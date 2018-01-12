@@ -20,9 +20,14 @@ class ListExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        $configuration = new Configuration(true);
+        $processedConfig = $this->processConfiguration($configuration, $configs);
+
+        $container->setParameter('huh.list', $processedConfig);
+
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-//        $loader->load('listener.yml');
+        $loader->load('config.yml');
 //        $loader->load('services.yml');
     }
 }

@@ -11,7 +11,7 @@ namespace HeimrichHannot\ListBundle;
 use HeimrichHannot\ListBundle\DependencyInjection\ListExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class ListBundle extends Bundle
+class HeimrichHannotContaoListBundle extends Bundle
 {
     /**
      * {@inheritdoc}

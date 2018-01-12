@@ -5,25 +5,21 @@
         </div>
     {% endfor %}
 
-    {% if addDetailsCol && details %}
+    {% if addDetails and detailsUrl %}
+        {% if useModal %}
+            <a class="details" href="{{ modalUrl }}" data-toggle="modal">
+                {{ detailsTitle }}
+            </a>
+        {% else %}
+            <a class="details" href="{{ detailsUrl }}">
+                {{ detailsTitle }}
+            </a>
+        {% endif %}
     {% endif %}
 
-    <?php if ($this->addDetailsCol && $this->detailsUrl): ?>
-    <?php if ($this->useModal): ?>
-    <a class="details" href="{{modal_url::<?= $this->modal->id ?>::<?= $this->jumpToDetails; ?>::<?= $this->idAlias; ?>}}"
-       data-toggle="modal">
-        <?php echo $GLOBALS['TL_LANG']['formhybrid_list']['detailsTitle']; ?>
-    </a>
-    <?php else: ?>
-    <a class="details" href="<?= $this->detailsUrl ?>">
-        <?php echo $GLOBALS['TL_LANG']['formhybrid_list']['detailsTitle']; ?>
-    </a>
-    <?php endif; ?>
-    <?php endif; ?>
-
-    <?php if ($this->addShareCol && $this->shareUrl): ?>
-    <a class="share" href="<?php echo $this->shareUrl; ?>" data-message="<?php echo $GLOBALS['TL_LANG']['formhybrid_list']['shareMessage']; ?>">
-        <?php echo $GLOBALS['TL_LANG']['formhybrid_list']['shareTitle']; ?>
-    </a>
-    <?php endif; ?>
+    {% if addShare and shareUrl %}
+        <a class="share" href="{{ shareUrl }}" data-message="{{ shareMessage }}">
+            {{ shareTitle }}
+        </a>
+    {% endif %}
 </div>

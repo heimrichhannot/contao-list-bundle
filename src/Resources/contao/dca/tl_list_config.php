@@ -304,7 +304,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['itemTemplate'],
             'exclude'          => true,
             'inputType'        => 'select',
-            'options_callback' => ['HeimrichHannot\FormHybridList\Backend\Module', 'getFormHybridListItemTemplates'],
+            'options_callback' => ['HeimrichHannot\ListBundle\Backend\ListConfig', 'getItemTemplates'],
             'eval'             => ['tl_class' => 'w50 clr', 'includeBlankOption' => true],
             'sql'              => "varchar(128) NOT NULL default ''",
         ]

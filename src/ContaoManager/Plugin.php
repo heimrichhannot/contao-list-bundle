@@ -12,7 +12,7 @@ use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-use HeimrichHannot\ListBundle\ListBundle;
+use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 
 class Plugin implements BundlePluginInterface
 {
@@ -22,7 +22,7 @@ class Plugin implements BundlePluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create(ListBundle::class)
+            BundleConfig::create(HeimrichHannotContaoListBundle::class)
                 ->setLoadAfter([ContaoCoreBundle::class]),
         ];
     }

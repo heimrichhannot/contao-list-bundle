@@ -1,0 +1,29 @@
+<div class="{{ class }}">
+    {% for field, value in fields %}
+        <div class="{{ field|lower }}">
+            {{ field }}: {{ value }}
+        </div>
+    {% endfor %}
+
+    {% if addDetailsCol && details %}
+    {% endif %}
+
+    <?php if ($this->addDetailsCol && $this->detailsUrl): ?>
+    <?php if ($this->useModal): ?>
+    <a class="details" href="{{modal_url::<?= $this->modal->id ?>::<?= $this->jumpToDetails; ?>::<?= $this->idAlias; ?>}}"
+       data-toggle="modal">
+        <?php echo $GLOBALS['TL_LANG']['formhybrid_list']['detailsTitle']; ?>
+    </a>
+    <?php else: ?>
+    <a class="details" href="<?= $this->detailsUrl ?>">
+        <?php echo $GLOBALS['TL_LANG']['formhybrid_list']['detailsTitle']; ?>
+    </a>
+    <?php endif; ?>
+    <?php endif; ?>
+
+    <?php if ($this->addShareCol && $this->shareUrl): ?>
+    <a class="share" href="<?php echo $this->shareUrl; ?>" data-message="<?php echo $GLOBALS['TL_LANG']['formhybrid_list']['shareMessage']; ?>">
+        <?php echo $GLOBALS['TL_LANG']['formhybrid_list']['shareTitle']; ?>
+    </a>
+    <?php endif; ?>
+</div>

@@ -8,11 +8,23 @@
 
 namespace HeimrichHannot\ListBundle\Module;
 
+use Contao\ModuleModel;
 use Patchwork\Utf8;
 
 class ModuleList extends \Contao\Module
 {
     protected $strTemplate = 'mod_list';
+
+    public function __construct(ModuleModel $objModule, $strColumn = 'main')
+    {
+        parent::__construct($objModule, $strColumn);
+
+        // add class to every list template
+        $cssID = $this->cssID;
+        $cssID[1] = $cssID[1].($cssID[1] ? ' ' : '').'huh-list';
+
+        $this->cssID = $cssID;
+    }
 
     public function generate()
     {

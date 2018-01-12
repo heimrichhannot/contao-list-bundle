@@ -40,12 +40,12 @@ $lang['sortingText'][0]      = 'Sortierung';
 $lang['sortingText'][1]      = 'Geben Sie hier eine Sortierung ein (Beispiel: "myField1 ASC, myField2 DESC").';
 
 // jump to
-$lang['addDetailsCol'][0] = 'Details-Weiterleitung hinzufügen';
-$lang['addDetailsCol'][1] = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Anzeigen von Details hinzuzufügen.';
+$lang['addDetails'][0]    = 'Details-Weiterleitung hinzufügen';
+$lang['addDetails'][1]    = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Anzeigen von Details hinzuzufügen.';
 $lang['jumpToDetails'][0] = 'Weiterleitungsseite (Details)';
 $lang['jumpToDetails'][1] = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn es eine Detailseite gibt.';
-$lang['addShareCol'][0]   = 'Teilen-Weiterleitung hinzufügen';
-$lang['addShareCol'][1]   = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Teilen des aktuellen Listeneintrags hinzuzufügen.';
+$lang['addShare'][0]      = 'Teilen-Weiterleitung hinzufügen';
+$lang['addShare'][1]      = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Teilen des aktuellen Listeneintrags hinzuzufügen.';
 $lang['jumpToShare'][0]   = 'Weiterleitungsseite (Teilen)';
 $lang['jumpToShare'][1]   = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn ein Inhalt geteilt wurde.';
 $lang['shareAutoItem'][0] = 'Auto-Item für den Teilen-Link verwenden';

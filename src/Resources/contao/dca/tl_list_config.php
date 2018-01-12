@@ -54,12 +54,6 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
                 'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm']
                                 . '\'))return false;Backend.getScrollOffset()"'
             ],
-            'toggle' => [
-                'label'           => &$GLOBALS['TL_LANG']['tl_list_config']['toggle'],
-                'icon'            => 'visible.gif',
-                'attributes'      => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-                'button_callback' => ['tl_list_config', 'toggleIcon']
-            ],
             'show'   => [
                 'label' => &$GLOBALS['TL_LANG']['tl_list_config']['show'],
                 'href'  => 'act=show',
@@ -71,14 +65,14 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         '__selector__' => [
             'isTableList',
             'sortingMode',
-            'addDetailsCol',
-            'addShareCol',
+            'addDetails',
+            'addShare',
             'addAjaxPagination',
             'addMasonry',
         ],
         'default'      => '{general_legend},title;' . '{entity_legend},dataContainer;'
                           . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showInitialResults,isTableList;'
-                          . '{sorting_legend},sortingMode;' . '{jumpto_legend},addDetailsCol,addShareCol;'
+                          . '{sorting_legend},sortingMode;' . '{jumpto_legend},addDetails,addShare;'
                           . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;'
                           . '{template_legend},itemTemplate;'
     ],
@@ -86,8 +80,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'isTableList'                                                                      => 'tableFields,hasHeader,sortingHeader',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_FIELD => 'sortingField,sortingDirection',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_TEXT  => 'sortingText',
-        'addDetailsCol'                                                                    => 'useModalExplanation,useModal,jumpToDetails',
-        'addShareCol'                                                                      => 'jumpToShare,shareAutoItem',
+        'addDetails'                                                                       => 'useModalExplanation,useModal,jumpToDetails',
+        'addShare'                                                                         => 'jumpToShare,shareAutoItem',
         'addAjaxPagination'                                                                => 'addInfiniteScroll',
         'addMasonry'                                                                       => 'masonryStampContentElements'
     ],
@@ -218,8 +212,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sql'       => "varchar(64) NOT NULL default ''"
         ],
         // jump to
-        'addDetailsCol'               => [
-            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addDetailsCol'],
+        'addDetails'                  => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addDetails'],
             'exclude'   => true,
             'inputType' => 'checkbox',
             'eval'      => ['tl_class' => 'w50 clr', 'submitOnChange' => true],
@@ -234,8 +228,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sql'        => "int(10) unsigned NOT NULL default '0'",
             'relation'   => ['type' => 'hasOne', 'load' => 'eager']
         ],
-        'addShareCol'                 => [
-            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addShareCol'],
+        'addShare'                    => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addShare'],
             'exclude'   => true,
             'inputType' => 'checkbox',
             'eval'      => ['tl_class' => 'w50 clr', 'submitOnChange' => true],

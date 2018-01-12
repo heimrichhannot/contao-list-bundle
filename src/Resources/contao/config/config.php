@@ -8,6 +8,17 @@ $GLOBALS['BE_MOD']['system']['list_configs'] = [
 ];
 
 /**
+ * Frontend modules
+ */
+array_insert(
+    $GLOBALS['FE_MOD']['list'],
+    3,
+    [
+        \HeimrichHannot\ListBundle\Backend\Module::MODULE_LIST => 'HeimrichHannot\ListBundle\Module\ModuleList',
+    ]
+);
+
+/**
  * Permissions
  */
 $GLOBALS['TL_PERMISSIONS'][] = 'listbundles';

@@ -1,0 +1,46 @@
+{
+  "name": "heimrichhannot/contao-filter-bundle",
+  "type": "contao-bundle",
+  "description": "This bundle offers a generic list module to use with arbitrary contao entities containing standard list handling like pagination, sorting, and filtering.",
+  "license": "LGPL-3.0+",
+  "require": {
+    "php": ">=7.0.0",
+    "contao/core-bundle": "^4.4",
+    "heimrichhannot/contao-haste_plus": "^1.7",
+    "heimrichhannot/contao-request": "^1.2"
+  },
+  "require-dev": {
+    "contao/manager-plugin": "^2.0",
+    "friendsofphp/php-cs-fixer": "^2.2",
+    "phpunit/phpunit": "^6.0",
+    "satooshi/php-coveralls": "^1.0"
+  },
+  "suggest": {
+    "heimrichhannot/contao-filter-bundle": "This bundle can be used to filter lists created with contao-list-bundle."
+  },
+  "autoload": {
+    "psr-4": {
+      "HeimrichHannot\\ListBundle\\": "src/"
+    },
+    "classmap": [
+      "src/"
+    ],
+    "exclude-from-classmap": [
+      "src/Resources/contao/config/",
+      "src/Resources/contao/dca/",
+      "src/Resources/contao/languages/",
+      "src/Resources/contao/templates/"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "HeimrichHannot\\ListBundle\\Test\\": "tests/"
+    }
+  },
+  "config": {
+    "preferred-install": "dist"
+  },
+  "extra": {
+    "contao-manager-plugin": "HeimrichHannot\\ListBundle\\ContaoManager\\Plugin"
+  }
+}

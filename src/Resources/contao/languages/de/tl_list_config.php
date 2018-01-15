@@ -16,6 +16,8 @@ $lang['dataContainer'][0] = 'Data-Container';
 $lang['dataContainer'][1] = 'Wählen Sie hier den Data-Container aus, der die anzuzeigenden Entitäten enthält.';
 
 // config
+$lang['filter'][0]             = 'Filter';
+$lang['filter'][1]             = 'Bitte wählen Sie hier bei Bedarf einen Filter aus.';
 $lang['showItemCount'][0]      = 'Ergebnisanzahl anzeigen';
 $lang['showItemCount'][1]      = 'Klicken Sie hier, um die Anzahl der gefundenen Objekte anzuzeigen.';
 $lang['showInitialResults'][0] = 'Initial Ergebnisse anzeigen';
@@ -75,6 +77,7 @@ $lang['itemTemplate'][1] = 'Wählen Sie hier das Template aus, mit dem die einze
 $lang['general_legend']  = 'Allgemeine Einstellungen';
 $lang['entity_legend']   = 'Entität';
 $lang['config_legend']   = 'Konfiguration';
+$lang['filter_legend']   = 'Filter';
 $lang['sorting_legend']  = 'Sortierung';
 $lang['jumpto_legend']   = 'Weiterleitung';
 $lang['misc_legend']     = 'Verschiedenes';

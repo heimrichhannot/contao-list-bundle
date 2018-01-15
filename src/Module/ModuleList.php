@@ -8,14 +8,19 @@
 
 namespace HeimrichHannot\ListBundle\Module;
 
+use Contao\Config;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
+use Contao\FrontendTemplate;
 use Contao\ModuleModel;
 use Contao\System;
+use HeimrichHannot\FilterBundle\Config\FilterConfig;
+use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Backend\ListBundle;
 use HeimrichHannot\ListBundle\Backend\ListConfig;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
+use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use HeimrichHannot\ListBundle\Util\Helper;
 use HeimrichHannot\Request\Request;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
@@ -27,16 +32,24 @@ class ModuleList extends \Contao\Module
 {
     protected $strTemplate = 'mod_list';
 
-    /**
-     * @var ContaoFramework
-     */
+    /** @var ContaoFramework */
     protected $framework;
 
-    /**
-     * @var ListConfigModel
-     */
+    /** @var ListConfigModel */
     protected $listConfig;
 
+    /** @var FilterConfig */
+    protected $filterConfig;
+
+    /** @var object */
+    protected $filter;
+
+    /**
+     * ModuleList constructor.
+     *
+     * @param ModuleModel $objModule
+     * @param string      $strColumn
+     */
     public function __construct(ModuleModel $objModule, $strColumn = 'main')
     {
         $this->framework = System::getContainer()->get('contao.framework');
@@ -71,6 +84,10 @@ class ModuleList extends \Contao\Module
         Controller::loadDataContainer('tl_list_config');
 
         $this->listConfig = $listConfig = $this->getListConfig();
+        $this->filterConfig = $this->getFilterConfig();
+        $this->filter = (object) $this->filterConfig->getFilter();
+        $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
+
         $this->handleShare();
 
         // apply module fields to template
@@ -88,70 +105,125 @@ class ModuleList extends \Contao\Module
 
         $this->addDataAttributes();
 
-//        $this->arrSkipInstances             = deserialize($this->skipInstances, true);
-//        $this->arrTableFields               = deserialize($this->tableFields, true);
-//        $this->addDefaultValues             = $this->formHybridAddDefaultValues;
-//        $this->arrDefaultValues             = deserialize($this->formHybridDefaultValues, true);
-//        $this->arrConjunctiveMultipleFields = deserialize($this->conjunctiveMultipleFields, true);
-
         // sorting
         $this->Template->currentSorting = $this->getCurrentSorting();
-
-//        // set initial filters
-//        $this->initInitialFilters();
-//
-//        // set default filter values
-//        if ($this->addDefaultValues)
-//        {
-//            $this->applyDefaultFilters();
-//        }
 
         if ($this->hasHeader) {
             $this->Template->header = $this->generateTableHeader();
         }
 
-//        switch ($this->filterMode)
-//        {
-//            case OPTION_FORMHYBRID_FILTERMODE_MODULE:
-//                if ($this->formHybridLinkedFilter)
-//                {
-//                    $this->linkedFilterModule = \ModuleModel::findByPk($this->formHybridLinkedFilter);
-//
-//                    if ($this->linkedFilterModule !== null)
-//                    {
-//                        $this->customFilterFields = $this->linkedFilterModule->customFilterFields;
-//                        $this->objFilterForm      = new ListFilterForm($this);
-//                    }
-//                }
-//                break;
-//            default:
-//                if (!$this->hideFilter)
-//                {
-//                    $this->objFilterForm        = new ListFilterForm($this);
-//                    $this->Template->filterForm = $this->objFilterForm->generate();
-//                }
-//                break;
-//        }
+        // apply filter
+        $queryBuilder = $this->filterRegistry->getQueryBuilder($this->filter->id);
+        $this->Template->isSubmitted = $this->filterConfig->getBuilder()->getForm()->isSubmitted();
+        $this->Template->showResults = $this->Template->isSubmitted || $listConfig->showInitialResults;
+        $this->Template->totalCount = $queryBuilder->select('*')->execute()->rowCount();
 
-//        if ((!$this->hideFilter || ($this->filterMode == OPTION_FORMHYBRID_FILTERMODE_MODULE && $this->formHybridLinkedFilter))
-//            && $this->objFilterForm->isSubmitted()
-//            && !$this->objFilterForm->doNotSubmit()
-//        )
+        $this->applyListConfigToQueryBuilder($queryBuilder);
+
+        $items = $queryBuilder->execute()->fetchAll();
+
+        echo '<pre>';
+        var_dump($items);
+        echo '</pre>';
+
+//        if (!empty($items))
 //        {
-//            // submission ain't formatted
-//            list($objItems, $this->Template->count) = $this->getItems($this->objFilterForm->getSubmission(false));
-//            $this->Template->isSubmitted = $this->objFilterForm->isSubmitted();
+//            $this->Template->items = $this->prepareItems($items);
 //        }
-//        elseif ($this->showInitialResults)
-//        {
-//            list($objItems, $this->Template->count) = $this->getItems();
-//        }
-//
-//        // Add the items
-//        if ($objItems !== null)
-//        {
-//            $this->Template->items = $this->parseItems($objItems);
-//        }
+    }
+
+    protected function applyListConfigToQueryBuilder(FilterQueryBuilder $queryBuilder)
+    {
+        $listConfig = $this->listConfig;
+
+        // offset
+        $offset = (int) ($listConfig->skipFirst);
+
+        // limit
+        $limit = null;
+
+        if ($listConfig->numberOfItems > 0) {
+            $limit = $listConfig->numberOfItems;
+        }
+
+        // total item number
+        $totalCount = $this->Template->totalCount;
+
+        // sorting
+        $currentSorting = $this->getCurrentSorting();
+
+        if (ListConfig::SORTING_MODE_RANDOM == $currentSorting['order']) {
+            $randomSeed = Request::getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
+            $queryBuilder->orderBy('RAND("'.(int) $randomSeed.'")');
+            list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit, $randomSeed);
+        } else {
+            if (!empty($currentSorting)) {
+                $queryBuilder->orderBy($currentSorting['order'], $currentSorting['sort']);
+            }
+
+            list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit);
+        }
+
+        // split the results
+        $queryBuilder->setFirstResult($offset)->setMaxResults($limit);
+    }
+
+    protected function splitResults($offset, $total, $limit, $randomSeed = null)
+    {
+        $listConfig = $this->listConfig;
+        $offsettedTotal = $total - $offset;
+
+        // Split the results
+        if ($listConfig->perPage > 0 && (!isset($limit) || $listConfig->numberOfItems > $listConfig->perPage)) {
+            // Adjust the overall limit
+            if (isset($limit)) {
+                $offsettedTotal = min($limit, $offsettedTotal);
+            }
+
+            // Get the current page
+            $id = 'page_s'.$this->id;
+            $page = Request::getGet($id) ?: 1;
+
+            // Do not index or cache the page if the page number is outside the range
+            if ($page < 1 || $page > max(ceil($offsettedTotal / $listConfig->perPage), 1)) {
+                global $objPage;
+                $objPage->noSearch = 1;
+                $objPage->cache = 0;
+
+                // Send a 404 header
+                header('HTTP/1.1 404 Not Found');
+
+                return;
+            }
+
+            // Set limit and offset
+            $limit = $listConfig->perPage;
+            $offset += (max($page, 1) - 1) * $listConfig->perPage;
+
+            // Overall limit
+            if ($offset + $limit > $offsettedTotal) {
+                $limit = $offsettedTotal - $offset;
+            }
+
+            // Add the pagination menu
+            if ($listConfig->addAjaxPagination) {
+                $pagination = new RandomPagination(
+                    $randomSeed, $offsettedTotal, $this->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate('pagination_ajax')
+                );
+            } else {
+                $pagination = new RandomPagination(
+                    $randomSeed, $offsettedTotal, $this->perPage, $GLOBALS['TL_CONFIG']['maxPaginationLinks'], $id
+                );
+            }
+
+            $this->Template->pagination = $pagination->generate("\n  ");
+        }
+
+        return [$offset, $limit];
+    }
+
+    protected function prepareItems()
+    {
     }
 
     protected function generateTableHeader()
@@ -168,12 +240,12 @@ class ModuleList extends \Contao\Module
             ];
 
             if ($isCurrentOrderField) {
-                $field['class'] = (ListConfig::SORTING_DIRECTION_ASC == $currentSorting['sort'] ?
-                    ListConfig::SORTING_DIRECTION_ASC : ListConfig::SORTING_DIRECTION_DESC);
+                $field['class'] = (ListConfig::SORTING_DIRECTION_ASC
+                                   == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_ASC : ListConfig::SORTING_DIRECTION_DESC);
 
                 $field['link'] = UrlUtil::addQueryString(
-                    'order='.$name.'&sort='.(ListConfig::SORTING_DIRECTION_ASC == $currentSorting['sort'] ?
-                        ListConfig::SORTING_DIRECTION_DESC : ListConfig::SORTING_DIRECTION_ASC)
+                    'order='.$name.'&sort='.(ListConfig::SORTING_DIRECTION_ASC
+                                                   == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_DESC : ListConfig::SORTING_DIRECTION_ASC)
                 );
             } else {
                 $field['link'] = UrlUtil::addQueryString('order='.$name.'&sort='.ListConfig::SORTING_DIRECTION_ASC);
@@ -202,11 +274,22 @@ class ModuleList extends \Contao\Module
     {
         $listConfigId = $this->arrData['listConfig'];
 
-        if (!$listConfigId || null === ($listConfig = ModelUtil::getModelInstanceByPk($this->framework, 'tl_list_config', $listConfigId))) {
+        if (!$listConfigId || null === ($listConfig = System::getContainer()->get('huh.list.registry')->findByPk($listConfigId))) {
             throw new \Exception(sprintf('The module %s has no valid list config. Please set one.', $this->id));
         }
 
         return $listConfig;
+    }
+
+    protected function getFilterConfig()
+    {
+        $filterId = $this->listConfig->filter;
+
+        if (!$filterId || null === ($filterConfig = System::getContainer()->get('huh.filter.registry')->findById($filterId))) {
+            throw new \Exception(sprintf('The module %s has no valid filter. Please set one.', $this->id));
+        }
+
+        return $filterConfig;
     }
 
     protected function handleShare()
@@ -218,7 +301,7 @@ class ModuleList extends \Contao\Module
             $url = Request::getGet('url');
             $id = Request::getGet('id');
 
-            if (null !== ($entity = ModelUtil::getModelInstanceByPk($this->framework, $listConfig->dataContainer, $id))) {
+            if (null !== ($entity = ModelUtil::findModelInstanceByPk($this->framework, $listConfig->dataContainer, $id))) {
                 $now = time();
 
                 if (Helper::shareTokenExpiredOrEmpty($entity, $now)) {
@@ -246,8 +329,9 @@ class ModuleList extends \Contao\Module
         // GET parameter
         if (($orderField = Request::getGet('order')) && ($sort = Request::getGet('sort'))) {
             // anti sql injection: check if field exists
-            if (Database::getInstance()->fieldExists($orderField, $listConfig->dataContainer) &&
-                in_array($sort, ListConfig::SORTING_DIRECTIONS, true)) {
+            if (Database::getInstance()->fieldExists($orderField, $listConfig->dataContainer)
+                && in_array($sort, ListConfig::SORTING_DIRECTIONS, true)
+            ) {
                 $currentSorting = [
                     'order' => Request::getGet('order'),
                     'sort' => Request::getGet('sort'),
@@ -266,7 +350,7 @@ class ModuleList extends \Contao\Module
                     break;
                 case ListConfig::SORTING_MODE_RANDOM:
                     $currentSorting = [
-                        'order' => 'random',
+                        'order' => ListConfig::SORTING_MODE_RANDOM,
                     ];
                     break;
                 default:

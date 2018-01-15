@@ -1,5 +1,9 @@
 services:
-  huh.list.choice.template.item:
-      class: HeimrichHannot\ListBundle\Choice\ListItemTemplateChoice
-      arguments:
-        - "@contao.framework"
+    huh.list.choice.template.item:
+        class: HeimrichHannot\ListBundle\Choice\ListItemTemplateChoice
+        arguments:
+            - "@contao.framework"
+    huh.list.registry:
+        class: HeimrichHannot\ListBundle\Registry\FilterRegistry
+        arguments:
+            - "@contao.framework"

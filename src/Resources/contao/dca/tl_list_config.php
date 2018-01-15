@@ -115,7 +115,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'dataContainer'               => [
             'inputType'        => 'select',
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['dataContainer'],
-            'options_callback' => ['HeimrichHannot\Haste\Dca\General', 'getDataContainers'],
+            'options_callback' => ['huh.utils.choice.data_container', 'getCachedChoices'],
             'eval'             => [
                 'chosen'             => true,
                 'submitOnChange'     => true,
@@ -168,7 +168,15 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'tableFields'                 => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['tableFields'],
             'inputType'        => 'checkboxWizard',
-            'options_callback' => ['HeimrichHannot\ListBundle\Backend\ListConfig', 'getFields'],
+            'options_callback' => function (DataContainer $dc)
+            {
+                return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
+                    [
+                        'dataContainer' => $dc->activeRecord->dataContainer,
+                        'localizeLabels' => true
+                    ]
+                );
+            },
             'exclude'          => true,
             'eval'             => ['multiple' => true, 'includeBlankOption' => true, 'tl_class' => 'w50 clr autoheight'],
             'sql'              => "blob NULL",
@@ -188,7 +196,15 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'exclude'          => true,
             'filter'           => true,
             'inputType'        => 'select',
-            'options_callback' => ['HeimrichHannot\ListBundle\Backend\ListConfig', 'getFields'],
+            'options_callback' => function (DataContainer $dc)
+            {
+                return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
+                    [
+                        'dataContainer' => $dc->activeRecord->dataContainer,
+                        'localizeLabels' => true
+                    ]
+                );
+            },
             'reference'        => &$GLOBALS['TL_LANG']['tl_list_config']['reference'],
             'eval'             => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true],
             'sql'              => "varchar(64) NOT NULL default ''"
@@ -304,7 +320,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['itemTemplate'],
             'exclude'          => true,
             'inputType'        => 'select',
-            'options_callback' => ['HeimrichHannot\ListBundle\Backend\ListConfig', 'getItemTemplates'],
+            'options_callback' => ['huh.list.choice.template.item', 'getCachedChoices'],
             'eval'             => ['tl_class' => 'w50 clr', 'includeBlankOption' => true],
             'sql'              => "varchar(128) NOT NULL default ''",
         ]

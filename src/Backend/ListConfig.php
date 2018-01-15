@@ -9,7 +9,6 @@
 namespace HeimrichHannot\ListBundle\Backend;
 
 use Contao\DataContainer;
-use Contao\System;
 use HeimrichHannot\Haste\Dca\General;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 
@@ -40,18 +39,5 @@ class ListConfig
         }
 
         return General::getFields($listConfig->dataContainer, false);
-    }
-
-    public static function getItemTemplates()
-    {
-        $options = [];
-
-        $config = System::getContainer()->getParameter('huh.list');
-
-        if (isset($config['list']['templates'])) {
-            $options = $config['list']['templates'];
-        }
-
-        return $options;
     }
 }

@@ -36,13 +36,13 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->arrayNode('list')
+                ->arrayNode('templates')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->arrayNode('templates')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('list_item')->cannotBeEmpty()->defaultValue('@HeimrichHannotContaoListBundle/list_item.html.twig')->end()
+                        ->arrayNode('item')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->scalarNode('default')->cannotBeEmpty()->defaultValue('@HeimrichHannotContaoListBundle/list_item.html.twig')->end()
                             ->end()
                         ->end()
                     ->end()

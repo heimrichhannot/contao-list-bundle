@@ -8,10 +8,6 @@
 
 namespace HeimrichHannot\ListBundle\Backend;
 
-use Contao\DataContainer;
-use HeimrichHannot\Haste\Dca\General;
-use HeimrichHannot\ListBundle\Model\ListConfigModel;
-
 class ListConfig
 {
     const SORTING_MODE_FIELD = 'field';
@@ -31,13 +27,4 @@ class ListConfig
         self::SORTING_DIRECTION_ASC,
         self::SORTING_DIRECTION_DESC,
     ];
-
-    public static function getFields(DataContainer $dc)
-    {
-        if (null === ($listConfig = ListConfigModel::findByPk($dc->id)) || !$listConfig->dataContainer) {
-            return [];
-        }
-
-        return General::getFields($listConfig->dataContainer, false);
-    }
 }

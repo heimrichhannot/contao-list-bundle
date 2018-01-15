@@ -279,14 +279,14 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addInfiniteScroll'],
             'exclude'   => true,
             'inputType' => 'checkbox',
-            'eval'      => ['tl_class' => 'w50'],
+            'eval'      => ['tl_class' => 'w50', 'addAsDataAttribute' => true],
             'sql'       => "char(1) NOT NULL default ''"
         ],
         'addMasonry'                  => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addMasonry'],
             'exclude'   => true,
             'inputType' => 'checkbox',
-            'eval'      => ['tl_class' => 'w50 clr', 'submitOnChange' => true],
+            'eval'      => ['tl_class' => 'w50 clr', 'submitOnChange' => true, 'addAsDataAttribute' => true],
             'sql'       => "char(1) NOT NULL default ''"
         ],
         'masonryStampContentElements' => [

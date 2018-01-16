@@ -63,6 +63,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
     ],
     'palettes'    => [
         '__selector__' => [
+            'limitFields',
             'isTableList',
             'sortingMode',
             'addDetails',
@@ -71,12 +72,13 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addMasonry',
         ],
         'default'      => '{general_legend},title;' . '{filter_legend},filter;'
-                          . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showInitialResults,isTableList;'
+                          . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showInitialResults,limitFields,isTableList;'
                           . '{sorting_legend},sortingMode;' . '{jumpto_legend},addDetails,addShare;'
                           . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;'
                           . '{template_legend},itemTemplate;'
     ],
     'subpalettes' => [
+        'limitFields'                                                                      => 'fields',
         'isTableList'                                                                      => 'tableFields,hasHeader,sortingHeader',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_FIELD => 'sortingField,sortingDirection',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_TEXT  => 'sortingText',
@@ -112,6 +114,33 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sql'       => "varchar(255) NOT NULL default ''"
         ],
         // config
+        'limitFields' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config']['limitFields'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'                     => "char(1) NOT NULL default ''"
+        ],
+        'fields'                 => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['fields'],
+            'inputType'        => 'checkboxWizard',
+            'options_callback' => function (DataContainer $dc)
+            {
+                if (null === ($filterConfig = \Contao\System::getContainer()->get('huh.filter.registry')->findById($dc->activeRecord->filter)))
+                {
+                    return [];
+                }
+
+                return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
+                    [
+                        'dataContainer'  => $filterConfig->getFilter()['dataContainer'],
+                    ]
+                );
+            },
+            'exclude'          => true,
+            'eval'             => ['multiple' => true, 'includeBlankOption' => true, 'tl_class' => 'w50 clr autoheight'],
+            'sql'              => "blob NULL",
+        ],
         'numberOfItems'               => $GLOBALS['TL_DCA']['tl_module']['fields']['numberOfItems'],
         'perPage'                     => $GLOBALS['TL_DCA']['tl_module']['fields']['perPage'],
         'skipFirst'                   => $GLOBALS['TL_DCA']['tl_module']['fields']['skipFirst'],
@@ -133,7 +162,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['isTableList'],
             'exclude'   => true,
             'inputType' => 'checkbox',
-            'eval'      => ['tl_class' => 'w50 clr', 'submitOnChange' => true],
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
             'sql'       => "char(1) NOT NULL default ''"
         ],
         'hasHeader'                   => [
@@ -162,8 +191,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
 
                 return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
                     [
-                        'dataContainer'  => $filterConfig->getFilter()['dataContainer'],
-                        'localizeLabels' => true
+                        'dataContainer'  => $filterConfig->getFilter()['dataContainer']
                     ]
                 );
             },
@@ -195,8 +223,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
 
                 return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
                     [
-                        'dataContainer'  => $filterConfig->getFilter()['dataContainer'],
-                        'localizeLabels' => true
+                        'dataContainer'  => $filterConfig->getFilter()['dataContainer']
                     ]
                 );
             },

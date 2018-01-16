@@ -116,13 +116,23 @@ class ModuleList extends \Contao\Module
         $queryBuilder = $this->filterRegistry->getQueryBuilder($this->filter->id);
         $this->Template->isSubmitted = $this->filterConfig->getBuilder()->getForm()->isSubmitted();
         $this->Template->showResults = $this->Template->isSubmitted || $listConfig->showInitialResults;
-        $this->Template->totalCount = $queryBuilder->select('*')->execute()->rowCount();
+
+        if ($listConfig->limitFields) {
+            $fieldsArray = \Contao\StringUtil::deserialize($listConfig->fields, true);
+            $fields = implode(', ', $fieldsArray);
+        } else {
+            $fields = '*';
+        }
+
+        $this->Template->totalCount = $queryBuilder->select($fields)->execute()->rowCount();
 
         $this->applyListConfigToQueryBuilder($queryBuilder);
 
         $items = $queryBuilder->execute()->fetchAll();
 
         echo '<pre>';
+        var_dump();
+        var_dump($queryBuilder->getSQL());
         var_dump($items);
         echo '</pre>';
 

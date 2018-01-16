@@ -34,6 +34,8 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property int    $masonryStampContentElements
  * @property string $itemTemplate
  * @property int    $filter
+ * @property bool   $limitFields
+ * @property string $fields
  */
 class ListConfigModel extends \Model
 {

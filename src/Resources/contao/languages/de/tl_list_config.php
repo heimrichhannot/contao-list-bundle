@@ -11,13 +11,15 @@ $lang['tstamp'][0] = 'Änderungsdatum';
 $lang['title'][0] = 'Titel';
 $lang['title'][1] = 'Geben Sie hier bitte den Titel ein.';
 
-// entity
-$lang['dataContainer'][0] = 'Data-Container';
-$lang['dataContainer'][1] = 'Wählen Sie hier den Data-Container aus, der die anzuzeigenden Entitäten enthält.';
+// filter
+$lang['filter'][0] = 'Filter';
+$lang['filter'][1] = 'Bitte wählen Sie hier bei Bedarf einen Filter aus.';
 
 // config
-$lang['filter'][0]             = 'Filter';
-$lang['filter'][1]             = 'Bitte wählen Sie hier bei Bedarf einen Filter aus.';
+$lang['limitFields'][0]        = 'Verarbeitete Felder einschränken';
+$lang['limitFields'][1]        = 'Wählen Sie diese Option, wenn nicht alle Felder des Data-Containers verarbeitet werden sollen.';
+$lang['fields'][0]             = 'Felder';
+$lang['fields'][1]             = 'Wählen Sie hier die zu verarbeitenden Felder aus.';
 $lang['showItemCount'][0]      = 'Ergebnisanzahl anzeigen';
 $lang['showItemCount'][1]      = 'Klicken Sie hier, um die Anzahl der gefundenen Objekte anzuzeigen.';
 $lang['showInitialResults'][0] = 'Initial Ergebnisse anzeigen';

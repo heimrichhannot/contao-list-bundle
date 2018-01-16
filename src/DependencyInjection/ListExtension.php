@@ -15,6 +15,11 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class ListExtension extends Extension
 {
+    public function getAlias()
+    {
+        return 'huh_list';
+    }
+
     /**
      * {@inheritdoc}
      */

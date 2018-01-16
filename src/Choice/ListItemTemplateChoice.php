@@ -22,11 +22,11 @@ class ListItemTemplateChoice extends AbstractChoice
 
         $config = System::getContainer()->getParameter('huh.list');
 
-        if (!isset($config['templates']['item'])) {
+        if (!isset($config['list']['templates']['item'])) {
             return $choices;
         }
 
-        $choices = $config['templates']['item'];
+        $choices = $config['list']['templates']['item'];
 
         return array_values($choices);
     }

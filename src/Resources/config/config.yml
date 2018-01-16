@@ -1,0 +1,5 @@
+huh:
+    list:
+        templates:
+            item:
+                - { name: default, template: "@HeimrichHannotContaoList/list_item_default.html.twig" }

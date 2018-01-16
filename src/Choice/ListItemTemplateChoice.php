@@ -26,8 +26,12 @@ class ListItemTemplateChoice extends AbstractChoice
             return $choices;
         }
 
-        $choices = $config['list']['templates']['item'];
+        foreach ($config['list']['templates']['item'] as $template) {
+            $choices[$template['name']] = $template['template'];
+        }
 
-        return array_values($choices);
+        asort($choices);
+
+        return $choices;
     }
 }

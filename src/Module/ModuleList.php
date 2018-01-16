@@ -147,7 +147,6 @@ class ModuleList extends \Contao\Module
 
         foreach ($items as $item) {
             $preparedItem = $this->prepareItem($item);
-            $preparedItem = $this->addItemUrls($preparedItem);
 
             $preparedItems[] = $preparedItem;
         }
@@ -163,9 +162,6 @@ class ModuleList extends \Contao\Module
 
         $result = [];
         $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
-
-        // TODO: needed? -> always add id
-        $result['raw']['id'] = $item['id'];
 
         $dc = DC_Table::createFromModelData($item, $filter->dataContainer);
 
@@ -196,55 +192,6 @@ class ModuleList extends \Contao\Module
         }
 
         return $result;
-    }
-
-    protected function addItemUrls(array $item): array
-    {
-        $listConfig = $this->listConfig;
-        $idOrAlias = $this->getIdOrAlias($item, $listConfig);
-        $urlUtil = System::getContainer()->get('huh.utils.url');
-
-        // details
-        $pageJumpTo = $urlUtil->getJumpToPageObject(
-            $listConfig->jumpToDetails
-        );
-
-        if (null !== $pageJumpTo) {
-            $item['detailsUrl'] = Controller::generateFrontendUrl(
-                $pageJumpTo->row(),
-                '/'.$idOrAlias
-            );
-        }
-
-        // share
-        $pageJumpTo = $urlUtil->getJumpToPageObject(
-            $listConfig->jumpToShare
-        );
-
-        if (null !== $pageJumpTo) {
-            $shareUrl = Environment::get('url').'/'.\Controller::generateFrontendUrl($pageJumpTo->row());
-
-            $url = $urlUtil->addQueryString(
-                'act='.ListBundle::ACTION_SHARE,
-                $urlUtil->getCurrentUrl(
-                    [
-                        'skipParams' => true,
-                    ]
-                )
-            );
-
-            $url = $urlUtil->addQueryString('url='.urlencode($shareUrl), $url);
-
-            if ($listConfig->useAlias && $item['raw'][$listConfig->aliasField]) {
-                $url = $urlUtil->addQueryString($listConfig->aliasField.'='.$item['raw'][$listConfig->aliasField], $url);
-            } else {
-                $url = $urlUtil->addQueryString('id='.$item['raw']['id'], $url);
-            }
-
-            $item['shareUrl'] = $url;
-        }
-
-        return $item;
     }
 
     protected function parseItems(array $items): array
@@ -298,18 +245,37 @@ class ModuleList extends \Contao\Module
         $templateData['active'] = $idOrAlias && \Input::get('items') == $idOrAlias;
 
         // details
+        $this->addDetailsUrl($idOrAlias, $templateData, $listConfig);
+
+        // share
+        $this->addShareUrl($item, $templateData, $listConfig);
+
+        $templateData['module'] = $this->arrData;
+
+        // TODO image size
+//        $objTemplate->imgSize     = deserialize($this->imgSize, true);
+
+        $this->modifyItemTemplateData($templateData, $item);
+
+        $config = System::getContainer()->getParameter('huh.list');
+
+        return System::getContainer()->get('twig')->render($listConfig->itemTemplate ?: $config['templates']['item']['default'], $templateData);
+    }
+
+    protected function addDetailsUrl($idOrAlias, array &$templateData, ListConfigModel $listConfig)
+    {
         $templateData['addDetails'] = $listConfig->addDetails;
 
         if ($listConfig->addDetails) {
             $templateData['useModal'] = $listConfig->useModal;
             $templateData['jumpToDetails'] = $listConfig->jumpToDetails;
 
-            if ($listConfig->useModal) {
-                $pageJumpTo = System::getContainer()->get('huh.utils.url')->getJumpToPageObject(
-                    $listConfig->jumpToDetails
-                );
+            $pageJumpTo = System::getContainer()->get('huh.utils.url')->getJumpToPageObject(
+                $listConfig->jumpToDetails
+            );
 
-                if (null !== $pageJumpTo) {
+            if (null !== $pageJumpTo) {
+                if ($listConfig->useModal) {
                     if (null !== ($modal = ModalModel::findPublishedByTargetPage($pageJumpTo))) {
                         $templateData['modalUrl'] = Controller::replaceInsertTags(
                             sprintf(
@@ -321,20 +287,50 @@ class ModuleList extends \Contao\Module
                             true
                         );
                     }
+                } else {
+                    $templateData['detailsUrl'] = Controller::generateFrontendUrl(
+                        $pageJumpTo->row(),
+                        '/'.$idOrAlias
+                    );
                 }
             }
         }
+    }
 
-        // share
+    protected function addShareUrl($item, array &$templateData, ListConfigModel $listConfig)
+    {
         $templateData['addShare'] = $listConfig->addShare;
-        $templateData['module'] = $this->arrData;
 
-        // TODO image size
-//        $objTemplate->imgSize     = deserialize($this->imgSize, true);
+        if ($listConfig->addShare) {
+            $urlUtil = System::getContainer()->get('huh.utils.url');
 
-        $this->modifyItemTemplateData($templateData, $item);
+            $pageJumpTo = $urlUtil->getJumpToPageObject(
+                $listConfig->jumpToShare
+            );
 
-        return System::getContainer()->get('twig')->render($listConfig->itemTemplate, $templateData);
+            if (null !== $pageJumpTo) {
+                $shareUrl = Environment::get('url').'/'.\Controller::generateFrontendUrl($pageJumpTo->row());
+
+                $url = $urlUtil->addQueryString(
+                    'act='.ListBundle::ACTION_SHARE,
+                    $urlUtil->getCurrentUrl(
+                        [
+                            'skipParams' => true,
+                        ]
+                    )
+                );
+
+                $url = $urlUtil->addQueryString('url='.urlencode($shareUrl), $url);
+
+                if ($listConfig->useAlias && $item['raw'][$listConfig->aliasField]) {
+                    $url = $urlUtil->addQueryString($listConfig->aliasField.'='.$item['raw'][$listConfig->aliasField], $url);
+                } else {
+                    $url = $urlUtil->addQueryString('id='.$item['raw']['id'], $url);
+                }
+
+                $templateData['shareUrl'] = $url;
+            }
+        }
     }
 
     protected function modifyItemTemplateData(array &$templateData, array $item): void

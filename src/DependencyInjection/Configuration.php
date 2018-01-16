@@ -42,7 +42,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('item')
                         ->addDefaultsIfNotSet()
                         ->children()
-                            ->scalarNode('default')->cannotBeEmpty()->defaultValue('@HeimrichHannotContaoListBundle/list_item.html.twig')->end()
+                            ->scalarNode('default')->cannotBeEmpty()->defaultValue('@HeimrichHannotContaoList/list_item.html.twig')->end()
                             ->end()
                         ->end()
                     ->end()

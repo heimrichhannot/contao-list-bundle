@@ -1,6 +1,8 @@
 <?php $this->extend('block_searchable'); ?>
 <?php $this->block('content'); ?>
 
-Test123
+<?php foreach ($this->items as $item): ?>
+    <?= $item ?>
+<?php endforeach; ?>
 
 <?php $this->endblock(); ?>

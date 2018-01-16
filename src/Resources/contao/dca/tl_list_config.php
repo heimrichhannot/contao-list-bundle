@@ -66,6 +66,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'limitFields',
             'isTableList',
             'sortingMode',
+            'useAlias',
             'addDetails',
             'addShare',
             'addAjaxPagination',
@@ -73,7 +74,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         ],
         'default'      => '{general_legend},title;' . '{filter_legend},filter;'
                           . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showInitialResults,limitFields,isTableList;'
-                          . '{sorting_legend},sortingMode;' . '{jumpto_legend},addDetails,addShare;'
+                          . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare;'
                           . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;'
                           . '{template_legend},itemTemplate;'
     ],
@@ -82,6 +83,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'isTableList'                                                                      => 'tableFields,hasHeader,sortingHeader',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_FIELD => 'sortingField,sortingDirection',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_TEXT  => 'sortingText',
+        'useAlias'                                                                         => 'aliasField',
         'addDetails'                                                                       => 'useModalExplanation,useModal,jumpToDetails',
         'addShare'                                                                         => 'jumpToShare,shareAutoItem',
         'addAjaxPagination'                                                                => 'addInfiniteScroll',
@@ -114,28 +116,19 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sql'       => "varchar(255) NOT NULL default ''"
         ],
         // config
-        'limitFields' => [
-            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config']['limitFields'],
-            'exclude'                 => true,
-            'inputType'               => 'checkbox',
-            'eval'                    => ['tl_class' => 'w50', 'submitOnChange' => true],
-            'sql'                     => "char(1) NOT NULL default ''"
+        'limitFields'                 => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['limitFields'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'       => "char(1) NOT NULL default ''"
         ],
-        'fields'                 => [
+        'fields'                      => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['fields'],
             'inputType'        => 'checkboxWizard',
             'options_callback' => function (DataContainer $dc)
             {
-                if (null === ($filterConfig = \Contao\System::getContainer()->get('huh.filter.registry')->findById($dc->activeRecord->filter)))
-                {
-                    return [];
-                }
-
-                return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
-                    [
-                        'dataContainer'  => $filterConfig->getFilter()['dataContainer'],
-                    ]
-                );
+                return \HeimrichHannot\ListBundle\Util\Helper::getFields($dc);
             },
             'exclude'          => true,
             'eval'             => ['multiple' => true, 'includeBlankOption' => true, 'tl_class' => 'w50 clr autoheight'],
@@ -184,23 +177,14 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType'        => 'checkboxWizard',
             'options_callback' => function (DataContainer $dc)
             {
-                if (null === ($filterConfig = \Contao\System::getContainer()->get('huh.filter.registry')->findById($dc->activeRecord->filter)))
-                {
-                    return [];
-                }
-
-                return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
-                    [
-                        'dataContainer'  => $filterConfig->getFilter()['dataContainer']
-                    ]
-                );
+                return \HeimrichHannot\ListBundle\Util\Helper::getFields($dc);
             },
             'exclude'          => true,
             'eval'             => ['multiple' => true, 'includeBlankOption' => true, 'tl_class' => 'w50 clr autoheight'],
             'sql'              => "blob NULL",
         ],
         // filter
-        'filter' => [
+        'filter'                      => [
             'label'      => &$GLOBALS['TL_LANG']['tl_list_config']['filter'],
             'exclude'    => true,
             'inputType'  => 'select',
@@ -226,16 +210,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc)
             {
-                if (null === ($filterConfig = \Contao\System::getContainer()->get('huh.filter.registry')->findById($dc->activeRecord->filter)))
-                {
-                    return [];
-                }
-
-                return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
-                    [
-                        'dataContainer'  => $filterConfig->getFilter()['dataContainer']
-                    ]
-                );
+                return \HeimrichHannot\ListBundle\Util\Helper::getFields($dc);
             },
             'reference'        => &$GLOBALS['TL_LANG']['tl_list_config']['reference'],
             'eval'             => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
@@ -260,6 +235,25 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sql'       => "varchar(64) NOT NULL default ''"
         ],
         // jump to
+        'useAlias'                    => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['useAlias'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'       => "char(1) NOT NULL default ''"
+        ],
+        'aliasField'                  => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['aliasField'],
+            'exclude'          => true,
+            'filter'           => true,
+            'inputType'        => 'select',
+            'options_callback' => function (DataContainer $dc)
+            {
+                return \HeimrichHannot\ListBundle\Util\Helper::getTextFields($dc);
+            },
+            'eval'             => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
+            'sql'              => "varchar(64) NOT NULL default ''"
+        ],
         'addDetails'                  => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addDetails'],
             'exclude'   => true,
@@ -267,6 +261,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'eval'      => ['tl_class' => 'w50 clr', 'submitOnChange' => true],
             'sql'       => "char(1) NOT NULL default ''"
         ],
+        'useModal'                    => $GLOBALS['TL_DCA']['tl_module']['fields']['useModal'],
+        'useModalExplanation'         => $GLOBALS['TL_DCA']['tl_module']['fields']['useModalExplanation'],
         'jumpToDetails'               => [
             'label'      => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetails'],
             'exclude'    => true,

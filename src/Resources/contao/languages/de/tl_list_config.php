@@ -44,6 +44,11 @@ $lang['sortingText'][0]      = 'Sortierung';
 $lang['sortingText'][1]      = 'Geben Sie hier eine Sortierung ein (Beispiel: "myField1 ASC, myField2 DESC").';
 
 // jump to
+$lang['useAlias'][0]   = 'Alias-Feld verwenden';
+$lang['useAlias'][1]   = 'Wählen Sie diese Option, wenn erzeugte URLs statt der ID der ausgegebenen Instanz deren Alias enthalten sollen.';
+$lang['aliasField'][0] = 'Alias-Feld';
+$lang['aliasField'][1] = 'Wählen Sie hier das zu verwendende Alias-Feld aus (Hinweis: Nur Felder mit inputType="text" sind erlaubt).';
+
 $lang['addDetails'][0]    = 'Details-Weiterleitung hinzufügen';
 $lang['addDetails'][1]    = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Anzeigen von Details hinzuzufügen.';
 $lang['jumpToDetails'][0] = 'Weiterleitungsseite (Details)';

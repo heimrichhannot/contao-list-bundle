@@ -9,6 +9,7 @@
 namespace HeimrichHannot\ListBundle\Util;
 
 use Contao\Config;
+use Contao\DataContainer;
 use Contao\StringUtil;
 use Contao\System;
 
@@ -25,5 +26,32 @@ class Helper
         }
 
         return !$shareToken || !$entity->shareTokenTime || ($entity->shareTokenTime > $now + $interval);
+    }
+
+    public static function getFields(DataContainer $dc)
+    {
+        if (null === ($filterConfig = \Contao\System::getContainer()->get('huh.filter.registry')->findById($dc->activeRecord->filter))) {
+            return [];
+        }
+
+        return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
+            [
+                'dataContainer' => $filterConfig->getFilter()['dataContainer'],
+            ]
+        );
+    }
+
+    public static function getTextFields(DataContainer $dc)
+    {
+        if (null === ($filterConfig = \Contao\System::getContainer()->get('huh.filter.registry')->findById($dc->activeRecord->filter))) {
+            return [];
+        }
+
+        return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
+            [
+                'dataContainer' => $filterConfig->getFilter()['dataContainer'],
+                'inputTypes' => ['text'],
+            ]
+        );
     }
 }

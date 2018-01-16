@@ -23,15 +23,18 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property string $sortingField
  * @property string $sortingDirection
  * @property string $sortingText
- * @property int    $addDetails
+ * @property bool   $useAlias
+ * @property string $aliasField
+ * @property bool   $useModal
+ * @property bool   $addDetails
  * @property int    $jumpToDetails
- * @property int    $addShare
+ * @property bool   $addShare
  * @property int    $jumpToShare
- * @property int    $shareAutoItem
- * @property int    $addAjaxPagination
- * @property int    $addInfiniteScroll
- * @property int    $addMasonry
- * @property int    $masonryStampContentElements
+ * @property bool   $shareAutoItem
+ * @property bool   $addAjaxPagination
+ * @property bool   $addInfiniteScroll
+ * @property bool   $addMasonry
+ * @property string $masonryStampContentElements
  * @property string $itemTemplate
  * @property int    $filter
  * @property bool   $limitFields

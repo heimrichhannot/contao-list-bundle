@@ -12,8 +12,10 @@ use Contao\Config;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
+use Contao\Environment;
 use Contao\FrontendTemplate;
 use Contao\ModuleModel;
+use Contao\StringUtil;
 use Contao\System;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
@@ -22,7 +24,9 @@ use HeimrichHannot\ListBundle\Backend\ListConfig;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use HeimrichHannot\ListBundle\Util\Helper;
+use HeimrichHannot\Modal\ModalModel;
 use HeimrichHannot\Request\Request;
+use HeimrichHannot\UtilsBundle\Driver\DC_Table;
 use Patchwork\Utf8;
 
 class ModuleList extends \Contao\Module
@@ -116,6 +120,12 @@ class ModuleList extends \Contao\Module
 
         if ($listConfig->limitFields) {
             $fieldsArray = \Contao\StringUtil::deserialize($listConfig->fields, true);
+
+            // always add id
+            if (!in_array('id', $fieldsArray, true)) {
+                $fieldsArray = array_merge(['id'], $fieldsArray);
+            }
+
             $fields = implode(', ', $fieldsArray);
         } else {
             $fields = '*';
@@ -127,15 +137,208 @@ class ModuleList extends \Contao\Module
 
         $items = $queryBuilder->execute()->fetchAll();
 
-        echo '<pre>';
-        var_dump($queryBuilder->getSQL());
-        var_dump($items);
-        echo '</pre>';
+        $preparedItems = $this->prepareItems($items);
+        $this->Template->items = $this->parseItems($preparedItems);
+    }
 
-//        if (!empty($items))
-//        {
-//            $this->Template->items = $this->prepareItems($items);
-//        }
+    protected function prepareItems(array $items): array
+    {
+        $preparedItems = [];
+
+        foreach ($items as $item) {
+            $preparedItem = $this->prepareItem($item);
+            $preparedItem = $this->addItemUrls($preparedItem);
+
+            $preparedItems[] = $preparedItem;
+        }
+
+        return $preparedItems;
+    }
+
+    protected function prepareItem(array $item): array
+    {
+        $listConfig = $this->listConfig;
+        $filter = $this->filter;
+        $formUtil = System::getContainer()->get('huh.utils.form');
+
+        $result = [];
+        $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
+
+        // TODO: needed? -> always add id
+        $result['raw']['id'] = $item['id'];
+
+        $dc = DC_Table::createFromModelData($item, $filter->dataContainer);
+
+        $fields = $listConfig->limitFields ? StringUtil::deserialize($listConfig->fields, true) : array_keys($dca['fields']);
+
+        foreach ($fields as $field) {
+            $value = $item[$field];
+
+            if (is_array($dca['fields'][$field]['load_callback'])) {
+                foreach ($dca['fields'][$field]['load_callback'] as $callback) {
+                    $obj = System::importStatic($callback[0]);
+                    $value = $obj->{$callback[1]}($value, $dc);
+                }
+            }
+
+            // add raw value
+            $result['raw'][$field] = $value;
+
+            $result['formatted'][$field] = $formUtil->prepareSpecialValueForOutput(
+                $field,
+                $value,
+                $dc
+            );
+
+            // anti-xss: escape everything besides some tags
+            $result['formatted'][$field] = $formUtil->escapeAllHtmlEntities(
+                $filter->dataContainer, $field, $result['formatted'][$field]);
+        }
+
+        return $result;
+    }
+
+    protected function addItemUrls(array $item): array
+    {
+        $listConfig = $this->listConfig;
+        $idOrAlias = $this->getIdOrAlias($item, $listConfig);
+        $urlUtil = System::getContainer()->get('huh.utils.url');
+
+        // details
+        $pageJumpTo = $urlUtil->getJumpToPageObject(
+            $listConfig->jumpToDetails
+        );
+
+        if (null !== $pageJumpTo) {
+            $item['detailsUrl'] = Controller::generateFrontendUrl(
+                $pageJumpTo->row(),
+                '/'.$idOrAlias
+            );
+        }
+
+        // share
+        $pageJumpTo = $urlUtil->getJumpToPageObject(
+            $listConfig->jumpToShare
+        );
+
+        if (null !== $pageJumpTo) {
+            $shareUrl = Environment::get('url').'/'.\Controller::generateFrontendUrl($pageJumpTo->row());
+
+            $url = $urlUtil->addQueryString(
+                'act='.ListBundle::ACTION_SHARE,
+                $urlUtil->getCurrentUrl(
+                    [
+                        'skipParams' => true,
+                    ]
+                )
+            );
+
+            $url = $urlUtil->addQueryString('url='.urlencode($shareUrl), $url);
+
+            if ($listConfig->useAlias && $item['raw'][$listConfig->aliasField]) {
+                $url = $urlUtil->addQueryString($listConfig->aliasField.'='.$item['raw'][$listConfig->aliasField], $url);
+            } else {
+                $url = $urlUtil->addQueryString('id='.$item['raw']['id'], $url);
+            }
+
+            $item['shareUrl'] = $url;
+        }
+
+        return $item;
+    }
+
+    protected function parseItems(array $items): array
+    {
+        $limit = count($items);
+
+        if ($limit < 1) {
+            return [];
+        }
+
+        $count = 0;
+        $results = [];
+
+        foreach ($items as $item) {
+            ++$count;
+            $first = 1 == $count ? ' first' : '';
+            $last = $count == $limit ? ' last' : '';
+            $oddEven = (0 == ($count % 2)) ? ' odd' : ' even';
+
+            $class = 'item item_'.$count.$first.$last.$oddEven;
+
+            $results[] = $this->parseItem(
+                $item,
+                $class,
+                $count
+            );
+        }
+
+        return $results;
+    }
+
+    protected function parseItem(array $item, string $class = '', int $count = 0): string
+    {
+        $listConfig = $this->listConfig;
+        $filter = $this->filter;
+
+        $templateData = $item['formatted'];
+
+        foreach ($item as $field => $value) {
+            $templateData[$field] = $value;
+        }
+
+        $templateData['class'] = $class;
+        $templateData['count'] = $count;
+        $templateData['dataContainer'] = $filter->dataContainer;
+
+        // id or alias
+        $idOrAlias = $this->getIdOrAlias($item, $listConfig);
+
+        $templateData['idOrAlias'] = $idOrAlias;
+        $templateData['active'] = $idOrAlias && \Input::get('items') == $idOrAlias;
+
+        // details
+        $templateData['addDetails'] = $listConfig->addDetails;
+
+        if ($listConfig->addDetails) {
+            $templateData['useModal'] = $listConfig->useModal;
+            $templateData['jumpToDetails'] = $listConfig->jumpToDetails;
+
+            if ($listConfig->useModal) {
+                $pageJumpTo = System::getContainer()->get('huh.utils.url')->getJumpToPageObject(
+                    $listConfig->jumpToDetails
+                );
+
+                if (null !== $pageJumpTo) {
+                    if (null !== ($modal = ModalModel::findPublishedByTargetPage($pageJumpTo))) {
+                        $templateData['modalUrl'] = Controller::replaceInsertTags(
+                            sprintf(
+                                '{{modal_url::%s::%s::%s}}',
+                                $modal->id,
+                                $listConfig->jumpToDetails,
+                                $idOrAlias
+                            ),
+                            true
+                        );
+                    }
+                }
+            }
+        }
+
+        // share
+        $templateData['addShare'] = $listConfig->addShare;
+        $templateData['module'] = $this->arrData;
+
+        // TODO image size
+//        $objTemplate->imgSize     = deserialize($this->imgSize, true);
+
+        $this->modifyItemTemplateData($templateData, $item);
+
+        return System::getContainer()->get('twig')->render($listConfig->itemTemplate, $templateData);
+    }
+
+    protected function modifyItemTemplateData(array &$templateData, array $item): void
+    {
     }
 
     protected function applyListConfigToQueryBuilder(FilterQueryBuilder $queryBuilder)
@@ -199,7 +402,7 @@ class ModuleList extends \Contao\Module
                 // Send a 404 header
                 header('HTTP/1.1 404 Not Found');
 
-                return;
+                return null;
             }
 
             // Set limit and offset
@@ -226,10 +429,6 @@ class ModuleList extends \Contao\Module
         }
 
         return [$offset, $limit];
-    }
-
-    protected function prepareItems()
-    {
     }
 
     protected function generateTableHeader()
@@ -306,9 +505,11 @@ class ModuleList extends \Contao\Module
 
         if (ListBundle::ACTION_SHARE == $action && $listConfig->addShare) {
             $url = Request::getGet('url');
-            $id = Request::getGet('id');
+            $id = Request::getGet($listConfig->useAlias ? $listConfig->aliasField : 'id');
 
-            if (null !== ($entity = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($this->framework, $listConfig->dataContainer, $id))) {
+            if (null !== ($entity =
+                    System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($this->framework, $listConfig->dataContainer, $id))
+            ) {
                 $now = time();
 
                 if (Helper::shareTokenExpiredOrEmpty($entity, $now)) {
@@ -370,5 +571,16 @@ class ModuleList extends \Contao\Module
         }
 
         return $currentSorting;
+    }
+
+    protected function getIdOrAlias(array $item, ListConfigModel $listConfig)
+    {
+        $idOrAlias = $item['raw']['id'];
+
+        if ($listConfig->useAlias && $item['raw'][$listConfig->aliasField]) {
+            $idOrAlias = $item['raw'][$listConfig->aliasField];
+        }
+
+        return $idOrAlias;
     }
 }

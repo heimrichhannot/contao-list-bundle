@@ -8,8 +8,8 @@
 
 namespace HeimrichHannot\ListBundle\Pagination;
 
+use Contao\System;
 use Contao\Template;
-use HeimrichHannot\UtilsBundle\Url\UrlUtil;
 
 class RandomPagination extends \Contao\Pagination
 {
@@ -33,19 +33,21 @@ class RandomPagination extends \Contao\Pagination
 
     protected function linkToPage($page)
     {
+        $urlUtil = System::getContainer()->get('huh.utils.url');
+
         $url = ampersand($this->strUrl);
 
         if ($page <= 1 && !$this->blnForceParam) {
             if ($this->randomSeed) {
-                $url = UrlUtil::addQueryString(static::PARAM_RANDOM.'='.$this->randomSeed, $url);
+                $url = $urlUtil->addQueryString(static::PARAM_RANDOM.'='.$this->randomSeed, $url);
             }
 
             return $url;
         }
-        $url = UrlUtil::addQueryString($this->strParameter.'='.$page, $url);
+        $url = $urlUtil->addQueryString($this->strParameter.'='.$page, $url);
 
         if ($this->randomSeed) {
-            $url = UrlUtil::addQueryString(static::PARAM_RANDOM.'='.$this->randomSeed, $url);
+            $url = $urlUtil->addQueryString(static::PARAM_RANDOM.'='.$this->randomSeed, $url);
         }
 
         return $url;

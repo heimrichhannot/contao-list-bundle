@@ -9,10 +9,10 @@
 namespace HeimrichHannot\ListBundle\Registry;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\System;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
-use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 
-class Registry
+class ListRegistry
 {
     /**
      * @var ContaoFrameworkInterface
@@ -40,7 +40,8 @@ class Registry
      */
     public function findBy($column, $value, array $options = [])
     {
-        return ModelUtil::findModelInstanceBy($this->framework, 'tl_list_config', $column, $value, $options);
+        return System::getContainer()->get('huh.utils.model')->findModelInstanceBy(
+            'tl_list_config', $column, $value, $options);
     }
 
     /**
@@ -54,7 +55,8 @@ class Registry
      */
     public function findOneBy($column, $value, array $options = [])
     {
-        return ModelUtil::findModelInstanceBy($this->framework, 'tl_list_config', $column, $value, $options);
+        return System::getContainer()->get('huh.utils.model')->findModelInstanceBy(
+            'tl_list_config', $column, $value, $options);
     }
 
     /**
@@ -68,6 +70,7 @@ class Registry
      */
     public function findByPk($pk, array $options = [])
     {
-        return ModelUtil::findModelInstanceByPk($this->framework, 'tl_list_config', $pk, $options);
+        return System::getContainer()->get('huh.utils.model')->findModelInstanceByPk(
+            'tl_list_config', $pk, $options);
     }
 }

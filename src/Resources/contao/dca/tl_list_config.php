@@ -199,6 +199,16 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'eval'             => ['multiple' => true, 'includeBlankOption' => true, 'tl_class' => 'w50 clr autoheight'],
             'sql'              => "blob NULL",
         ],
+        // filter
+        'filter' => [
+            'label'      => &$GLOBALS['TL_LANG']['tl_list_config']['filter'],
+            'exclude'    => true,
+            'inputType'  => 'select',
+            'foreignKey' => 'tl_filter.title',
+            'relation'   => ['type' => 'belongsTo', 'load' => 'eager'],
+            'eval'       => ['tl_class' => 'w50 clr', 'includeBlankOption' => true, 'chosen' => true],
+            'sql'        => "int(10) NOT NULL default '0'",
+        ],
         // sorting
         'sortingMode'                 => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['sortingMode'],
@@ -348,21 +358,3 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         ]
     ]
 ];
-
-$dca = &$GLOBALS['TL_DCA']['tl_list_config'];
-
-if (\HeimrichHannot\UtilsBundle\Container\ContainerUtil::isBundleActive(
-    'HeimrichHannot\FilterBundle\HeimrichHannotContaoFilterBundle'
-)
-)
-{
-    $dca['fields']['filter'] = [
-        'label'      => &$GLOBALS['TL_LANG']['tl_list_config']['filter'],
-        'exclude'    => true,
-        'inputType'  => 'select',
-        'foreignKey' => 'tl_filter.title',
-        'relation'   => ['type' => 'belongsTo', 'load' => 'eager'],
-        'eval'       => ['tl_class' => 'w50 clr', 'includeBlankOption' => true, 'chosen' => true],
-        'sql'        => "int(10) NOT NULL default '0'",
-    ];
-}

@@ -10,7 +10,7 @@ namespace HeimrichHannot\ListBundle\Util;
 
 use Contao\Config;
 use Contao\StringUtil;
-use HeimrichHannot\UtilsBundle\Date\DateUtil;
+use Contao\System;
 
 class Helper
 {
@@ -21,7 +21,7 @@ class Helper
         $interval = 604800; // default: 7 days
 
         if (isset($expirationInterval['unit']) && isset($expirationInterval['value']) && $expirationInterval['value'] > 0) {
-            $interval = DateUtil::getTimePeriodInSeconds($expirationInterval);
+            $interval = System::getContainer()->get('huh.utils.date')->getTimePeriodInSeconds($expirationInterval);
         }
 
         return !$shareToken || !$entity->shareTokenTime || ($entity->shareTokenTime > $now + $interval);

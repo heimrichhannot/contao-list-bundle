@@ -23,9 +23,6 @@ use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use HeimrichHannot\ListBundle\Util\Helper;
 use HeimrichHannot\Request\Request;
-use HeimrichHannot\UtilsBundle\Model\ModelUtil;
-use HeimrichHannot\UtilsBundle\String\StringUtil;
-use HeimrichHannot\UtilsBundle\Url\UrlUtil;
 use Patchwork\Utf8;
 
 class ModuleList extends \Contao\Module
@@ -131,7 +128,6 @@ class ModuleList extends \Contao\Module
         $items = $queryBuilder->execute()->fetchAll();
 
         echo '<pre>';
-        var_dump();
         var_dump($queryBuilder->getSQL());
         var_dump($items);
         echo '</pre>';
@@ -241,6 +237,7 @@ class ModuleList extends \Contao\Module
         $headerFields = [];
         $currentSorting = $this->getCurrentSorting();
         $listConfig = $this->listConfig;
+        $urlUtil = System::getContainer()->get('huh.utils.url');
 
         foreach (\Contao\StringUtil::deserialize($listConfig->tableFields, true) as $name) {
             $isCurrentOrderField = ($name == $currentSorting['order']);
@@ -253,12 +250,12 @@ class ModuleList extends \Contao\Module
                 $field['class'] = (ListConfig::SORTING_DIRECTION_ASC
                                    == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_ASC : ListConfig::SORTING_DIRECTION_DESC);
 
-                $field['link'] = UrlUtil::addQueryString(
+                $field['link'] = $urlUtil->addQueryString(
                     'order='.$name.'&sort='.(ListConfig::SORTING_DIRECTION_ASC
                                                    == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_DESC : ListConfig::SORTING_DIRECTION_ASC)
                 );
             } else {
-                $field['link'] = UrlUtil::addQueryString('order='.$name.'&sort='.ListConfig::SORTING_DIRECTION_ASC);
+                $field['link'] = $urlUtil->addQueryString('order='.$name.'&sort='.ListConfig::SORTING_DIRECTION_ASC);
             }
 
             $headerFields[] = $field;
@@ -273,7 +270,7 @@ class ModuleList extends \Contao\Module
 
         foreach ($GLOBALS['TL_DCA']['tl_list_config']['fields'] as $field => $data) {
             if ($data['addAsDataAttribute']) {
-                $dataAttributes[StringUtil::camelCaseToDashed($field)] = $this->listConfig->{$field};
+                $dataAttributes[System::getContainer()->get('huh.utils.string')->camelCaseToDashed($field)] = $this->listConfig->{$field};
             }
         }
 
@@ -311,7 +308,7 @@ class ModuleList extends \Contao\Module
             $url = Request::getGet('url');
             $id = Request::getGet('id');
 
-            if (null !== ($entity = ModelUtil::findModelInstanceByPk($this->framework, $listConfig->dataContainer, $id))) {
+            if (null !== ($entity = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($this->framework, $listConfig->dataContainer, $id))) {
                 $now = time();
 
                 if (Helper::shareTokenExpiredOrEmpty($entity, $now)) {
@@ -324,7 +321,7 @@ class ModuleList extends \Contao\Module
                 if ($listConfig->shareAutoItem) {
                     $shareUrl = $url.'/'.$entity->shareToken;
                 } else {
-                    $shareUrl = UrlUtil::addQueryString('share='.$entity->shareToken, $url);
+                    $shareUrl = System::getContainer()->get('huh.utils.url')->addQueryString('share='.$entity->shareToken, $url);
                 }
 
                 die($shareUrl);

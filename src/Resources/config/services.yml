@@ -4,6 +4,6 @@ services:
         arguments:
             - "@contao.framework"
     huh.list.registry:
-        class: HeimrichHannot\ListBundle\Registry\FilterRegistry
+        class: HeimrichHannot\ListBundle\Registry\ListRegistry
         arguments:
             - "@contao.framework"

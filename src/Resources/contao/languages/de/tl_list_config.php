@@ -104,9 +104,10 @@ $lang['reference'] = [
 /**
  * Buttons
  */
-$lang['new']    = ['Neue Listenkonfiguration', 'Listenkonfiguration erstellen'];
-$lang['edit']   = ['Listenkonfiguration bearbeiten', 'Listenkonfiguration ID %s bearbeiten'];
-$lang['copy']   = ['Listenkonfiguration duplizieren', 'Listenkonfiguration ID %s duplizieren'];
-$lang['delete'] = ['Listenkonfiguration löschen', 'Listenkonfiguration ID %s löschen'];
-$lang['toggle'] = ['Listenkonfiguration veröffentlichen', 'Listenkonfiguration ID %s veröffentlichen/verstecken'];
-$lang['show']   = ['Listenkonfiguration Details', 'Listenkonfiguration-Details ID %s anzeigen'];
+$lang['new']        = ['Neue Listenkonfiguration', 'Listenkonfiguration erstellen'];
+$lang['edit']       = ['Listenkonfiguration bearbeiten', 'Listenkonfiguration ID %s bearbeiten'];
+$lang['editheader'] = ['Listenkonfiguration-Einstellungen bearbeiten', 'Listenkonfiguration-Einstellungen ID %s bearbeiten'];
+$lang['copy']       = ['Listenkonfiguration duplizieren', 'Listenkonfiguration ID %s duplizieren'];
+$lang['delete']     = ['Listenkonfiguration löschen', 'Listenkonfiguration ID %s löschen'];
+$lang['toggle']     = ['Listenkonfiguration veröffentlichen', 'Listenkonfiguration ID %s veröffentlichen/verstecken'];
+$lang['show']       = ['Listenkonfiguration Details', 'Listenkonfiguration-Details ID %s anzeigen'];

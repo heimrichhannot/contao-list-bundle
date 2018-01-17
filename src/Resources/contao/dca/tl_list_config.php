@@ -11,7 +11,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'onsubmit_callback' => [
             ['huh.utils.dca', 'setDateAdded'],
         ],
-        'oncopy_callback' => [
+        'oncopy_callback'   => [
             ['huh.utils.dca', 'setDateAddedOnCopy'],
         ],
         'sql'               => [
@@ -40,24 +40,30 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             ],
         ],
         'operations'        => [
-            'edit'   => [
+            'edit'       => [
                 'label' => &$GLOBALS['TL_LANG']['tl_list_config']['edit'],
-                'href'  => 'act=edit',
-                'icon'  => 'edit.gif'
+                'href'  => 'table=tl_list_config_element',
+                'icon'  => 'edit.svg'
             ],
-            'copy'   => [
+            'editheader' => [
+                'label'           => &$GLOBALS['TL_LANG']['tl_list_config']['editheader'],
+                'href'            => 'act=edit',
+                'icon'            => 'header.svg',
+                'button_callback' => ['HeimrichHannot\ListBundle\Backend\ListConfig', 'editHeader']
+            ],
+            'copy'       => [
                 'label' => &$GLOBALS['TL_LANG']['tl_list_config']['copy'],
                 'href'  => 'act=copy',
                 'icon'  => 'copy.gif'
             ],
-            'delete' => [
+            'delete'     => [
                 'label'      => &$GLOBALS['TL_LANG']['tl_list_config']['delete'],
                 'href'       => 'act=delete',
                 'icon'       => 'delete.gif',
                 'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm']
                                 . '\'))return false;Backend.getScrollOffset()"'
             ],
-            'show'   => [
+            'show'       => [
                 'label' => &$GLOBALS['TL_LANG']['tl_list_config']['show'],
                 'href'  => 'act=show',
                 'icon'  => 'show.gif'

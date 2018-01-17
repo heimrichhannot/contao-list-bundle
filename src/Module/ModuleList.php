@@ -257,9 +257,21 @@ class ModuleList extends \Contao\Module
 
         $this->modifyItemTemplateData($templateData, $item);
 
-        $config = System::getContainer()->getParameter('huh.list');
+        return System::getContainer()->get('twig')->render($this->getTemplateByName($listConfig->itemTemplate ?: 'default'), $templateData);
+    }
 
-        return System::getContainer()->get('twig')->render($listConfig->itemTemplate ?: $config['templates']['item']['default'], $templateData);
+    protected function getTemplateByName($name)
+    {
+        $config = System::getContainer()->getParameter('huh.list');
+        $templates = $config['list']['templates']['item'];
+
+        foreach ($templates as $template) {
+            if ($template['name'] == $name) {
+                return $template['template'];
+            }
+        }
+
+        return null;
     }
 
     protected function addDetailsUrl($idOrAlias, array &$templateData, ListConfigModel $listConfig)

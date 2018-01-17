@@ -323,10 +323,22 @@ class ModuleList extends \Contao\Module
                     $imageSelectorField = $imageListConfigElements->imageSelectorField;
                     $image = $item['raw'][$imageListConfigElements->imageField];
                     $imageField = $imageListConfigElements->imageField;
-                } elseif ($imageListConfigElements->addPlaceholderImage && $imageListConfigElements->placeholderImage) {
+                } elseif ($imageListConfigElements->placeholderImageMode) {
                     $imageSelectorField = $imageListConfigElements->imageSelectorField;
-                    $image = $imageListConfigElements->placeholderImage;
                     $imageField = $imageListConfigElements->imageField;
+
+                    switch ($imageListConfigElements->placeholderImageMode) {
+                        case ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED:
+                            if ($item['raw'][$imageListConfigElements->genderField] == 'female') {
+                                $image = $imageListConfigElements->placeholderImageFemale;
+                            } else {
+                                $image = $imageListConfigElements->placeholderImage;
+                            }
+                            break;
+                        case ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE:
+                            $image = $imageListConfigElements->placeholderImage;
+                            break;
+                    }
                 } else {
                     continue;
                 }

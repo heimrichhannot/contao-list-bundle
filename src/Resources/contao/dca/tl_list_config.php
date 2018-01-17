@@ -137,7 +137,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType'        => 'checkboxWizard',
             'options_callback' => function (DataContainer $dc)
             {
-                return \HeimrichHannot\ListBundle\Util\Helper::getFields($dc);
+                return \HeimrichHannot\ListBundle\Util\ListConfigHelper::getFields($dc);
             },
             'exclude'          => true,
             'eval'             => ['multiple' => true, 'includeBlankOption' => true, 'tl_class' => 'w50 clr autoheight'],
@@ -186,7 +186,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType'        => 'checkboxWizard',
             'options_callback' => function (DataContainer $dc)
             {
-                return \HeimrichHannot\ListBundle\Util\Helper::getFields($dc);
+                return \HeimrichHannot\ListBundle\Util\ListConfigHelper::getFields($dc);
             },
             'exclude'          => true,
             'eval'             => ['multiple' => true, 'includeBlankOption' => true, 'tl_class' => 'w50 clr autoheight'],
@@ -219,7 +219,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc)
             {
-                return \HeimrichHannot\ListBundle\Util\Helper::getFields($dc);
+                return \HeimrichHannot\ListBundle\Util\ListConfigHelper::getFields($dc);
             },
             'reference'        => &$GLOBALS['TL_LANG']['tl_list_config']['reference'],
             'eval'             => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
@@ -258,7 +258,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc)
             {
-                return \HeimrichHannot\ListBundle\Util\Helper::getTextFields($dc);
+                return \HeimrichHannot\ListBundle\Util\ListConfigHelper::getTextFields($dc);
             },
             'eval'             => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
             'sql'              => "varchar(64) NOT NULL default ''"

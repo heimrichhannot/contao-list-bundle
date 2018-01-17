@@ -10,9 +10,9 @@ namespace HeimrichHannot\ListBundle\Registry;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\System;
-use HeimrichHannot\ListBundle\Model\ListConfigModel;
+use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 
-class ListRegistry
+class ListConfigElementRegistry
 {
     /**
      * @var ContaoFrameworkInterface
@@ -36,12 +36,12 @@ class ListRegistry
      * @param mixed $value
      * @param array $options
      *
-     * @return \Contao\Model\Collection|ListConfigModel|null
+     * @return \Contao\Model\Collection|ListConfigElementModel|null
      */
     public function findBy($column, $value, array $options = [])
     {
         return System::getContainer()->get('huh.utils.model')->findModelInstancesBy(
-            'tl_list_config', $column, $value, $options);
+            'tl_list_config_element', $column, $value, $options);
     }
 
     /**
@@ -51,12 +51,12 @@ class ListRegistry
      * @param mixed $value
      * @param array $options
      *
-     * @return \Contao\Model\Collection|ListConfigModel|null
+     * @return \Contao\Model\Collection|ListConfigElementModel|null
      */
     public function findOneBy($column, $value, array $options = [])
     {
         return System::getContainer()->get('huh.utils.model')->findModelInstancesBy(
-            'tl_list_config', $column, $value, $options);
+            'tl_list_config_element', $column, $value, $options);
     }
 
     /**
@@ -66,11 +66,27 @@ class ListRegistry
      * @param mixed $value
      * @param array $options
      *
-     * @return \Contao\Model\Collection|ListConfigModel|null
+     * @return \Contao\Model\Collection|ListConfigElementModel|null
      */
     public function findByPk($pk, array $options = [])
     {
         return System::getContainer()->get('huh.utils.model')->findModelInstanceByPk(
-            'tl_list_config', $pk, $options);
+            'tl_list_config_element', $pk, $options);
+    }
+
+    /**
+     * Returns the filter associated to a list config element.
+     *
+     * @param int $listConfigPk
+     *
+     * @return array|null
+     */
+    public function getFilterByPk(int $listConfigElementPk)
+    {
+        if (null === ($listConfigElement = $this->findByPk($listConfigElementPk))) {
+            return null;
+        }
+
+        return System::getContainer()->get('huh.list.list-config-registry')->getFilterByPk($listConfigElement->pid);
     }
 }

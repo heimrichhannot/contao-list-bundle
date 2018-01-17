@@ -13,7 +13,7 @@ use Contao\DataContainer;
 use Contao\StringUtil;
 use Contao\System;
 
-class Helper
+class ListConfigHelper
 {
     public static function shareTokenExpiredOrEmpty($entity, $now)
     {
@@ -30,26 +30,26 @@ class Helper
 
     public static function getFields(DataContainer $dc)
     {
-        if (null === ($filterConfig = \Contao\System::getContainer()->get('huh.filter.registry')->findById($dc->activeRecord->filter))) {
+        if (!$dc->id || null === ($filter = System::getContainer()->get('huh.list.list-config-registry')->getFilterByPk($dc->id))) {
             return [];
         }
 
         return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
             [
-                'dataContainer' => $filterConfig->getFilter()['dataContainer'],
+                'dataContainer' => $filter['dataContainer'],
             ]
         );
     }
 
     public static function getTextFields(DataContainer $dc)
     {
-        if (!$dc->activeRecord->filter || null === ($filterConfig = \Contao\System::getContainer()->get('huh.filter.registry')->findById($dc->activeRecord->filter))) {
+        if (!$dc->id || null === ($filter = System::getContainer()->get('huh.list.list-config-registry')->getFilterByPk($dc->id))) {
             return [];
         }
 
         return \Contao\System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
             [
-                'dataContainer' => $filterConfig->getFilter()['dataContainer'],
+                'dataContainer' => $filter['dataContainer'],
                 'inputTypes' => ['text'],
             ]
         );

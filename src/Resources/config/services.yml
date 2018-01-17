@@ -3,7 +3,11 @@ services:
         class: HeimrichHannot\ListBundle\Choice\ListItemTemplateChoice
         arguments:
             - "@contao.framework"
-    huh.list.registry:
-        class: HeimrichHannot\ListBundle\Registry\ListRegistry
+    huh.list.list-config-registry:
+        class: HeimrichHannot\ListBundle\Registry\ListConfigRegistry
+        arguments:
+            - "@contao.framework"
+    huh.list.list-config-element-registry:
+        class: HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry
         arguments:
             - "@contao.framework"

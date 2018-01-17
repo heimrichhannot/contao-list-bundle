@@ -17,6 +17,12 @@ use Contao\System;
 
 class ListConfigElement extends Backend
 {
+    const TYPE_IMAGE = 'image';
+
+    const TYPES = [
+        self::TYPE_IMAGE,
+    ];
+
     public function listChildren($arrRow)
     {
         return '<div class="tl_content_left">'.($arrRow['title'] ?: $arrRow['id']).' <span style="color:#b3b3b3; padding-left:3px">['

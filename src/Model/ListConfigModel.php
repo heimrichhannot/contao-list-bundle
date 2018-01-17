@@ -9,6 +9,7 @@
 namespace HeimrichHannot\ListBundle\Model;
 
 /**
+ * @property int    $id
  * @property string $title
  * @property int    $numberOfItems
  * @property int    $perPage

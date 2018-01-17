@@ -13,6 +13,7 @@ use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\Environment;
+use Contao\FilesModel;
 use Contao\FrontendTemplate;
 use Contao\ModuleModel;
 use Contao\StringUtil;
@@ -21,9 +22,10 @@ use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Backend\ListBundle;
 use HeimrichHannot\ListBundle\Backend\ListConfig;
+use HeimrichHannot\ListBundle\Backend\ListConfigElement;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
-use HeimrichHannot\ListBundle\Util\Helper;
+use HeimrichHannot\ListBundle\Util\ListConfigHelper;
 use HeimrichHannot\Modal\ModalModel;
 use HeimrichHannot\Request\Request;
 use HeimrichHannot\UtilsBundle\Driver\DC_Table;
@@ -188,7 +190,29 @@ class ModuleList extends \Contao\Module
 
             // anti-xss: escape everything besides some tags
             $result['formatted'][$field] = $formUtil->escapeAllHtmlEntities(
-                $filter->dataContainer, $field, $result['formatted'][$field]);
+                $filter->dataContainer,
+                $field,
+                $result['formatted'][$field]
+            );
+        }
+
+        // add the missing field's raw values (these should always be inserted completely)
+        foreach (array_keys($dca['fields']) as $field) {
+            if (isset($result['raw'][$field])) {
+                continue;
+            }
+
+            $value = $item[$field];
+
+            if (is_array($dca['fields'][$field]['load_callback'])) {
+                foreach ($dca['fields'][$field]['load_callback'] as $callback) {
+                    $obj = System::importStatic($callback[0]);
+                    $value = $obj->{$callback[1]}($value, $dc);
+                }
+            }
+
+            // add raw value
+            $result['raw'][$field] = $value;
         }
 
         return $result;
@@ -245,30 +269,47 @@ class ModuleList extends \Contao\Module
         $templateData['active'] = $idOrAlias && \Input::get('items') == $idOrAlias;
 
         // add images
-//        if ($objArticle->addImage && $objArticle->singleSRC != '')
-//        {
-//            $objModel = \FilesModel::findByUuid($objArticle->singleSRC);
-//
-//            if ($objModel !== null && is_file(TL_ROOT . '/' . $objModel->path))
-//            {
-//                // Do not override the field now that we have a model registry (see #6303)
-//                $arrArticle = $objArticle->row();
-//
-//                // Override the default image size
-//                if ($this->imgSize != '')
-//                {
-//                    $size = \StringUtil::deserialize($this->imgSize);
-//
-//                    if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]))
-//                    {
-//                        $arrArticle['size'] = $this->imgSize;
-//                    }
-//                }
-//
-//                $arrArticle['singleSRC'] = $objModel->path;
-//                $this->addImageToTemplate($objTemplate, $arrArticle, null, null, $objModel);
-//            }
-//        }
+        $imageListConfigElements = System::getContainer()->get('huh.list.list-config-element-registry')->findBy(
+            ['type=?', 'pid=?'],
+            [ListConfigElement::TYPE_IMAGE, $listConfig->id]
+        );
+
+        if (null !== $imageListConfigElements) {
+            while ($imageListConfigElements->next()) {
+                if ($item['raw'][$imageListConfigElements->imageSelectorField] && $item['raw'][$imageListConfigElements->imageField]) {
+                    $imageModel = FilesModel::findByUuid($item['raw'][$imageListConfigElements->imageField]);
+
+                    if (null !== $imageModel
+                        && is_file(System::getContainer()->get('huh.utils.container')->getProjectDir().'/'.$imageModel->path)
+                    ) {
+                        $imageArray = $item['raw'];
+
+                        // Override the default image size
+                        if ('' != $imageListConfigElements->imgSize) {
+                            $size = StringUtil::deserialize($imageListConfigElements->imgSize);
+
+                            if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
+                                $imageArray['size'] = $imageListConfigElements->imgSize;
+                            }
+                        }
+
+                        $imageArray[$imageListConfigElements->imageField] = $imageModel->path;
+                        $templateData['images'][$imageListConfigElements->imageField] = [];
+
+                        System::getContainer()->get('huh.utils.image')->addToTemplateData(
+                            $imageListConfigElements->imageField,
+                            $imageListConfigElements->imageSelectorField,
+                            $templateData['images'][$imageListConfigElements->imageField],
+                            $imageArray,
+                            null,
+                            null,
+                            null,
+                            $imageModel
+                        );
+                    }
+                }
+            }
+        }
 
         // details
         $this->addDetailsUrl($idOrAlias, $templateData, $listConfig);
@@ -511,7 +552,7 @@ class ModuleList extends \Contao\Module
     {
         $listConfigId = $this->arrData['listConfig'];
 
-        if (!$listConfigId || null === ($listConfig = System::getContainer()->get('huh.list.registry')->findByPk($listConfigId))) {
+        if (!$listConfigId || null === ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->findByPk($listConfigId))) {
             throw new \Exception(sprintf('The module %s has no valid list config. Please set one.', $this->id));
         }
 
@@ -543,7 +584,7 @@ class ModuleList extends \Contao\Module
             ) {
                 $now = time();
 
-                if (Helper::shareTokenExpiredOrEmpty($entity, $now)) {
+                if (ListConfigHelper::shareTokenExpiredOrEmpty($entity, $now)) {
                     $shareToken = str_replace('.', '', uniqid('', true));
                     $entity->shareToken = $shareToken;
                     $entity->shareTokenTime = $now;

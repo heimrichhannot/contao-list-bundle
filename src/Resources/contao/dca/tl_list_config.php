@@ -72,6 +72,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
     ],
     'palettes'    => [
         '__selector__' => [
+            'showItemCount',
+            'overrideItemCountText',
             'limitFields',
             'isTableList',
             'sortingMode',
@@ -88,6 +90,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
                           . '{template_legend},itemTemplate;'
     ],
     'subpalettes' => [
+        'showItemCount' => 'overrideItemCountText',
+        'overrideItemCountText' => 'itemCountText',
         'limitFields'                                                                      => 'fields',
         'isTableList'                                                                      => 'tableFields,hasHeader,sortingHeader',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_FIELD => 'sortingField,sortingDirection',
@@ -150,8 +154,23 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['showItemCount'],
             'exclude'   => true,
             'inputType' => 'checkbox',
-            'eval'      => ['tl_class' => 'w50'],
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
             'sql'       => "char(1) NOT NULL default ''"
+        ],
+        'overrideItemCountText'               => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['overrideItemCountText'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'       => "char(1) NOT NULL default ''"
+        ],
+        'itemCountText' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config']['itemCountText'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
+            'sql'                     => "varchar(255) NOT NULL default ''"
         ],
         'showInitialResults'          => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['showInitialResults'],

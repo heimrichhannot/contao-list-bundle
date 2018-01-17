@@ -15,6 +15,8 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property int    $perPage
  * @property int    $skipFirst
  * @property bool   $showItemCount
+ * @property bool   $overrideItemCountText
+ * @property string $itemCountText
  * @property bool   $showInitialResults
  * @property bool   $isTableList
  * @property bool   $hasHeader

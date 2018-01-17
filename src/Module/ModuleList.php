@@ -135,6 +135,15 @@ class ModuleList extends \Contao\Module
 
         $this->Template->totalCount = $queryBuilder->select($fields)->execute()->rowCount();
 
+        if ($listConfig->overrideItemCountText) {
+            $this->Template->itemsFoundText = str_replace('%count%', $this->Template->totalCount, $listConfig->itemCountText);
+        } else {
+            $this->Template->itemsFoundText = System::getContainer()->get('translator')->trans(
+                'huh.list.misc.itemsFound',
+                ['%count%' => $this->Template->totalCount]
+            );
+        }
+
         $this->applyListConfigToQueryBuilder($queryBuilder);
 
         $items = $queryBuilder->execute()->fetchAll();
@@ -538,14 +547,17 @@ class ModuleList extends \Contao\Module
     protected function addDataAttributes()
     {
         $dataAttributes = [];
+        $stringUtil = System::getContainer()->get('huh.utils.string');
 
         foreach ($GLOBALS['TL_DCA']['tl_list_config']['fields'] as $field => $data) {
             if ($data['addAsDataAttribute']) {
-                $dataAttributes[System::getContainer()->get('huh.utils.string')->camelCaseToDashed($field)] = $this->listConfig->{$field};
+                $dataAttributes[] = 'data-'.$stringUtil->camelCaseToDashed($field).'="'.$this->listConfig->{$field}.'"';
             }
         }
 
-        $this->Template->dataAttributes = $dataAttributes;
+        if (!empty($dataAttributes)) {
+            $this->Template->dataAttributes = implode(' ', $dataAttributes);
+        }
     }
 
     protected function getListConfig()

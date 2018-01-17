@@ -1,8 +1,20 @@
 <?php $this->extend('block_searchable'); ?>
 <?php $this->block('content'); ?>
 
-<?php foreach ($this->items as $item): ?>
-    <?= $item ?>
-<?php endforeach; ?>
+<div class="wrapper"<?= $this->dataAttributes ? ' ' . $this->dataAttributes : $this->dataAttributes ?>>
+    <?php if ($this->showItemCount): ?>
+        <p class="count"><?= $this->itemsFoundText ?></p>
+    <?php endif; ?>
+
+    <?php if (empty($this->items)): ?>
+        <p class="alert alert-warning empty"><?php echo $this->emptyText; ?></p>
+    <?php else: ?>
+        <div class="items">
+            <?php foreach ($this->items as $item): ?>
+                <?= $item ?>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>
 
 <?php $this->endblock(); ?>

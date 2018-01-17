@@ -40,7 +40,7 @@ class ListRegistry
      */
     public function findBy($column, $value, array $options = [])
     {
-        return System::getContainer()->get('huh.utils.model')->findModelInstanceBy(
+        return System::getContainer()->get('huh.utils.model')->findModelInstancesBy(
             'tl_list_config', $column, $value, $options);
     }
 
@@ -55,7 +55,7 @@ class ListRegistry
      */
     public function findOneBy($column, $value, array $options = [])
     {
-        return System::getContainer()->get('huh.utils.model')->findModelInstanceBy(
+        return System::getContainer()->get('huh.utils.model')->findModelInstancesBy(
             'tl_list_config', $column, $value, $options);
     }
 

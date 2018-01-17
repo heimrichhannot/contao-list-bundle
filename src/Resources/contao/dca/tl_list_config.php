@@ -7,9 +7,12 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
     'config'      => [
         'dataContainer'     => 'Table',
         'ctable'            => 'tl_list_config_element',
-        'enableVersioning'  => false,
+        'enableVersioning'  => true,
         'onsubmit_callback' => [
-            ['HeimrichHannot\Haste\Dca\General', 'setDateAdded'],
+            ['huh.utils.dca', 'setDateAdded'],
+        ],
+        'oncopy_callback' => [
+            ['huh.utils.dca', 'setDateAddedOnCopy'],
         ],
         'sql'               => [
             'keys' => [
@@ -190,7 +193,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType'  => 'select',
             'foreignKey' => 'tl_filter.title',
             'relation'   => ['type' => 'belongsTo', 'load' => 'eager'],
-            'eval'       => ['tl_class' => 'w50 clr', 'includeBlankOption' => true, 'chosen' => true],
+            'eval'       => ['tl_class' => 'w50 clr', 'includeBlankOption' => true, 'chosen' => true, 'mandatory' => true, 'submitOnChange' => true],
             'sql'        => "int(10) NOT NULL default '0'",
         ],
         // sorting

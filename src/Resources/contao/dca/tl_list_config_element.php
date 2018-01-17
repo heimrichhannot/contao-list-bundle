@@ -5,19 +5,20 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         'dataContainer'     => 'Table',
         'ptable'            => 'tl_list_config',
         'enableVersioning'  => true,
-        'onload_callback' => [
-            ['tl_list_config_element', 'checkPermission'],
-        ],
         'onsubmit_callback' => [
-            ['HeimrichHannot\Haste\Dca\General', 'setDateAdded'],
+            ['huh.utils.dca', 'setDateAdded'],
         ],
-        'sql' => [
+        'oncopy_callback' => [
+            ['huh.utils.dca', 'setDateAddedOnCopy'],
+        ],
+        'sql'               => [
             'keys' => [
-                'id' => 'primary'            ]
+                'id' => 'primary'
+            ]
         ]
     ],
     'list'     => [
-        'label' => [
+        'label'             => [
             'fields' => ['id'],
             'format' => '%s'
         ],
@@ -29,14 +30,14 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'child_record_callback' => ['tl_list_config_element', 'listChildren']
         ],
         'global_operations' => [
-            'all'    => [
+            'all' => [
                 'label'      => &$GLOBALS['TL_LANG']['MSC']['all'],
                 'href'       => 'act=select',
                 'class'      => 'header_edit_all',
                 'attributes' => 'onclick="Backend.getScrollOffset();"'
             ],
         ],
-        'operations' => [
+        'operations'        => [
             'edit'   => [
                 'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['edit'],
                 'href'  => 'act=edit',
@@ -51,7 +52,8 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
                 'label'      => &$GLOBALS['TL_LANG']['tl_list_config_element']['delete'],
                 'href'       => 'act=delete',
                 'icon'       => 'delete.gif',
-                'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"'
+                'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm']
+                                . '\'))return false;Backend.getScrollOffset()"'
             ],
             'toggle' => [
                 'label'           => &$GLOBALS['TL_LANG']['tl_list_config_element']['toggle'],
@@ -68,37 +70,37 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
     ],
     'palettes' => [
         '__selector__' => [],
-        'default' => '{general_legend},title;'
+        'default'      => '{general_legend},title;'
     ],
     'fields'   => [
-        'id' => [
-            'sql'                     => "int(10) unsigned NOT NULL auto_increment"
+        'id'        => [
+            'sql' => "int(10) unsigned NOT NULL auto_increment"
         ],
-        'pid' => [
-            'foreignKey'              => 'tl_list_config.title',
-            'sql'                     => "int(10) unsigned NOT NULL default '0'",
-            'relation'                => ['type'=>'belongsTo', 'load'=>'eager']
+        'pid'       => [
+            'foreignKey' => 'tl_list_config.title',
+            'sql'        => "int(10) unsigned NOT NULL default '0'",
+            'relation'   => ['type' => 'belongsTo', 'load' => 'eager']
         ],
-        'tstamp' => [
-            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['tstamp'],
-            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+        'tstamp'    => [
+            'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['tstamp'],
+            'sql'   => "int(10) unsigned NOT NULL default '0'"
         ],
         'dateAdded' => [
-            'label'                   => &$GLOBALS['TL_LANG']['MSC']['dateAdded'],
-            'sorting'                 => true,
-            'flag'                    => 6,
-            'eval'                    => ['rgxp'=>'datim', 'doNotCopy' => true],
-            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+            'label'   => &$GLOBALS['TL_LANG']['MSC']['dateAdded'],
+            'sorting' => true,
+            'flag'    => 6,
+            'eval'    => ['rgxp' => 'datim', 'doNotCopy' => true],
+            'sql'     => "int(10) unsigned NOT NULL default '0'"
         ],
-        'title' => [
-            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['title'],
-            'exclude'                 => true,
-            'search'                  => true,
-            'sorting'                 => true,
-            'flag'                    => 1,
-            'inputType'               => 'text',
-            'eval'                    => ['mandatory' => true, 'tl_class'=>'w50'],
-            'sql'                     => "varchar(255) NOT NULL default ''"
+        'title'     => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['title'],
+            'exclude'   => true,
+            'search'    => true,
+            'sorting'   => true,
+            'flag'      => 1,
+            'inputType' => 'text',
+            'eval'      => ['mandatory' => true, 'tl_class' => 'w50'],
+            'sql'       => "varchar(255) NOT NULL default ''"
         ],
     ]
 ];
@@ -109,13 +111,13 @@ class tl_list_config_element extends \Contao\Backend
 
     public function listChildren($arrRow)
     {
-        return '<div class="tl_content_left">' . ($arrRow['title'] ?: $arrRow['id']) . ' <span style="color:#b3b3b3; padding-left:3px">[' .
-                \Date::parse(\Contao\Config::get('datimFormat'), trim($arrRow['dateAdded'])) . ']</span></div>';
+        return '<div class="tl_content_left">' . ($arrRow['title'] ?: $arrRow['id']) . ' <span style="color:#b3b3b3; padding-left:3px">['
+               . \Date::parse(\Contao\Config::get('datimFormat'), trim($arrRow['dateAdded'])) . ']</span></div>';
     }
 
     public function checkPermission()
     {
-        $user = \Contao\BackendUser::getInstance();
+        $user     = \Contao\BackendUser::getInstance();
         $database = \Contao\Database::getInstance();
 
         if ($user->isAdmin)
@@ -139,22 +141,28 @@ class tl_list_config_element extends \Contao\Backend
         switch (\Contao\Input::get('act'))
         {
             case 'paste':
-            // Allow
-            break;
+                // Allow
+                break;
 
             case 'create':
-            if (!strlen(\Contao\Input::get('pid')) || !in_array(\Contao\Input::get('pid'), $root))
-            {
-                throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to create list_config_element items in list_config_element archive ID ' . \Contao\Input::get('pid') . '.');
-            }
-            break;
+                if (!strlen(\Contao\Input::get('pid')) || !in_array(\Contao\Input::get('pid'), $root))
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException(
+                        'Not enough permissions to create list_config_element items in list_config_element archive ID ' . \Contao\Input::get('pid')
+                        . '.'
+                    );
+                }
+                break;
 
             case 'cut':
             case 'copy':
-            if (!in_array(\Contao\Input::get('pid'), $root))
-            {
-                throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to ' . \Contao\Input::get('act') . ' list_config_element item ID ' . $id . ' to list_config_element archive ID ' . \Contao\Input::get('pid') . '.');
-            }
+                if (!in_array(\Contao\Input::get('pid'), $root))
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException(
+                        'Not enough permissions to ' . \Contao\Input::get('act') . ' list_config_element item ID ' . $id
+                        . ' to list_config_element archive ID ' . \Contao\Input::get('pid') . '.'
+                    );
+                }
             // NO BREAK STATEMENT HERE
 
             case 'edit':
@@ -162,20 +170,21 @@ class tl_list_config_element extends \Contao\Backend
             case 'delete':
             case 'toggle':
             case 'feature':
-            $objArchive = $database->prepare("SELECT pid FROM tl_list_config_element WHERE id=?")
-            ->limit(1)
-            ->execute($id);
+                $objArchive = $database->prepare("SELECT pid FROM tl_list_config_element WHERE id=?")->limit(1)->execute($id);
 
-            if ($objArchive->numRows < 1)
-            {
-                throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid list_config_element item ID ' . $id . '.');
-            }
+                if ($objArchive->numRows < 1)
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid list_config_element item ID ' . $id . '.');
+                }
 
-            if (!in_array($objArchive->pid, $root))
-            {
-                throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to ' . \Contao\Input::get('act') . ' list_config_element item ID ' . $id . ' of list_config_element archive ID ' . $objArchive->pid . '.');
-            }
-            break;
+                if (!in_array($objArchive->pid, $root))
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException(
+                        'Not enough permissions to ' . \Contao\Input::get('act') . ' list_config_element item ID ' . $id
+                        . ' of list_config_element archive ID ' . $objArchive->pid . '.'
+                    );
+                }
+                break;
 
             case 'select':
             case 'editAll':
@@ -183,37 +192,40 @@ class tl_list_config_element extends \Contao\Backend
             case 'overrideAll':
             case 'cutAll':
             case 'copyAll':
-            if (!in_array($id, $root))
-            {
-                throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to access list_config_element archive ID ' . $id . '.');
-            }
+                if (!in_array($id, $root))
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException(
+                        'Not enough permissions to access list_config_element archive ID ' . $id . '.'
+                    );
+                }
 
-            $objArchive = $database->prepare("SELECT id FROM tl_list_config_element WHERE pid=?")
-            ->execute($id);
+                $objArchive = $database->prepare("SELECT id FROM tl_list_config_element WHERE pid=?")->execute($id);
 
-            if ($objArchive->numRows < 1)
-            {
-                throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid list_config_element archive ID ' . $id . '.');
-            }
+                if ($objArchive->numRows < 1)
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid list_config_element archive ID ' . $id . '.');
+                }
 
-            /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
-            $session = \System::getContainer()->get('session');
+                /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
+                $session = \System::getContainer()->get('session');
 
-            $session = $session->all();
-            $session['CURRENT']['IDS'] = array_intersect($session['CURRENT']['IDS'], $objArchive->fetchEach('id'));
-            $session->replace($session);
-            break;
+                $session                   = $session->all();
+                $session['CURRENT']['IDS'] = array_intersect($session['CURRENT']['IDS'], $objArchive->fetchEach('id'));
+                $session->replace($session);
+                break;
 
             default:
-            if (strlen(\Contao\Input::get('act')))
-            {
-                throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "' . \Contao\Input::get('act') . '".');
-            }
-            elseif (!in_array($id, $root))
-            {
-                throw new \Contao\CoreBundle\Exception\AccessDeniedException('Not enough permissions to access list_config_element archive ID ' . $id . '.');
-            }
-            break;
+                if (strlen(\Contao\Input::get('act')))
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "' . \Contao\Input::get('act') . '".');
+                }
+                elseif (!in_array($id, $root))
+                {
+                    throw new \Contao\CoreBundle\Exception\AccessDeniedException(
+                        'Not enough permissions to access list_config_element archive ID ' . $id . '.'
+                    );
+                }
+                break;
         }
     }
 

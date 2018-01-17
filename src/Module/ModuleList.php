@@ -244,6 +244,32 @@ class ModuleList extends \Contao\Module
         $templateData['idOrAlias'] = $idOrAlias;
         $templateData['active'] = $idOrAlias && \Input::get('items') == $idOrAlias;
 
+        // add images
+//        if ($objArticle->addImage && $objArticle->singleSRC != '')
+//        {
+//            $objModel = \FilesModel::findByUuid($objArticle->singleSRC);
+//
+//            if ($objModel !== null && is_file(TL_ROOT . '/' . $objModel->path))
+//            {
+//                // Do not override the field now that we have a model registry (see #6303)
+//                $arrArticle = $objArticle->row();
+//
+//                // Override the default image size
+//                if ($this->imgSize != '')
+//                {
+//                    $size = \StringUtil::deserialize($this->imgSize);
+//
+//                    if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2]))
+//                    {
+//                        $arrArticle['size'] = $this->imgSize;
+//                    }
+//                }
+//
+//                $arrArticle['singleSRC'] = $objModel->path;
+//                $this->addImageToTemplate($objTemplate, $arrArticle, null, null, $objModel);
+//            }
+//        }
+
         // details
         $this->addDetailsUrl($idOrAlias, $templateData, $listConfig);
 
@@ -251,9 +277,6 @@ class ModuleList extends \Contao\Module
         $this->addShareUrl($item, $templateData, $listConfig);
 
         $templateData['module'] = $this->arrData;
-
-        // TODO image size
-//        $objTemplate->imgSize     = deserialize($this->imgSize, true);
 
         $this->modifyItemTemplateData($templateData, $item);
 

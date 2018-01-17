@@ -43,7 +43,7 @@ class Helper
 
     public static function getTextFields(DataContainer $dc)
     {
-        if (null === ($filterConfig = \Contao\System::getContainer()->get('huh.filter.registry')->findById($dc->activeRecord->filter))) {
+        if (!$dc->activeRecord->filter || null === ($filterConfig = \Contao\System::getContainer()->get('huh.filter.registry')->findById($dc->activeRecord->filter))) {
             return [];
         }
 

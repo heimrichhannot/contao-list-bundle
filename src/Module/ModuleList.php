@@ -90,6 +90,7 @@ class ModuleList extends \Contao\Module
         $this->filterConfig = $this->getFilterConfig();
         $this->filter = (object) $this->filterConfig->getFilter();
         $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
+        $isSubmitted = $this->filterConfig->hasData();
 
         $this->handleShare();
 
@@ -111,14 +112,18 @@ class ModuleList extends \Contao\Module
         // sorting
         $this->Template->currentSorting = $this->getCurrentSorting();
 
-        if ($this->hasHeader) {
-            $this->Template->header = $this->generateTableHeader();
+        if ($listConfig->isTableList) {
+            $this->Template->tableFields = StringUtil::deserialize($listConfig->tableFields, true);
+
+            if ($listConfig->hasHeader) {
+                $this->Template->header = $this->generateTableHeader();
+            }
         }
 
         // apply filter
         $queryBuilder = $this->filterRegistry->getQueryBuilder($this->filter->id);
-        $this->Template->isSubmitted = $this->filterConfig->getBuilder()->getForm()->isSubmitted();
-        $this->Template->showResults = $this->Template->isSubmitted || $listConfig->showInitialResults;
+
+        $this->Template->isSubmitted = $isSubmitted;
 
         if ($listConfig->limitFields) {
             $fieldsArray = \Contao\StringUtil::deserialize($listConfig->fields, true);
@@ -133,8 +138,11 @@ class ModuleList extends \Contao\Module
             $fields = '*';
         }
 
-        $this->Template->totalCount = $queryBuilder->select($fields)->execute()->rowCount();
+        if ($isSubmitted || $listConfig->showInitialResults) {
+            $this->Template->totalCount = $queryBuilder->select($fields)->execute()->rowCount();
+        }
 
+        // item count text
         if ($listConfig->overrideItemCountText) {
             $this->Template->itemsFoundText = str_replace('%count%', $this->Template->totalCount, $listConfig->itemCountText);
         } else {
@@ -144,12 +152,21 @@ class ModuleList extends \Contao\Module
             );
         }
 
+        // no items text
+        if ($listConfig->overrideNoItemsText) {
+            $this->Template->noItemsText = $listConfig->noItemsText;
+        } else {
+            $this->Template->noItemsText = System::getContainer()->get('translator')->trans('huh.list.misc.noItemsFound');
+        }
+
         $this->applyListConfigToQueryBuilder($queryBuilder);
 
-        $items = $queryBuilder->execute()->fetchAll();
+        if ($isSubmitted || $listConfig->showInitialResults) {
+            $items = $queryBuilder->execute()->fetchAll();
 
-        $preparedItems = $this->prepareItems($items);
-        $this->Template->items = $this->parseItems($preparedItems);
+            $preparedItems = $this->prepareItems($items);
+            $this->Template->items = $this->parseItems($preparedItems);
+        }
     }
 
     protected function prepareItems(array $items): array

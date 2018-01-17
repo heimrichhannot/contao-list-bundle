@@ -295,47 +295,7 @@ class ModuleList extends \Contao\Module
         $templateData['active'] = $idOrAlias && \Input::get('items') == $idOrAlias;
 
         // add images
-        $imageListConfigElements = System::getContainer()->get('huh.list.list-config-element-registry')->findBy(
-            ['type=?', 'pid=?'],
-            [ListConfigElement::TYPE_IMAGE, $listConfig->id]
-        );
-
-        if (null !== $imageListConfigElements) {
-            while ($imageListConfigElements->next()) {
-                if ($item['raw'][$imageListConfigElements->imageSelectorField] && $item['raw'][$imageListConfigElements->imageField]) {
-                    $imageModel = FilesModel::findByUuid($item['raw'][$imageListConfigElements->imageField]);
-
-                    if (null !== $imageModel
-                        && is_file(System::getContainer()->get('huh.utils.container')->getProjectDir().'/'.$imageModel->path)
-                    ) {
-                        $imageArray = $item['raw'];
-
-                        // Override the default image size
-                        if ('' != $imageListConfigElements->imgSize) {
-                            $size = StringUtil::deserialize($imageListConfigElements->imgSize);
-
-                            if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
-                                $imageArray['size'] = $imageListConfigElements->imgSize;
-                            }
-                        }
-
-                        $imageArray[$imageListConfigElements->imageField] = $imageModel->path;
-                        $templateData['images'][$imageListConfigElements->imageField] = [];
-
-                        System::getContainer()->get('huh.utils.image')->addToTemplateData(
-                            $imageListConfigElements->imageField,
-                            $imageListConfigElements->imageSelectorField,
-                            $templateData['images'][$imageListConfigElements->imageField],
-                            $imageArray,
-                            null,
-                            null,
-                            null,
-                            $imageModel
-                        );
-                    }
-                }
-            }
-        }
+        $this->addImagesToTemplate($item, $templateData, $listConfig);
 
         // details
         $this->addDetailsUrl($idOrAlias, $templateData, $listConfig);
@@ -348,6 +308,61 @@ class ModuleList extends \Contao\Module
         $this->modifyItemTemplateData($templateData, $item);
 
         return System::getContainer()->get('twig')->render($this->getTemplateByName($listConfig->itemTemplate ?: 'default'), $templateData);
+    }
+
+    protected function addImagesToTemplate(array $item, array &$templateData, ListConfigModel $listConfig)
+    {
+        $imageListConfigElements = System::getContainer()->get('huh.list.list-config-element-registry')->findBy(
+            ['type=?', 'pid=?'],
+            [ListConfigElement::TYPE_IMAGE, $listConfig->id]
+        );
+
+        if (null !== $imageListConfigElements) {
+            while ($imageListConfigElements->next()) {
+                if ($item['raw'][$imageListConfigElements->imageSelectorField] && $item['raw'][$imageListConfigElements->imageField]) {
+                    $imageSelectorField = $imageListConfigElements->imageSelectorField;
+                    $image = $item['raw'][$imageListConfigElements->imageField];
+                    $imageField = $imageListConfigElements->imageField;
+                } elseif ($imageListConfigElements->addPlaceholderImage && $imageListConfigElements->placeholderImage) {
+                    $imageSelectorField = $imageListConfigElements->imageSelectorField;
+                    $image = $imageListConfigElements->placeholderImage;
+                    $imageField = $imageListConfigElements->imageField;
+                } else {
+                    continue;
+                }
+
+                $imageModel = FilesModel::findByUuid($image);
+
+                if (null !== $imageModel
+                    && is_file(System::getContainer()->get('huh.utils.container')->getProjectDir().'/'.$imageModel->path)
+                ) {
+                    $imageArray = $item['raw'];
+
+                    // Override the default image size
+                    if ('' != $imageListConfigElements->imgSize) {
+                        $size = StringUtil::deserialize($imageListConfigElements->imgSize);
+
+                        if ($size[0] > 0 || $size[1] > 0 || is_numeric($size[2])) {
+                            $imageArray['size'] = $imageListConfigElements->imgSize;
+                        }
+                    }
+
+                    $imageArray[$imageField] = $imageModel->path;
+                    $templateData['images'][$imageField] = [];
+
+                    System::getContainer()->get('huh.utils.image')->addToTemplateData(
+                        $imageField,
+                        $imageSelectorField,
+                        $templateData['images'][$imageField],
+                        $imageArray,
+                        null,
+                        null,
+                        null,
+                        $imageModel
+                    );
+                }
+            }
+        }
     }
 
     protected function getTemplateByName($name)

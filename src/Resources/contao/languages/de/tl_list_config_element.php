@@ -12,10 +12,14 @@ $lang['type'][0]   = 'Typ';
 $lang['type'][1]   = 'Wählen Sie hier den Typ des Elements aus.';
 
 // image
-$lang['imageSelectorField'][0] = 'Selektor-Feld';
-$lang['imageSelectorField'][1] = 'Wählen Sie hier das Feld aus, das den boolschen Selektor für das Bild enthält.';
-$lang['imageField'][0]         = 'Feld';
-$lang['imageField'][1]         = 'Wählen Sie hier das Feld aus, das die Referenz zur Bilddatei enthält.';
+$lang['imageSelectorField'][0]  = 'Selektor-Feld';
+$lang['imageSelectorField'][1]  = 'Wählen Sie hier das Feld aus, das den boolschen Selektor für das Bild enthält.';
+$lang['imageField'][0]          = 'Feld';
+$lang['imageField'][1]          = 'Wählen Sie hier das Feld aus, das die Referenz zur Bilddatei enthält.';
+$lang['addPlaceholderImage'][0] = 'Platzhalterbild hinzufügen';
+$lang['addPlaceholderImage'][1] = 'Wählen Sie diese Option, wenn Sie für den Fall, dass die ausgegebene Instanz kein Bild enthält, ein Platzhalterbild hinzufügen möchten.';
+$lang['placeholderImage'][0]    = 'Platzhalterbild';
+$lang['placeholderImage'][1]    = 'Wählen Sie hier ein Platzhalterbild aus.';
 
 /**
  * Legends

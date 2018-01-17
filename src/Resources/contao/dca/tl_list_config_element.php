@@ -65,41 +65,45 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         ]
     ],
     'palettes' => [
-        '__selector__' => [
-            'type'
+        '__selector__'                                                   => [
+            'type',
+            'addPlaceholderImage'
         ],
-        'default'      => '{type_legend},title,type;',
-        \HeimrichHannot\ListBundle\Backend\ListConfigElement::TYPE_IMAGE => '{title_type_legend},title,type;{config_legend},imageSelectorField,imageField,imgSize;'
+        'default'                                                        => '{type_legend},title,type;',
+        \HeimrichHannot\ListBundle\Backend\ListConfigElement::TYPE_IMAGE => '{title_type_legend},title,type;{config_legend},imageSelectorField,imageField,imgSize,addPlaceholderImage;'
+    ],
+    'subpalettes' => [
+        'addPlaceholderImage' => 'placeholderImage'
     ],
     'fields'   => [
-        'id'        => [
+        'id'                  => [
             'sql' => "int(10) unsigned NOT NULL auto_increment"
         ],
-        'pid'       => [
+        'pid'                 => [
             'foreignKey' => 'tl_list_config.title',
             'sql'        => "int(10) unsigned NOT NULL default '0'",
             'relation'   => ['type' => 'belongsTo', 'load' => 'eager']
         ],
-        'tstamp'    => [
+        'tstamp'              => [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['tstamp'],
             'sql'   => "int(10) unsigned NOT NULL default '0'"
         ],
-        'dateAdded' => [
+        'dateAdded'           => [
             'label'   => &$GLOBALS['TL_LANG']['MSC']['dateAdded'],
             'sorting' => true,
             'flag'    => 6,
             'eval'    => ['rgxp' => 'datim', 'doNotCopy' => true],
             'sql'     => "int(10) unsigned NOT NULL default '0'"
         ],
-        'title' => [
-            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['title'],
-            'exclude'                 => true,
-            'search'                  => true,
-            'inputType'               => 'text',
-            'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
-            'sql'                     => "varchar(255) NOT NULL default ''"
+        'title'               => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['title'],
+            'exclude'   => true,
+            'search'    => true,
+            'inputType' => 'text',
+            'eval'      => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
+            'sql'       => "varchar(255) NOT NULL default ''"
         ],
-        'type'      => [
+        'type'                => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['type'],
             'exclude'   => true,
             'filter'    => true,
@@ -109,7 +113,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'      => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true],
             'sql'       => "varchar(64) NOT NULL default ''"
         ],
-        'imageSelectorField'                      => [
+        'imageSelectorField'  => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['imageSelectorField'],
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc)
@@ -120,7 +124,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
-        'imageField'                      => [
+        'imageField'          => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['imageField'],
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc)
@@ -131,6 +135,20 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
-        'imgSize' => $GLOBALS['TL_DCA']['tl_module']['fields']['imgSize']
+        'imgSize'             => $GLOBALS['TL_DCA']['tl_module']['fields']['imgSize'],
+        'addPlaceholderImage' => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['addPlaceholderImage'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'       => "char(1) NOT NULL default ''"
+        ],
+        'placeholderImage'    => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['placeholderImage'],
+            'exclude'   => true,
+            'inputType' => 'fileTree',
+            'eval'      => ['fieldType' => 'radio', 'filesOnly' => true, 'extensions' => Config::get('validImageTypes'), 'mandatory' => true],
+            'sql'       => "binary(16) NULL"
+        ],
     ]
 ];

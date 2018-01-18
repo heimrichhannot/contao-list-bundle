@@ -675,9 +675,10 @@ class ModuleList extends \Contao\Module
     {
         $listConfig = $this->listConfig;
         $filter = $this->filter;
+        $sortingAllowed = $listConfig->isTableList && $listConfig->hasHeader && $listConfig->sortingHeader;
 
         // GET parameter
-        if (($orderField = Request::getGet('order')) && ($sort = Request::getGet('sort'))) {
+        if ($sortingAllowed && ($orderField = Request::getGet('order')) && ($sort = Request::getGet('sort'))) {
             // anti sql injection: check if field exists
             if (Database::getInstance()->fieldExists($orderField, $filter->dataContainer)
                 && in_array($sort, ListConfig::SORTING_DIRECTIONS, true)

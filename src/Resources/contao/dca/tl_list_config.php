@@ -74,6 +74,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         '__selector__' => [
             'showItemCount',
             'overrideItemCountText',
+            'showNoItemsText',
+            'overrideNoItemsText',
             'limitFields',
             'isTableList',
             'sortingMode',
@@ -84,14 +86,16 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addMasonry',
         ],
         'default'      => '{general_legend},title;' . '{filter_legend},filter;'
-                          . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showInitialResults,limitFields,isTableList;'
+                          . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showNoItemsText,showInitialResults,limitFields,isTableList;'
                           . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare;'
                           . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;'
                           . '{template_legend},itemTemplate;'
     ],
     'subpalettes' => [
-        'showItemCount' => 'overrideItemCountText',
-        'overrideItemCountText' => 'itemCountText',
+        'showItemCount'                                                                    => 'overrideItemCountText',
+        'overrideItemCountText'                                                            => 'itemCountText',
+        'showNoItemsText'                                                                  => 'overrideNoItemsText',
+        'overrideNoItemsText'                                                              => 'noItemsText',
         'limitFields'                                                                      => 'fields',
         'isTableList'                                                                      => 'tableFields,hasHeader,sortingHeader',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_FIELD => 'sortingField,sortingDirection',
@@ -157,20 +161,42 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
             'sql'       => "char(1) NOT NULL default ''"
         ],
-        'overrideItemCountText'               => [
+        'overrideItemCountText'       => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['overrideItemCountText'],
             'exclude'   => true,
             'inputType' => 'checkbox',
             'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
             'sql'       => "char(1) NOT NULL default ''"
         ],
-        'itemCountText' => [
-            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config']['itemCountText'],
-            'exclude'                 => true,
-            'search'                  => true,
-            'inputType'               => 'text',
-            'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
-            'sql'                     => "varchar(255) NOT NULL default ''"
+        'itemCountText'               => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['itemCountText'],
+            'exclude'   => true,
+            'search'    => true,
+            'inputType' => 'text',
+            'eval'      => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
+            'sql'       => "varchar(255) NOT NULL default ''"
+        ],
+        'showNoItemsText'             => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['showNoItemsText'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'       => "char(1) NOT NULL default ''"
+        ],
+        'overrideNoItemsText'         => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['overrideNoItemsText'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'       => "char(1) NOT NULL default ''"
+        ],
+        'noItemsText'                 => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['noItemsText'],
+            'exclude'   => true,
+            'search'    => true,
+            'inputType' => 'text',
+            'eval'      => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
+            'sql'       => "varchar(255) NOT NULL default ''"
         ],
         'showInitialResults'          => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['showInitialResults'],

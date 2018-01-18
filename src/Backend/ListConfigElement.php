@@ -23,6 +23,15 @@ class ListConfigElement extends Backend
         self::TYPE_IMAGE,
     ];
 
+    const PLACEHOLDER_IMAGE_MODE_NONE = 'none';
+    const PLACEHOLDER_IMAGE_MODE_GENDERED = 'gendered';
+    const PLACEHOLDER_IMAGE_MODE_SIMPLE = 'simple';
+
+    const PLACEHOLDER_IMAGE_MODES = [
+        self::PLACEHOLDER_IMAGE_MODE_GENDERED,
+        self::PLACEHOLDER_IMAGE_MODE_SIMPLE,
+    ];
+
     public function listChildren($arrRow)
     {
         return '<div class="tl_content_left">'.($arrRow['title'] ?: $arrRow['id']).' <span style="color:#b3b3b3; padding-left:3px">['
@@ -56,8 +65,7 @@ class ListConfigElement extends Backend
             case 'create':
                 if (!strlen(Input::get('pid')) || !in_array(Input::get('pid'), $root, true)) {
                     throw new AccessDeniedException(
-                        'Not enough permissions to create list_config_element items in list_config_element archive ID '.Input::get('pid')
-                        .'.'
+                        'Not enough permissions to create list_config_element items in list_config_element archive ID '.Input::get('pid').'.'
                     );
                 }
                 break;

@@ -3,3 +3,4 @@ huh:
         templates:
             item:
                 - { name: default, template: "@HeimrichHannotContaoList/list_item_default.html.twig" }
+                - { name: table_default, template: "@HeimrichHannotContaoList/list_item_table_default.html.twig" }

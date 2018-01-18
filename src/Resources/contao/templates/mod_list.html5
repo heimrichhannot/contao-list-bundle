@@ -9,10 +9,44 @@
             <?php endif; ?>
 
             <div class="items">
+                <?php if ($this->isTableList): ?>
+                    <table>
+                        <?php if (is_array($this->header)): ?>
+                            <thead>
+                                <tr>
+                                    <?php foreach ($this->header as $i => $fieldData): ?>
+                                        <th class="<?= $fieldData['class']; ?>">
+                                            <?php if ($this->sortingHeader): ?>
+                                                <a class="<?= $fieldData['sortingClass'] ?>" href="<?= $fieldData['link']; ?>">
+                                                    <?= $fieldData['label']; ?>
+                                                </a>
+                                            <?php else: ?>
+                                                <?= $fieldData['label']; ?>
+                                            <?php endif; ?>
+                                        </th>
+                                    <?php endforeach; ?>
+
+                                    <?php if ($this->addDetails): ?>
+                                        <th class="actions"></th>
+                                    <?php endif; ?>
+                                </tr>
+                            </thead>
+                        <?php endif; ?>
+
+                        <tbody>
+                <?php endif; ?>
+
                 <?php foreach ($this->items as $item): ?>
                     <?= $item ?>
                 <?php endforeach; ?>
+
+                <?php if ($this->isTableList): ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
             </div>
+
+            <?= $this->pagination; ?>
         <?php elseif ($this->showNoItemsText): ?>
             <p class="no-items"><?= $this->noItemsText; ?></p>
         <?php endif; ?>

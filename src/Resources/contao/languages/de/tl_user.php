@@ -11,4 +11,4 @@ $lang['listbundlep'] = ['Archivrechte', 'Hier können Sie die Archivrechte festl
 /**
  * Legends
  */
-$lang['list-bundle_legend'] = '-Archivrechte';
+$lang['list-bundle_legend'] = 'Listenarchivrechte';

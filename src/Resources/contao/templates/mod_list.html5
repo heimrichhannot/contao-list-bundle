@@ -17,21 +17,22 @@
                                     <?php foreach ($this->header as $i => $fieldData): ?>
                                         <th class="<?= $fieldData['class']; ?>">
                                             <?php if ($this->sortingHeader): ?>
-                                                <a href="<?= $fieldData['link']; ?>">
-                                                    <?php if ($fieldData['sortingClass']): ?>
-                                                        <i class="fa <?= $fieldData['class'] == 'asc' ? 'fa-caret-up' : 'fa-caret-down'; ?>"></i><?php endif; ?>
-                                                    <?= $GLOBALS['TL_DCA'][$this->formHybridDataContainer]['fields'][$fieldData['field']]['label'][0] ?: $fieldData['field']; ?>
+                                                <a class="<?= $fieldData['sortingClass'] ?>" href="<?= $fieldData['link']; ?>">
+                                                    <?= $fieldData['label']; ?>
                                                 </a>
                                             <?php else: ?>
-                                                <?= $GLOBALS['TL_DCA'][$this->formHybridDataContainer]['fields'][$fieldData['field']]['label'][0] ?: $fieldData['field']; ?>
+                                                <?= $fieldData['label']; ?>
                                             <?php endif; ?>
                                         </th>
                                     <?php endforeach; ?>
-                                    <?php if ($this->addDetailsCol): ?>
-                                        <th class="actions"></th><?php endif; ?>
+
+                                    <?php if ($this->addDetails): ?>
+                                        <th class="actions"></th>
+                                    <?php endif; ?>
                                 </tr>
                             </thead>
                         <?php endif; ?>
+
                         <tbody>
                 <?php endif; ?>
 

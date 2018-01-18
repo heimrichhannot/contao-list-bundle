@@ -92,6 +92,9 @@ class ModuleList extends \Contao\Module
         $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
         $isSubmitted = $this->filterConfig->hasData();
 
+        Controller::loadDataContainer($this->filter->dataContainer);
+        System::loadLanguageFile($this->filter->dataContainer);
+
         $this->handleShare();
 
         // apply module fields to template
@@ -113,6 +116,7 @@ class ModuleList extends \Contao\Module
         $this->Template->currentSorting = $this->getCurrentSorting();
 
         if ($listConfig->isTableList) {
+            $this->Template->isTableList = $listConfig->isTableList;
             $this->Template->tableFields = StringUtil::deserialize($listConfig->tableFields, true);
 
             if ($listConfig->hasHeader) {
@@ -195,7 +199,12 @@ class ModuleList extends \Contao\Module
 
         $fields = $listConfig->limitFields ? StringUtil::deserialize($listConfig->fields, true) : array_keys($dca['fields']);
 
+        if ($listConfig->isTableList) {
+            $result['tableFields'] = StringUtil::deserialize($listConfig->tableFields, true);
+        }
+
         foreach ($fields as $field) {
+            $dc->field = $field;
             $value = $item[$field];
 
             if (is_array($dca['fields'][$field]['load_callback'])) {
@@ -542,11 +551,11 @@ class ModuleList extends \Contao\Module
             // Add the pagination menu
             if ($listConfig->addAjaxPagination) {
                 $pagination = new RandomPagination(
-                    $randomSeed, $offsettedTotal, $listConfig->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate('pagination_ajax')
+                    $randomSeed, $offsettedTotal, $this->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate('pagination_ajax')
                 );
             } else {
                 $pagination = new RandomPagination(
-                    $randomSeed, $offsettedTotal, $listConfig->perPage, $GLOBALS['TL_CONFIG']['maxPaginationLinks'], $id
+                    $randomSeed, $offsettedTotal, $this->perPage, $GLOBALS['TL_CONFIG']['maxPaginationLinks'], $id
                 );
             }
 
@@ -561,23 +570,22 @@ class ModuleList extends \Contao\Module
         $headerFields = [];
         $currentSorting = $this->getCurrentSorting();
         $listConfig = $this->listConfig;
+        $filter = $this->filter;
         $urlUtil = System::getContainer()->get('huh.utils.url');
-        $stringUtil = System::getContainer()->get('huh.utils.string');
+        $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
         $tableFields = \Contao\StringUtil::deserialize($listConfig->tableFields, true);
 
         foreach ($tableFields as $i => $name) {
             $isCurrentOrderField = ($name == $currentSorting['order']);
-            $first = 0 == $i ? ' first' : '';
-            $last = $i == count($tableFields) - 1 ? ' last' : '';
 
             $field = [
-                'field' => $name,
-                'class' => $stringUtil->camelCaseToDashed($name).' col_'.($i + 1).$first.$last,
+                'label' => $dca['fields'][$name]['label'][0] ?: $name,
+                'class' => System::getContainer()->get('huh.utils.string')->camelCaseToDashed($name),
             ];
 
             if ($isCurrentOrderField) {
                 $field['sortingClass'] = (ListConfig::SORTING_DIRECTION_ASC
-                                   == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_ASC : ListConfig::SORTING_DIRECTION_DESC);
+                                          == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_ASC : ListConfig::SORTING_DIRECTION_DESC);
 
                 $field['link'] = $urlUtil->addQueryString(
                     'order='.$name.'&sort='.(ListConfig::SORTING_DIRECTION_ASC
@@ -666,11 +674,12 @@ class ModuleList extends \Contao\Module
     protected function getCurrentSorting()
     {
         $listConfig = $this->listConfig;
+        $filter = $this->filter;
 
         // GET parameter
         if (($orderField = Request::getGet('order')) && ($sort = Request::getGet('sort'))) {
             // anti sql injection: check if field exists
-            if (Database::getInstance()->fieldExists($orderField, $listConfig->dataContainer)
+            if (Database::getInstance()->fieldExists($orderField, $filter->dataContainer)
                 && in_array($sort, ListConfig::SORTING_DIRECTIONS, true)
             ) {
                 $currentSorting = [

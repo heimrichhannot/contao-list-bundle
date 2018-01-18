@@ -542,11 +542,11 @@ class ModuleList extends \Contao\Module
             // Add the pagination menu
             if ($listConfig->addAjaxPagination) {
                 $pagination = new RandomPagination(
-                    $randomSeed, $offsettedTotal, $this->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate('pagination_ajax')
+                    $randomSeed, $offsettedTotal, $listConfig->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate('pagination_ajax')
                 );
             } else {
                 $pagination = new RandomPagination(
-                    $randomSeed, $offsettedTotal, $this->perPage, $GLOBALS['TL_CONFIG']['maxPaginationLinks'], $id
+                    $randomSeed, $offsettedTotal, $listConfig->perPage, $GLOBALS['TL_CONFIG']['maxPaginationLinks'], $id
                 );
             }
 
@@ -562,16 +562,21 @@ class ModuleList extends \Contao\Module
         $currentSorting = $this->getCurrentSorting();
         $listConfig = $this->listConfig;
         $urlUtil = System::getContainer()->get('huh.utils.url');
+        $stringUtil = System::getContainer()->get('huh.utils.string');
+        $tableFields = \Contao\StringUtil::deserialize($listConfig->tableFields, true);
 
-        foreach (\Contao\StringUtil::deserialize($listConfig->tableFields, true) as $name) {
+        foreach ($tableFields as $i => $name) {
             $isCurrentOrderField = ($name == $currentSorting['order']);
+            $first = 0 == $i ? ' first' : '';
+            $last = $i == count($tableFields) - 1 ? ' last' : '';
 
             $field = [
                 'field' => $name,
+                'class' => $stringUtil->camelCaseToDashed($name).' col_'.($i + 1).$first.$last,
             ];
 
             if ($isCurrentOrderField) {
-                $field['class'] = (ListConfig::SORTING_DIRECTION_ASC
+                $field['sortingClass'] = (ListConfig::SORTING_DIRECTION_ASC
                                    == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_ASC : ListConfig::SORTING_DIRECTION_DESC);
 
                 $field['link'] = $urlUtil->addQueryString(

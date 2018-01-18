@@ -9,10 +9,43 @@
             <?php endif; ?>
 
             <div class="items">
+                <?php if ($this->isTableList): ?>
+                    <table>
+                        <?php if (is_array($this->header)): ?>
+                            <thead>
+                                <tr>
+                                    <?php foreach ($this->header as $i => $fieldData): ?>
+                                        <th class="<?= $fieldData['class']; ?>">
+                                            <?php if ($this->sortingHeader): ?>
+                                                <a href="<?= $fieldData['link']; ?>">
+                                                    <?php if ($fieldData['sortingClass']): ?>
+                                                        <i class="fa <?= $fieldData['class'] == 'asc' ? 'fa-caret-up' : 'fa-caret-down'; ?>"></i><?php endif; ?>
+                                                    <?= $GLOBALS['TL_DCA'][$this->formHybridDataContainer]['fields'][$fieldData['field']]['label'][0] ?: $fieldData['field']; ?>
+                                                </a>
+                                            <?php else: ?>
+                                                <?= $GLOBALS['TL_DCA'][$this->formHybridDataContainer]['fields'][$fieldData['field']]['label'][0] ?: $fieldData['field']; ?>
+                                            <?php endif; ?>
+                                        </th>
+                                    <?php endforeach; ?>
+                                    <?php if ($this->addDetailsCol): ?>
+                                        <th class="actions"></th><?php endif; ?>
+                                </tr>
+                            </thead>
+                        <?php endif; ?>
+                        <tbody>
+                <?php endif; ?>
+
                 <?php foreach ($this->items as $item): ?>
                     <?= $item ?>
                 <?php endforeach; ?>
+
+                <?php if ($this->isTableList): ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
             </div>
+
+            <?= $this->pagination; ?>
         <?php elseif ($this->showNoItemsText): ?>
             <p class="no-items"><?= $this->noItemsText; ?></p>
         <?php endif; ?>

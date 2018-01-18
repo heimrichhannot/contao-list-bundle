@@ -34,12 +34,16 @@ use Patchwork\Utf8;
 class ModuleList extends \Contao\Module
 {
     protected $strTemplate = 'mod_list';
+
     /** @var ContaoFramework */
     protected $framework;
+
     /** @var ListConfigModel */
     protected $listConfig;
+
     /** @var FilterConfig */
     protected $filterConfig;
+
     /** @var object */
     protected $filter;
 

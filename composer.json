@@ -5,16 +5,14 @@
   "license": "LGPL-3.0+",
   "require": {
     "php": ">=7.0.0",
-    "contao/core-bundle": "^4.4"
+    "contao/core-bundle": "^4.4",
+    "heimrichhannot/contao-filter-bundle": "dev-master"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.0",
     "friendsofphp/php-cs-fixer": "^2.2",
     "phpunit/phpunit": "^6.0",
     "satooshi/php-coveralls": "^1.0"
-  },
-  "suggest": {
-    "heimrichhannot/contao-filter-bundle": "This bundle can be used to filter lists created with contao-list-bundle."
   },
   "autoload": {
     "psr-4": {

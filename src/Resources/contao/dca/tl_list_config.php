@@ -242,7 +242,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'label'      => &$GLOBALS['TL_LANG']['tl_list_config']['filter'],
             'exclude'    => true,
             'inputType'  => 'select',
-            'foreignKey' => 'tl_filter.title',
+            'foreignKey' => 'tl_filter_config.title',
             'relation'   => ['type' => 'belongsTo', 'load' => 'eager'],
             'eval'       => ['tl_class' => 'w50 clr', 'includeBlankOption' => true, 'chosen' => true, 'mandatory' => true, 'submitOnChange' => true],
             'sql'        => "int(10) NOT NULL default '0'",

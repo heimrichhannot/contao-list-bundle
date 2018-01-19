@@ -5,8 +5,9 @@ $dca = &$GLOBALS['TL_DCA']['tl_module'];
 /**
  * Palettes
  */
-$dca['palettes'][\HeimrichHannot\ListBundle\Backend\Module::MODULE_LIST] = '{title_legend},name,headline,type;'
-                                                                           . '{config_legend},listConfig;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$dca['palettes'][\HeimrichHannot\ListBundle\Backend\Module::MODULE_LIST] =
+    '{title_legend},name,headline,type;' . '{config_legend},listConfig;' . '{template_legend:hide},customTpl;'
+    . '{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 /**
  * Fields

@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
- * @license LGPL-3.0+
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\ListBundle\Module;
@@ -28,7 +28,7 @@ use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use HeimrichHannot\ListBundle\Util\ListConfigHelper;
 use HeimrichHannot\Modal\ModalModel;
 use HeimrichHannot\Request\Request;
-use HeimrichHannot\UtilsBundle\Driver\DC_Table;
+use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
 use Patchwork\Utf8;
 
 class ModuleList extends \Contao\Module
@@ -195,7 +195,7 @@ class ModuleList extends \Contao\Module
         $result = [];
         $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
 
-        $dc = DC_Table::createFromModelData($item, $filter->dataContainer);
+        $dc = DC_Table_Utils::createFromModelData($item, $filter->dataContainer);
 
         $fields = $listConfig->limitFields ? StringUtil::deserialize($listConfig->fields, true) : array_keys($dca['fields']);
 

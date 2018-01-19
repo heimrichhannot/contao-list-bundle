@@ -3,13 +3,15 @@
 /*
  * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
- * @license LGPL-3.0+
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\ListBundle\Model;
 
 /**
  * @property int    $id
+ * @property int    $tstamp
+ * @property int    $dateAdded
  * @property string $title
  * @property int    $numberOfItems
  * @property int    $perPage

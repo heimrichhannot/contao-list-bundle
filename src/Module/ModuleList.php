@@ -316,7 +316,7 @@ class ModuleList extends \Contao\Module
 
         $this->modifyItemTemplateData($templateData, $item);
 
-        return System::getContainer()->get('twig')->render($this->getTemplateByName($listConfig->itemTemplate ?: 'default'), $templateData);
+        return System::getContainer()->get('twig')->render($this->getItemTemplateByName($listConfig->itemTemplate ?: 'default'), $templateData);
     }
 
     protected function addImagesToTemplate(array $item, array &$templateData, ListConfigModel $listConfig)
@@ -328,6 +328,8 @@ class ModuleList extends \Contao\Module
 
         if (null !== $imageListConfigElements) {
             while ($imageListConfigElements->next()) {
+                $image = null;
+
                 if ($item['raw'][$imageListConfigElements->imageSelectorField] && $item['raw'][$imageListConfigElements->imageField]) {
                     $imageSelectorField = $imageListConfigElements->imageSelectorField;
                     $image = $item['raw'][$imageListConfigElements->imageField];
@@ -386,7 +388,7 @@ class ModuleList extends \Contao\Module
         }
     }
 
-    protected function getTemplateByName($name)
+    protected function getItemTemplateByName($name)
     {
         $config = System::getContainer()->getParameter('huh.list');
         $templates = $config['list']['templates']['item'];

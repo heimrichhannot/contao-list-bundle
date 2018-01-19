@@ -9,12 +9,14 @@
 namespace HeimrichHannot\ListBundle\ContaoManager;
 
 use Contao\CoreBundle\ContaoCoreBundle;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Config\ContainerBuilder;
 use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
 use Contao\System;
+use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 
 class Plugin implements BundlePluginInterface, ExtensionPluginInterface
@@ -34,10 +36,11 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
      */
     public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container)
     {
-        return System::getContainer()->get('huh.utils.container')->mergeConfigFile(
+        return ContainerUtil::mergeConfigFile(
             'huh_list',
             $extensionName,
-            $extensionConfigs
+            $extensionConfigs,
+            __DIR__.'/../Resources/config/config.yml'
         );
     }
 }

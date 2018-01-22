@@ -17,8 +17,9 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property int    $perPage
  * @property int    $skipFirst
  * @property bool   $showItemCount
- * @property bool   $overrideItemCountText
  * @property string $itemCountText
+ * @property bool   $showNoItemsText
+ * @property string $noItemsText
  * @property bool   $showInitialResults
  * @property bool   $isTableList
  * @property bool   $hasHeader
@@ -41,6 +42,7 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property bool   $addMasonry
  * @property string $masonryStampContentElements
  * @property string $itemTemplate
+ * @property string $listTemplate
  * @property int    $filter
  * @property bool   $limitFields
  * @property string $fields

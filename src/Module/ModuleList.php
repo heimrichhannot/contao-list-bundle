@@ -63,12 +63,12 @@ class ModuleList extends \Contao\Module
     public function generate()
     {
         if (TL_MODE == 'BE') {
-            $objTemplate           = new \BackendTemplate('be_wildcard');
+            $objTemplate = new \BackendTemplate('be_wildcard');
             $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD'][$this->type][0]).' ###';
-            $objTemplate->title    = $this->headline;
-            $objTemplate->id       = $this->id;
-            $objTemplate->link     = $this->name;
-            $objTemplate->href     = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
+            $objTemplate->title = $this->headline;
+            $objTemplate->id = $this->id;
+            $objTemplate->link = $this->name;
+            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
 
             return $objTemplate->parse();
         }
@@ -80,9 +80,9 @@ class ModuleList extends \Contao\Module
     {
         Controller::loadDataContainer('tl_list_config');
 
-        $this->listConfig     = $listConfig = $this->getListConfig();
-        $this->filterConfig   = $this->getFilterConfig();
-        $this->filter         = (object)$this->filterConfig->getFilter();
+        $this->listConfig = $listConfig = $this->getListConfig();
+        $this->filterConfig = $this->getFilterConfig();
+        $this->filter = (object) $this->filterConfig->getFilter();
         $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
 
         Controller::loadDataContainer($this->filter->dataContainer);
@@ -93,7 +93,6 @@ class ModuleList extends \Contao\Module
         // apply module fields to template
         $this->Template->headline = $this->headline;
         $this->Template->hl = $this->hl;
-        $this->Template->wrapperId = 'huh-list-'.$this->id;
 
         // add class to every list template
         $cssID = $this->cssID;
@@ -108,7 +107,10 @@ class ModuleList extends \Contao\Module
 
     protected function parseList(string $listTemplate = null, string $itemTemplate = null, array $data = [])
     {
+        $templateData = [];
         $isSubmitted = $this->filterConfig->hasData();
+
+        $templateData['wrapperId'] = 'huh-list-'.$this->id;
 
         // apply list config to template
         foreach ($this->listConfig->row() as $field => $value) {
@@ -116,27 +118,27 @@ class ModuleList extends \Contao\Module
                 continue;
             }
 
-            $this->Template->{$field} = $value;
+            $templateData[$field] = $value;
         }
 
-        $this->addDataAttributes();
+        $this->addDataAttributes($templateData);
 
         // sorting
-        $this->Template->currentSorting = $this->getCurrentSorting();
+        $templateData['currentSorting'] = $this->getCurrentSorting();
 
         if ($this->listConfig->isTableList) {
-            $this->Template->isTableList = $this->listConfig->isTableList;
-            $this->Template->tableFields = StringUtil::deserialize($this->listConfig->tableFields, true);
+            $templateData['isTableList'] = $this->listConfig->isTableList;
+            $templateData['tableFields'] = StringUtil::deserialize($this->listConfig->tableFields, true);
 
             if ($this->listConfig->hasHeader) {
-                $this->Template->header = $this->generateTableHeader();
+                $templateData['header'] = $this->generateTableHeader();
             }
         }
 
         // apply filter
         $queryBuilder = $this->filterRegistry->getQueryBuilder($this->filter->id);
 
-        $this->Template->isSubmitted = $isSubmitted;
+        $templateData['isSubmitted'] = $isSubmitted;
 
         if ($this->listConfig->limitFields) {
             $fieldsArray = \Contao\StringUtil::deserialize($this->listConfig->fields, true);
@@ -152,26 +154,31 @@ class ModuleList extends \Contao\Module
         }
 
         if ($isSubmitted || $this->listConfig->showInitialResults) {
-            $this->Template->totalCount = $queryBuilder->select($fields)->execute()->rowCount();
+            $templateData['totalCount'] = $queryBuilder->select($fields)->execute()->rowCount();
         }
 
         // item count text
-        $this->Template->itemsFoundText = System::getContainer()->get('translator')->transChoice($this->listConfig->itemCountText, $this->Template->totalCount, ['%count%' => $this->Template->totalCount]);
+        $templateData['itemsFoundText'] = System::getContainer()->get('translator')->transChoice(
+            $this->listConfig->itemCountText,
+            $templateData['totalCount'],
+            ['%count%' => $templateData['totalCount']]
+        );
 
         // no items text
-        $this->Template->noItemsText = System::getContainer()->get('translator')->trans($this->listConfig->noItemsText ?: 'huh.list.empty.text.default');
+        $templateData['noItemsText'] =
+            System::getContainer()->get('translator')->trans($this->listConfig->noItemsText ?: 'huh.list.empty.text.default');
 
-        $this->applyListConfigToQueryBuilder($queryBuilder);
+        $this->applyListConfigToQueryBuilder($queryBuilder, $templateData);
 
         if ($isSubmitted || $this->listConfig->showInitialResults) {
             $items = $queryBuilder->execute()->fetchAll();
 
-            $preparedItems         = $this->prepareItems($items);
-            $this->Template->items = $this->parseItems($preparedItems, $itemTemplate);
+            $preparedItems = $this->prepareItems($items);
+            $templateData['items'] = $this->parseItems($preparedItems, $itemTemplate);
         }
 
         $listTemplate = $this->getListTemplateByName(($listTemplate ?: $this->listConfig->listTemplate) ?: 'default');
-        $data         = array_merge($this->Template->getData(), $data);
+        $data = array_merge($templateData, $data);
 
         return System::getContainer()->get('twig')->render($listTemplate, $data);
     }
@@ -320,7 +327,10 @@ class ModuleList extends \Contao\Module
 
         $this->modifyItemTemplateData($templateData, $item);
 
-        return System::getContainer()->get('twig')->render($this->getItemTemplateByName(($itemTemplate ?: $listConfig->itemTemplate) ?: 'default'), $templateData);
+        return System::getContainer()->get('twig')->render(
+            $this->getItemTemplateByName(($itemTemplate ?: $listConfig->itemTemplate) ?: 'default'),
+            $templateData
+        );
     }
 
     protected function addImagesToTemplate(array $item, array &$templateData, ListConfigModel $listConfig)
@@ -392,10 +402,9 @@ class ModuleList extends \Contao\Module
         }
     }
 
-
     protected function getListTemplateByName($name)
     {
-        $config    = System::getContainer()->getParameter('huh.list');
+        $config = System::getContainer()->getParameter('huh.list');
         $templates = $config['list']['templates']['list'];
 
         foreach ($templates as $template) {
@@ -496,7 +505,7 @@ class ModuleList extends \Contao\Module
     {
     }
 
-    protected function applyListConfigToQueryBuilder(FilterQueryBuilder $queryBuilder)
+    protected function applyListConfigToQueryBuilder(FilterQueryBuilder $queryBuilder, array &$templateData)
     {
         $listConfig = $this->listConfig;
 
@@ -511,7 +520,7 @@ class ModuleList extends \Contao\Module
         }
 
         // total item number
-        $totalCount = $this->Template->totalCount;
+        $totalCount = $templateData['totalCount'];
 
         // sorting
         $currentSorting = $this->getCurrentSorting();
@@ -519,20 +528,20 @@ class ModuleList extends \Contao\Module
         if (ListConfig::SORTING_MODE_RANDOM == $currentSorting['order']) {
             $randomSeed = Request::getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
             $queryBuilder->orderBy('RAND("'.(int) $randomSeed.'")');
-            list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit, $randomSeed);
+            list($offset, $limit) = $this->splitResults($templateData, $offset, $totalCount, $limit, $randomSeed);
         } else {
             if (!empty($currentSorting)) {
                 $queryBuilder->orderBy($currentSorting['order'], $currentSorting['sort']);
             }
 
-            list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit);
+            list($offset, $limit) = $this->splitResults($templateData, $offset, $totalCount, $limit);
         }
 
         // split the results
         $queryBuilder->setFirstResult($offset)->setMaxResults($limit);
     }
 
-    protected function splitResults($offset, $total, $limit, $randomSeed = null)
+    protected function splitResults(array &$templateData, $offset, $total, $limit, $randomSeed = null)
     {
         $listConfig = $this->listConfig;
         $offsettedTotal = $total - $offset;
@@ -585,7 +594,7 @@ class ModuleList extends \Contao\Module
                 );
             }
 
-            $this->Template->pagination = $pagination->generate("\n  ");
+            $templateData['pagination'] = $pagination->generate("\n  ");
         }
 
         return [$offset, $limit];
@@ -627,7 +636,7 @@ class ModuleList extends \Contao\Module
         return $headerFields;
     }
 
-    protected function addDataAttributes()
+    protected function addDataAttributes(array &$templateData)
     {
         $dataAttributes = [];
         $stringUtil = System::getContainer()->get('huh.utils.string');
@@ -640,7 +649,7 @@ class ModuleList extends \Contao\Module
         }
 
         if (!empty($dataAttributes)) {
-            $this->Template->dataAttributes = implode(' ', $dataAttributes);
+            $templateData['dataAttributes'] = implode(' ', $dataAttributes);
         }
     }
 
@@ -669,6 +678,7 @@ class ModuleList extends \Contao\Module
     protected function handleShare()
     {
         $listConfig = $this->listConfig;
+        $filter = $this->filter;
         $action = Request::getGet('act');
 
         if (ListBundle::ACTION_SHARE == $action && $listConfig->addShare) {
@@ -676,7 +686,7 @@ class ModuleList extends \Contao\Module
             $id = Request::getGet($listConfig->useAlias ? $listConfig->aliasField : 'id');
 
             if (null !== ($entity =
-                    System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($this->framework, $listConfig->dataContainer, $id))
+                    System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($this->framework, $filter->dataContainer, $id))
             ) {
                 $now = time();
 

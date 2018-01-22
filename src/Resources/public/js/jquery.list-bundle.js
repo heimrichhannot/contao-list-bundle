@@ -11,12 +11,13 @@
             {
                 var $list = $(this).closest('.huh-list'),
                     $items = $list.find('.items'),
-                    id = '#' + $list.find('.wrapper').attr('id');
+                    $wrapper = $list.find('.wrapper'),
+                    id = '#' + $wrapper.attr('id');
 
-                $list.jscroll({
+                $wrapper.jscroll({
                     loadingHtml: '<div class="loading"><span class="text">Lade...</span></div>',
                     nextSelector: '.ajax-pagination a.next',
-                    autoTrigger: $list.data('infinitescroll') == 1,
+                    autoTrigger: $wrapper.data('add-infinite-scroll') == 1,
                     contentSelector: id,
                     callback: function()
                     {

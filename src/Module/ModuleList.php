@@ -613,10 +613,11 @@ class ModuleList extends \Contao\Module
     {
         $dataAttributes = [];
         $stringUtil = System::getContainer()->get('huh.utils.string');
+        $listConfig = $this->listConfig;
 
         foreach ($GLOBALS['TL_DCA']['tl_list_config']['fields'] as $field => $data) {
-            if ($data['addAsDataAttribute']) {
-                $dataAttributes[] = 'data-'.$stringUtil->camelCaseToDashed($field).'="'.$this->listConfig->{$field}.'"';
+            if ($data['eval']['addAsDataAttribute'] && $listConfig->{$field}) {
+                $dataAttributes[] = 'data-'.$stringUtil->camelCaseToDashed($field).'="'.$listConfig->{$field}.'"';
             }
         }
 

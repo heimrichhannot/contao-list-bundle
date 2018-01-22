@@ -1,5 +1,9 @@
 # misc
 huh.list.misc.detailsTitle: Details
 huh.list.misc.shareTitle: Teilen
-huh.list.misc.itemsFound: Es wurden %count% Einträge gefunden.
-huh.list.misc.noItemsFound: Es wurden keine Einträge gefunden.
+
+# count items text
+huh.list.count.text.default: '{0} Es wurden keine Einträge gefunden.|{1}Es wurde %count% Eintrag gefunden.|]1,Inf[ Es wurden %count% Einträge gefunden.'
+
+# empty list text
+huh.list.empty.text.default: Für Ihre Suchanfrage wurden keine Einträge gefunden.

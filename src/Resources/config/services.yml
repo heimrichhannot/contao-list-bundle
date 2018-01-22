@@ -1,4 +1,8 @@
 services:
+    huh.list.choice.template.list:
+        class: HeimrichHannot\ListBundle\Choice\ListTemplateChoice
+        arguments:
+            - "@contao.framework"
     huh.list.choice.template.item:
         class: HeimrichHannot\ListBundle\Choice\ListItemTemplateChoice
         arguments:

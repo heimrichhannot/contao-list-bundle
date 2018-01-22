@@ -38,7 +38,7 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
             'huh_list',
             $extensionName,
             $extensionConfigs,
-            __DIR__.'/../Resources/config/config.yml'
+            $container->getParameter('kernel.project_dir').'/vendor/heimrichhannot/contao-list-bundle/src/Resources/config/config.yml'
         );
     }
 }

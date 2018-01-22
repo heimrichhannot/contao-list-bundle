@@ -1,7 +1,7 @@
 <?php $this->extend('block_searchable'); ?>
 <?php $this->block('content'); ?>
 
-<div class="wrapper"<?= $this->dataAttributes ? ' ' . $this->dataAttributes : $this->dataAttributes ?>>
+<div class="wrapper" id="<?= $this->wrapperId ?>"<?= $this->dataAttributes ? ' ' . $this->dataAttributes : $this->dataAttributes ?>>
     <?php if ($this->showInitialResults || $this->isSubmitted): ?>
         <?php if (!empty($this->items)): ?>
             <?php if ($this->showItemCount): ?>

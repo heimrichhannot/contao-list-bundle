@@ -11,7 +11,7 @@
             {
                 var $list = $(this).closest('.huh-list'),
                     $items = $list.find('.items'),
-                    id = '#' + $list.attr('id');
+                    id = '#' + $list.find('.wrapper').attr('id');
 
                 $list.jscroll({
                     loadingHtml: '<div class="loading"><span class="text">Lade...</span></div>',
@@ -43,12 +43,13 @@
                             //... and readd them again
                             $items.find('.item').each(function(index)
                             {
-                                var $item = $(this);
+                                var $item = $(this),
+                                    itemIndex = index + 1;
 
-                                $(this).addClass('item_' + index).removeClass('odd even first last');
+                                $(this).addClass('item_' + itemIndex).removeClass('odd even first last');
 
                                 // odd/even
-                                if (index % 2 == 0)
+                                if (itemIndex % 2 == 0)
                                 {
                                     $item.addClass('even');
                                 }
@@ -58,12 +59,12 @@
                                 }
 
                                 // add first and last
-                                if (index == 0)
+                                if (itemIndex == 0)
                                 {
                                     $item.addClass('first');
                                 }
 
-                                if (index == $items.find('.item').length - 1)
+                                if (itemIndex == $items.find('.item').length - 1)
                                 {
                                     $item.addClass('last');
                                 }

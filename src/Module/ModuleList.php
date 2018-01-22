@@ -94,6 +94,7 @@ class ModuleList extends \Contao\Module
         // apply module fields to template
         $this->Template->headline = $this->headline;
         $this->Template->hl = $this->hl;
+        $this->Template->wrapperId = 'huh-list-'.$this->id;
 
         // add class to every list template
         $cssID = $this->cssID;
@@ -553,7 +554,12 @@ class ModuleList extends \Contao\Module
             // Add the pagination menu
             if ($listConfig->addAjaxPagination) {
                 $pagination = new RandomPagination(
-                    $randomSeed, $offsettedTotal, $listConfig->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate('pagination_ajax')
+                    $randomSeed,
+                    $offsettedTotal,
+                    $listConfig->perPage,
+                    Config::get('maxPaginationLinks'),
+                    $id,
+                    new FrontendTemplate('pagination_ajax')
                 );
             } else {
                 $pagination = new RandomPagination(

@@ -19,6 +19,14 @@ array_insert(
 );
 
 /**
+ * JS
+ */
+if (System::getContainer()->get('huh.utils.container')->isFrontend())
+{
+    $GLOBALS['TL_JAVASCRIPT']['list-bundle'] = 'bundles/heimrichhannotcontaolist/js/jquery.list-bundle.js|static';
+}
+
+/**
  * Permissions
  */
 $GLOBALS['TL_PERMISSIONS'][] = 'listbundles';

@@ -269,7 +269,7 @@ class ModuleList extends \Contao\Module
             ++$count;
             $first = 1 == $count ? ' first' : '';
             $last = $count == $limit ? ' last' : '';
-            $oddEven = (0 == ($count % 2)) ? ' odd' : ' even';
+            $oddEven = (0 == ($count % 2)) ? ' even' : ' odd';
 
             $class = 'item item_'.$count.$first.$last.$oddEven;
 

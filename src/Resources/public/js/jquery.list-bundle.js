@@ -59,12 +59,12 @@
                                 }
 
                                 // add first and last
-                                if (itemIndex == 0)
+                                if (itemIndex == 1)
                                 {
                                     $item.addClass('first');
                                 }
 
-                                if (itemIndex == $items.find('.item').length - 1)
+                                if (itemIndex == $items.find('.item').length)
                                 {
                                     $item.addClass('last');
                                 }

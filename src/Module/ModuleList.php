@@ -58,12 +58,6 @@ class ModuleList extends \Contao\Module
         $this->framework = System::getContainer()->get('contao.framework');
 
         parent::__construct($objModule, $strColumn);
-
-        // add class to every list template
-        $cssID = $this->cssID;
-        $cssID[1] = $cssID[1].($cssID[1] ? ' ' : '').'huh-list';
-
-        $this->cssID = $cssID;
     }
 
     public function generate()
@@ -100,6 +94,12 @@ class ModuleList extends \Contao\Module
         // apply module fields to template
         $this->Template->headline = $this->headline;
         $this->Template->hl = $this->hl;
+
+        // add class to every list template
+        $cssID = $this->cssID;
+        $cssID[1] = $cssID[1].($cssID[1] ? ' ' : '').'huh-list';
+
+        $this->cssID = $cssID;
 
         // apply list config to template
         foreach ($listConfig->row() as $field => $value) {
@@ -553,11 +553,11 @@ class ModuleList extends \Contao\Module
             // Add the pagination menu
             if ($listConfig->addAjaxPagination) {
                 $pagination = new RandomPagination(
-                    $randomSeed, $offsettedTotal, $this->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate('pagination_ajax')
+                    $randomSeed, $offsettedTotal, $listConfig->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate('pagination_ajax')
                 );
             } else {
                 $pagination = new RandomPagination(
-                    $randomSeed, $offsettedTotal, $this->perPage, $GLOBALS['TL_CONFIG']['maxPaginationLinks'], $id
+                    $randomSeed, $offsettedTotal, $listConfig->perPage, $GLOBALS['TL_CONFIG']['maxPaginationLinks'], $id
                 );
             }
 

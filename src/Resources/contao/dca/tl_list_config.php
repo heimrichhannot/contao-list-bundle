@@ -159,7 +159,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'options_callback' => function (\DataContainer $dc) {
                 return \Contao\System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.count.text');
             },
-            'eval'             => ['maxlength' => 64, 'mandatory' => true, 'includeBlankOption' => true],
+            'eval'             => ['maxlength' => 64, 'includeBlankOption' => true],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
         'showNoItemsText'             => [
@@ -177,7 +177,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'options_callback' => function (\DataContainer $dc) {
                 return \Contao\System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.empty.text');
             },
-            'eval'      => ['maxlength' => 64, 'tl_class' => 'w50', 'mandatory' => true],
+            'eval'      => ['maxlength' => 64, 'tl_class' => 'w50', 'includeBlankOption' => true],
             'sql'       => "varchar(64) NOT NULL default ''",
         ],
         'showInitialResults'          => [

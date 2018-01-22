@@ -23,11 +23,11 @@ $lang['fields'][1]             = 'Wählen Sie hier die zu verarbeitenden Felder 
 $lang['showItemCount'][0]      = 'Ergebnisanzahl anzeigen';
 $lang['showItemCount'][1]      = 'Klicken Sie hier, um die Anzahl der gefundenen Instanzen anzuzeigen.';
 $lang['itemCountText'][0]      = 'Individueller Ergebnisanzahl-Text';
-$lang['itemCountText'][1]      = 'Geben Sie hier einen Text ein (Beispiel: "Es wurden %count% Einträge gefunden").';
+$lang['itemCountText'][1]      = 'Wählen Sie hier eine Symfony-Message aus.';
 $lang['showNoItemsText'][0]    = '"Keine Ergebnisse"-Meldung anzeigen';
 $lang['showNoItemsText'][1]    = 'Klicken Sie hier, um eine Meldung anzuzeigen, wenn keine Instanzen gefunden wurden.';
 $lang['noItemsText'][0]        = 'Individueller "Keine Ergebnisse"-Text';
-$lang['noItemsText'][1]        = 'Geben Sie hier einen Text ein (Beispiel: "Es wurden keine Einträge gefunden").';
+$lang['noItemsText'][1]        = 'Wählen Sie hier eine Symfony-Message aus.';
 $lang['showInitialResults'][0] = 'Initial Ergebnisse anzeigen';
 $lang['showInitialResults'][1] = 'Wählen Sie diese Option, wenn initial eine Ergebnisliste angezeigt werden soll.';
 $lang['isTableList'][0]        = 'Als Tabelle ausgeben';
@@ -68,13 +68,15 @@ $lang['shareAutoItem'][1] = 'Wählen Sie diese Option aus, um das Share Token al
 
 // misc
 $lang['addAjaxPagination'][0]           = 'Ajax-Paginierung hinzufügen';
-$lang['addAjaxPagination'][1]           = 'Wählen Sie diese Option, wenn eine Ajax-Paginierung genutzt werden soll. Dafür muss ein Wert > 0 in "Elemente pro Seite" gesetzt sein. Die Seitenzahlen werden durch einen einzelnen "Weiter"-Button ersetzt.';
+$lang['addAjaxPagination'][1]           =
+    'Wählen Sie diese Option, wenn eine Ajax-Paginierung genutzt werden soll. Dafür muss ein Wert > 0 in "Elemente pro Seite" gesetzt sein. Die Seitenzahlen werden durch einen einzelnen "Weiter"-Button ersetzt.';
 $lang['addInfiniteScroll'][0]           = 'Infinite Scroll hinzufügen';
 $lang['addInfiniteScroll'][1]           = 'Wählen Sie diese Option, um die Ajax-Paginierung im UI-Muster "Infinite Scroll" umzusetzen.';
 $lang['addMasonry'][0]                  = 'Masonry hinzufügen';
 $lang['addMasonry'][1]                  = 'Wählen Sie diese Option, wenn das Masonry-JavaScript-Plugin auf die Liste angewendet werden soll.';
 $lang['masonryStampContentElements'][0] = 'Fixierte Blöcke festlegen';
-$lang['masonryStampContentElements'][1] = 'Hier können Sie Blöcke festlegen, die immer gerendert werden sollen. Die Position muss anschließend per CSS festgelegt werden (-> Responsive).';
+$lang['masonryStampContentElements'][1] =
+    'Hier können Sie Blöcke festlegen, die immer gerendert werden sollen. Die Position muss anschließend per CSS festgelegt werden (-> Responsive).';
 $lang['stampBlock'][0]                  = 'Block';
 $lang['stampBlock'][1]                  = 'Wählen Sie hier einen Block aus.';
 

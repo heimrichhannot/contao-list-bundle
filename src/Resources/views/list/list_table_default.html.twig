@@ -1,4 +1,4 @@
-<div class="wrapper" id="{{ wrapperId }}"{{ (' ' ~ dataAttributes ?? '') | trim }}>
+<div class="wrapper" id="{{ wrapperId }}"{{ dataAttributes|default()|raw }}>
     {% if showInitialResults or isSubmitted %}
         {% if showItemCount %}
             <p class="count">{{ itemsFoundText|raw }}</p>

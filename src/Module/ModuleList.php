@@ -159,7 +159,7 @@ class ModuleList extends \Contao\Module
 
         // item count text
         $templateData['itemsFoundText'] = System::getContainer()->get('translator')->transChoice(
-            $this->listConfig->itemCountText,
+            $this->listConfig->itemCountText ?: 'huh.list.count.text.default',
             $templateData['totalCount'],
             ['%count%' => $templateData['totalCount']]
         );

@@ -63,12 +63,12 @@ class ModuleList extends \Contao\Module
     public function generate()
     {
         if (TL_MODE == 'BE') {
-            $objTemplate = new \BackendTemplate('be_wildcard');
+            $objTemplate           = new \BackendTemplate('be_wildcard');
             $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD'][$this->type][0]).' ###';
-            $objTemplate->title = $this->headline;
-            $objTemplate->id = $this->id;
-            $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
+            $objTemplate->title    = $this->headline;
+            $objTemplate->id       = $this->id;
+            $objTemplate->link     = $this->name;
+            $objTemplate->href     = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
 
             return $objTemplate->parse();
         }
@@ -80,11 +80,10 @@ class ModuleList extends \Contao\Module
     {
         Controller::loadDataContainer('tl_list_config');
 
-        $this->listConfig = $listConfig = $this->getListConfig();
-        $this->filterConfig = $this->getFilterConfig();
-        $this->filter = (object) $this->filterConfig->getFilter();
+        $this->listConfig     = $listConfig = $this->getListConfig();
+        $this->filterConfig   = $this->getFilterConfig();
+        $this->filter         = (object)$this->filterConfig->getFilter();
         $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
-        $isSubmitted = $this->filterConfig->hasData();
 
         Controller::loadDataContainer($this->filter->dataContainer);
         System::loadLanguageFile($this->filter->dataContainer);
@@ -102,8 +101,17 @@ class ModuleList extends \Contao\Module
 
         $this->cssID = $cssID;
 
+        $this->Template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) {
+            return $this->parseList($listTemplate, $itemTemplate, $data);
+        };
+    }
+
+    protected function parseList(string $listTemplate = null, string $itemTemplate = null, array $data = [])
+    {
+        $isSubmitted = $this->filterConfig->hasData();
+
         // apply list config to template
-        foreach ($listConfig->row() as $field => $value) {
+        foreach ($this->listConfig->row() as $field => $value) {
             if (in_array($field, ['id', 'tstamp', 'dateAdded', 'title'], true)) {
                 continue;
             }
@@ -116,11 +124,11 @@ class ModuleList extends \Contao\Module
         // sorting
         $this->Template->currentSorting = $this->getCurrentSorting();
 
-        if ($listConfig->isTableList) {
-            $this->Template->isTableList = $listConfig->isTableList;
-            $this->Template->tableFields = StringUtil::deserialize($listConfig->tableFields, true);
+        if ($this->listConfig->isTableList) {
+            $this->Template->isTableList = $this->listConfig->isTableList;
+            $this->Template->tableFields = StringUtil::deserialize($this->listConfig->tableFields, true);
 
-            if ($listConfig->hasHeader) {
+            if ($this->listConfig->hasHeader) {
                 $this->Template->header = $this->generateTableHeader();
             }
         }
@@ -130,8 +138,8 @@ class ModuleList extends \Contao\Module
 
         $this->Template->isSubmitted = $isSubmitted;
 
-        if ($listConfig->limitFields) {
-            $fieldsArray = \Contao\StringUtil::deserialize($listConfig->fields, true);
+        if ($this->listConfig->limitFields) {
+            $fieldsArray = \Contao\StringUtil::deserialize($this->listConfig->fields, true);
 
             // always add id
             if (!in_array('id', $fieldsArray, true)) {
@@ -143,35 +151,29 @@ class ModuleList extends \Contao\Module
             $fields = '*';
         }
 
-        if ($isSubmitted || $listConfig->showInitialResults) {
+        if ($isSubmitted || $this->listConfig->showInitialResults) {
             $this->Template->totalCount = $queryBuilder->select($fields)->execute()->rowCount();
         }
 
         // item count text
-        if ($listConfig->overrideItemCountText) {
-            $this->Template->itemsFoundText = str_replace('%count%', $this->Template->totalCount, $listConfig->itemCountText);
-        } else {
-            $this->Template->itemsFoundText = System::getContainer()->get('translator')->trans(
-                'huh.list.misc.itemsFound',
-                ['%count%' => $this->Template->totalCount]
-            );
-        }
+        $this->Template->itemsFoundText = System::getContainer()->get('translator')->transChoice($this->listConfig->itemCountText, $this->Template->totalCount, ['%count%' => $this->Template->totalCount]);
 
         // no items text
-        if ($listConfig->overrideNoItemsText) {
-            $this->Template->noItemsText = $listConfig->noItemsText;
-        } else {
-            $this->Template->noItemsText = System::getContainer()->get('translator')->trans('huh.list.misc.noItemsFound');
-        }
+        $this->Template->noItemsText = System::getContainer()->get('translator')->trans($this->listConfig->noItemsText ?: 'huh.list.empty.text.default');
 
         $this->applyListConfigToQueryBuilder($queryBuilder);
 
-        if ($isSubmitted || $listConfig->showInitialResults) {
+        if ($isSubmitted || $this->listConfig->showInitialResults) {
             $items = $queryBuilder->execute()->fetchAll();
 
-            $preparedItems = $this->prepareItems($items);
-            $this->Template->items = $this->parseItems($preparedItems);
+            $preparedItems         = $this->prepareItems($items);
+            $this->Template->items = $this->parseItems($preparedItems, $itemTemplate);
         }
+
+        $listTemplate = $this->getListTemplateByName(($listTemplate ?: $this->listConfig->listTemplate) ?: 'default');
+        $data         = array_merge($this->Template->getData(), $data);
+
+        return System::getContainer()->get('twig')->render($listTemplate, $data);
     }
 
     protected function prepareItems(array $items): array
@@ -254,7 +256,7 @@ class ModuleList extends \Contao\Module
         return $result;
     }
 
-    protected function parseItems(array $items): array
+    protected function parseItems(array $items, string $itemTemplate = null): array
     {
         $limit = count($items);
 
@@ -275,6 +277,7 @@ class ModuleList extends \Contao\Module
 
             $results[] = $this->parseItem(
                 $item,
+                $itemTemplate,
                 $class,
                 $count
             );
@@ -283,7 +286,7 @@ class ModuleList extends \Contao\Module
         return $results;
     }
 
-    protected function parseItem(array $item, string $class = '', int $count = 0): string
+    protected function parseItem(array $item, string $itemTemplate = null, string $class = '', int $count = 0): string
     {
         $listConfig = $this->listConfig;
         $filter = $this->filter;
@@ -317,7 +320,7 @@ class ModuleList extends \Contao\Module
 
         $this->modifyItemTemplateData($templateData, $item);
 
-        return System::getContainer()->get('twig')->render($this->getItemTemplateByName($listConfig->itemTemplate ?: 'default'), $templateData);
+        return System::getContainer()->get('twig')->render($this->getItemTemplateByName(($itemTemplate ?: $listConfig->itemTemplate) ?: 'default'), $templateData);
     }
 
     protected function addImagesToTemplate(array $item, array &$templateData, ListConfigModel $listConfig)
@@ -387,6 +390,21 @@ class ModuleList extends \Contao\Module
                 }
             }
         }
+    }
+
+
+    protected function getListTemplateByName($name)
+    {
+        $config    = System::getContainer()->getParameter('huh.list');
+        $templates = $config['list']['templates']['list'];
+
+        foreach ($templates as $template) {
+            if ($template['name'] == $name) {
+                return $template['template'];
+            }
+        }
+
+        return null;
     }
 
     protected function getItemTemplateByName($name)

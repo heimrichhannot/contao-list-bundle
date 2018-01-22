@@ -1,6 +1,9 @@
 huh:
     list:
         templates:
+            list:
+                - { name: default, template: "@HeimrichHannotContaoList/list/list_default.html.twig" }
+                - { name: table_default, template: "@HeimrichHannotContaoList/list/list_table_default.html.twig" }
             item:
-                - { name: default, template: "@HeimrichHannotContaoList/list_item_default.html.twig" }
-                - { name: table_default, template: "@HeimrichHannotContaoList/list_item_table_default.html.twig" }
+                - { name: default, template: "@HeimrichHannotContaoList/item/list_item_default.html.twig" }
+                - { name: table_default, template: "@HeimrichHannotContaoList/item/list_item_table_default.html.twig" }

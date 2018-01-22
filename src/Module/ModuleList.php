@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
- * @license LGPL-3.0+
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\ListBundle\Module;
@@ -28,7 +28,7 @@ use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use HeimrichHannot\ListBundle\Util\ListConfigHelper;
 use HeimrichHannot\Modal\ModalModel;
 use HeimrichHannot\Request\Request;
-use HeimrichHannot\UtilsBundle\Driver\DC_Table;
+use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
 use Patchwork\Utf8;
 
 class ModuleList extends \Contao\Module
@@ -58,12 +58,6 @@ class ModuleList extends \Contao\Module
         $this->framework = System::getContainer()->get('contao.framework');
 
         parent::__construct($objModule, $strColumn);
-
-        // add class to every list template
-        $cssID = $this->cssID;
-        $cssID[1] = $cssID[1].($cssID[1] ? ' ' : '').'huh-list';
-
-        $this->cssID = $cssID;
     }
 
     public function generate()
@@ -90,7 +84,6 @@ class ModuleList extends \Contao\Module
         $this->filterConfig = $this->getFilterConfig();
         $this->filter = (object) $this->filterConfig->getFilter();
         $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
-        $isSubmitted = $this->filterConfig->hasData();
 
         Controller::loadDataContainer($this->filter->dataContainer);
         System::loadLanguageFile($this->filter->dataContainer);
@@ -101,36 +94,54 @@ class ModuleList extends \Contao\Module
         $this->Template->headline = $this->headline;
         $this->Template->hl = $this->hl;
 
+        // add class to every list template
+        $cssID = $this->cssID;
+        $cssID[1] = $cssID[1].($cssID[1] ? ' ' : '').'huh-list';
+
+        $this->cssID = $cssID;
+
+        $this->Template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) {
+            return $this->parseList($listTemplate, $itemTemplate, $data);
+        };
+    }
+
+    protected function parseList(string $listTemplate = null, string $itemTemplate = null, array $data = [])
+    {
+        $templateData = [];
+        $isSubmitted = $this->filterConfig->hasData();
+
+        $templateData['wrapperId'] = 'huh-list-'.$this->id;
+
         // apply list config to template
-        foreach ($listConfig->row() as $field => $value) {
+        foreach ($this->listConfig->row() as $field => $value) {
             if (in_array($field, ['id', 'tstamp', 'dateAdded', 'title'], true)) {
                 continue;
             }
 
-            $this->Template->{$field} = $value;
+            $templateData[$field] = $value;
         }
 
-        $this->addDataAttributes();
+        $this->addDataAttributes($templateData);
 
         // sorting
-        $this->Template->currentSorting = $this->getCurrentSorting();
+        $templateData['currentSorting'] = $this->getCurrentSorting();
 
-        if ($listConfig->isTableList) {
-            $this->Template->isTableList = $listConfig->isTableList;
-            $this->Template->tableFields = StringUtil::deserialize($listConfig->tableFields, true);
+        if ($this->listConfig->isTableList) {
+            $templateData['isTableList'] = $this->listConfig->isTableList;
+            $templateData['tableFields'] = StringUtil::deserialize($this->listConfig->tableFields, true);
 
-            if ($listConfig->hasHeader) {
-                $this->Template->header = $this->generateTableHeader();
+            if ($this->listConfig->hasHeader) {
+                $templateData['header'] = $this->generateTableHeader();
             }
         }
 
         // apply filter
         $queryBuilder = $this->filterRegistry->getQueryBuilder($this->filter->id);
 
-        $this->Template->isSubmitted = $isSubmitted;
+        $templateData['isSubmitted'] = $isSubmitted;
 
-        if ($listConfig->limitFields) {
-            $fieldsArray = \Contao\StringUtil::deserialize($listConfig->fields, true);
+        if ($this->listConfig->limitFields) {
+            $fieldsArray = \Contao\StringUtil::deserialize($this->listConfig->fields, true);
 
             // always add id
             if (!in_array('id', $fieldsArray, true)) {
@@ -142,35 +153,34 @@ class ModuleList extends \Contao\Module
             $fields = '*';
         }
 
-        if ($isSubmitted || $listConfig->showInitialResults) {
-            $this->Template->totalCount = $queryBuilder->select($fields)->execute()->rowCount();
+        if ($isSubmitted || $this->listConfig->showInitialResults) {
+            $templateData['totalCount'] = $queryBuilder->select($fields)->execute()->rowCount();
         }
 
         // item count text
-        if ($listConfig->overrideItemCountText) {
-            $this->Template->itemsFoundText = str_replace('%count%', $this->Template->totalCount, $listConfig->itemCountText);
-        } else {
-            $this->Template->itemsFoundText = System::getContainer()->get('translator')->trans(
-                'huh.list.misc.itemsFound',
-                ['%count%' => $this->Template->totalCount]
-            );
-        }
+        $templateData['itemsFoundText'] = System::getContainer()->get('translator')->transChoice(
+            $this->listConfig->itemCountText ?: 'huh.list.count.text.default',
+            $templateData['totalCount'],
+            ['%count%' => $templateData['totalCount']]
+        );
 
         // no items text
-        if ($listConfig->overrideNoItemsText) {
-            $this->Template->noItemsText = $listConfig->noItemsText;
-        } else {
-            $this->Template->noItemsText = System::getContainer()->get('translator')->trans('huh.list.misc.noItemsFound');
-        }
+        $templateData['noItemsText'] =
+            System::getContainer()->get('translator')->trans($this->listConfig->noItemsText ?: 'huh.list.empty.text.default');
 
-        $this->applyListConfigToQueryBuilder($queryBuilder);
+        $this->applyListConfigToQueryBuilder($queryBuilder, $templateData);
 
-        if ($isSubmitted || $listConfig->showInitialResults) {
+        if ($isSubmitted || $this->listConfig->showInitialResults) {
             $items = $queryBuilder->execute()->fetchAll();
 
             $preparedItems = $this->prepareItems($items);
-            $this->Template->items = $this->parseItems($preparedItems);
+            $templateData['items'] = $this->parseItems($preparedItems, $itemTemplate);
         }
+
+        $listTemplate = $this->getListTemplateByName(($listTemplate ?: $this->listConfig->listTemplate) ?: 'default');
+        $data = array_merge($templateData, $data);
+
+        return System::getContainer()->get('twig')->render($listTemplate, $data);
     }
 
     protected function prepareItems(array $items): array
@@ -195,7 +205,7 @@ class ModuleList extends \Contao\Module
         $result = [];
         $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
 
-        $dc = DC_Table::createFromModelData($item, $filter->dataContainer);
+        $dc = DC_Table_Utils::createFromModelData($item, $filter->dataContainer);
 
         $fields = $listConfig->limitFields ? StringUtil::deserialize($listConfig->fields, true) : array_keys($dca['fields']);
 
@@ -253,7 +263,7 @@ class ModuleList extends \Contao\Module
         return $result;
     }
 
-    protected function parseItems(array $items): array
+    protected function parseItems(array $items, string $itemTemplate = null): array
     {
         $limit = count($items);
 
@@ -268,12 +278,13 @@ class ModuleList extends \Contao\Module
             ++$count;
             $first = 1 == $count ? ' first' : '';
             $last = $count == $limit ? ' last' : '';
-            $oddEven = (0 == ($count % 2)) ? ' odd' : ' even';
+            $oddEven = (0 == ($count % 2)) ? ' even' : ' odd';
 
             $class = 'item item_'.$count.$first.$last.$oddEven;
 
             $results[] = $this->parseItem(
                 $item,
+                $itemTemplate,
                 $class,
                 $count
             );
@@ -282,7 +293,7 @@ class ModuleList extends \Contao\Module
         return $results;
     }
 
-    protected function parseItem(array $item, string $class = '', int $count = 0): string
+    protected function parseItem(array $item, string $itemTemplate = null, string $class = '', int $count = 0): string
     {
         $listConfig = $this->listConfig;
         $filter = $this->filter;
@@ -316,7 +327,10 @@ class ModuleList extends \Contao\Module
 
         $this->modifyItemTemplateData($templateData, $item);
 
-        return System::getContainer()->get('twig')->render($this->getTemplateByName($listConfig->itemTemplate ?: 'default'), $templateData);
+        return System::getContainer()->get('twig')->render(
+            $this->getItemTemplateByName(($itemTemplate ?: $listConfig->itemTemplate) ?: 'default'),
+            $templateData
+        );
     }
 
     protected function addImagesToTemplate(array $item, array &$templateData, ListConfigModel $listConfig)
@@ -328,6 +342,8 @@ class ModuleList extends \Contao\Module
 
         if (null !== $imageListConfigElements) {
             while ($imageListConfigElements->next()) {
+                $image = null;
+
                 if ($item['raw'][$imageListConfigElements->imageSelectorField] && $item['raw'][$imageListConfigElements->imageField]) {
                     $imageSelectorField = $imageListConfigElements->imageSelectorField;
                     $image = $item['raw'][$imageListConfigElements->imageField];
@@ -386,7 +402,21 @@ class ModuleList extends \Contao\Module
         }
     }
 
-    protected function getTemplateByName($name)
+    protected function getListTemplateByName($name)
+    {
+        $config = System::getContainer()->getParameter('huh.list');
+        $templates = $config['list']['templates']['list'];
+
+        foreach ($templates as $template) {
+            if ($template['name'] == $name) {
+                return $template['template'];
+            }
+        }
+
+        return null;
+    }
+
+    protected function getItemTemplateByName($name)
     {
         $config = System::getContainer()->getParameter('huh.list');
         $templates = $config['list']['templates']['item'];
@@ -475,7 +505,7 @@ class ModuleList extends \Contao\Module
     {
     }
 
-    protected function applyListConfigToQueryBuilder(FilterQueryBuilder $queryBuilder)
+    protected function applyListConfigToQueryBuilder(FilterQueryBuilder $queryBuilder, array &$templateData)
     {
         $listConfig = $this->listConfig;
 
@@ -490,7 +520,7 @@ class ModuleList extends \Contao\Module
         }
 
         // total item number
-        $totalCount = $this->Template->totalCount;
+        $totalCount = $templateData['totalCount'];
 
         // sorting
         $currentSorting = $this->getCurrentSorting();
@@ -498,20 +528,20 @@ class ModuleList extends \Contao\Module
         if (ListConfig::SORTING_MODE_RANDOM == $currentSorting['order']) {
             $randomSeed = Request::getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
             $queryBuilder->orderBy('RAND("'.(int) $randomSeed.'")');
-            list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit, $randomSeed);
+            list($offset, $limit) = $this->splitResults($templateData, $offset, $totalCount, $limit, $randomSeed);
         } else {
             if (!empty($currentSorting)) {
                 $queryBuilder->orderBy($currentSorting['order'], $currentSorting['sort']);
             }
 
-            list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit);
+            list($offset, $limit) = $this->splitResults($templateData, $offset, $totalCount, $limit);
         }
 
         // split the results
         $queryBuilder->setFirstResult($offset)->setMaxResults($limit);
     }
 
-    protected function splitResults($offset, $total, $limit, $randomSeed = null)
+    protected function splitResults(array &$templateData, $offset, $total, $limit, $randomSeed = null)
     {
         $listConfig = $this->listConfig;
         $offsettedTotal = $total - $offset;
@@ -551,15 +581,20 @@ class ModuleList extends \Contao\Module
             // Add the pagination menu
             if ($listConfig->addAjaxPagination) {
                 $pagination = new RandomPagination(
-                    $randomSeed, $offsettedTotal, $this->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate('pagination_ajax')
+                    $randomSeed,
+                    $offsettedTotal,
+                    $listConfig->perPage,
+                    Config::get('maxPaginationLinks'),
+                    $id,
+                    new FrontendTemplate('pagination_ajax')
                 );
             } else {
                 $pagination = new RandomPagination(
-                    $randomSeed, $offsettedTotal, $this->perPage, $GLOBALS['TL_CONFIG']['maxPaginationLinks'], $id
+                    $randomSeed, $offsettedTotal, $listConfig->perPage, $GLOBALS['TL_CONFIG']['maxPaginationLinks'], $id
                 );
             }
 
-            $this->Template->pagination = $pagination->generate("\n  ");
+            $templateData['pagination'] = $pagination->generate("\n  ");
         }
 
         return [$offset, $limit];
@@ -601,19 +636,20 @@ class ModuleList extends \Contao\Module
         return $headerFields;
     }
 
-    protected function addDataAttributes()
+    protected function addDataAttributes(array &$templateData)
     {
         $dataAttributes = [];
         $stringUtil = System::getContainer()->get('huh.utils.string');
+        $listConfig = $this->listConfig;
 
         foreach ($GLOBALS['TL_DCA']['tl_list_config']['fields'] as $field => $data) {
-            if ($data['addAsDataAttribute']) {
-                $dataAttributes[] = 'data-'.$stringUtil->camelCaseToDashed($field).'="'.$this->listConfig->{$field}.'"';
+            if ($data['eval']['addAsDataAttribute'] && $listConfig->{$field}) {
+                $dataAttributes[] = 'data-'.$stringUtil->camelCaseToDashed($field).'="'.$listConfig->{$field}.'"';
             }
         }
 
         if (!empty($dataAttributes)) {
-            $this->Template->dataAttributes = implode(' ', $dataAttributes);
+            $templateData['dataAttributes'] = implode(' ', $dataAttributes);
         }
     }
 
@@ -642,6 +678,7 @@ class ModuleList extends \Contao\Module
     protected function handleShare()
     {
         $listConfig = $this->listConfig;
+        $filter = $this->filter;
         $action = Request::getGet('act');
 
         if (ListBundle::ACTION_SHARE == $action && $listConfig->addShare) {
@@ -649,7 +686,7 @@ class ModuleList extends \Contao\Module
             $id = Request::getGet($listConfig->useAlias ? $listConfig->aliasField : 'id');
 
             if (null !== ($entity =
-                    System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($this->framework, $listConfig->dataContainer, $id))
+                    System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($this->framework, $filter->dataContainer, $id))
             ) {
                 $now = time();
 

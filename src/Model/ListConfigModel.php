@@ -3,20 +3,23 @@
 /*
  * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
- * @license LGPL-3.0+
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\ListBundle\Model;
 
 /**
  * @property int    $id
+ * @property int    $tstamp
+ * @property int    $dateAdded
  * @property string $title
  * @property int    $numberOfItems
  * @property int    $perPage
  * @property int    $skipFirst
  * @property bool   $showItemCount
- * @property bool   $overrideItemCountText
  * @property string $itemCountText
+ * @property bool   $showNoItemsText
+ * @property string $noItemsText
  * @property bool   $showInitialResults
  * @property bool   $isTableList
  * @property bool   $hasHeader
@@ -39,6 +42,7 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property bool   $addMasonry
  * @property string $masonryStampContentElements
  * @property string $itemTemplate
+ * @property string $listTemplate
  * @property int    $filter
  * @property bool   $limitFields
  * @property string $fields

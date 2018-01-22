@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2018 Heimrich & Hannot GmbH
  *
- * @license LGPL-3.0+
+ * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\ListBundle\DependencyInjection;
@@ -42,6 +42,20 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('templates')
                             ->addDefaultsIfNotSet()
                             ->children()
+                                ->arrayNode('list')
+                                ->arrayPrototype()
+                                        ->children()
+                                            ->scalarNode('name')
+                                                ->isRequired()
+                                                ->cannotBeEmpty()
+                                            ->end()
+                                            ->scalarNode('template')
+                                                ->isRequired()
+                                                ->cannotBeEmpty()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
                                 ->arrayNode('item')
                                 ->arrayPrototype()
                                     ->children()

@@ -11,7 +11,7 @@ namespace HeimrichHannot\ListBundle\Choice;
 use Contao\System;
 use HeimrichHannot\UtilsBundle\Choice\AbstractChoice;
 
-class ListItemTemplateChoice extends AbstractChoice
+class ListTemplateChoice extends AbstractChoice
 {
     /**
      * @return array
@@ -22,11 +22,11 @@ class ListItemTemplateChoice extends AbstractChoice
 
         $config = System::getContainer()->getParameter('huh.list');
 
-        if (!isset($config['list']['templates']['item'])) {
+        if (!isset($config['list']['templates']['list'])) {
             return $choices;
         }
 
-        foreach ($config['list']['templates']['item'] as $template) {
+        foreach ($config['list']['templates']['list'] as $template) {
             $choices[$template['name']] = $template['template'];
         }
 

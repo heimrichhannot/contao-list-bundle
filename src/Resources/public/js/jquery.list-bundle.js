@@ -4,6 +4,7 @@
         init: function()
         {
             this.initPagination();
+            this.initMasonry();
         },
         initPagination: function()
         {
@@ -29,6 +30,12 @@
                         $jscrollAdded.imagesLoaded(function()
                         {
                             $items.append($newItems.fadeIn(300));
+
+                            if (1 === $wrapper.attr('data-fhl-masonry')) {
+                                $items.masonry('appended', $newItems);
+                                // whyever not items, but works...
+                                $list.masonry();
+                            }
 
                             // remove item counters...
                             $items.find('.item').removeClass(function(index, cssClass)
@@ -75,6 +82,27 @@
                             $jscrollAdded.remove();
                         });
                     }
+                });
+            });
+        },
+        initMasonry: function()
+        {
+            $('.huh-list .wrapper[data-add-masonry="1"]').each(function()
+            {
+                var $this = $(this).find('.items'),
+                    options = $(this).data('masonry-options');
+
+                var $grid = $this.imagesLoaded(function()
+                {
+                    $grid.masonry({
+                        // fitWidth: true,
+                        itemSelector: '.item'
+                    });
+
+                    $grid.masonry('stamp', $grid.find('.stamp-item'));
+
+                    // update due to stamps
+                    $grid.masonry();
                 });
             });
         }

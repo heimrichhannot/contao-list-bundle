@@ -18,6 +18,7 @@ use Contao\FrontendTemplate;
 use Contao\ModuleModel;
 use Contao\StringUtil;
 use Contao\System;
+use HeimrichHannot\Blocks\BlockModuleModel;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Backend\ListBundle;
@@ -122,6 +123,7 @@ class ModuleList extends \Contao\Module
         }
 
         $this->addDataAttributes($templateData);
+        $this->addMasonry($templateData);
 
         // sorting
         $templateData['currentSorting'] = $this->getCurrentSorting();
@@ -650,6 +652,24 @@ class ModuleList extends \Contao\Module
 
         if (!empty($dataAttributes)) {
             $templateData['dataAttributes'] = implode(' ', $dataAttributes);
+        }
+    }
+
+    protected function addMasonry(array &$templateData)
+    {
+        if ($this->addMasonry) {
+            $templateData['addMasonry'] = true;
+            $arrStamps                  = [];
+
+            foreach (deserialize($this->masonryStampContentElements, true) as $arrStamp) {
+                $arrStamps[] = [
+                    'content' => $this->framework->getAdapter(BlockModuleModel::class)
+                        ->generateContent($arrStamp['stampBlock']),
+                    'class'   => $arrStamp['stampCssClass']
+                ];
+            }
+
+            $templateData['masonryStampContentElements'] = $arrStamps;
         }
     }
 

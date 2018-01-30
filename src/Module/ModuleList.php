@@ -87,7 +87,7 @@ class ModuleList extends \Contao\Module
         $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
 
         Controller::loadDataContainer($this->filter->dataContainer);
-        System::loadLanguageFile($this->filter->dataContainer);
+        $this->framework->getAdapter(System::class)->loadLanguageFile($this->filter->dataContainer);
 
         $this->handleShare();
 

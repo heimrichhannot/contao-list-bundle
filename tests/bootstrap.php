@@ -9,6 +9,8 @@
 error_reporting(E_ALL);
 define('TL_MODE', 'FE'); // required by contao 3
 define('UNIT_TESTING', true);
+define('TL_ROOT', __DIR__);
+define('TL_LANGUAGE', 'de');
 
 $include = function ($file) {
     return file_exists($file) ? include $file : false;

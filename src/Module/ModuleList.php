@@ -659,13 +659,13 @@ class ModuleList extends \Contao\Module
     {
         if ($this->addMasonry) {
             $templateData['addMasonry'] = true;
-            $arrStamps                  = [];
+            $arrStamps = [];
 
             foreach (deserialize($this->masonryStampContentElements, true) as $arrStamp) {
                 $arrStamps[] = [
                     'content' => $this->framework->getAdapter(BlockModuleModel::class)
                         ->generateContent($arrStamp['stampBlock']),
-                    'class'   => $arrStamp['stampCssClass']
+                    'class' => $arrStamp['stampCssClass'],
                 ];
             }
 

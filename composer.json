@@ -4,9 +4,10 @@
   "description": "This bundle offers a generic list module to use with arbitrary contao entities containing standard list handling like pagination, sorting, and filtering.",
   "license": "LGPL-3.0-or-later",
   "require": {
-    "php": ">=7.0.0",
+    "php": "~7.1",
     "contao/core-bundle": "^4.4",
     "heimrichhannot/contao-filter-bundle": "dev-master",
+    "heimrichhannot/contao-utils-bundle": "dev-master",
     "heimrichhannot-contao-components/masonry": "4.2.*",
     "heimrichhannot-contao-components/imagesloaded": "~4.1"
   },

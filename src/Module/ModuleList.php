@@ -172,6 +172,8 @@ class ModuleList extends \Contao\Module
 
         $this->applyListConfigToQueryBuilder($queryBuilder, $templateData);
 
+        $this->modifyQueryBuilder($queryBuilder, $templateData);
+
         if ($isSubmitted || $this->listConfig->showInitialResults) {
             $items = $queryBuilder->execute()->fetchAll();
 
@@ -782,5 +784,15 @@ class ModuleList extends \Contao\Module
         }
 
         return $idOrAlias;
+    }
+
+    /**
+     * Override to add custom filters before query builder execution.
+     *
+     * @param FilterQueryBuilder $queryBuilder
+     * @param array              $templateData
+     */
+    protected function modifyQueryBuilder(FilterQueryBuilder $queryBuilder, array &$templateData)
+    {
     }
 }

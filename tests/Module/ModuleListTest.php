@@ -69,7 +69,7 @@ class ModuleListTest extends ContaoTestCase
     /**
      * Noch nicht fertiggestellt.
      */
-    public function skiptestGenerate()
+    public function skip_testGenerate()
     {
         TemplateLoader::addFiles(['mod_list' => '../src/Resources/contao/templates']);
 
@@ -141,7 +141,10 @@ class ModuleListTest extends ContaoTestCase
             'filter' => 3,
         ];
 
-        $listRegistryModel = $this->getMockBuilder(ListConfigModel::class)->disableOriginalConstructor()->setMethods(['row'])->getMock();
+        $listRegistryModel = $this->getMockBuilder(ListConfigModel::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['row', '__set'])
+            ->getMock();
         $listRegistryModel->method('row')->willReturn($listModelData);
 
         $listRegistryModel->filter = 3;

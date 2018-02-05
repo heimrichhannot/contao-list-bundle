@@ -15,6 +15,7 @@ use Contao\Database;
 use Contao\Environment;
 use Contao\FilesModel;
 use Contao\FrontendTemplate;
+use Contao\Module;
 use Contao\ModuleModel;
 use Contao\StringUtil;
 use Contao\System;
@@ -32,7 +33,7 @@ use HeimrichHannot\Request\Request;
 use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
 use Patchwork\Utf8;
 
-class ModuleList extends \Contao\Module
+class ModuleList extends Module
 {
     protected $strTemplate = 'mod_list';
 

@@ -576,6 +576,7 @@ class ModuleList extends Module
             // Get the current page
             $id = 'page_s'.$this->id;
             $page = Request::getGet($id) ?: 1;
+            $templateData['page'] = $page;
 
             // Do not index or cache the page if the page number is outside the range
             if ($page < 1 || $page > max(ceil($offsettedTotal / $listConfig->perPage), 1)) {

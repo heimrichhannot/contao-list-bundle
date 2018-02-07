@@ -295,12 +295,19 @@ class ModuleList extends Module
 
             $class = 'item item_'.$count.$first.$last.$oddEven;
 
-            $results[] = $this->parseItem(
+            $result = $this->parseItem(
                 $item,
                 $itemTemplate,
                 $class,
                 $count
             );
+
+            if (empty(trim($result))) {
+                --$count;
+                continue;
+            }
+
+            $results[] = $result;
         }
 
         return $results;
@@ -668,11 +675,17 @@ class ModuleList extends Module
 
     protected function addMasonry(array &$templateData)
     {
-        if ($this->addMasonry) {
-            $templateData['addMasonry'] = true;
+        if ($templateData['addMasonry']) {
+//            $templateData['addMasonry'] = true;
+
+            $contentElements = deserialize($templateData['masonryStampContentElements']);
+            if (empty($contentElements)) {
+                return;
+            }
             $arrStamps = [];
 
-            foreach (deserialize($this->masonryStampContentElements, true) as $arrStamp) {
+            foreach ($contentElements as $arrStamp) {
+//                $content = BlockModuleModel::generateContent()
                 $arrStamps[] = [
                     'content' => $this->framework->getAdapter(BlockModuleModel::class)
                         ->generateContent($arrStamp['stampBlock']),

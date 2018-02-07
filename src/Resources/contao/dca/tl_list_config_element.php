@@ -69,7 +69,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'type',
             'placeholderImageMode'
         ],
-        'default'                                                        => '{type_legend},title,type;',
+        'default'                                                        => '{title_type_legend},title,type;',
         \HeimrichHannot\ListBundle\Backend\ListConfigElement::TYPE_IMAGE => '{title_type_legend},title,type;{config_legend},imageSelectorField,imageField,imgSize,placeholderImageMode;'
     ],
     'subpalettes' => [

@@ -4,6 +4,7 @@
         init: function()
         {
             this.initPagination();
+            this.initMasonry();
         },
         initPagination: function()
         {
@@ -30,12 +31,17 @@
                         {
                             $items.append($newItems.fadeIn(300));
 
+                            if ($wrapper.attr('data-add-masonry') === "1") {
+                                $items.masonry('appended', $newItems);
+                                $items.masonry();
+                            }
+
                             // remove item counters...
                             $items.find('.item').removeClass(function(index, cssClass)
                             {
                                 var matches = cssClass.match(/item_\d+/g);
 
-                                if (matches.length > 0)
+                                if (matches instanceof Array && matches.length > 0)
                                 {
                                     return matches[0];
                                 }
@@ -75,6 +81,26 @@
                             $jscrollAdded.remove();
                         });
                     }
+                });
+            });
+        },
+        initMasonry: function()
+        {
+            $('.huh-list .wrapper[data-add-masonry="1"]').each(function()
+            {
+                var $this = $(this).find('.items'),
+                    options = $(this).data('masonry-options');
+
+                var $grid = $this.imagesLoaded(function()
+                {
+                    $grid.masonry({
+                        // fitWidth: true,
+                        itemSelector: '.item',
+                        stamp: '.stamp-item'
+                    });
+
+                    // update due to stamps
+                    $grid.masonry();
                 });
             });
         }

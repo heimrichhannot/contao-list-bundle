@@ -5,9 +5,9 @@
         </td>
     {% endfor %}
 
-    {% if addDetails and detailsUrl is defined %}
+    {% if addDetails|default() and detailsUrl|default() %}
         <td>
-            {% if useModal %}
+            {% if useModal|default() %}
                 <a class="details" href="{{ modalUrl }}" data-toggle="modal">
                     {{ 'huh.list.misc.detailsTitle' | trans }}
                 </a>
@@ -19,7 +19,7 @@
         </td>
     {% endif %}
 
-    {% if addShare and shareUrl is defined %}
+    {% if addShare|default() and shareUrl|default() %}
         <td>
             <a class="share" href="{{ shareUrl }}" data-message="{{ shareMessage }}">
                 {{ shareTitle }}

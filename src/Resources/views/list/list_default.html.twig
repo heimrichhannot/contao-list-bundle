@@ -9,7 +9,7 @@
                     {{ item|raw }}
                 {% endfor %}
             </div>
-            {{ pagination|raw }}
+            {{ pagination|default()|raw }}
         {% elseif showNoItemsText %}
             <p class="no-items">{{ noItemsText|raw }}</p>
         {% endif %}

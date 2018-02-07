@@ -15,9 +15,11 @@ use Contao\Database;
 use Contao\Environment;
 use Contao\FilesModel;
 use Contao\FrontendTemplate;
+use Contao\Module;
 use Contao\ModuleModel;
 use Contao\StringUtil;
 use Contao\System;
+use HeimrichHannot\Blocks\BlockModuleModel;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Backend\ListBundle;
@@ -31,7 +33,7 @@ use HeimrichHannot\Request\Request;
 use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
 use Patchwork\Utf8;
 
-class ModuleList extends \Contao\Module
+class ModuleList extends Module
 {
     protected $strTemplate = 'mod_list';
 
@@ -86,7 +88,7 @@ class ModuleList extends \Contao\Module
         $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
 
         Controller::loadDataContainer($this->filter->dataContainer);
-        System::loadLanguageFile($this->filter->dataContainer);
+        $this->framework->getAdapter(System::class)->loadLanguageFile($this->filter->dataContainer);
 
         $this->handleShare();
 
@@ -122,6 +124,7 @@ class ModuleList extends \Contao\Module
         }
 
         $this->addDataAttributes($templateData);
+        $this->addMasonry($templateData);
 
         // sorting
         $templateData['currentSorting'] = $this->getCurrentSorting();
@@ -169,6 +172,8 @@ class ModuleList extends \Contao\Module
             System::getContainer()->get('translator')->trans($this->listConfig->noItemsText ?: 'huh.list.empty.text.default');
 
         $this->applyListConfigToQueryBuilder($queryBuilder, $templateData);
+
+        $this->modifyQueryBuilder($queryBuilder, $templateData);
 
         if ($isSubmitted || $this->listConfig->showInitialResults) {
             $items = $queryBuilder->execute()->fetchAll();
@@ -260,6 +265,14 @@ class ModuleList extends \Contao\Module
             $result['raw'][$field] = $value;
         }
 
+        // HOOK: add custom logic
+        if (isset($GLOBALS['TL_HOOKS']['parseListItem']) && is_array($GLOBALS['TL_HOOKS']['parseListItem'])) {
+            foreach ($GLOBALS['TL_HOOKS']['parseListItem'] as $callback) {
+                $this->import($callback[0]);
+                $result = System::getContainer()->get($callback[0])->{$callback[1]}($result, $item, $this);
+            }
+        }
+
         return $result;
     }
 
@@ -282,12 +295,19 @@ class ModuleList extends \Contao\Module
 
             $class = 'item item_'.$count.$first.$last.$oddEven;
 
-            $results[] = $this->parseItem(
+            $result = $this->parseItem(
                 $item,
                 $itemTemplate,
                 $class,
                 $count
             );
+
+            if (empty(trim($result))) {
+                --$count;
+                continue;
+            }
+
+            $results[] = $result;
         }
 
         return $results;
@@ -556,6 +576,7 @@ class ModuleList extends \Contao\Module
             // Get the current page
             $id = 'page_s'.$this->id;
             $page = Request::getGet($id) ?: 1;
+            $templateData['page'] = $page;
 
             // Do not index or cache the page if the page number is outside the range
             if ($page < 1 || $page > max(ceil($offsettedTotal / $listConfig->perPage), 1)) {
@@ -650,6 +671,30 @@ class ModuleList extends \Contao\Module
 
         if (!empty($dataAttributes)) {
             $templateData['dataAttributes'] = implode(' ', $dataAttributes);
+        }
+    }
+
+    protected function addMasonry(array &$templateData)
+    {
+        if ($templateData['addMasonry']) {
+//            $templateData['addMasonry'] = true;
+
+            $contentElements = deserialize($templateData['masonryStampContentElements']);
+            if (empty($contentElements)) {
+                return;
+            }
+            $arrStamps = [];
+
+            foreach ($contentElements as $arrStamp) {
+//                $content = BlockModuleModel::generateContent()
+                $arrStamps[] = [
+                    'content' => $this->framework->getAdapter(BlockModuleModel::class)
+                        ->generateContent($arrStamp['stampBlock']),
+                    'class' => $arrStamp['stampCssClass'],
+                ];
+            }
+
+            $templateData['masonryStampContentElements'] = $arrStamps;
         }
     }
 
@@ -762,5 +807,15 @@ class ModuleList extends \Contao\Module
         }
 
         return $idOrAlias;
+    }
+
+    /**
+     * Override to add custom filters before query builder execution.
+     *
+     * @param FilterQueryBuilder $queryBuilder
+     * @param array              $templateData
+     */
+    protected function modifyQueryBuilder(FilterQueryBuilder $queryBuilder, array &$templateData)
+    {
     }
 }

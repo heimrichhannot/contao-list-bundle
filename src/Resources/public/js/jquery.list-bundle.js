@@ -100,8 +100,6 @@
                         stamp: '.stamp-item'
                     });
 
-                    // $grid.masonry('stamp', $grid.find('.stamp-item'));
-
                     // update due to stamps
                     $grid.masonry();
                 });

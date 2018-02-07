@@ -31,10 +31,9 @@
                         {
                             $items.append($newItems.fadeIn(300));
 
-                            if (1 === $wrapper.attr('data-fhl-masonry')) {
+                            if ($wrapper.attr('data-add-masonry') === "1") {
                                 $items.masonry('appended', $newItems);
-                                // whyever not items, but works...
-                                $list.masonry();
+                                $items.masonry();
                             }
 
                             // remove item counters...
@@ -42,7 +41,7 @@
                             {
                                 var matches = cssClass.match(/item_\d+/g);
 
-                                if (matches.length > 0)
+                                if (matches instanceof Array && matches.length > 0)
                                 {
                                     return matches[0];
                                 }

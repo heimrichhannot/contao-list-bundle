@@ -8,8 +8,8 @@
     "contao/core-bundle": "^4.4",
     "heimrichhannot/contao-filter-bundle": "dev-master",
     "heimrichhannot/contao-utils-bundle": "dev-master",
-    "heimrichhannot-contao-components/masonry": "4.2.*",
-    "heimrichhannot-contao-components/imagesloaded": "~4.1"
+    "heimrichhannot-contao-components/masonry": ">=4.2, <=4.3",
+    "heimrichhannot-contao-components/imagesloaded": "4.1.*"
   },
   "require-dev": {
     "contao/test-case": "^1.1",

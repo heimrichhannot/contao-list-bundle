@@ -37,7 +37,7 @@
                     </tbody>
                 </table>
             </div>
-            {{ pagination }}
+            {{ pagination|default()|raw }}
         {% elseif showNoItemsText %}
             <p class="no-items">{{ noItemsText|raw }}</p>
         {% endif %}

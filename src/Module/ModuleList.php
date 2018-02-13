@@ -139,6 +139,7 @@ class ModuleList extends Module
         }
 
         // apply filter
+        /** @var FilterQueryBuilder $queryBuilder */
         $queryBuilder = $this->filterRegistry->getQueryBuilder($this->filter->id);
 
         $templateData['isSubmitted'] = $isSubmitted;
@@ -556,6 +557,8 @@ class ModuleList extends Module
 
             list($offset, $limit) = $this->splitResults($templateData, $offset, $totalCount, $limit);
         }
+
+        $queryBuilder->orderBy('FIELD(id,16,17,18,32)', ' ');
 
         // split the results
         $queryBuilder->setFirstResult($offset)->setMaxResults($limit);

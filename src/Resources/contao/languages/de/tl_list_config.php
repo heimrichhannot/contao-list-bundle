@@ -48,6 +48,8 @@ $lang['sortingDirection'][0] = 'Sortierreihenfolge';
 $lang['sortingDirection'][1] = 'Wählen Sie eine Reihenfolge für die Sortierung aus.';
 $lang['sortingText'][0]      = 'Sortierung';
 $lang['sortingText'][1]      = 'Geben Sie hier eine Sortierung ein (Beispiel: "myField1 ASC, myField2 DESC").';
+$lang['sortingItems'][0]     = 'Manuelle Sortierung';
+$lang['sortingItems'][1]     = 'Wählen Sie hier die manuelle Sortierung aus.';
 
 // jump to
 $lang['useAlias'][0]   = 'Alias-Feld verwenden';
@@ -105,6 +107,7 @@ $lang['reference'] = [
     \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_FIELD     => 'Feld',
     \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_TEXT      => 'Freitext',
     \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_RANDOM    => 'Zufällig',
+    \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_MANUAL    => 'Manuell',
     \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_DIRECTION_ASC  => 'Aufsteigend',
     \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_DIRECTION_DESC => 'Absteigend',
 ];

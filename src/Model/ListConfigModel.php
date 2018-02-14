@@ -29,6 +29,7 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property string $sortingField
  * @property string $sortingDirection
  * @property string $sortingText
+ * @property string $sortingItems
  * @property bool   $useAlias
  * @property string $aliasField
  * @property bool   $useModal

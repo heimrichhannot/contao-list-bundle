@@ -60,7 +60,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
                 'label'      => &$GLOBALS['TL_LANG']['tl_list_config']['delete'],
                 'href'       => 'act=delete',
                 'icon'       => 'delete.gif',
-                'attributes' => 'onclick="if(!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'\'))return false;Backend.getScrollOffset()"',
+                'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
             ],
             'show'       => [
                 'label' => &$GLOBALS['TL_LANG']['tl_list_config']['show'],
@@ -82,20 +82,21 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addAjaxPagination',
             'addMasonry',
         ],
-        'default'      => '{general_legend},title;'.'{filter_legend},filter;'.'{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showNoItemsText,showInitialResults,limitFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry;'.'{template_legend},listTemplate,itemTemplate;',
+        'default'      => '{general_legend},title;' . '{filter_legend},filter;' . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showNoItemsText,showInitialResults,limitFields,isTableList;' . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare;' . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;' . '{template_legend},listTemplate,itemTemplate;',
     ],
     'subpalettes' => [
-        'showItemCount'                                                                  => 'itemCountText',
-        'showNoItemsText'                                                                => 'noItemsText',
-        'limitFields'                                                                    => 'fields',
-        'isTableList'                                                                    => 'tableFields,hasHeader,sortingHeader',
-        'sortingMode_'.\HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_FIELD => 'sortingField,sortingDirection',
-        'sortingMode_'.\HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_TEXT  => 'sortingText',
-        'useAlias'                                                                       => 'aliasField',
-        'addDetails'                                                                     => 'useModalExplanation,useModal,jumpToDetails',
-        'addShare'                                                                       => 'jumpToShare,shareAutoItem',
-        'addAjaxPagination'                                                              => 'addInfiniteScroll',
-        'addMasonry'                                                                     => 'masonryStampContentElements',
+        'showItemCount'                                                                     => 'itemCountText',
+        'showNoItemsText'                                                                   => 'noItemsText',
+        'limitFields'                                                                       => 'fields',
+        'isTableList'                                                                       => 'tableFields,hasHeader,sortingHeader',
+        'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_FIELD  => 'sortingField,sortingDirection',
+        'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_TEXT   => 'sortingText',
+        'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_MANUAL => 'sortingItems',
+        'useAlias'                                                                          => 'aliasField',
+        'addDetails'                                                                        => 'useModalExplanation,useModal,jumpToDetails',
+        'addShare'                                                                          => 'jumpToShare,shareAutoItem',
+        'addAjaxPagination'                                                                 => 'addInfiniteScroll',
+        'addMasonry'                                                                        => 'masonryStampContentElements',
     ],
     'fields'      => [
         'id'                          => [
@@ -170,15 +171,15 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sql'       => "char(1) NOT NULL default ''",
         ],
         'noItemsText'                 => [
-            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['noItemsText'],
-            'exclude'   => true,
-            'search'    => true,
-            'inputType' => 'select',
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['noItemsText'],
+            'exclude'          => true,
+            'search'           => true,
+            'inputType'        => 'select',
             'options_callback' => function (\DataContainer $dc) {
                 return \Contao\System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.empty.text');
             },
-            'eval'      => ['maxlength' => 64, 'tl_class' => 'w50', 'includeBlankOption' => true],
-            'sql'       => "varchar(64) NOT NULL default ''",
+            'eval'             => ['maxlength' => 64, 'tl_class' => 'w50', 'includeBlankOption' => true],
+            'sql'              => "varchar(64) NOT NULL default ''",
         ],
         'showInitialResults'          => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['showInitialResults'],
@@ -267,6 +268,17 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType' => 'text',
             'eval'      => ['maxlength' => 64, 'tl_class' => 'w50', 'mandatory' => true],
             'sql'       => "varchar(64) NOT NULL default ''",
+        ],
+        'sortingItems' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config']['sortingItems'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'inputType'               => 'checkboxWizard',
+            'options_callback' => function (DataContainer $dc) {
+                return \HeimrichHannot\ListBundle\Util\ListConfigHelper::getModelInstances($dc);
+            },
+            'eval'                    => ['tl_class' => 'w50', 'mandatory' => true, 'multiple' => true],
+            'sql'                     => "blob NULL"
         ],
         // jump to
         'useAlias'                    => [

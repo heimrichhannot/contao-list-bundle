@@ -550,6 +550,14 @@ class ModuleList extends Module
             $randomSeed = Request::getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
             $queryBuilder->orderBy('RAND("'.(int) $randomSeed.'")');
             list($offset, $limit) = $this->splitResults($templateData, $offset, $totalCount, $limit, $randomSeed);
+        } elseif (ListConfig::SORTING_MODE_MANUAL == $currentSorting['order']) {
+            $sortingItems = StringUtil::deserialize($listConfig->sortingItems, true);
+
+            if (!empty($sortingItems)) {
+                $queryBuilder->orderBy('FIELD(id,'.implode(',', $sortingItems).')', ' ');
+            }
+
+            list($offset, $limit) = $this->splitResults($templateData, $offset, $totalCount, $limit);
         } else {
             if (!empty($currentSorting)) {
                 $queryBuilder->orderBy($currentSorting['order'], $currentSorting['sort']);
@@ -557,8 +565,6 @@ class ModuleList extends Module
 
             list($offset, $limit) = $this->splitResults($templateData, $offset, $totalCount, $limit);
         }
-
-        $queryBuilder->orderBy('FIELD(id,16,17,18,32)', ' ');
 
         // split the results
         $queryBuilder->setFirstResult($offset)->setMaxResults($limit);
@@ -787,6 +793,11 @@ class ModuleList extends Module
                 case ListConfig::SORTING_MODE_RANDOM:
                     $currentSorting = [
                         'order' => ListConfig::SORTING_MODE_RANDOM,
+                    ];
+                    break;
+                case ListConfig::SORTING_MODE_MANUAL:
+                    $currentSorting = [
+                        'order' => ListConfig::SORTING_MODE_MANUAL,
                     ];
                     break;
                 default:

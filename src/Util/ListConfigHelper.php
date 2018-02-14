@@ -54,4 +54,17 @@ class ListConfigHelper
             ]
         );
     }
+
+    public static function getModelInstances(DataContainer $dc)
+    {
+        if (!$dc->id || null === ($filter = System::getContainer()->get('huh.list.list-config-registry')->getFilterByPk($dc->id))) {
+            return [];
+        }
+
+        return \Contao\System::getContainer()->get('huh.utils.choice.model_instance')->getCachedChoices(
+            [
+                'dataContainer' => $filter['dataContainer'],
+            ]
+        );
+    }
 }

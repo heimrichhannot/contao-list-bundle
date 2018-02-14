@@ -18,11 +18,13 @@ class ListConfig extends Backend
     const SORTING_MODE_FIELD = 'field';
     const SORTING_MODE_TEXT = 'text';
     const SORTING_MODE_RANDOM = 'random';
+    const SORTING_MODE_MANUAL = 'manual';
 
     const SORTING_MODES = [
         self::SORTING_MODE_FIELD,
         self::SORTING_MODE_TEXT,
         self::SORTING_MODE_RANDOM,
+        self::SORTING_MODE_MANUAL,
     ];
 
     const SORTING_DIRECTION_ASC = 'asc';

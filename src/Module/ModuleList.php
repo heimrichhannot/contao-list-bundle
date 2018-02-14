@@ -82,7 +82,10 @@ class ModuleList extends Module
     {
         Controller::loadDataContainer('tl_list_config');
 
-        $this->listConfig = $listConfig = $this->getListConfig();
+        $this->listConfig = $listConfig = System::getContainer()->get('huh.list.list-config-registry')->computeListConfig(
+            $this->getListConfig()->id
+        );
+
         $this->filterConfig = $this->getFilterConfig();
         $this->filter = (object) $this->filterConfig->getFilter();
         $this->filterRegistry = System::getContainer()->get('huh.filter.registry');

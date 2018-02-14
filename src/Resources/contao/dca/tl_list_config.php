@@ -8,6 +8,9 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'dataContainer'     => 'Table',
         'ctable'            => 'tl_list_config_element',
         'enableVersioning'  => true,
+        'onload_callback'   => [
+            ['HeimrichHannot\ListBundle\Backend\ListConfig', 'flattenPaletteForSubEntities']
+        ],
         'onsubmit_callback' => [
             ['huh.utils.dca', 'setDateAdded'],
         ],
@@ -24,12 +27,13 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'label'             => [
             'fields' => ['title'],
             'format' => '%s',
+            'label_callback' => ['HeimrichHannot\ListBundle\Backend\ListConfig', 'generateLabel']
         ],
         'sorting'           => [
-            'mode'         => 1,
-            'fields'       => ['title'],
-            'headerFields' => ['title'],
-            'panelLayout'  => 'filter;sort,search,limit',
+            'mode'                  => 1,
+            'fields'                => ['title'],
+            'headerFields'          => ['title'],
+            'panelLayout'           => 'filter;sort,search,limit',
         ],
         'global_operations' => [
             'all' => [
@@ -82,7 +86,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addAjaxPagination',
             'addMasonry',
         ],
-        'default'      => '{general_legend},title;' . '{filter_legend},filter;' . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showNoItemsText,showInitialResults,limitFields,isTableList;' . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare;' . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;' . '{template_legend},listTemplate,itemTemplate;',
+        'default'      => '{general_legend},title,parentListConfig;' . '{filter_legend},filter;' . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showNoItemsText,showInitialResults,limitFields,isTableList;' . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare;' . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;' . '{template_legend},listTemplate,itemTemplate;',
     ],
     'subpalettes' => [
         'showItemCount'                                                                     => 'itemCountText',
@@ -100,17 +104,19 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
     ],
     'fields'      => [
         'id'                          => [
-            'sql' => "int(10) unsigned NOT NULL auto_increment",
+            'sql'  => "int(10) unsigned NOT NULL auto_increment",
+            'eval' => ['notOverridable' => true],
         ],
         'tstamp'                      => [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config']['tstamp'],
+            'eval'  => ['notOverridable' => true],
             'sql'   => "int(10) unsigned NOT NULL default '0'",
         ],
         'dateAdded'                   => [
             'label'   => &$GLOBALS['TL_LANG']['MSC']['dateAdded'],
             'sorting' => true,
             'flag'    => 6,
-            'eval'    => ['rgxp' => 'datim', 'doNotCopy' => true],
+            'eval'    => ['rgxp' => 'datim', 'doNotCopy' => true, 'notOverridable' => true],
             'sql'     => "int(10) unsigned NOT NULL default '0'",
         ],
         // general
@@ -121,8 +127,23 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sorting'   => true,
             'flag'      => 1,
             'inputType' => 'text',
-            'eval'      => ['mandatory' => true, 'tl_class' => 'w50'],
+            'eval'      => ['mandatory' => true, 'tl_class' => 'w50', 'notOverridable' => true],
             'sql'       => "varchar(255) NOT NULL default ''",
+        ],
+        'parentListConfig'            => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['parentListConfig'],
+            'exclude'          => true,
+            'filter'           => true,
+            'inputType'        => 'select',
+            'options_callback' => function (DataContainer $dc) {
+                return \Contao\System::getContainer()->get('huh.list.choice.parent-list-config')->getCachedChoices(
+                    [
+                        'id' => $dc->id
+                    ]
+                );
+            },
+            'eval'             => ['tl_class' => 'w50', 'includeBlankOption' => true, 'chosen' => true, 'notOverridable' => true, 'submitOnChange' => true],
+            'sql'              => "int(10) unsigned NOT NULL default '0'"
         ],
         // config
         'limitFields'                 => [
@@ -269,16 +290,16 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'eval'      => ['maxlength' => 64, 'tl_class' => 'w50', 'mandatory' => true],
             'sql'       => "varchar(64) NOT NULL default ''",
         ],
-        'sortingItems' => [
-            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config']['sortingItems'],
-            'exclude'                 => true,
-            'filter'                  => true,
-            'inputType'               => 'checkboxWizard',
+        'sortingItems'                => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['sortingItems'],
+            'exclude'          => true,
+            'filter'           => true,
+            'inputType'        => 'checkboxWizard',
             'options_callback' => function (DataContainer $dc) {
                 return \HeimrichHannot\ListBundle\Util\ListConfigHelper::getModelInstances($dc);
             },
-            'eval'                    => ['tl_class' => 'w50', 'mandatory' => true, 'multiple' => true],
-            'sql'                     => "blob NULL"
+            'eval'             => ['tl_class' => 'w50', 'mandatory' => true, 'multiple' => true],
+            'sql'              => "blob NULL"
         ],
         // jump to
         'useAlias'                    => [
@@ -407,3 +428,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         ],
     ],
 ];
+
+$GLOBALS['TL_DCA']['tl_list_config']['fields']['useModalExplanation']['eval']['notOverridable'] = true;
+
+\HeimrichHannot\ListBundle\Backend\ListConfig::addOverridableFields();

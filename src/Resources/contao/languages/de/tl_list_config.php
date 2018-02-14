@@ -10,6 +10,8 @@ $lang['tstamp'][0] = 'Änderungsdatum';
 // general
 $lang['title'][0] = 'Titel';
 $lang['title'][1] = 'Geben Sie hier bitte den Titel ein.';
+$lang['parentListConfig'][0] = 'Eltern-Listenkonfiguration';
+$lang['parentListConfig'][1] = 'Wählen Sie hier eine Listenkonfiguration aus, von der geerbt werden soll. Sie können dann punktuell einzelne Eigenschaften überschreiben.';
 
 // filter
 $lang['filter'][0] = 'Filter';

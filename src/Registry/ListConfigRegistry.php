@@ -93,4 +93,67 @@ class ListConfigRegistry
 
         return $filterConfig->getFilter();
     }
+
+    public function getOverridableProperty($property, int $listConfigPk)
+    {
+        if (null === ($listConfig = $this->findByPk($listConfigPk))) {
+            return null;
+        }
+
+        $parentListConfigs = System::getContainer()->get('huh.utils.model')->findParentsRecursively(
+            'parentListConfig',
+            'tl_list_config',
+            $listConfig
+        );
+
+        if (empty($parentListConfigs)) {
+            return null;
+        }
+
+        return System::getContainer()->get('huh.utils.dca')->getOverridableProperty(
+            $property,
+            $parentListConfigs
+        );
+    }
+
+    /**
+     * Computes the list config respecting the list config hierarchy (sub list configs can override parts of their ancestors).
+     *
+     * @param int $listConfigPk
+     *
+     * @return ListConfigModel|null
+     */
+    public function computeListConfig(int $listConfigPk)
+    {
+        if (null === ($listConfig = $this->findByPk($listConfigPk))) {
+            return null;
+        }
+
+        if (!$listConfig->parentListConfig) {
+            return $listConfig;
+        }
+
+        $computedListConfig = new ListConfigModel();
+
+        $parentListConfigs = System::getContainer()->get('huh.utils.model')->findParentsRecursively(
+            'parentListConfig', 'tl_list_config', $listConfig
+        );
+
+        $rootListConfig = System::getContainer()->get('huh.utils.model')->findRootParentRecursively(
+            'parentListConfig', 'tl_list_config', $listConfig
+        );
+
+        foreach ($GLOBALS['TL_DCA']['tl_list_config']['fields'] as $field => $data) {
+            if ($data['eval']['notOverridable']) {
+                $computedListConfig->{$field} = $rootListConfig->{$field};
+            } else {
+                $computedListConfig->{$field} = System::getContainer()->get('huh.utils.dca')->getOverridableProperty(
+                    $field,
+                    array_merge($parentListConfigs, [$listConfig])
+                );
+            }
+        }
+
+        return $computedListConfig;
+    }
 }

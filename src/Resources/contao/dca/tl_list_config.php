@@ -48,6 +48,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_list_config']['edit'],
                 'href'  => 'table=tl_list_config_element',
                 'icon'  => 'edit.svg',
+                'button_callback' => ['HeimrichHannot\ListBundle\Backend\ListConfig', 'edit']
             ],
             'editheader' => [
                 'label'           => &$GLOBALS['TL_LANG']['tl_list_config']['editheader'],

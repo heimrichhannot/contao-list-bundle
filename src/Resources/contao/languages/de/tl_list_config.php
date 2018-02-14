@@ -8,8 +8,8 @@ $lang = &$GLOBALS['TL_LANG']['tl_list_config'];
 $lang['tstamp'][0] = 'Änderungsdatum';
 
 // general
-$lang['title'][0] = 'Titel';
-$lang['title'][1] = 'Geben Sie hier bitte den Titel ein.';
+$lang['title'][0]            = 'Titel';
+$lang['title'][1]            = 'Geben Sie hier bitte den Titel ein.';
 $lang['parentListConfig'][0] = 'Eltern-Listenkonfiguration';
 $lang['parentListConfig'][1] = 'Wählen Sie hier eine Listenkonfiguration aus, von der geerbt werden soll. Sie können dann punktuell einzelne Eigenschaften überschreiben.';
 
@@ -93,14 +93,15 @@ $lang['itemTemplate'][1] = 'Wählen Sie hier das Template aus, mit dem die einze
 /**
  * Legends
  */
-$lang['general_legend']  = 'Allgemeine Einstellungen';
-$lang['entity_legend']   = 'Entität';
-$lang['config_legend']   = 'Konfiguration';
-$lang['filter_legend']   = 'Filter';
-$lang['sorting_legend']  = 'Sortierung';
-$lang['jumpto_legend']   = 'Weiterleitung';
-$lang['misc_legend']     = 'Verschiedenes';
-$lang['template_legend'] = 'Template';
+$lang['general_legend']        = 'Allgemeine Einstellungen';
+$lang['entity_legend']         = 'Entität';
+$lang['config_legend']         = 'Konfiguration';
+$lang['filter_legend']         = 'Filter';
+$lang['overrideFilter_legend'] = 'Filter';
+$lang['sorting_legend']        = 'Sortierung';
+$lang['jumpto_legend']         = 'Weiterleitung';
+$lang['misc_legend']           = 'Verschiedenes';
+$lang['template_legend']       = 'Template';
 
 /**
  * Reference

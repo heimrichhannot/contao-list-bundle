@@ -119,4 +119,13 @@ class ListConfig extends Backend
     {
         return BackendUser::getInstance()->canEditFieldsOf('tl_list_config') ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
     }
+
+    public function edit($row, $href, $label, $title, $icon, $attributes)
+    {
+        if ($row['parentListConfig']) {
+            return '';
+        }
+
+        return sprintf('<a href="%s" title="%s" class="edit">%s</a>', $this->addToUrl($href.'&amp;id='.$row['id']), $title, Image::getHtml($icon, $label));
+    }
 }

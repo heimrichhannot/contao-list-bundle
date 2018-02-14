@@ -25,7 +25,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'format' => '%s'
         ],
         'sorting'           => [
-            'mode'                  => 1,
+            'mode'                  => 4,
             'fields'                => ['title'],
             'headerFields'          => ['title'],
             'panelLayout'           => 'filter;sort,search,limit',

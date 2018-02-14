@@ -188,9 +188,6 @@ class ModuleList extends Module
         if ($isSubmitted || $this->listConfig->showInitialResults) {
             $items = $queryBuilder->execute()->fetchAll();
 
-            dump($queryBuilder->getSQL());
-            dump($queryBuilder->getParameters());
-
             $preparedItems         = $this->prepareItems($items);
             $templateData['items'] = $this->parseItems($preparedItems, $itemTemplate);
         }

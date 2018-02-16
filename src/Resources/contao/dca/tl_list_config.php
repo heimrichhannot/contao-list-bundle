@@ -25,15 +25,15 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
     ],
     'list'        => [
         'label'             => [
-            'fields' => ['title'],
-            'format' => '%s',
+            'fields'         => ['title'],
+            'format'         => '%s',
             'label_callback' => ['HeimrichHannot\ListBundle\Backend\ListConfig', 'generateLabel']
         ],
         'sorting'           => [
-            'mode'                  => 1,
-            'fields'                => ['title'],
-            'headerFields'          => ['title'],
-            'panelLayout'           => 'filter;sort,search,limit',
+            'mode'         => 1,
+            'fields'       => ['title'],
+            'headerFields' => ['title'],
+            'panelLayout'  => 'filter;sort,search,limit',
         ],
         'global_operations' => [
             'all' => [
@@ -45,9 +45,9 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         ],
         'operations'        => [
             'edit'       => [
-                'label' => &$GLOBALS['TL_LANG']['tl_list_config']['edit'],
-                'href'  => 'table=tl_list_config_element',
-                'icon'  => 'edit.svg',
+                'label'           => &$GLOBALS['TL_LANG']['tl_list_config']['edit'],
+                'href'            => 'table=tl_list_config_element',
+                'icon'            => 'edit.svg',
                 'button_callback' => ['HeimrichHannot\ListBundle\Backend\ListConfig', 'edit']
             ],
             'editheader' => [
@@ -78,7 +78,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         '__selector__' => [
             'showItemCount',
             'showNoItemsText',
-            'limitFields',
+            'limitFormattedFields',
             'isTableList',
             'sortingMode',
             'useAlias',
@@ -87,12 +87,12 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addAjaxPagination',
             'addMasonry',
         ],
-        'default'      => '{general_legend},title,parentListConfig;' . '{filter_legend},filter;' . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showNoItemsText,showInitialResults,limitFields,isTableList;' . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare;' . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;' . '{template_legend},listTemplate,itemTemplate;',
+        'default'      => '{general_legend},title,parentListConfig;' . '{filter_legend},filter;' . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;' . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare;' . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;' . '{template_legend},listTemplate,itemTemplate;',
     ],
     'subpalettes' => [
         'showItemCount'                                                                     => 'itemCountText',
         'showNoItemsText'                                                                   => 'noItemsText',
-        'limitFields'                                                                       => 'fields',
+        'limitFormattedFields'                                                              => 'formattedFields',
         'isTableList'                                                                       => 'tableFields,hasHeader,sortingHeader',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_FIELD  => 'sortingField,sortingDirection',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_TEXT   => 'sortingText',
@@ -147,15 +147,15 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sql'              => "int(10) unsigned NOT NULL default '0'"
         ],
         // config
-        'limitFields'                 => [
-            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['limitFields'],
+        'limitFormattedFields'        => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['limitFormattedFields'],
             'exclude'   => true,
             'inputType' => 'checkbox',
             'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
             'sql'       => "char(1) NOT NULL default ''",
         ],
-        'fields'                      => [
-            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['fields'],
+        'formattedFields'             => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['formattedFields'],
             'inputType'        => 'checkboxWizard',
             'options_callback' => function (DataContainer $dc) {
                 return \HeimrichHannot\ListBundle\Util\ListConfigHelper::getFields($dc);

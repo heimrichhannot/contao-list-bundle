@@ -148,23 +148,7 @@ class ModuleList extends Module
 
         $templateData['isSubmitted'] = $isSubmitted;
 
-        if ($this->listConfig->limitFields) {
-            $fieldsArray = \Contao\StringUtil::deserialize($this->listConfig->fields, true);
-
-            // always add id
-            if (!in_array('id', $fieldsArray, true)) {
-                $fieldsArray = array_merge(['id'], $fieldsArray);
-            }
-
-            $fieldsArray = array_map(function ($field) use ($filter) {
-                return $filter->dataContainer . '.' . $field;
-            }, $fieldsArray);
-
-            $fields = implode(',', $fieldsArray);
-
-        } else {
-            $fields = $filter->dataContainer . '.*';
-        }
+        $fields = $filter->dataContainer . '.*';
 
         if ($isSubmitted || $this->listConfig->showInitialResults) {
             $templateData['totalCount'] = $queryBuilder->select($fields)->execute()->rowCount();
@@ -222,12 +206,14 @@ class ModuleList extends Module
 
         $dc = DC_Table_Utils::createFromModelData($item, $filter->dataContainer);
 
-        $fields = $listConfig->limitFields ? StringUtil::deserialize($listConfig->fields,
+        $fields = $listConfig->limitFormattedFields ? StringUtil::deserialize($listConfig->formattedFields,
             true) : array_keys($dca['fields']);
 
         if ($listConfig->isTableList) {
             $result['tableFields'] = StringUtil::deserialize($listConfig->tableFields, true);
         }
+
+        $result['raw'] = $item;
 
         foreach ($fields as $field) {
             $dc->field = $field;
@@ -239,9 +225,6 @@ class ModuleList extends Module
                     $value = $obj->{$callback[1]}($value, $dc);
                 }
             }
-
-            // add raw value
-            $result['raw'][$field] = $value;
 
             $result['formatted'][$field] = $formUtil->prepareSpecialValueForOutput(
                 $field,
@@ -255,6 +238,8 @@ class ModuleList extends Module
                 $field,
                 $result['formatted'][$field]
             );
+
+
         }
 
         // add the missing field's raw values (these should always be inserted completely)
@@ -343,7 +328,7 @@ class ModuleList extends Module
         $idOrAlias = $this->getIdOrAlias($item, $listConfig);
 
         $templateData['idOrAlias'] = $idOrAlias;
-        $templateData['active']    = $idOrAlias && \Input::get('items') == $idOrAlias;
+        $templateData['active']    = $idOrAlias && Request::getGet('items') == $idOrAlias;
 
         // add images
         $this->addImagesToTemplate($item, $templateData, $listConfig);

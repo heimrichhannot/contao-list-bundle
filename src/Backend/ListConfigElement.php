@@ -14,6 +14,7 @@ use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\Database;
 use Contao\Input;
 use Contao\System;
+use HeimrichHannot\Request\Request;
 
 class ListConfigElement extends Backend
 {
@@ -54,28 +55,28 @@ class ListConfigElement extends Backend
             $root = $user->listbundles;
         }
 
-        $id = strlen(Input::get('id')) ? Input::get('id') : CURRENT_ID;
+        $id = strlen(Request::getGet('id')) ? Request::getGet('id') : CURRENT_ID;
 
         // Check current action
-        switch (Input::get('act')) {
+        switch (Request::getGet('act')) {
             case 'paste':
                 // Allow
                 break;
 
             case 'create':
-                if (!strlen(Input::get('pid')) || !in_array(Input::get('pid'), $root, true)) {
+                if (!strlen(Request::getGet('pid')) || !in_array(Request::getGet('pid'), $root, true)) {
                     throw new AccessDeniedException(
-                        'Not enough permissions to create list_config_element items in list_config_element archive ID '.Input::get('pid').'.'
+                        'Not enough permissions to create list_config_element items in list_config_element archive ID '.Request::getGet('pid').'.'
                     );
                 }
                 break;
 
             case 'cut':
             case 'copy':
-                if (!in_array(Input::get('pid'), $root, true)) {
+                if (!in_array(Request::getGet('pid'), $root, true)) {
                     throw new AccessDeniedException(
-                        'Not enough permissions to '.Input::get('act').' list_config_element item ID '.$id
-                        .' to list_config_element archive ID '.Input::get('pid').'.'
+                        'Not enough permissions to '.Request::getGet('act').' list_config_element item ID '.$id
+                        .' to list_config_element archive ID '.Request::getGet('pid').'.'
                     );
                 }
             // no break STATEMENT HERE
@@ -93,7 +94,7 @@ class ListConfigElement extends Backend
 
                 if (!in_array($objArchive->pid, $root, true)) {
                     throw new AccessDeniedException(
-                        'Not enough permissions to '.Input::get('act').' list_config_element item ID '.$id
+                        'Not enough permissions to '.Request::getGet('act').' list_config_element item ID '.$id
                         .' of list_config_element archive ID '.$objArchive->pid.'.'
                     );
                 }
@@ -126,8 +127,8 @@ class ListConfigElement extends Backend
                 break;
 
             default:
-                if (strlen(Input::get('act'))) {
-                    throw new AccessDeniedException('Invalid command "'.Input::get('act').'".');
+                if (strlen(Request::getGet('act'))) {
+                    throw new AccessDeniedException('Invalid command "'.Request::getGet('act').'".');
                 } elseif (!in_array($id, $root, true)) {
                     throw new AccessDeniedException(
                         'Not enough permissions to access list_config_element archive ID '.$id.'.'

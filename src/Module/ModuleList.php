@@ -179,6 +179,8 @@ class ModuleList extends Module
         $listTemplate = $this->getListTemplateByName(($listTemplate ?: $this->listConfig->listTemplate) ?: 'default');
         $data         = array_merge($templateData, $data);
 
+        $this->modifyListTemplateData($data);
+
         return System::getContainer()->get('twig')->render($listTemplate, $data);
     }
 
@@ -525,6 +527,11 @@ class ModuleList extends Module
         }
     }
 
+    protected function modifyListTemplateData(array &$templateData): void
+    {
+
+    }
+
     protected function modifyItemTemplateData(array &$templateData, array $item): void
     {
     }
@@ -702,7 +709,7 @@ class ModuleList extends Module
                 $arrStamps[] = [
                     'content' => $this->framework->getAdapter(BlockModuleModel::class)
                         ->generateContent($arrStamp['stampBlock']),
-                    'class' => $arrStamp['stampCssClass'],
+                    'class'   => $arrStamp['stampCssClass'],
                 ];
             }
 
@@ -781,7 +788,7 @@ class ModuleList extends Module
             ) {
                 $currentSorting = [
                     'order' => Request::getGet('order'),
-                    'sort' => Request::getGet('sort'),
+                    'sort'  => Request::getGet('sort'),
                 ];
             } else {
                 $currentSorting = [];
@@ -807,7 +814,7 @@ class ModuleList extends Module
                 default:
                     $currentSorting = [
                         'order' => $listConfig->sortingField,
-                        'sort' => $listConfig->sortingDirection,
+                        'sort'  => $listConfig->sortingDirection,
                     ];
                     break;
             }

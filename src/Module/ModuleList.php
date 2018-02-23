@@ -343,7 +343,14 @@ class ModuleList extends Module
 
         $this->modifyItemTemplateData($templateData, $item);
 
-        return System::getContainer()->get('twig')->render(
+        $twig = System::getContainer()->get('twig');
+
+        $twig->hasExtension('\Twig_Extensions_Extension_Text') ?: $twig->addExtension(new \Twig_Extensions_Extension_Text());
+        $twig->hasExtension('\Twig_Extensions_Extension_Intl') ?: $twig->addExtension(new \Twig_Extensions_Extension_Intl());
+        $twig->hasExtension('\Twig_Extensions_Extension_Array') ?: $twig->addExtension(new \Twig_Extensions_Extension_Array());
+        $twig->hasExtension('\Twig_Extensions_Extension_Date') ?: $twig->addExtension(new \Twig_Extensions_Extension_Date());
+
+        return $twig->render(
             $this->getItemTemplateByName(($itemTemplate ?: $listConfig->itemTemplate) ?: 'default'),
             $templateData
         );

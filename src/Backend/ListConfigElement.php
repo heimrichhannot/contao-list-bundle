@@ -12,7 +12,6 @@ use Contao\Backend;
 use Contao\BackendUser;
 use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\Database;
-use Contao\Input;
 use Contao\System;
 use HeimrichHannot\Request\Request;
 

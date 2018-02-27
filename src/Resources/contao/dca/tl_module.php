@@ -19,7 +19,7 @@ $fields = [
         'filter'     => true,
         'inputType'  => 'select',
         'foreignKey' => 'tl_list_config.title',
-	'relation'   => ['type' => 'belongsTo', 'load' => 'lazy'],
+        'relation'   => ['type' => 'belongsTo', 'load' => 'lazy'],
         'eval'       => ['tl_class' => 'long clr', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
         'sql'        => "int(10) unsigned NOT NULL default '0'"
     ],

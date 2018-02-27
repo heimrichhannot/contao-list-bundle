@@ -26,6 +26,7 @@ if (System::getContainer()->get('huh.utils.container')->isFrontend())
     $GLOBALS['TL_JAVASCRIPT']['list-bundle'] = 'bundles/heimrichhannotcontaolist/js/jquery.list-bundle.js|static';
     $GLOBALS['TL_JAVASCRIPT']['huh_components_masonry'] = 'assets/masonry/dist/masonry.pkgd.min.js|static';
     $GLOBALS['TL_JAVASCRIPT']['huh_components_imagesloaded'] = 'assets/imagesloaded/dist/imagesloaded.pkgd.min.js|static';
+    $GLOBALS['TL_JAVASCRIPT']['huh_components_jscroll'] = 'assets/jscroll/dist/jquery.jscroll.min.js|static';
 }
 
 /**

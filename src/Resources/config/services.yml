@@ -7,6 +7,10 @@ services:
         class: HeimrichHannot\ListBundle\Choice\ListItemTemplateChoice
         arguments:
             - "@contao.framework"
+    huh.list.choice.parent-list-config:
+        class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice
+        arguments:
+            - "@contao.framework"
     huh.list.list-config-registry:
         class: HeimrichHannot\ListBundle\Registry\ListConfigRegistry
         arguments:

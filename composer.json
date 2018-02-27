@@ -9,7 +9,10 @@
     "heimrichhannot/contao-filter-bundle": "dev-master",
     "heimrichhannot/contao-utils-bundle": "dev-master",
     "heimrichhannot-contao-components/masonry": ">=4.2, <=4.3",
-    "heimrichhannot-contao-components/imagesloaded": "4.1.*"
+    "heimrichhannot-contao-components/imagesloaded": "4.1.*",
+    "heimrichhannot-contao-components/jscroll": "2.3.*",
+    "heimrichhannot/contao-request": "^1.2",
+    "twig/extensions": "^1.5"
   },
   "require-dev": {
     "contao/test-case": "^1.1",

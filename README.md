@@ -7,9 +7,27 @@
 
 This bundle offers a generic list module to use with arbitrary contao entities containing standard list handling like pagination, sorting, and filtering.
 
+## Concepts
 
+### Inheritable list configuration
 
-## Technical Introductiona
+Since list configuration can be lots of data sometimes we decided to outsource it into a dedicated DCA entity.
+These entities can be assigned to one or even multiple list modules in a reusable way.
+
+In addition it's possible to create list configs that inherit from other list configs.
+Hence overriding a single option while keeping everything else is possible.
+
+### List config elements
+
+Every list config can have one or more list config elements. These are designed to specify things that can occur multiple times (e.g. because there are many fields of one type).
+
+Currently available list config element types:
+
+Type  | Description
+------|------------
+image | Configure the output of one or more image fields separately (image size, placeholder handling, ...)
+
+## Technical Instructions
 
 ### Masonry
 

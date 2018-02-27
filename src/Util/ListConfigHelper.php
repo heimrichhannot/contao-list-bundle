@@ -30,7 +30,17 @@ class ListConfigHelper
 
     public static function getFields(DataContainer $dc)
     {
-        if (!$dc->id || null === ($filter = System::getContainer()->get('huh.list.list-config-registry')->getFilterByPk($dc->id))) {
+        $listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
+
+        if (null === ($listConfig = $listConfigRegistry->findByPk($dc->id))) {
+            return [];
+        }
+
+        $listConfig = System::getContainer()->get('huh.utils.model')->findRootParentRecursively(
+            'parentListConfig', 'tl_list_config', $listConfig
+        );
+
+        if (null === $listConfig || null === ($filter = $listConfigRegistry->getFilterByPk($listConfig->id))) {
             return [];
         }
 
@@ -43,7 +53,17 @@ class ListConfigHelper
 
     public static function getTextFields(DataContainer $dc)
     {
-        if (!$dc->id || null === ($filter = System::getContainer()->get('huh.list.list-config-registry')->getFilterByPk($dc->id))) {
+        $listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
+
+        if (null === ($listConfig = $listConfigRegistry->findByPk($dc->id))) {
+            return [];
+        }
+
+        $listConfig = System::getContainer()->get('huh.utils.model')->findRootParentRecursively(
+            'parentListConfig', 'tl_list_config', $listConfig
+        );
+
+        if (null === $listConfig || null === ($filter = $listConfigRegistry->getFilterByPk($listConfig->id))) {
             return [];
         }
 
@@ -51,6 +71,29 @@ class ListConfigHelper
             [
                 'dataContainer' => $filter['dataContainer'],
                 'inputTypes' => ['text'],
+            ]
+        );
+    }
+
+    public static function getModelInstances(DataContainer $dc)
+    {
+        $listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
+
+        if (null === ($listConfig = $listConfigRegistry->findByPk($dc->id))) {
+            return [];
+        }
+
+        $listConfig = System::getContainer()->get('huh.utils.model')->findRootParentRecursively(
+            'parentListConfig', 'tl_list_config', $listConfig
+        );
+
+        if (null === $listConfig || null === ($filter = $listConfigRegistry->getFilterByPk($listConfig->id))) {
+            return [];
+        }
+
+        return \Contao\System::getContainer()->get('huh.utils.choice.model_instance')->getCachedChoices(
+            [
+                'dataContainer' => $filter['dataContainer'],
             ]
         );
     }

@@ -265,7 +265,7 @@ class ModuleList extends Module
         if (isset($GLOBALS['TL_HOOKS']['parseListItem']) && is_array($GLOBALS['TL_HOOKS']['parseListItem'])) {
             foreach ($GLOBALS['TL_HOOKS']['parseListItem'] as $callback) {
                 $this->import($callback[0]);
-                $result = System::getContainer()->get($callback[0])->{$callback[1]}($result, $item, $this);
+                $result = System::getContainer()->get($callback[0])->{$callback[1]}($result, $item, $this, $this->filterConfig, $this->listConfig);
             }
         }
 

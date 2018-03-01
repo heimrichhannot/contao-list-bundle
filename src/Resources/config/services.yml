@@ -19,3 +19,5 @@ services:
         class: HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry
         arguments:
             - "@contao.framework"
+    huh.list.backend.module:
+        class: HeimrichHannot\ListBundle\Backend\Module

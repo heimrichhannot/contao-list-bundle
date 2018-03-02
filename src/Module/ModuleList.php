@@ -157,7 +157,7 @@ class ModuleList extends Module
 
         $templateData['isSubmitted'] = $isSubmitted;
 
-        $fields = $filter->dataContainer.'.*';
+	$fields = $filter->dataContainer.'.* FROM '.$filter->dataContainer;
 
         if ($isSubmitted || $this->listConfig->showInitialResults) {
             $templateData['totalCount'] = $queryBuilder->select($fields)->execute()->rowCount();

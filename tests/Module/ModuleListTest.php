@@ -30,9 +30,7 @@ class ModuleListTest extends ContaoTestCase
 {
     public function setUp()
     {
-        $objPage = $this->getMockBuilder(PageModel::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $objPage = $this->getMockBuilder(PageModel::class)->disableOriginalConstructor()->getMock();
         $objPage->outputFormat = '';
 
         $GLOBALS['TL_LANGUAGE'] = 'de';
@@ -62,6 +60,7 @@ class ModuleListTest extends ContaoTestCase
     public function testCanBeInstantiated()
     {
         $moduleModel = $this->mockClassWithProperties(ModuleModel::class, ['id' => 1]);
+        $moduleModel->method('row')->willReturn(['listConfig' => 12]);
         $module = new ModuleList($moduleModel);
         $this->assertInstanceOf(ModuleList::class, $module);
     }
@@ -78,9 +77,7 @@ class ModuleListTest extends ContaoTestCase
             'listConfig' => 5,
             'cssID' => [0 => 'phpunit', 1 => 'test'],
         ];
-        $moduleModel = $this->getMockBuilder(ModuleModel::class)->disableOriginalConstructor()
-            ->setMethods(['row'])
-            ->getMock();
+        $moduleModel = $this->getMockBuilder(ModuleModel::class)->disableOriginalConstructor()->setMethods(['row'])->getMock();
         $moduleModel->method('row')->willReturn($moduleModelConfig);
         foreach ($moduleModelConfig as $key => $value) {
             $moduleModel->$key = $value;
@@ -92,22 +89,19 @@ class ModuleListTest extends ContaoTestCase
     public function createRouterMock()
     {
         $router = $this->createMock(RouterInterface::class);
-        $router
-            ->method('generate')
-            ->with('contao_backend', $this->anything())
-            ->will($this->returnCallback(function ($route, $params = []) {
-                $url = '/contao';
-                if (!empty($params)) {
-                    $count = 0;
-                    foreach ($params as $key => $value) {
-                        $url .= (0 === $count ? '?' : '&');
-                        $url .= $key.'='.$value;
-                        ++$count;
-                    }
+        $router->method('generate')->with('contao_backend', $this->anything())->will($this->returnCallback(function ($route, $params = []) {
+            $url = '/contao';
+            if (!empty($params)) {
+                $count = 0;
+                foreach ($params as $key => $value) {
+                    $url .= (0 === $count ? '?' : '&');
+                    $url .= $key.'='.$value;
+                    ++$count;
                 }
+            }
 
-                return $url;
-            }));
+            return $url;
+        }));
 
         return $router;
     }
@@ -130,7 +124,7 @@ class ModuleListTest extends ContaoTestCase
 
         return [
 //            Model::class => $modelAdapter
-            System::class => $systemAdapter,
+System::class => $systemAdapter,
         ];
     }
 
@@ -141,16 +135,14 @@ class ModuleListTest extends ContaoTestCase
             'filter' => 3,
         ];
 
-        $listRegistryModel = $this->getMockBuilder(ListConfigModel::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['row', '__set'])
-            ->getMock();
+        $listRegistryModel = $this->mockClassWithProperties(ListConfigModel::class, $listModelData);
         $listRegistryModel->method('row')->willReturn($listModelData);
 
         $listRegistryModel->filter = 3;
 
         $listRegistry = $this->createConfiguredMock(ListConfigRegistry::class, [
             'findByPk' => $listRegistryModel,
+            'computeListConfig' => $listRegistryModel,
         ]);
 
         return $listRegistry;
@@ -158,11 +150,7 @@ class ModuleListTest extends ContaoTestCase
 
     public function createFilterRegistry()
     {
-        $filterConfig = $this->getMockBuilder(FilterConfig::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getFilter', 'hasData'])
-            ->getMock()
-        ;
+        $filterConfig = $this->getMockBuilder(FilterConfig::class)->disableOriginalConstructor()->setMethods(['getFilter', 'hasData'])->getMock();
         $filterConfig->method('getFilter')->willReturn([
             'dataContainer' => 'tl_news',
         ]);

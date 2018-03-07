@@ -7,7 +7,7 @@
     "php": "^7.1",
     "contao/core-bundle": "^4.4",
     "symfony/framework-bundle": "^3.4",
-    "heimrichhannot/contao-filter-bundle": "dev-master",
+    "heimrichhannot/contao-filter-bundle": "^1.0-beta",
     "heimrichhannot/contao-utils-bundle": "^1.0",
     "heimrichhannot-contao-components/masonry": ">=4.2, <=4.3",
     "heimrichhannot-contao-components/imagesloaded": "4.1.*",

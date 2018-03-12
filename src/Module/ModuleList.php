@@ -29,7 +29,7 @@ use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use HeimrichHannot\ListBundle\Util\ListConfigHelper;
 use HeimrichHannot\Modal\ModalModel;
-use HeimrichHannot\Request\Request;
+use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
 use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
 use Patchwork\Utf8;
 
@@ -37,17 +37,30 @@ class ModuleList extends Module
 {
     protected $strTemplate = 'mod_list';
 
-    /** @var ContaoFramework */
+    /**
+     * @var ContaoFramework
+     */
     protected $framework;
 
-    /** @var ListConfigModel */
+    /**
+     * @var ListConfigModel
+     */
     protected $listConfig;
 
-    /** @var FilterConfig */
+    /**
+     * @var FilterConfig
+     */
     protected $filterConfig;
 
-    /** @var object */
+    /**
+     * @var object
+     */
     protected $filter;
+
+    /**
+     * @var Request
+     */
+    protected $request;
 
     /**
      * ModuleList constructor.
@@ -66,6 +79,7 @@ class ModuleList extends Module
         $this->filterConfig = $this->getFilterConfig();
         $this->filter = (object) $this->filterConfig->getFilter();
         $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
+        $this->request = System::getContainer()->get('huh.request');
     }
 
     public function generate()
@@ -318,7 +332,7 @@ class ModuleList extends Module
         $idOrAlias = $this->getIdOrAlias($item, $listConfig);
 
         $templateData['idOrAlias'] = $idOrAlias;
-        $templateData['active'] = $idOrAlias && Request::getGet('items') == $idOrAlias;
+        $templateData['active'] = $idOrAlias && $this->request->getGet('items') == $idOrAlias;
 
         // add images
         $this->addImagesToTemplate($item, $templateData, $listConfig);
@@ -507,7 +521,7 @@ class ModuleList extends Module
         $currentSorting = $this->getCurrentSorting();
 
         if (ListConfig::SORTING_MODE_RANDOM == $currentSorting['order']) {
-            $randomSeed = Request::getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
+            $randomSeed = $this->request->getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
             $queryBuilder->orderBy('RAND("'.(int) $randomSeed.'")');
             list($offset, $limit) = $this->splitResults($templateData, $offset, $totalCount, $limit, $randomSeed);
         } elseif (ListConfig::SORTING_MODE_MANUAL == $currentSorting['order']) {
@@ -544,7 +558,7 @@ class ModuleList extends Module
 
             // Get the current page
             $id = 'page_s'.$this->id;
-            $page = Request::getGet($id) ?: 1;
+            $page = $this->request->getGet($id) ?: 1;
             $templateData['page'] = $page;
 
             // Do not index or cache the page if the page number is outside the range
@@ -668,11 +682,11 @@ class ModuleList extends Module
     {
         $listConfig = $this->listConfig;
         $filter = $this->filter;
-        $action = Request::getGet('act');
+        $action = $this->request->getGet('act');
 
         if (ListBundle::ACTION_SHARE == $action && $listConfig->addShare) {
-            $url = Request::getGet('url');
-            $id = Request::getGet($listConfig->useAlias ? $listConfig->aliasField : 'id');
+            $url = $this->request->getGet('url');
+            $id = $this->request->getGet($listConfig->useAlias ? $listConfig->aliasField : 'id');
 
             if (null !== ($entity = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($this->framework, $filter->dataContainer, $id))) {
                 $now = time();
@@ -702,13 +716,13 @@ class ModuleList extends Module
         $sortingAllowed = $listConfig->isTableList && $listConfig->hasHeader && $listConfig->sortingHeader;
 
         // GET parameter
-        if ($sortingAllowed && ($orderField = Request::getGet('order')) && ($sort = Request::getGet('sort'))) {
+        if ($sortingAllowed && ($orderField = $this->request->getGet('order')) && ($sort = $this->request->getGet('sort'))) {
             // anti sql injection: check if field exists
             if (Database::getInstance()->fieldExists($orderField, $filter->dataContainer)
                 && in_array($sort, ListConfig::SORTING_DIRECTIONS, true)) {
                 $currentSorting = [
-                    'order' => Request::getGet('order'),
-                    'sort' => Request::getGet('sort'),
+                    'order' => $this->request->getGet('order'),
+                    'sort' => $this->request->getGet('sort'),
                 ];
             } else {
                 $currentSorting = [];

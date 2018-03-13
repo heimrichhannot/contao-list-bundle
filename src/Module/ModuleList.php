@@ -74,6 +74,9 @@ class ModuleList extends Module
 
         parent::__construct($objModule, $strColumn);
 
+        Controller::loadDataContainer('tl_list_config');
+        System::loadLanguageFile('tl_list_config');
+
         $this->listConfig = $listConfig = System::getContainer()->get('huh.list.list-config-registry')->computeListConfig($this->getListConfig()->id);
 
         $this->filterConfig = $this->getFilterConfig();

@@ -1,5 +1,5 @@
 <div class="wrapper" id="{{ wrapperId }}"{{ dataAttributes|default()|raw }}>
-    {% if showInitialResults or isSubmitted %}
+    {% if showInitialResults or submitted %}
         {% if showItemCount %}
             <p class="count">{{ itemsFoundText|raw }}</p>
         {% endif %}

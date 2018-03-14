@@ -1,5 +1,13 @@
 huh:
     list:
+        managers:
+            - { name: default, id: huh.list.manager.list }
+        lists:
+            - { name: default, class: HeimrichHannot\ListBundle\Lists\DefaultList }
+        items:
+            - { name: default, class: HeimrichHannot\ListBundle\Item\DefaultItem }
+        config_element_types:
+            - { name: image, class: HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType }
         templates:
             list:
                 - { name: default, template: "@HeimrichHannotContaoList/list/list_default.html.twig" }

@@ -11,6 +11,21 @@ services:
         class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice
         arguments:
             - "@contao.framework"
+    huh.list.manager.list:
+        class: HeimrichHannot\ListBundle\Manager\ListManager
+        arguments:
+            - "@contao.framework"
+            - "@huh.entity_filter.backend.entity_filter"
+            - "@huh.list.list-config-registry"
+            - "@huh.list.list-config-element-registry"
+            - "@huh.filter.registry"
+            - "@huh.request"
+            - "@huh.utils.model"
+            - "@huh.utils.url"
+            - "@huh.utils.container"
+            - "@huh.utils.image"
+            - "@huh.utils.form"
+            - "@twig"
     huh.list.list-config-registry:
         class: HeimrichHannot\ListBundle\Registry\ListConfigRegistry
         arguments:
@@ -21,3 +36,15 @@ services:
             - "@contao.framework"
     huh.list.backend.module:
         class: HeimrichHannot\ListBundle\Backend\Module
+    huh.list.choice.manager:
+        class: HeimrichHannot\ListBundle\Choice\ManagerChoice
+        arguments:
+            - "@contao.framework"
+    huh.list.choice.list:
+        class: HeimrichHannot\ListBundle\Choice\ItemChoice
+        arguments:
+            - "@contao.framework"
+    huh.list.choice.item:
+        class: HeimrichHannot\ListBundle\Choice\ItemChoice
+        arguments:
+            - "@contao.framework"

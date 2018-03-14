@@ -47,6 +47,8 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property int    $filter
  * @property bool   $limitFormattedFields
  * @property string $formattedFields
+ * @property string $list
+ * @property string $item
  */
 class ListConfigModel extends \Model
 {

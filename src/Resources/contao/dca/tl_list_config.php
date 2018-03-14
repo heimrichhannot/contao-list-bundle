@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addAjaxPagination',
             'addMasonry',
         ],
-        'default'      => '{general_legend},title,parentListConfig;' . '{filter_legend},filter;' . '{config_legend},numberOfItems,perPage,skipFirst,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;' . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare;' . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;' . '{template_legend},listTemplate,itemTemplate;',
+        'default'      => '{general_legend},title,parentListConfig;' . '{filter_legend},filter;' . '{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;' . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare;' . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;' . '{template_legend},listTemplate,itemTemplate;',
     ],
     'subpalettes' => [
         'showItemCount'                                                                     => 'itemCountText',
@@ -147,6 +147,48 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sql'              => "int(10) unsigned NOT NULL default '0'"
         ],
         // config
+        'manager'                    => [
+            'inputType'        => 'select',
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['manager'],
+            'options_callback' => ['huh.list.choice.manager', 'getChoices'],
+            'eval'             => [
+                'chosen'             => true,
+                'includeBlankOption' => true,
+                'tl_class'           => 'clr w50',
+                'mandatory'          => true,
+                'notOverridable'     => true
+            ],
+            'exclude'          => true,
+            'sql'              => "varchar(128) NOT NULL default 'default'",
+        ],
+        'list'                       => [
+            'inputType'        => 'select',
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['list'],
+            'options_callback' => ['huh.list.choice.list', 'getChoices'],
+            'eval'             => [
+                'chosen'             => true,
+                'includeBlankOption' => true,
+                'mandatory'          => true,
+                'tl_class'           => 'w50',
+                'notOverridable'     => true
+            ],
+            'exclude'          => true,
+            'sql'              => "varchar(128) NOT NULL default 'default'",
+        ],
+        'item'                       => [
+            'inputType'        => 'select',
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['item'],
+            'options_callback' => ['huh.list.choice.item', 'getChoices'],
+            'eval'             => [
+                'chosen'             => true,
+                'includeBlankOption' => true,
+                'mandatory'          => true,
+                'tl_class'           => 'w50',
+                'notOverridable'     => true
+            ],
+            'exclude'          => true,
+            'sql'              => "varchar(128) NOT NULL default 'default'",
+        ],
         'limitFormattedFields'        => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['limitFormattedFields'],
             'exclude'   => true,
@@ -431,5 +473,6 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
 ];
 
 $GLOBALS['TL_DCA']['tl_list_config']['fields']['useModalExplanation']['eval']['notOverridable'] = true;
+$GLOBALS['TL_DCA']['tl_list_config']['fields']['numberOfItems']['eval']['tl_class'] = 'w50 clr';
 
 \HeimrichHannot\ListBundle\Backend\ListConfig::addOverridableFields();

@@ -18,6 +18,12 @@ $lang['filter'][0] = 'Filter';
 $lang['filter'][1] = 'Bitte wählen Sie hier bei Bedarf einen Filter aus.';
 
 // config
+$lang['manager'][0]                      = 'Manager-Service';
+$lang['manager'][1]                      = 'Wählen Sie hier einen individuellen Manager-Service aus.';
+$lang['list'][0]                         = 'List-Klasse';
+$lang['list'][1]                         = 'Wählen Sie hier eine individuelle List-Klasse aus.';
+$lang['item'][0]                         = 'Item-Klasse';
+$lang['item'][1]                         = 'Wählen Sie hier eine individuelle Item-Klasse aus.';
 $lang['limitFormattedFields'][0] = 'Formatierte Felder einschränken (Geschwindigkeit verbessern)';
 $lang['limitFormattedFields'][1] = 'Wählen Sie diese Option, wenn nur bestimmte Felder auf Basis der Data-Containers-Konfiguration formatiert werden sollen möchten.';
 $lang['formattedFields'][0]      = 'Formatierte Felder';

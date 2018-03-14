@@ -89,4 +89,25 @@ class ListConfigElementRegistry
 
         return System::getContainer()->get('huh.list.list-config-registry')->getFilterByPk($listConfigElement->pid);
     }
+
+    /**
+     * Get the type class by given element name.
+     *
+     * @param $name
+     *
+     * @return string|null
+     */
+    public function getElementClassByName($name)
+    {
+        $config = System::getContainer()->getParameter('huh.list');
+        $templates = $config['list']['config_element_types'];
+
+        foreach ($templates as $template) {
+            if ($template['name'] == $name) {
+                return class_exists($template['class']) ? $template['class'] : null;
+            }
+        }
+
+        return null;
+    }
 }

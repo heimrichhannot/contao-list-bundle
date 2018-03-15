@@ -12,7 +12,6 @@ use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\System;
-use HeimrichHannot\EntityFilterBundle\Backend\EntityFilter;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Registry\FilterRegistry;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
@@ -37,11 +36,6 @@ class ListManager implements ListManagerInterface
      * @var ListConfigModel
      */
     protected $listConfig;
-
-    /**
-     * @var EntityFilter
-     */
-    protected $entityFilter;
 
     /**
      * @var ListConfigRegistry
@@ -110,7 +104,6 @@ class ListManager implements ListManagerInterface
 
     public function __construct(
         ContaoFrameworkInterface $framework,
-        EntityFilter $entityFilter,
         ListConfigRegistry $listConfigRegistry,
         ListConfigElementRegistry $listConfigElementRegistry,
         FilterRegistry $filterRegistry,
@@ -123,7 +116,6 @@ class ListManager implements ListManagerInterface
         \Twig_Environment $twig
     ) {
         $this->framework = $framework;
-        $this->entityFilter = $entityFilter;
         $this->listConfigRegistry = $listConfigRegistry;
         $this->listConfigElementRegistry = $listConfigElementRegistry;
         $this->filterRegistry = $filterRegistry;
@@ -154,9 +146,7 @@ class ListManager implements ListManagerInterface
         }
 
         // compute list config respecting the inheritance hierarchy
-        $listConfig = $this->listConfigRegistry->computeListConfig(
-            $listConfigId
-        );
+        $listConfig = $this->listConfigRegistry->computeListConfig($listConfigId);
 
         $this->listConfig = $listConfig;
 

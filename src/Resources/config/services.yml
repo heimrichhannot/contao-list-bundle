@@ -15,7 +15,6 @@ services:
         class: HeimrichHannot\ListBundle\Manager\ListManager
         arguments:
             - "@contao.framework"
-            - "@huh.entity_filter.backend.entity_filter"
             - "@huh.list.list-config-registry"
             - "@huh.list.list-config-element-registry"
             - "@huh.filter.registry"

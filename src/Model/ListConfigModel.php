@@ -48,6 +48,7 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property bool   $limitFormattedFields
  * @property string $formattedFields
  * @property string $list
+ * @property string $manager
  * @property string $item
  */
 class ListConfigModel extends \Model

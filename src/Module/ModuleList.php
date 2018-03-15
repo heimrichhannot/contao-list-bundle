@@ -17,6 +17,7 @@ use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
+use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
 use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
 use Patchwork\Utf8;
 
@@ -45,6 +46,11 @@ class ModuleList extends Module
     protected $filterConfig;
 
     /**
+     * @var ListConfigRegistry
+     */
+    protected $listConfigRegistry;
+
+    /**
      * @var object
      */
     protected $filter;
@@ -69,14 +75,18 @@ class ModuleList extends Module
         Controller::loadDataContainer('tl_list_config');
         System::loadLanguageFile('tl_list_config');
 
-        $this->manager = $this->getListManagerByName($this->getListConfig()->manager ?: 'default');
+        $this->listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
+        $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
+        $this->request = System::getContainer()->get('huh.request');
+
+        // retrieve list config
+        $this->listConfig = $this->getListConfig((int) $objModule->listConfig);
+
+        $this->manager = $this->getListManagerByName($this->listConfig->manager ?: 'default');
         $this->manager->setModuleData($this->arrData);
-        $this->listConfig = $listConfig = $this->manager->getListConfig();
 
         $this->filterConfig = $this->manager->getFilterConfig();
         $this->filter = (object) $this->filterConfig->getFilter();
-        $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
-        $this->request = System::getContainer()->get('huh.request');
     }
 
     public function generate()
@@ -100,7 +110,7 @@ class ModuleList extends Module
         $this->framework->getAdapter(Controller::class)->loadDataContainer($this->filter->dataContainer);
         $this->framework->getAdapter(System::class)->loadLanguageFile($this->filter->dataContainer);
 
-        if (null !== ($listClass = $this->manager->getListByName($this->manager->getListConfig()->list ?: 'default'))) {
+        if (null !== ($listClass = $this->manager->getListByName($this->listConfig->list ?: 'default'))) {
             $reflection = new \ReflectionClass($listClass);
 
             if (!$reflection->implementsInterface(ListInterface::class)) {
@@ -117,10 +127,8 @@ class ModuleList extends Module
         return parent::generate();
     }
 
-    public function getListConfig(): ListConfigModel
+    public function getListConfig(int $listConfigId): ListConfigModel
     {
-        $listConfigId = $this->moduleData['listConfig'];
-
         if (!$listConfigId || null === ($listConfig = $this->listConfigRegistry->findByPk($listConfigId))) {
             throw new \Exception(sprintf('The module %s has no valid list config. Please set one.', $this->moduleData['id']));
         }
@@ -151,72 +159,6 @@ class ModuleList extends Module
             return $this->manager->getList()->parse($listTemplate, $itemTemplate, $data);
         };
     }
-
-//    protected function prepareItem(array $item): array
-//    {
-//        $listConfig = $this->listConfig;
-//        $filter = $this->filter;
-//        $formUtil = System::getContainer()->get('huh.utils.form');
-//
-//        $result = [];
-//        $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
-//
-//        $dc = DC_Table_Utils::createFromModelData($item, $filter->dataContainer);
-//
-//        $fields = $listConfig->limitFormattedFields ? StringUtil::deserialize($listConfig->formattedFields, true) : array_keys($dca['fields']);
-//
-//        if ($listConfig->isTableList) {
-//            $result['tableFields'] = StringUtil::deserialize($listConfig->tableFields, true);
-//        }
-//
-//        $result['raw'] = $item;
-//
-//        foreach ($fields as $field) {
-//            $dc->field = $field;
-//            $value = $item[$field];
-//
-//            if (is_array($dca['fields'][$field]['load_callback'])) {
-//                foreach ($dca['fields'][$field]['load_callback'] as $callback) {
-//                    $obj = System::importStatic($callback[0]);
-//                    $value = $obj->{$callback[1]}($value, $dc);
-//                }
-//            }
-//
-//            $result['formatted'][$field] = $formUtil->prepareSpecialValueForOutput($field, $value, $dc);
-//
-//            // anti-xss: escape everything besides some tags
-//            $result['formatted'][$field] = $formUtil->escapeAllHtmlEntities($filter->dataContainer, $field, $result['formatted'][$field]);
-//        }
-//
-//        // add the missing field's raw values (these should always be inserted completely)
-//        foreach (array_keys($dca['fields']) as $field) {
-//            if (isset($result['raw'][$field])) {
-//                continue;
-//            }
-//
-//            $value = $item[$field];
-//
-//            if (is_array($dca['fields'][$field]['load_callback'])) {
-//                foreach ($dca['fields'][$field]['load_callback'] as $callback) {
-//                    $obj = System::importStatic($callback[0]);
-//                    $value = $obj->{$callback[1]}($value, $dc);
-//                }
-//            }
-//
-//            // add raw value
-//            $result['raw'][$field] = $value;
-//        }
-//
-//        // HOOK: add custom logic
-//        if (isset($GLOBALS['TL_HOOKS']['parseListItem']) && is_array($GLOBALS['TL_HOOKS']['parseListItem'])) {
-//            foreach ($GLOBALS['TL_HOOKS']['parseListItem'] as $callback) {
-//                $this->import($callback[0]);
-//                $result = System::getContainer()->get($callback[0])->{$callback[1]}($result, $item, $this, $this->filterConfig, $this->listConfig);
-//            }
-//        }
-//
-//        return $result;
-//    }
 
     /**
      * Get the list manager.

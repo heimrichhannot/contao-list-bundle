@@ -373,7 +373,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return array_merge($data, System::getContainer()->get('huh.utils.class')->jsonSerialize(static::class, $this, $this->getFormatted()));
+        return System::getContainer()->get('huh.utils.class')->jsonSerialize(static::class, $this, $this->getFormatted());
     }
 
     public function generateIdOrAlias(ItemInterface $item, ListConfigModel $listConfig): string

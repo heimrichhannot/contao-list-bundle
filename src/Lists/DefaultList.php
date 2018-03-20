@@ -551,7 +551,7 @@ class DefaultList implements ListInterface, \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return System::getContainer()->get('huh.utils.class')->jsonSerialize(static::class, $this);
+        return System::getContainer()->get('huh.utils.class')->jsonSerialize($this);
     }
 
     /**

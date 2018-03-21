@@ -17,7 +17,7 @@ services:
             - "@contao.framework"
             - "@huh.list.list-config-registry"
             - "@huh.list.list-config-element-registry"
-            - "@huh.filter.registry"
+            - "@huh.filter.manager"
             - "@huh.request"
             - "@huh.utils.model"
             - "@huh.utils.url"

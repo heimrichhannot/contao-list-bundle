@@ -13,7 +13,7 @@ use Contao\Database;
 use Contao\DataContainer;
 use Contao\System;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
-use HeimrichHannot\FilterBundle\Registry\FilterRegistry;
+use HeimrichHannot\FilterBundle\Manager\FilterManager;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
@@ -48,9 +48,9 @@ class ListManager implements ListManagerInterface
     protected $listConfigElementRegistry;
 
     /**
-     * @var FilterRegistry
+     * @var FilterManager
      */
-    protected $filterRegistry;
+    protected $filterManager;
 
     /**
      * @var Request
@@ -106,7 +106,7 @@ class ListManager implements ListManagerInterface
         ContaoFrameworkInterface $framework,
         ListConfigRegistry $listConfigRegistry,
         ListConfigElementRegistry $listConfigElementRegistry,
-        FilterRegistry $filterRegistry,
+        FilterManager $filterManager,
         Request $request,
         ModelUtil $modelUtil,
         UrlUtil $urlUtil,
@@ -115,18 +115,18 @@ class ListManager implements ListManagerInterface
         FormUtil $formUtil,
         \Twig_Environment $twig
     ) {
-        $this->framework = $framework;
-        $this->listConfigRegistry = $listConfigRegistry;
+        $this->framework                 = $framework;
+        $this->listConfigRegistry        = $listConfigRegistry;
         $this->listConfigElementRegistry = $listConfigElementRegistry;
-        $this->filterRegistry = $filterRegistry;
-        $this->request = $request;
-        $this->modelUtil = $modelUtil;
-        $this->urlUtil = $urlUtil;
-        $this->formUtil = $formUtil;
-        $this->containerUtil = $containerUtil;
-        $this->imageUtil = $imageUtil;
-        $this->twig = $twig;
-        $this->database = $framework->createInstance(Database::class);
+        $this->filterManager             = $filterManager;
+        $this->request                   = $request;
+        $this->modelUtil                 = $modelUtil;
+        $this->urlUtil                   = $urlUtil;
+        $this->formUtil                  = $formUtil;
+        $this->containerUtil             = $containerUtil;
+        $this->imageUtil                 = $imageUtil;
+        $this->twig                      = $twig;
+        $this->database                  = $framework->createInstance(Database::class);
     }
 
     /**
@@ -318,7 +318,7 @@ class ListManager implements ListManagerInterface
     {
         $filterId = $this->getListConfig()->filter;
 
-        if (!$filterId || null === ($filterConfig = System::getContainer()->get('huh.filter.registry')->findById($filterId))) {
+        if (!$filterId || null === ($filterConfig = System::getContainer()->get('huh.filter.manager')->findById($filterId))) {
             throw new \Exception(sprintf('The module %s has no valid filter. Please set one.', $this->moduleData['id']));
         }
 
@@ -342,18 +342,18 @@ class ListManager implements ListManagerInterface
     }
 
     /**
-     * @return FilterRegistry
+     * @return FilterManager
      */
-    public function getFilterRegistry(): FilterRegistry
+    public function getFilterManager(): FilterManager
     {
-        return $this->filterRegistry;
+        return $this->filterManager;
     }
 
     /**
-     * @param FilterRegistry $filterRegistry
+     * @param FilterManager $filterManager
      */
-    public function setFilterRegistry(FilterRegistry $filterRegistry)
+    public function setFilterManager(FilterManager $filterManager)
     {
-        $this->filterRegistry = $filterRegistry;
+        $this->filterManager = $filterManager;
     }
 }

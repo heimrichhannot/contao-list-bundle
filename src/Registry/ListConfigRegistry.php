@@ -87,7 +87,7 @@ class ListConfigRegistry
             return null;
         }
 
-        if (!$listConfig->filter || null === ($filterConfig = System::getContainer()->get('huh.filter.registry')->findById($listConfig->filter))) {
+        if (!$listConfig->filter || null === ($filterConfig = System::getContainer()->get('huh.filter.manager')->findById($listConfig->filter))) {
             return null;
         }
 

@@ -14,6 +14,7 @@ use Contao\Module;
 use Contao\ModuleModel;
 use Contao\System;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
+use HeimrichHannot\FilterBundle\Manager\FilterManager;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
@@ -46,6 +47,11 @@ class ModuleList extends Module
     protected $filterConfig;
 
     /**
+     * @var FilterManager
+     */
+    protected $filterManager;
+
+    /**
      * @var ListConfigRegistry
      */
     protected $listConfigRegistry;
@@ -76,7 +82,7 @@ class ModuleList extends Module
         System::loadLanguageFile('tl_list_config');
 
         $this->listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
-        $this->filterRegistry = System::getContainer()->get('huh.filter.registry');
+        $this->filterManager = System::getContainer()->get('huh.filter.manager');
         $this->request = System::getContainer()->get('huh.request');
 
         // retrieve list config

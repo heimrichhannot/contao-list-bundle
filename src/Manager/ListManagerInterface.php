@@ -10,7 +10,7 @@ namespace HeimrichHannot\ListBundle\Manager;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
-use HeimrichHannot\FilterBundle\Registry\FilterRegistry;
+use HeimrichHannot\FilterBundle\Manager\FilterManager;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
@@ -147,12 +147,12 @@ interface ListManagerInterface
     public function setRequest(Request $request);
 
     /**
-     * @return FilterRegistry
+     * @return FilterManager
      */
-    public function getFilterRegistry(): FilterRegistry;
+    public function getFilterManager(): FilterManager;
 
     /**
-     * @param FilterRegistry $filterRegistry
+     * @param FilterManager $filterRegistry
      */
-    public function setFilterRegistry(FilterRegistry $filterRegistry);
+    public function setFilterManager(FilterManager $filterRegistry);
 }

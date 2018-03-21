@@ -126,7 +126,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         // apply filter
         /** @var FilterQueryBuilder $queryBuilder */
-        $queryBuilder = $this->_manager->getFilterRegistry()->getQueryBuilder($filter->id);
+        $queryBuilder = $this->_manager->getFilterManager()->getQueryBuilder($filter->id);
 
         $this->setIsSubmitted($isSubmitted);
 

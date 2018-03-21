@@ -115,18 +115,18 @@ class ListManager implements ListManagerInterface
         FormUtil $formUtil,
         \Twig_Environment $twig
     ) {
-        $this->framework                 = $framework;
-        $this->listConfigRegistry        = $listConfigRegistry;
+        $this->framework = $framework;
+        $this->listConfigRegistry = $listConfigRegistry;
         $this->listConfigElementRegistry = $listConfigElementRegistry;
-        $this->filterManager             = $filterManager;
-        $this->request                   = $request;
-        $this->modelUtil                 = $modelUtil;
-        $this->urlUtil                   = $urlUtil;
-        $this->formUtil                  = $formUtil;
-        $this->containerUtil             = $containerUtil;
-        $this->imageUtil                 = $imageUtil;
-        $this->twig                      = $twig;
-        $this->database                  = $framework->createInstance(Database::class);
+        $this->filterManager = $filterManager;
+        $this->request = $request;
+        $this->modelUtil = $modelUtil;
+        $this->urlUtil = $urlUtil;
+        $this->formUtil = $formUtil;
+        $this->containerUtil = $containerUtil;
+        $this->imageUtil = $imageUtil;
+        $this->twig = $twig;
+        $this->database = $framework->createInstance(Database::class);
     }
 
     /**

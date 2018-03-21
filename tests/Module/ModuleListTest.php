@@ -52,24 +52,24 @@ class ModuleListTest extends ContaoTestCase
             \define('TL_ROOT', $this->getFixturesDir());
         }
 
-        $objPage               = $this->getMockBuilder(PageModel::class)->disableOriginalConstructor()->getMock();
+        $objPage = $this->getMockBuilder(PageModel::class)->disableOriginalConstructor()->getMock();
         $objPage->outputFormat = '';
 
-        $GLOBALS['TL_LANGUAGE']                                                                          = 'de';
-        $GLOBALS['objPage']                                                                              = $objPage;
-        $GLOBALS['TL_DCA']['tl_list_config']['fields']['abc']['eval']['addAsDataAttribute']              = true;
-        $GLOBALS['TL_DCA']['tl_list_config']['fields']['fieldWithData']['eval']['addAsDataAttribute']    = true;
+        $GLOBALS['TL_LANGUAGE'] = 'de';
+        $GLOBALS['objPage'] = $objPage;
+        $GLOBALS['TL_DCA']['tl_list_config']['fields']['abc']['eval']['addAsDataAttribute'] = true;
+        $GLOBALS['TL_DCA']['tl_list_config']['fields']['fieldWithData']['eval']['addAsDataAttribute'] = true;
         $GLOBALS['TL_DCA']['tl_list_config']['fields']['fieldWithoutData']['eval']['addAsDataAttribute'] = false;
 
-        $router       = $this->createRouterMock();
+        $router = $this->createRouterMock();
         $requestStack = $this->createRequestStackMock();
-        $framework    = $this->mockContaoFramework($this->createMockAdapater());
+        $framework = $this->mockContaoFramework($this->createMockAdapater());
 
-        $config   = $this->createMock(Config::class);
+        $config = $this->createMock(Config::class);
         $database = $this->createMock(Connection::class);
 
         $finder = new ResourceFinder([
-            $this->getFixturesDir() . '/vendor/contao/core-bundle/Resources/contao',
+            $this->getFixturesDir().'/vendor/contao/core-bundle/Resources/contao',
         ]);
 
         $container = $this->mockContainer();
@@ -99,10 +99,10 @@ class ModuleListTest extends ContaoTestCase
                 'managers' => [
                     [
                         'name' => 'default',
-                        'id'   => 'huh.list.manager.list',
-                    ]
-                ]
-            ]
+                        'id' => 'huh.list.manager.list',
+                    ],
+                ],
+            ],
         ]);
         $container->set('huh.utils.model', new ModelUtil($framework));
         $container->set('huh.filter.manager', $this->createFilterManager());
@@ -148,11 +148,11 @@ class ModuleListTest extends ContaoTestCase
         TemplateLoader::addFiles(['mod_list' => '../src/Resources/contao/templates']);
 
         $moduleModelConfig = [
-            'id'         => 1,
+            'id' => 1,
             'listConfig' => 5,
-            'cssID'      => [0 => 'phpunit', 1 => 'test'],
+            'cssID' => [0 => 'phpunit', 1 => 'test'],
         ];
-        $moduleModel       = $this->getMockBuilder(ModuleModel::class)->disableOriginalConstructor()->setMethods(['row'])->getMock();
+        $moduleModel = $this->getMockBuilder(ModuleModel::class)->disableOriginalConstructor()->setMethods(['row'])->getMock();
         $moduleModel->method('row')->willReturn($moduleModelConfig);
         foreach ($moduleModelConfig as $key => $value) {
             $moduleModel->$key = $value;
@@ -170,7 +170,7 @@ class ModuleListTest extends ContaoTestCase
                 $count = 0;
                 foreach ($params as $key => $value) {
                     $url .= (0 === $count ? '?' : '&');
-                    $url .= $key . '=' . $value;
+                    $url .= $key.'='.$value;
                     ++$count;
                 }
             }
@@ -184,7 +184,7 @@ class ModuleListTest extends ContaoTestCase
     public function createRequestStackMock()
     {
         $requestStack = new RequestStack();
-        $request      = new Request();
+        $request = new Request();
         $request->attributes->set('_contao_referer_id', 'foobar');
         $requestStack->push($request);
 
@@ -205,7 +205,7 @@ class ModuleListTest extends ContaoTestCase
     public function createListConfigRegistry()
     {
         $listModelData = [
-            'id'     => 5,
+            'id' => 5,
             'filter' => 3,
         ];
 
@@ -215,7 +215,7 @@ class ModuleListTest extends ContaoTestCase
         $listRegistryModel->filter = 3;
 
         $listRegistry = $this->createConfiguredMock(ListConfigRegistry::class, [
-            'findByPk'          => $listRegistryModel,
+            'findByPk' => $listRegistryModel,
             'computeListConfig' => $listRegistryModel,
         ]);
 
@@ -233,7 +233,7 @@ class ModuleListTest extends ContaoTestCase
         $filterManagerConfig = [
             'findById' => $filterConfig,
         ];
-        $filterManager       = $this->createConfiguredMock(FilterManager::class, $filterManagerConfig);
+        $filterManager = $this->createConfiguredMock(FilterManager::class, $filterManagerConfig);
 
         return $filterManager;
     }
@@ -243,7 +243,7 @@ class ModuleListTest extends ContaoTestCase
      */
     protected function getFixturesDir(): string
     {
-        return __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Fixtures';
+        return __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Fixtures';
     }
 
     /**

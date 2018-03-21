@@ -1,0 +1,4 @@
+huh:
+    encore:
+        entries:
+            - { name: contao-list-bundle, file: "vendor/heimrichhannot/contao-list-bundle/src/Resources/public/js/jquery.list-bundle.es6.js" }

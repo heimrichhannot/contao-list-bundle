@@ -34,11 +34,24 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
      */
     public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container)
     {
-        return ContainerUtil::mergeConfigFile(
+        $extensionConfigs = ContainerUtil::mergeConfigFile(
             'huh_list',
             $extensionName,
             $extensionConfigs,
             $container->getParameter('kernel.project_dir').'/vendor/heimrichhannot/contao-list-bundle/src/Resources/config/config.yml'
         );
+
+        if (in_array(
+            'HeimrichHannot\EncoreBundle\HeimrichHannotContaoEncoreBundle',
+            $container->getParameter('kernel.bundles'), true)) {
+            $extensionConfigs = ContainerUtil::mergeConfigFile(
+                'huh_encore',
+                $extensionName,
+                $extensionConfigs,
+                $container->getParameter('kernel.project_dir').'/vendor/heimrichhannot/contao-list-bundle/src/Resources/config/config_encore.yml'
+            );
+        }
+
+        return $extensionConfigs;
     }
 }

@@ -147,6 +147,14 @@ class ModuleList extends Module
         return $listConfig;
     }
 
+    /**
+     * @return FilterConfig
+     */
+    public function getFilterConfig(): FilterConfig
+    {
+        return $this->filterConfig;
+    }
+
     protected function compile()
     {
         $this->manager->getList()->handleShare();

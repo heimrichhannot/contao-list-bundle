@@ -96,6 +96,12 @@ class DefaultList implements ListInterface, \JsonSerializable
     protected $_sortingHeader;
 
     /**
+     * Current page
+     * @var int
+     */
+    protected $_page = 0;
+
+    /**
      * Constructor.
      *
      * @param ListManagerInterface $_manager
@@ -108,10 +114,10 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function parse(string $listTemplate = null, string $itemTemplate = null, array $data = []): ?string
     {
         $isSubmitted = $this->_manager->getFilterConfig()->hasData();
-        $listConfig = $this->_manager->getListConfig();
-        $filter = (object) $this->_manager->getFilterConfig()->getFilter();
+        $listConfig  = $this->_manager->getListConfig();
+        $filter      = (object)$this->_manager->getFilterConfig()->getFilter();
 
-        $this->setWrapperId('huh-list-'.$this->getModule()['id']);
+        $this->setWrapperId('huh-list-' . $this->getModule()['id']);
 
         $this->addDataAttributes();
         $this->addMasonry();
@@ -130,7 +136,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $this->setIsSubmitted($isSubmitted);
 
-        $fields = $filter->dataContainer.'.* ';
+        $fields = $filter->dataContainer . '.* ';
 
         $totalCount = 0;
 
@@ -179,16 +185,16 @@ class DefaultList implements ListInterface, \JsonSerializable
             return [];
         }
 
-        $count = 0;
+        $count   = 0;
         $results = [];
 
         foreach ($items as $item) {
             ++$count;
-            $first = 1 == $count ? ' first' : '';
-            $last = $count == $limit ? ' last' : '';
+            $first   = 1 == $count ? ' first' : '';
+            $last    = $count == $limit ? ' last' : '';
             $oddEven = (0 == ($count % 2)) ? ' even' : ' odd';
 
-            $cssClass = 'item item_'.$count.$first.$last.$oddEven;
+            $cssClass = 'item item_' . $count . $first . $last . $oddEven;
 
             if (null !== ($itemClass = $this->getItemClassByName($listConfig->item ?: 'default'))) {
                 $reflection = new \ReflectionClass($itemClass);
@@ -225,7 +231,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $listConfig = $this->_manager->getListConfig();
 
         // offset
-        $offset = (int) ($listConfig->skipFirst);
+        $offset = (int)($listConfig->skipFirst);
 
         // limit
         $limit = null;
@@ -239,13 +245,13 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         if (ListConfig::SORTING_MODE_RANDOM == $currentSorting['order']) {
             $randomSeed = $this->_manager->getRequest()->getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
-            $queryBuilder->orderBy('RAND("'.(int) $randomSeed.'")');
+            $queryBuilder->orderBy('RAND("' . (int)$randomSeed . '")');
             list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit, $randomSeed);
         } elseif (ListConfig::SORTING_MODE_MANUAL == $currentSorting['order']) {
             $sortingItems = StringUtil::deserialize($listConfig->sortingItems, true);
 
             if (!empty($sortingItems)) {
-                $queryBuilder->orderBy('FIELD(id,'.implode(',', $sortingItems).')', ' ');
+                $queryBuilder->orderBy('FIELD(id,' . implode(',', $sortingItems) . ')', ' ');
             }
 
             list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit);
@@ -263,9 +269,8 @@ class DefaultList implements ListInterface, \JsonSerializable
 
     public function splitResults($offset, $total, $limit, $randomSeed = null): ?array
     {
-        $listConfig = $this->_manager->getListConfig();
+        $listConfig     = $this->_manager->getListConfig();
         $offsettedTotal = $total - $offset;
-        $templateData = [];
 
         // Split the results
         if ($listConfig->perPage > 0 && (!isset($limit) || $listConfig->numberOfItems > $listConfig->perPage)) {
@@ -275,15 +280,15 @@ class DefaultList implements ListInterface, \JsonSerializable
             }
 
             // Get the current page
-            $id = 'page_s'.$this->getModule()['id'];
+            $id   = 'page_s' . $this->getModule()['id'];
             $page = $this->_manager->getRequest()->getGet($id) ?: 1;
-            $templateData['page'] = $page;
+            $this->setPage($page);
 
             // Do not index or cache the page if the page number is outside the range
             if ($page < 1 || $page > max(ceil($offsettedTotal / $listConfig->perPage), 1)) {
                 global $objPage;
                 $objPage->noSearch = 1;
-                $objPage->cache = 0;
+                $objPage->cache    = 0;
 
                 // Send a 404 header
                 header('HTTP/1.1 404 Not Found');
@@ -292,7 +297,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             }
 
             // Set limit and offset
-            $limit = $listConfig->perPage;
+            $limit  = $listConfig->perPage;
             $offset += (max($page, 1) - 1) * $listConfig->perPage;
 
             // Overall limit
@@ -318,13 +323,13 @@ class DefaultList implements ListInterface, \JsonSerializable
      */
     public function generateTableHeader(): array
     {
-        $headerFields = [];
+        $headerFields   = [];
         $currentSorting = $this->getCurrentSorting();
-        $listConfig = $this->_manager->getListConfig();
-        $filter = (object) $this->_manager->getFilterConfig()->getFilter();
-        $urlUtil = System::getContainer()->get('huh.utils.url');
-        $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
-        $tableFields = \Contao\StringUtil::deserialize($listConfig->tableFields, true);
+        $listConfig     = $this->_manager->getListConfig();
+        $filter         = (object)$this->_manager->getFilterConfig()->getFilter();
+        $urlUtil        = System::getContainer()->get('huh.utils.url');
+        $dca            = &$GLOBALS['TL_DCA'][$filter->dataContainer];
+        $tableFields    = \Contao\StringUtil::deserialize($listConfig->tableFields, true);
 
         foreach ($tableFields as $i => $name) {
             $isCurrentOrderField = ($name == $currentSorting['order']);
@@ -337,9 +342,9 @@ class DefaultList implements ListInterface, \JsonSerializable
             if ($isCurrentOrderField) {
                 $field['sortingClass'] = (ListConfig::SORTING_DIRECTION_ASC == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_ASC : ListConfig::SORTING_DIRECTION_DESC);
 
-                $field['link'] = $urlUtil->addQueryString('order='.$name.'&sort='.(ListConfig::SORTING_DIRECTION_ASC == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_DESC : ListConfig::SORTING_DIRECTION_ASC));
+                $field['link'] = $urlUtil->addQueryString('order=' . $name . '&sort=' . (ListConfig::SORTING_DIRECTION_ASC == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_DESC : ListConfig::SORTING_DIRECTION_ASC));
             } else {
-                $field['link'] = $urlUtil->addQueryString('order='.$name.'&sort='.ListConfig::SORTING_DIRECTION_ASC);
+                $field['link'] = $urlUtil->addQueryString('order=' . $name . '&sort=' . ListConfig::SORTING_DIRECTION_ASC);
             }
 
             $headerFields[] = $field;
@@ -351,12 +356,12 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function addDataAttributes()
     {
         $dataAttributes = [];
-        $stringUtil = System::getContainer()->get('huh.utils.string');
-        $listConfig = $this->_manager->getListConfig();
+        $stringUtil     = System::getContainer()->get('huh.utils.string');
+        $listConfig     = $this->_manager->getListConfig();
 
         foreach ($GLOBALS['TL_DCA']['tl_list_config']['fields'] as $field => $data) {
             if ($data['eval']['addAsDataAttribute'] && $listConfig->{$field}) {
-                $dataAttributes[] = 'data-'.$stringUtil->camelCaseToDashed($field).'="'.$listConfig->{$field}.'"';
+                $dataAttributes[] = 'data-' . $stringUtil->camelCaseToDashed($field) . '="' . $listConfig->{$field} . '"';
             }
         }
 
@@ -384,7 +389,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
                 $stamps[] = [
                     'content' => $blockModule->generateContent($stamp['stampBlock']),
-                    'class' => $stamp['stampCssClass'],
+                    'class'   => $stamp['stampCssClass'],
                 ];
             }
 
@@ -398,28 +403,28 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function handleShare()
     {
         $listConfig = $this->_manager->getListConfig();
-        $filter = (object) $this->_manager->getFilterConfig();
-        $request = $this->_manager->getRequest();
-        $action = $request->getGet('act');
+        $filter     = (object)$this->_manager->getFilterConfig();
+        $request    = $this->_manager->getRequest();
+        $action     = $request->getGet('act');
 
         if (ListBundle::ACTION_SHARE == $action && $listConfig->addShare) {
             $url = $request->getGet('url');
-            $id = $request->getGet($listConfig->useAlias ? $listConfig->aliasField : 'id');
+            $id  = $request->getGet($listConfig->useAlias ? $listConfig->aliasField : 'id');
 
             if (null !== ($entity = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($this->_manager->getFramework(), $filter->dataContainer, $id))) {
                 $now = time();
 
                 if ($this->shareTokenExpiredOrEmpty($entity, $now)) {
-                    $shareToken = str_replace('.', '', uniqid('', true));
-                    $entity->shareToken = $shareToken;
+                    $shareToken             = str_replace('.', '', uniqid('', true));
+                    $entity->shareToken     = $shareToken;
                     $entity->shareTokenTime = $now;
                     $entity->save();
                 }
 
                 if ($listConfig->shareAutoItem) {
-                    $shareUrl = $url.'/'.$entity->shareToken;
+                    $shareUrl = $url . '/' . $entity->shareToken;
                 } else {
-                    $shareUrl = System::getContainer()->get('huh.utils.url')->addQueryString('share='.$entity->shareToken, $url);
+                    $shareUrl = System::getContainer()->get('huh.utils.url')->addQueryString('share=' . $entity->shareToken, $url);
                 }
 
                 die($shareUrl);
@@ -432,9 +437,9 @@ class DefaultList implements ListInterface, \JsonSerializable
      */
     public function shareTokenExpiredOrEmpty($entity, $now)
     {
-        $shareToken = $entity->shareToken;
+        $shareToken         = $entity->shareToken;
         $expirationInterval = StringUtil::deserialize(Config::get('shareExpirationInterval'), true);
-        $interval = 604800; // default: 7 days
+        $interval           = 604800; // default: 7 days
 
         if (isset($expirationInterval['unit']) && isset($expirationInterval['value']) && $expirationInterval['value'] > 0) {
             $interval = System::getContainer()->get('huh.utils.date')->getTimePeriodInSeconds($expirationInterval);
@@ -448,9 +453,9 @@ class DefaultList implements ListInterface, \JsonSerializable
      */
     public function getCurrentSorting(): array
     {
-        $listConfig = $this->_manager->getListConfig();
-        $filter = (object) $this->_manager->getFilterConfig();
-        $request = $this->_manager->getRequest();
+        $listConfig     = $this->_manager->getListConfig();
+        $filter         = (object)$this->_manager->getFilterConfig();
+        $request        = $this->_manager->getRequest();
         $sortingAllowed = $listConfig->isTableList && $listConfig->hasHeader && $listConfig->sortingHeader;
 
         // GET parameter
@@ -463,7 +468,7 @@ class DefaultList implements ListInterface, \JsonSerializable
                 && in_array($sort, ListConfig::SORTING_DIRECTIONS, true)) {
                 $currentSorting = [
                     'order' => $request->getGet('order'),
-                    'sort' => $request->getGet('sort'),
+                    'sort'  => $request->getGet('sort'),
                 ];
             } else {
                 $currentSorting = [];
@@ -489,7 +494,7 @@ class DefaultList implements ListInterface, \JsonSerializable
                 default:
                     $currentSorting = [
                         'order' => $listConfig->sortingField,
-                        'sort' => $listConfig->sortingDirection,
+                        'sort'  => $listConfig->sortingDirection,
                     ];
                     break;
             }
@@ -533,7 +538,7 @@ class DefaultList implements ListInterface, \JsonSerializable
      */
     public function getDataContainer(): ?string
     {
-        $filter = (object) $this->_manager->getFilterConfig()->getFilter();
+        $filter = (object)$this->_manager->getFilterConfig()->getFilter();
 
         return $filter->dataContainer;
     }
@@ -761,4 +766,22 @@ class DefaultList implements ListInterface, \JsonSerializable
     {
         $this->_sortingHeader = $sortingHeader;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function setPage(int $page): void
+    {
+        $this->_page = $page;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPage(): int
+    {
+        return $this->_page;
+    }
+
+
 }

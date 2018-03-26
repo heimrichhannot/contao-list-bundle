@@ -40,7 +40,7 @@ services:
         arguments:
             - "@contao.framework"
     huh.list.choice.list:
-        class: HeimrichHannot\ListBundle\Choice\ItemChoice
+        class: HeimrichHannot\ListBundle\Choice\ListChoice
         arguments:
             - "@contao.framework"
     huh.list.choice.item:

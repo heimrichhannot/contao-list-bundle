@@ -1,5 +1,7 @@
 {
+  "name": "contao-list-bundle",
+  "version": "1.0.0",
   "dependencies": {
-    "masonry-layout": "^4.2"
+    "@masonry-layout": "^4.2"
   }
 }

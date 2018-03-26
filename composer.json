@@ -25,7 +25,8 @@
     "php-http/guzzle6-adapter": "^1.1",
     "php-http/message-factory": "^1.0.2",
     "satooshi/php-coveralls": "^2.0",
-    "symfony/phpunit-bridge": "^3.2"
+    "symfony/phpunit-bridge": "^3.2",
+    "foxy/foxy": "^1.0.0"
   },
   "autoload": {
     "psr-4": {

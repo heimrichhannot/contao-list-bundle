@@ -39,7 +39,7 @@ interface ListInterface
      *
      * @param string|null $listTemplate
      * @param string|null $itemTemplate
-     * @param array $data
+     * @param array       $data
      *
      * @return string|null
      */
@@ -75,7 +75,7 @@ interface ListInterface
     /**
      * Applies the list config to the query builder.
      *
-     * @param int $totalCount
+     * @param int                $totalCount
      * @param FilterQueryBuilder $queryBuilder
      *
      * @return mixed
@@ -93,7 +93,7 @@ interface ListInterface
     public function splitResults($offset, $total, $limit, $randomSeed = null): ?array;
 
     /**
-     * @param array $items
+     * @param array       $items
      * @param string|null $itemTemplate
      *
      * @return array
@@ -227,15 +227,16 @@ interface ListInterface
      */
     public function setSortingHeader(bool $sortingHeader);
 
-
     /**
-     * Set current page
+     * Set current page.
+     *
      * @param int $page
      */
     public function setPage(int $page): void;
 
     /**
-     * Get current page
+     * Get current page.
+     *
      * @return int
      */
     public function getPage(): int;

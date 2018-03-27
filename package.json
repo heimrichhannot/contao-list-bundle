@@ -2,6 +2,8 @@
   "name": "contao-list-bundle",
   "version": "1.0.0",
   "dependencies": {
-    "masonry-layout": "^4.2"
+    "masonry-layout": "^4.1",
+    "imagesloaded": "^4.1",
+    "jscroll": "^2.3"
   }
 }

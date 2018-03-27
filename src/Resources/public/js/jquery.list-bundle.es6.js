@@ -98,7 +98,6 @@ let jQuery = require('jquery');
                             options = $(this).data('masonry-options');
 
                         let $grid = $this.imagesLoaded(function() {
-                            console.log($grid);
                             $grid.masonry({
                                 // fitWidth: true,
                                 itemSelector: '.item',

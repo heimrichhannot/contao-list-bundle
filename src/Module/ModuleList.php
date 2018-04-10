@@ -89,7 +89,7 @@ class ModuleList extends Module
         $this->listConfig = $this->getListConfig((int) $objModule->listConfig);
 
         $this->manager = $this->getListManagerByName($this->listConfig->manager ?: 'default');
-	$this->manager->setListConfig($this->listConfig);
+        $this->manager->setListConfig($this->listConfig);
         $this->manager->setModuleData($this->arrData);
 
         $this->filterConfig = $this->manager->getFilterConfig();

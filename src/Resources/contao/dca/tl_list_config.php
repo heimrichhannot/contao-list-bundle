@@ -155,8 +155,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
                 'chosen'             => true,
                 'includeBlankOption' => true,
                 'tl_class'           => 'clr w50',
-                'mandatory'          => true,
-                'notOverridable'     => true
+                'mandatory'          => true
             ],
             'exclude'          => true,
             'sql'              => "varchar(128) NOT NULL default 'default'",
@@ -169,8 +168,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
                 'chosen'             => true,
                 'includeBlankOption' => true,
                 'mandatory'          => true,
-                'tl_class'           => 'w50',
-                'notOverridable'     => true
+                'tl_class'           => 'w50'
             ],
             'exclude'          => true,
             'sql'              => "varchar(128) NOT NULL default 'default'",
@@ -183,8 +181,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
                 'chosen'             => true,
                 'includeBlankOption' => true,
                 'mandatory'          => true,
-                'tl_class'           => 'w50',
-                'notOverridable'     => true
+                'tl_class'           => 'w50'
             ],
             'exclude'          => true,
             'sql'              => "varchar(128) NOT NULL default 'default'",

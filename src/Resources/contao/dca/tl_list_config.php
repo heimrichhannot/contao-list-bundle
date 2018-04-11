@@ -30,7 +30,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'label_callback' => ['HeimrichHannot\ListBundle\Backend\ListConfig', 'generateLabel']
         ],
         'sorting'           => [
-            'mode'         => 1,
+            'mode'         => 2,
             'fields'       => ['title'],
             'headerFields' => ['title'],
             'panelLayout'  => 'filter;sort,search,limit',

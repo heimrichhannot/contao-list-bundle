@@ -5,7 +5,7 @@
         </div>
     {% endfor %}
 
-    {% if addDetails|default() and detailsUrl|default() %}
+    {% if addDetails|default() and (detailsUrl|default() or modalUrl|default()) %}
         {% if useModal|default() %}
             <a class="details" href="{{ modalUrl }}" data-toggle="modal">
                 {{ 'huh.list.misc.detailsTitle' | trans }}

@@ -5,7 +5,7 @@
         </td>
     {% endfor %}
 
-    {% if addDetails|default() and detailsUrl|default() %}
+    {% if addDetails|default() and (detailsUrl|default() or modalUrl|default()) %}
         <td>
             {% if useModal|default() %}
                 <a class="details" href="{{ modalUrl }}" data-toggle="modal">

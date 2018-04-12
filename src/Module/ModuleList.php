@@ -70,7 +70,7 @@ class ModuleList extends Module
      * ModuleList constructor.
      *
      * @param ModuleModel $objModule
-     * @param string      $strColumn
+     * @param string $strColumn
      */
     public function __construct(ModuleModel $objModule, $strColumn = 'main')
     {
@@ -82,29 +82,33 @@ class ModuleList extends Module
         System::loadLanguageFile('tl_list_config');
 
         $this->listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
-        $this->filterManager = System::getContainer()->get('huh.filter.manager');
-        $this->request = System::getContainer()->get('huh.request');
+        $this->filterManager      = System::getContainer()->get('huh.filter.manager');
+        $this->request            = System::getContainer()->get('huh.request');
+
+        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
+            return;
+        }
 
         // retrieve list config
-        $this->listConfig = $this->getListConfig((int) $objModule->listConfig);
+        $this->listConfig = $this->getListConfig((int)$objModule->listConfig);
 
         $this->manager = $this->getListManagerByName($this->listConfig->manager ?: 'default');
         $this->manager->setListConfig($this->listConfig);
         $this->manager->setModuleData($this->arrData);
 
         $this->filterConfig = $this->manager->getFilterConfig();
-        $this->filter = (object) $this->filterConfig->getFilter();
+        $this->filter       = (object)$this->filterConfig->getFilter();
     }
 
     public function generate()
     {
         if (TL_MODE == 'BE') {
-            $objTemplate = new \BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD'][$this->type][0]).' ###';
-            $objTemplate->title = $this->headline;
-            $objTemplate->id = $this->id;
-            $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
+            $objTemplate           = new \BackendTemplate('be_wildcard');
+            $objTemplate->wildcard = '### ' . Utf8::strtoupper($GLOBALS['TL_LANG']['FMD'][$this->type][0]) . ' ###';
+            $objTemplate->title    = $this->headline;
+            $objTemplate->id       = $this->id;
+            $objTemplate->link     = $this->name;
+            $objTemplate->href     = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
 
             return $objTemplate->parse();
         }
@@ -134,7 +138,7 @@ class ModuleList extends Module
         return parent::generate();
     }
 
-    public function getListConfig(int $listConfigId): ListConfigModel
+    public function getListConfig(int $listConfigId): ?ListConfigModel
     {
         if (!$listConfigId || null === ($listConfig = $this->listConfigRegistry->findByPk($listConfigId))) {
             throw new \Exception(sprintf('The module %s has no valid list config. Please set one.', $this->moduleData['id']));
@@ -162,11 +166,11 @@ class ModuleList extends Module
 
         // apply module fields to template
         $this->Template->headline = $this->headline;
-        $this->Template->hl = $this->hl;
+        $this->Template->hl       = $this->hl;
 
         // add class to every list template
-        $cssID = $this->cssID;
-        $cssID[1] = $cssID[1].($cssID[1] ? ' ' : '').'huh-list';
+        $cssID    = $this->cssID;
+        $cssID[1] = $cssID[1] . ($cssID[1] ? ' ' : '') . 'huh-list';
 
         $this->cssID = $cssID;
 
@@ -201,7 +205,7 @@ class ModuleList extends Module
                 }
 
                 /** @var ListManagerInterface $manager */
-                $manager = System::getContainer()->get($manager['id']);
+                $manager    = System::getContainer()->get($manager['id']);
                 $interfaces = class_implements($manager);
 
                 if (!is_array($interfaces) || !in_array(ListManagerInterface::class, $interfaces, true)) {

@@ -19,6 +19,8 @@ use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\Modal\ModalModel;
 use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
+use Urodoz\Truncate\Bridge\Twig\TruncateExtension;
+use Urodoz\Truncate\TruncateService;
 
 class DefaultItem implements ItemInterface, \JsonSerializable
 {
@@ -364,6 +366,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         $twig->hasExtension('\Twig_Extensions_Extension_Intl') ?: $twig->addExtension(new \Twig_Extensions_Extension_Intl());
         $twig->hasExtension('\Twig_Extensions_Extension_Array') ?: $twig->addExtension(new \Twig_Extensions_Extension_Array());
         $twig->hasExtension('\Twig_Extensions_Extension_Date') ?: $twig->addExtension(new \Twig_Extensions_Extension_Date());
+        $twig->hasExtension('urodoztruncatehtml_extension') ?: $twig->addExtension(new TruncateExtension(TruncateService::create()));
 
         return $twig->render($this->_manager->getItemTemplateByName($listConfig->itemTemplate ?: 'default'), $this->jsonSerialize());
     }

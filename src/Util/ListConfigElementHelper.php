@@ -19,11 +19,9 @@ class ListConfigElementHelper
             return [];
         }
 
-        return System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
-            [
-                'dataContainer' => $filter['dataContainer'],
-            ]
-        );
+        return System::getContainer()->get('huh.utils.choice.field')->getCachedChoices([
+            'dataContainer' => $filter['dataContainer'],
+        ]);
     }
 
     public static function getCheckboxFields(DataContainer $dc)
@@ -32,11 +30,23 @@ class ListConfigElementHelper
             return [];
         }
 
-        return System::getContainer()->get('huh.utils.choice.field')->getCachedChoices(
-            [
-                'dataContainer' => $filter['dataContainer'],
-                'inputTypes' => ['checkbox'],
-            ]
-        );
+        return System::getContainer()->get('huh.utils.choice.field')->getCachedChoices([
+            'dataContainer' => $filter['dataContainer'],
+            'inputTypes' => ['checkbox'],
+        ]);
+    }
+
+    public static function getConfigElementTypes()
+    {
+        $types = [];
+
+        $listConfig = System::getContainer()->getParameter('huh.list');
+        $configElementTypes = $listConfig['list']['config_element_types'];
+
+        foreach ($configElementTypes as $configElementType) {
+            $types[] = $configElementType['name'];
+        }
+
+        return $types;
     }
 }

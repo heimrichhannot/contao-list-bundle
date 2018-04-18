@@ -121,7 +121,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
                 return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getCheckboxFields($dc);
             },
             'exclude'          => true,
-            'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
+            'eval'             => ['includeBlankOption' => true, 'tl_class' => 'w50 autoheight'],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
         'imageField'             => [

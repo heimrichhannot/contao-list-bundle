@@ -32,17 +32,16 @@ class ImageConfigElementType implements ConfigElementType
     {
         $image = null;
 
-        if ($item->getRawValue($listConfigElement->imageSelectorField) && $item->getRawValue($listConfigElement->imageField)) {
+        if ($listConfigElement->imageSelectorField && $item->getRawValue($listConfigElement->imageSelectorField) &&
+            $item->getRawValue($listConfigElement->imageField)) {
             $imageSelectorField = $listConfigElement->imageSelectorField;
             $image = $item->getRawValue($listConfigElement->imageField);
             $imageField = $listConfigElement->imageField;
-        }
-        elseif (null === $item->getRawValue($listConfigElement->imageSelectorField) && $item->getRawValue($listConfigElement->imageField)) {
+        } elseif (!$listConfigElement->imageSelectorField && $item->getRawValue($listConfigElement->imageField)) {
             $imageSelectorField = '';
             $image = $item->getRawValue($listConfigElement->imageField);
             $imageField = $listConfigElement->imageField;
-        }
-        elseif ($listConfigElement->placeholderImageMode) {
+        } elseif ($listConfigElement->placeholderImageMode) {
             $imageSelectorField = $listConfigElement->imageSelectorField;
             $imageField = $listConfigElement->imageField;
 
@@ -59,20 +58,24 @@ class ImageConfigElementType implements ConfigElementType
                     $image = $listConfigElement->placeholderImage;
                     break;
             }
-        }
-        else {
+        } else {
             return;
         }
 
         /** @var FilesModel $filesModel */
         $filesModel = $this->framework->getAdapter(FilesModel::class);
 
-        if(null === ($imageFile = $filesModel->findByUuid($image)))
-        {
-            $uuid = StringUtil::deserialize($image,true)[0];
+        // support for multifileupload
+        $image = StringUtil::deserialize($image);
+
+        if (is_array($image)) {
+            $image = $image[0];
+        }
+
+        if (null === ($imageFile = $filesModel->findByUuid($image))) {
+            $uuid = StringUtil::deserialize($image, true)[0];
             $imageFile = $filesModel->findByUuid($uuid);
         }
-        
 
         if (null !== $imageFile
             && file_exists(System::getContainer()->get('huh.utils.container')->getProjectDir().'/'.$imageFile->path)
@@ -108,4 +111,3 @@ class ImageConfigElementType implements ConfigElementType
         }
     }
 }
-

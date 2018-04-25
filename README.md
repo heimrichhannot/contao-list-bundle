@@ -49,6 +49,81 @@ image | Configure the output of one or more image fields separately (image size,
 
 ## Technical Instructions
 
+### Templates (list and item)
+
+There are two ways to define your templates. 
+
+#### 1. By Prefix
+
+The first one is to simply deploy twig templates inside any `templates` or bundles `views` directory with the following prefixes:
+
+** list template prefixes**
+
+- `list_`
+
+** item template prefixes**
+
+- `list_item_`
+- `item_`
+- `news_`
+- `event_`
+
+**More prefixes can be defined, see 2nd way.**
+
+#### 2. By config.yml
+
+The second on is to extend the `config.yml` and define a strict template:
+
+**Plugin.php**
+```
+<?php
+
+class Plugin implements BundlePluginInterface, ExtensionPluginInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function getBundles(ParserInterface $parser)
+    {
+        …
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container)
+    {
+        return ContainerUtil::mergeConfigFile(
+            'huh_list',
+            $extensionName,
+            $extensionConfigs,
+            __DIR__ .'/../Resources/config/config.yml'
+        );
+    }
+}
+```
+
+**config.yml**
+```
+huh:
+    list:
+        templates:
+            list:
+                - { name: default, template: "@HeimrichHannotContaoList/list/list_default.html.twig" }
+                - { name: table_default, template: "@HeimrichHannotContaoList/list/list_table_default.html.twig" }
+            list_prefixes:
+                - list_(?!item)
+            item:
+                - { name: default, template: "@HeimrichHannotContaoList/item/list_item_default.html.twig" }
+                - { name: table_default, template: "@HeimrichHannotContaoList/item/list_item_table_default.html.twig" }
+            item_prefixes:
+                - list_item_
+                - item_
+                - news_
+                - event_
+```
+
+
 ### Masonry
 
 #### Template

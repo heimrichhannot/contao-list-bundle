@@ -12,6 +12,13 @@ huh:
             list:
                 - { name: default, template: "@HeimrichHannotContaoList/list/list_default.html.twig" }
                 - { name: table_default, template: "@HeimrichHannotContaoList/list/list_table_default.html.twig" }
+            list_prefixes:
+                - list_(?!item)
             item:
                 - { name: default, template: "@HeimrichHannotContaoList/item/list_item_default.html.twig" }
                 - { name: table_default, template: "@HeimrichHannotContaoList/item/list_item_table_default.html.twig" }
+            item_prefixes:
+                - list_item_
+                - item_
+                - news_
+                - event_

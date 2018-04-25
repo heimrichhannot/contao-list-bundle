@@ -22,12 +22,19 @@ class ListItemTemplateChoice extends AbstractChoice
 
         $config = System::getContainer()->getParameter('huh.list');
 
-        if (!isset($config['list']['templates']['item'])) {
-            return $choices;
+        if (isset($config['list']['templates']['item_prefixes'])) {
+            $choices = System::getContainer()->get('huh.utils.choice.twig_template')->setContext($config['list']['templates']['item_prefixes'])->getCachedChoices();
         }
 
-        foreach ($config['list']['templates']['item'] as $template) {
-            $choices[$template['name']] = $template['template'];
+        if (isset($config['list']['templates']['item'])) {
+            foreach ($config['list']['templates']['item'] as $template) {
+                // remove duplicates returned by `huh.utils.choice.twig_template`
+                if (false !== ($idx = array_search($template['template'], $choices))) {
+                    unset($choices[$idx]);
+                }
+
+                $choices[$template['name']] = $template['template'] . ' (Yaml)';
+            }
         }
 
         asort($choices);

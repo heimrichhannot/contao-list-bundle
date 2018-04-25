@@ -69,7 +69,7 @@ class ModuleListTest extends ContaoTestCase
         $database = $this->createMock(Connection::class);
 
         $finder = new ResourceFinder([
-            $this->getFixturesDir().'/vendor/contao/core-bundle/Resources/contao',
+            __DIR__ . '/../../vendor/contao/core-bundle/src/Resources/contao',
         ]);
 
         $container = $this->mockContainer();
@@ -93,6 +93,8 @@ class ModuleListTest extends ContaoTestCase
                 new \Twig_Environment($this->getMockBuilder('Twig_LoaderInterface')->getMock())
             )
         );
+
+        $container->set('huh.utils.container', new ContainerUtil($framework));
 
         $container->setParameter('huh.list', [
             'list' => [

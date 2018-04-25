@@ -18,7 +18,7 @@ let jQuery = require('jquery');
                     $wrapper.jscroll({
                         loadingHtml: '<div class="loading"><span class="text">Lade...</span></div>',
                         nextSelector: '.ajax-pagination a.next',
-                        autoTrigger: $items.data('add-infinite-scroll') == 1,
+                        autoTrigger: $wrapper.data('add-infinite-scroll') == 1,
                         contentSelector: id,
                         callback: function() {
                             let $jscrollAdded = $(this),
@@ -30,7 +30,7 @@ let jQuery = require('jquery');
                                 $jscrollAdded.imagesLoaded(function() {
                                     $items.append($newItems.fadeIn(300));
 
-                                    if ($items.attr('data-add-masonry') === "1") {
+                                    if ($wrapper.attr('data-add-masonry') === "1") {
                                         import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function() {
                                             $items.masonry('appended', $newItems);
                                             $items.masonry();
@@ -86,15 +86,15 @@ let jQuery = require('jquery');
             });
         },
         initMasonry: function() {
-            if ($('.huh-list .items[data-add-masonry="1"]').length < 1)
+            if ($('.huh-list .wrapper[data-add-masonry="1"]').length < 1)
             {
                 return;
             }
 
             import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function() {
                 import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(function() {
-                    $('.huh-list .items[data-add-masonry="1"]').each(function() {
-                        let $this = $(this),
+                    $('.huh-list .wrapper[data-add-masonry="1"]').each(function() {
+                        let $this = $(this).find('.items'),
                             options = $(this).data('masonry-options');
 
                         let $grid = $this.imagesLoaded(function() {

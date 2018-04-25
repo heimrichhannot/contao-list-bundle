@@ -17,9 +17,15 @@ use HeimrichHannot\Blocks\BlockModuleModel;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Backend\ListBundle;
 use HeimrichHannot\ListBundle\Backend\ListConfig;
+use HeimrichHannot\ListBundle\Event\ListAfterParseItemsEvent;
+use HeimrichHannot\ListBundle\Event\ListAfterRenderEvent;
+use HeimrichHannot\ListBundle\Event\ListBeforeParseItemsEvent;
+use HeimrichHannot\ListBundle\Event\ListBeforeRenderEvent;
+use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderEvent;
 use HeimrichHannot\ListBundle\Item\ItemInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class DefaultList implements ListInterface, \JsonSerializable
 {
@@ -29,6 +35,13 @@ class DefaultList implements ListInterface, \JsonSerializable
      * @var ListManagerInterface
      */
     protected $_manager;
+
+    /**
+     * Current List Manager.
+     *
+     * @var EventDispatcher
+     */
+    protected $_dispatcher;
 
     /**
      * @var string
@@ -110,6 +123,7 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function __construct(ListManagerInterface $_manager)
     {
         $this->_manager = $_manager;
+        $this->_dispatcher = System::getContainer()->get('event_dispatcher');
     }
 
     public function parse(string $listTemplate = null, string $itemTemplate = null, array $data = []): ?string
@@ -161,6 +175,8 @@ class DefaultList implements ListInterface, \JsonSerializable
         // query builder
         $this->applyListConfigToQueryBuilder($totalCount, $queryBuilder);
 
+        $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig));
+
         if ($isSubmitted || $listConfig->showInitialResults) {
             $items = $queryBuilder->execute()->fetchAll();
 
@@ -169,8 +185,15 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         // render
         $listTemplate = $this->_manager->getListTemplateByName(($listTemplate ?: $listConfig->listTemplate) ?: 'default');
+        $templateData = $this->jsonSerialize();
 
-        return System::getContainer()->get('twig')->render($listTemplate, $this->jsonSerialize());
+        $event = $this->_dispatcher->dispatch(ListBeforeRenderEvent::NAME, new ListBeforeRenderEvent($templateData, $this, $listConfig));
+
+        $rendered = System::getContainer()->get('twig')->render($listTemplate, $event->getTemplateData());
+
+        $event = $this->_dispatcher->dispatch(ListAfterRenderEvent::NAME, new ListAfterRenderEvent($rendered, $event->getTemplateData(), $this, $listConfig));
+
+        return $event->getRendered();
     }
 
     /**
@@ -188,6 +211,8 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $count = 0;
         $results = [];
+
+        $this->_dispatcher->dispatch(ListBeforeParseItemsEvent::NAME, new ListBeforeParseItemsEvent($items, $this, $listConfig));
 
         foreach ($items as $item) {
             ++$count;
@@ -223,6 +248,8 @@ class DefaultList implements ListInterface, \JsonSerializable
 
             $results[] = $parsedResult;
         }
+
+        $this->_dispatcher->dispatch(ListAfterParseItemsEvent::NAME, new ListAfterParseItemsEvent($items, $results, $this, $listConfig));
 
         return $results;
     }

@@ -15,6 +15,7 @@ use Contao\ModuleModel;
 use Contao\System;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Manager\FilterManager;
+use HeimrichHannot\ListBundle\Event\ListCompileEvent;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
@@ -177,6 +178,8 @@ class ModuleList extends Module
         $this->Template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) {
             return $this->manager->getList()->parse($listTemplate, $itemTemplate, $data);
         };
+
+        System::getContainer()->get('event_dispatcher')->dispatch(ListCompileEvent::NAME, new ListCompileEvent($this->Template, $this, $this->manager->getListConfig()));
     }
 
     /**

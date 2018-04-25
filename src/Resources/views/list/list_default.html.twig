@@ -1,10 +1,10 @@
-<div class="wrapper" id="{{ wrapperId }}"{{ dataAttributes|default()|raw }}>
+<div class="wrapper{{ wrapperClass|default() ? ' ' ~ wrapperClass : '' }}" id="{{ wrapperId }}">
     {% if showInitialResults or submitted %}
         {% if showItemCount %}
             <p class="count">{{ itemsFoundText|raw }}</p>
         {% endif %}
         {% if items is not empty %}
-            <div class="items">
+            <div class="items{{ itemsClass|default() ? ' ' ~ itemsClass : '' }}"{{ dataAttributes|default()|raw }}>
                 {% for item in items %}
                     {{ item|raw }}
                 {% endfor %}

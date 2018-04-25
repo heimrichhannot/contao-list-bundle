@@ -18,7 +18,7 @@
                 $wrapper.jscroll({
                     loadingHtml: '<div class="loading"><span class="text">Lade...</span></div>',
                     nextSelector: '.ajax-pagination a.next',
-                    autoTrigger: $wrapper.data('add-infinite-scroll') == 1,
+                    autoTrigger: $items.data('add-infinite-scroll') == 1,
                     contentSelector: id,
                     callback: function()
                     {
@@ -31,7 +31,7 @@
                         {
                             $items.append($newItems.fadeIn(300));
 
-                            if ($wrapper.attr('data-add-masonry') === "1") {
+                            if ($items.attr('data-add-masonry') === "1") {
                                 $items.masonry('appended', $newItems);
                                 $items.masonry();
                             }
@@ -86,9 +86,9 @@
         },
         initMasonry: function()
         {
-            $('.huh-list .wrapper[data-add-masonry="1"]').each(function()
+            $('.huh-list .items[data-add-masonry="1"]').each(function()
             {
-                var $this = $(this).find('.items'),
+                var $this = $(this),
                     options = $(this).data('masonry-options');
 
                 var $grid = $this.imagesLoaded(function()

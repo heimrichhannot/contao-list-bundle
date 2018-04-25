@@ -355,7 +355,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'filter'           => true,
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc) {
-                return \HeimrichHannot\ListBundle\Util\ListConfigHelper::getTextFields($dc);
+                return \HeimrichHannot\ListBundle\Util\ListConfigHelper::getFields($dc);
             },
             'eval'             => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
             'sql'              => "varchar(64) NOT NULL default ''",

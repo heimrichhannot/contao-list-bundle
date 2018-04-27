@@ -362,11 +362,11 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
         $twig = $this->_manager->getTwig();
 
-        $twig->hasExtension('\Twig_Extensions_Extension_Text') ?: $twig->addExtension(new \Twig_Extensions_Extension_Text());
-        $twig->hasExtension('\Twig_Extensions_Extension_Intl') ?: $twig->addExtension(new \Twig_Extensions_Extension_Intl());
-        $twig->hasExtension('\Twig_Extensions_Extension_Array') ?: $twig->addExtension(new \Twig_Extensions_Extension_Array());
-        $twig->hasExtension('\Twig_Extensions_Extension_Date') ?: $twig->addExtension(new \Twig_Extensions_Extension_Date());
-        $twig->hasExtension('Urodoz\Truncate\Bridge\Twig\TruncateExtension') ?: $twig->addExtension(new TruncateExtension(TruncateService::create()));
+        true === $twig->hasExtension('\Twig_Extensions_Extension_Text') ?: $twig->addExtension(new \Twig_Extensions_Extension_Text());
+        true === $twig->hasExtension('\Twig_Extensions_Extension_Intl') ?: $twig->addExtension(new \Twig_Extensions_Extension_Intl());
+        true === $twig->hasExtension('\Twig_Extensions_Extension_Array') ?: $twig->addExtension(new \Twig_Extensions_Extension_Array());
+        true === $twig->hasExtension('\Twig_Extensions_Extension_Date') ?: $twig->addExtension(new \Twig_Extensions_Extension_Date());
+        true === $twig->hasExtension('Urodoz\Truncate\Bridge\Twig\TruncateExtension') ?: $twig->addExtension(new TruncateExtension(TruncateService::create()));
 
         return $twig->render($this->_manager->getItemTemplateByName($listConfig->itemTemplate ?: 'default'), $this->jsonSerialize());
     }

@@ -223,7 +223,7 @@ class ListManager implements ListManagerInterface
         $config = System::getContainer()->getParameter('huh.list');
 
         if (!isset($config['list']['templates']['item'])) {
-            return null;
+            return System::getContainer()->get('huh.utils.template')->getTemplate($name);
         }
 
         $templates = $config['list']['templates']['item'];
@@ -234,7 +234,7 @@ class ListManager implements ListManagerInterface
             }
         }
 
-        return null;
+        return System::getContainer()->get('huh.utils.template')->getTemplate($name);
     }
 
     /**

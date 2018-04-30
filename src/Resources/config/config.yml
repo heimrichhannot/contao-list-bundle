@@ -1,24 +1,67 @@
-huh:
-    list:
-        managers:
-            - { name: default, id: huh.list.manager.list }
-        lists:
-            - { name: default, class: HeimrichHannot\ListBundle\Lists\DefaultList }
-        items:
-            - { name: default, class: HeimrichHannot\ListBundle\Item\DefaultItem }
-        config_element_types:
-            - { name: image, class: HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType }
-        templates:
-            list:
-                - { name: default, template: "@HeimrichHannotContaoList/list/list_default.html.twig" }
-                - { name: table_default, template: "@HeimrichHannotContaoList/list/list_table_default.html.twig" }
-            list_prefixes:
-                - list_(?!item)
-            item:
-                - { name: default, template: "@HeimrichHannotContaoList/item/list_item_default.html.twig" }
-                - { name: table_default, template: "@HeimrichHannotContaoList/item/list_item_table_default.html.twig" }
-            item_prefixes:
-                - list_item_
-                - item_
-                - news_
-                - event_
+services:
+    huh.list.choice.template.list:
+        class: HeimrichHannot\ListBundle\Choice\ListTemplateChoice
+        arguments:
+            - "@contao.framework"
+    huh.list.choice.template.item:
+        class: HeimrichHannot\ListBundle\Choice\ListItemTemplateChoice
+        arguments:
+            - "@contao.framework"
+    huh.list.choice.parent-list-config:
+        class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice
+        arguments:
+            - "@contao.framework"
+    huh.list.manager.list:
+        class: HeimrichHannot\ListBundle\Manager\ListManager
+        arguments:
+            - "@contao.framework"
+            - "@huh.list.list-config-registry"
+            - "@huh.list.list-config-element-registry"
+            - "@huh.filter.manager"
+            - "@huh.request"
+            - "@huh.utils.model"
+            - "@huh.utils.url"
+            - "@huh.utils.container"
+            - "@huh.utils.image"
+            - "@huh.utils.form"
+            - "@twig"
+    huh.list.list-config-registry:
+        class: HeimrichHannot\ListBundle\Registry\ListConfigRegistry
+        arguments:
+            - "@contao.framework"
+    huh.list.list-config-element-registry:
+        class: HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry
+        arguments:
+            - "@contao.framework"
+    huh.list.backend.module:
+        class: HeimrichHannot\ListBundle\Backend\Module
+    huh.list.choice.manager:
+        class: HeimrichHannot\ListBundle\Choice\ManagerChoice
+        arguments:
+            - "@contao.framework"
+    huh.list.choice.list:
+        class: HeimrichHannot\ListBundle\Choice\ListChoice
+        arguments:
+            - "@contao.framework"
+    huh.list.choice.item:
+        class: HeimrichHannot\ListBundle\Choice\ItemChoice
+        arguments:
+            - "@contao.framework"
+    twig.extension.text:
+        class: Twig_Extensions_Extension_Text
+        tags:
+          - { name: twig.extension }
+    twig.extension.intl:
+        class: Twig_Extensions_Extension_Intl
+        tags:
+          - { name: twig.extension }
+    twig.extension.array:
+        class: Twig_Extensions_Extension_Array
+        tags:
+          - { name: twig.extension }
+    twig.extension.date:
+        class: Twig_Extensions_Extension_Date
+        tags:
+        - { name: twig.extension }
+        arguments:
+        - "@translator"

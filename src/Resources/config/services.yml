@@ -47,3 +47,27 @@ services:
         class: HeimrichHannot\ListBundle\Choice\ItemChoice
         arguments:
             - "@contao.framework"
+    twig.extension.text:
+        class: Twig_Extensions_Extension_Text
+        tags:
+          - { name: twig.extension }
+    twig.extension.intl:
+        class: Twig_Extensions_Extension_Intl
+        tags:
+          - { name: twig.extension }
+    twig.extension.array:
+        class: Twig_Extensions_Extension_Array
+        tags:
+          - { name: twig.extension }
+    twig.extension.date:
+        class: Twig_Extensions_Extension_Date
+        tags:
+          - { name: twig.extension }
+        arguments:
+          - "@translator"
+    twig.extension.truncate.html:
+        class: Urodoz\Truncate\Bridge\Twig\TruncateExtension
+        arguments:
+          -  "@twig.truncate.html.service"
+        tags:
+          - { name: twig.extension }

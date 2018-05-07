@@ -19,8 +19,6 @@ use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\Modal\ModalModel;
 use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
-use Urodoz\Truncate\Bridge\Twig\TruncateExtension;
-use Urodoz\Truncate\TruncateService;
 
 class DefaultItem implements ItemInterface, \JsonSerializable
 {

@@ -268,6 +268,15 @@ class DefaultList implements ListInterface, \JsonSerializable
             $limit = $listConfig->numberOfItems;
         }
 
+        $queryParts = $queryBuilder->getQueryParts();
+
+        if (!empty($queryParts['orderBy'])) {
+            list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit);
+            // split the results
+            $queryBuilder->setFirstResult($offset)->setMaxResults($limit);
+
+            return;
+        }
         // sorting
         $currentSorting = $this->getCurrentSorting();
 

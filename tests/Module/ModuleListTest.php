@@ -69,7 +69,7 @@ class ModuleListTest extends ContaoTestCase
         $database = $this->createMock(Connection::class);
 
         $finder = new ResourceFinder([
-            __DIR__ . '/../../vendor/contao/core-bundle/src/Resources/contao',
+            __DIR__.'/../../vendor/contao/core-bundle/src/Resources/contao',
         ]);
 
         $container = $this->mockContainer();

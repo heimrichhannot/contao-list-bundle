@@ -46,8 +46,8 @@ interface ItemInterface
     /**
      * Set a raw value for a given property.
      *
-     * @param string $name The property name
-     * @param mixed $value The property value
+     * @param string $name  The property name
+     * @param mixed  $value The property value
      */
     public function setRawValue(string $name, $value): void;
 
@@ -77,8 +77,8 @@ interface ItemInterface
     /**
      * Set a formatted value for a given property.
      *
-     * @param string $name The property name
-     * @param mixed $value The property value
+     * @param string $name  The property name
+     * @param mixed  $value The property value
      */
     public function setFormattedValue(string $name, $value): void;
 
@@ -111,7 +111,7 @@ interface ItemInterface
     /**
      * Compute id (or alias) for a given item.
      *
-     * @param ItemInterface $item
+     * @param ItemInterface   $item
      * @param ListConfigModel $listConfig
      *
      * @return string
@@ -122,7 +122,7 @@ interface ItemInterface
      * Adds a details url to the item data.
      *
      * @param $idOrAlias
-     * @param ItemInterface $item
+     * @param ItemInterface   $item
      * @param ListConfigModel $listConfig
      */
     public function addDetailsUrl($idOrAlias, self $item, ListConfigModel $listConfig): void;
@@ -130,7 +130,7 @@ interface ItemInterface
     /**
      * Adds a share url to the item data.
      *
-     * @param ItemInterface $item
+     * @param ItemInterface   $item
      * @param ListConfigModel $listConfig
      */
     public function addShareUrl(self $item, ListConfigModel $listConfig): void;
@@ -236,8 +236,9 @@ interface ItemInterface
     public function setTableFields(array $tableFields);
 
     /**
-     * Get the details url
+     * Get the details url.
+     *
      * @return null|string
      */
-    public function getDetailsUrl():?string;
+    public function getDetailsUrl(): ?string;
 }

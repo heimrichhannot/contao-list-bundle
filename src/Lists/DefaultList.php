@@ -212,9 +212,10 @@ class DefaultList implements ListInterface, \JsonSerializable
         $count = 0;
         $results = [];
 
-        $this->_dispatcher->dispatch(ListBeforeParseItemsEvent::NAME, new ListBeforeParseItemsEvent($items, $this, $listConfig));
+        /** @var ListBeforeParseItemsEvent $event */
+        $event = $this->_dispatcher->dispatch(ListBeforeParseItemsEvent::NAME, new ListBeforeParseItemsEvent($items, $this, $listConfig));
 
-        foreach ($items as $item) {
+        foreach ($event->getItems as $item) {
             ++$count;
             $first = 1 == $count ? ' first' : '';
             $last = $count == $limit ? ' last' : '';
@@ -249,9 +250,10 @@ class DefaultList implements ListInterface, \JsonSerializable
             $results[] = $parsedResult;
         }
 
-        $this->_dispatcher->dispatch(ListAfterParseItemsEvent::NAME, new ListAfterParseItemsEvent($items, $results, $this, $listConfig));
+        /** @var ListAfterParseItemsEvent $event */
+        $event = $this->_dispatcher->dispatch(ListAfterParseItemsEvent::NAME, new ListAfterParseItemsEvent($items, $results, $this, $listConfig));
 
-        return $results;
+        return $event->getParsedItems();
     }
 
     public function applyListConfigToQueryBuilder(int $totalCount, FilterQueryBuilder $queryBuilder): void

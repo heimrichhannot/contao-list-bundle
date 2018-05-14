@@ -15,6 +15,7 @@ use Contao\StringUtil;
 use Contao\System;
 use HeimrichHannot\ListBundle\Backend\ListBundle;
 use HeimrichHannot\ListBundle\ConfigElementType\ConfigElementType;
+use HeimrichHannot\ListBundle\Event\ListBeforeRenderItemEvent;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\Modal\ModalModel;
@@ -112,6 +113,10 @@ class DefaultItem implements ItemInterface, \JsonSerializable
      * @var DataContainer
      */
     protected $dc;
+    /**
+     * @var object|\Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher|\Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher
+     */
+    protected $_dispatcher;
 
     /**
      * DefaultItem constructor.
@@ -123,6 +128,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     {
         $this->_manager = $_manager;
         $this->setRaw($data);
+        $this->_dispatcher = System::getContainer()->get('event_dispatcher');
     }
 
     /**
@@ -360,7 +366,15 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
         $twig = $this->_manager->getTwig();
 
-        return $twig->render($this->_manager->getItemTemplateByName($listConfig->itemTemplate ?: 'default'), $this->jsonSerialize());
+        $templateName = $listConfig->itemTemplate;
+        $templateData = $this->jsonSerialize();
+
+        $event = $this->_dispatcher->dispatch(ListBeforeRenderItemEvent::NAME, new ListBeforeRenderItemEvent($templateName, $templateData, $this));
+
+        return $twig->render(
+            $this->_manager->getItemTemplateByName($event->getTemplateName() ?: 'default'),
+            $event->getTemplateData()
+        );
     }
 
     /**

@@ -157,16 +157,15 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         // initial results
         $this->setShowInitialResults($listConfig->showInitialResults);
-
         if ($isSubmitted || $listConfig->showInitialResults) {
-            $totalCount = $queryBuilder->select($fields)->execute()->rowCount();
+            $queryBuilder->select($fields);
+            $totalCount = $this->getTotalCountByQuery($queryBuilder);
         }
 
         // item count text
         $this->setShowItemCount($listConfig->showItemCount);
 
-        $this->setItemsFoundText(System::getContainer()->get('translator')
-            ->transChoice($listConfig->itemCountText ?: 'huh.list.count.text.default', $totalCount, ['%count%' => $totalCount]));
+        $this->setItemsFoundText(System::getContainer()->get('translator')->transChoice($listConfig->itemCountText ?: 'huh.list.count.text.default', $totalCount, ['%count%' => $totalCount]));
 
         // no items text
         $this->setShowNoItemsText($listConfig->showNoItemsText);
@@ -178,7 +177,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig));
 
         if ($isSubmitted || $listConfig->showInitialResults) {
-            $items = $queryBuilder->execute()->fetchAll();
+            $items = $this->getItemsByQuery($queryBuilder, $fields, $filter);
 
             $this->setItems($this->parseItems($items, $itemTemplate));
         }
@@ -822,5 +821,63 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function getPage(): int
     {
         return $this->_page;
+    }
+
+    /**
+     * @param FilterQueryBuilder $queryBuilder
+     *
+     * @return int|mixed
+     */
+    protected function getTotalCountByQuery(FilterQueryBuilder $queryBuilder)
+    {
+        if (!Config::get('activateDbCache') || System::getContainer()->get('kernel')->isDebug()) {
+            return $queryBuilder->execute()->rowCount();
+        }
+
+        $utilsCacheDb = System::getContainer()->get('huh.utils.cache.database');
+        $utilsUrl = System::getContainer()->get('huh.utils.url');
+
+        if ($utilsCacheDb->keyExists($utilsUrl->getCurrentUrl(['skipParams' => true]).'_count')) {
+            $totalCount = $utilsCacheDb->getValue($utilsUrl->getCurrentUrl(['skipParams' => true]).'_count');
+        } else {
+            $totalCount = $queryBuilder->execute()->rowCount();
+            $utilsCacheDb->cacheValue($utilsUrl->getCurrentUrl(['skipParams' => true]).'_count', $totalCount);
+        }
+
+        return $totalCount;
+    }
+
+    /**
+     * @param FilterQueryBuilder $queryBuilder
+     * @param                    $fields
+     * @param                    $filter
+     *
+     * @return array
+     */
+    protected function getItemsByQuery(FilterQueryBuilder $queryBuilder, $fields, $filter)
+    {
+        if (!Config::get('activateDbCache') || System::getContainer()->get('kernel')->isDebug()) {
+            return $queryBuilder->execute()->fetchAll();
+        }
+
+        $utilsCacheDb = System::getContainer()->get('huh.utils.cache.database');
+        $utilsUrl = System::getContainer()->get('huh.utils.url');
+        $orderBy = $queryBuilder->getQueryPart('orderBy');
+
+        if ($utilsCacheDb->keyExists($utilsUrl->getCurrentUrl([]).str_replace(' ', '', $orderBy[0]))) {
+            $ids = $utilsCacheDb->getValue($utilsUrl->getCurrentUrl([]).str_replace(' ', '', $orderBy[0]));
+            $ids = implode(',', StringUtil::deserialize($ids, true));
+            $items = System::getContainer()->get('contao.framework')->createInstance(Database::class)->execute("SELECT $fields FROM $filter->dataContainer WHERE $filter->dataContainer.id IN ($ids) ORDER BY $orderBy[0]")->fetchAllAssoc();
+        } else {
+            $items = $queryBuilder->execute()->fetchAll();
+            $queryBuilder->select('id');
+            $ids = $queryBuilder->execute()->fetchAll();
+            foreach ($ids as $i => $id) {
+                $ids[$i] = $id['id'];
+            }
+            $utilsCacheDb->cacheValue($utilsUrl->getCurrentUrl([]).str_replace(' ', '', $orderBy[0]), $ids);
+        }
+
+        return $items;
     }
 }

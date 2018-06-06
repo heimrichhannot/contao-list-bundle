@@ -9,6 +9,7 @@
 namespace HeimrichHannot\ListBundle\Lists;
 
 use Contao\Config;
+use Contao\Controller;
 use Contao\Database;
 use Contao\FrontendTemplate;
 use Contao\StringUtil;
@@ -178,6 +179,19 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         if ($isSubmitted || $listConfig->showInitialResults) {
             $items = $this->getItemsByQuery($queryBuilder, $fields, $filter);
+
+            // add fields without sql key in DCA (could have a value by load_callback)
+            Controller::loadDataContainer($filter->dataContainer);
+
+            foreach ($items as &$item) {
+                $itemFields = array_keys($item);
+
+                foreach (array_keys($GLOBALS['TL_DCA'][$filter->dataContainer]['fields']) as $field) {
+                    if (!in_array($field, $itemFields, true)) {
+                        $item[$field] = null;
+                    }
+                }
+            }
 
             $this->setItems($this->parseItems($items, $itemTemplate));
         }

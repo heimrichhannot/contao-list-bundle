@@ -136,6 +136,10 @@ class ModuleList extends Module
             $this->manager->setList(new $listClass($this->manager));
         }
 
+        if (true === (bool) $this->manager->getListConfig()->doNotRenderEmpty && empty($this->manager->getList()->getItems())) {
+            return '';
+        }
+
         return parent::generate();
     }
 
@@ -159,6 +163,14 @@ class ModuleList extends Module
     public function getFilterConfig(): FilterConfig
     {
         return $this->filterConfig;
+    }
+
+    /**
+     * @return ListManagerInterface
+     */
+    public function getManager(): ListManagerInterface
+    {
+        return $this->manager;
     }
 
     protected function compile()

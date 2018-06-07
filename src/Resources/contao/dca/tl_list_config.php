@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addAjaxPagination',
             'addMasonry',
         ],
-        'default'      => '{general_legend},title,parentListConfig;' . '{filter_legend},filter;' . '{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;' . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare;' . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;' . '{template_legend},listTemplate,itemTemplate;',
+        'default'      => '{general_legend},title,parentListConfig;' . '{filter_legend},filter;' . '{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;' . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare;' . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry;' . '{template_legend},listTemplate,itemTemplate;',
     ],
     'subpalettes' => [
         'showItemCount'                                                                     => 'itemCountText',
@@ -249,6 +249,13 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'eval'      => ['tl_class' => 'w50'],
             'sql'       => "char(1) NOT NULL default '1'",
         ],
+        'doNotRenderEmpty'          => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['doNotRenderEmpty'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['tl_class' => 'w50'],
+            'sql'       => "char(1) NOT NULL default ''",
+        ],
         'isTableList'                 => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['isTableList'],
             'exclude'   => true,
@@ -374,7 +381,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'exclude'    => true,
             'inputType'  => 'pageTree',
             'foreignKey' => 'tl_page.title',
-            'eval'       => ['fieldType' => 'radio', 'tl_class' => 'w50 clr'],
+            'eval'       => ['fieldType' => 'radio', 'tl_class' => 'clr'],
             'sql'        => "int(10) unsigned NOT NULL default '0'",
             'relation'   => ['type' => 'hasOne', 'load' => 'eager'],
         ],

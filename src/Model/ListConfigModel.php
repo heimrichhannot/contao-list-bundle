@@ -16,6 +16,7 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property int    $numberOfItems
  * @property int    $perPage
  * @property int    $skipFirst
+ * @property bool   $doNotRenderEmpty
  * @property bool   $showItemCount
  * @property string $itemCountText
  * @property bool   $showNoItemsText

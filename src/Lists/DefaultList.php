@@ -215,7 +215,9 @@ class DefaultList implements ListInterface, \JsonSerializable
         /** @var ListBeforeParseItemsEvent $event */
         $event = $this->_dispatcher->dispatch(ListBeforeParseItemsEvent::NAME, new ListBeforeParseItemsEvent($items, $this, $listConfig));
 
-        foreach ($event->getItems as $item) {
+        $items = $event->getItems() ?: [];
+
+        foreach ($items as $item) {
             ++$count;
             $first = 1 == $count ? ' first' : '';
             $last = $count == $limit ? ' last' : '';

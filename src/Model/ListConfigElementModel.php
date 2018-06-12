@@ -8,7 +8,9 @@
 
 namespace HeimrichHannot\ListBundle\Model;
 
-class ListConfigElementModel extends \Model
+use Contao\Model;
+
+class ListConfigElementModel extends Model
 {
     protected static $strTable = 'tl_list_config_element';
 }

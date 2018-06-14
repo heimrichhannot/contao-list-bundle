@@ -11,10 +11,14 @@ namespace HeimrichHannot\ListBundle\Backend;
 use Contao\DataContainer;
 use Contao\ModuleModel;
 use Contao\System;
+use HeimrichHannot\ListBundle\Module\ModuleList;
 
 class Module
 {
-    const MODULE_LIST = 'huhlist';
+    /**
+     * @deprecated use ModuleList::TYPE instead
+     */
+    const MODULE_LIST = ModuleList::TYPE;
 
     public function getAllListModules()
     {

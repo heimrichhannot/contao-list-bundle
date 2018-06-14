@@ -18,13 +18,13 @@ class Module
     /**
      * @deprecated use ModuleList::TYPE instead
      */
-    const MODULE_LIST = ModuleList::TYPE;
+    const MODULE_LIST = 'huhlist';
 
     public function getAllListModules()
     {
         $listModules = [];
-        /** @var \Contao\ModuleModel $adapter */
-        $modules = \Contao\ModuleModel::findBy('type', static::MODULE_LIST);
+        /** @var ModuleModel $adapter */
+        $modules = ModuleModel::findBy('type', ModuleList::TYPE);
 
         if (null === $modules) {
             return $listModules;

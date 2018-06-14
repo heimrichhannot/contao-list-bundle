@@ -25,7 +25,7 @@ use Patchwork\Utf8;
 
 class ModuleList extends Module
 {
-    const TYPE = 'huhreader';
+    const TYPE = 'huhlist';
 
     protected $strTemplate = 'mod_list';
 

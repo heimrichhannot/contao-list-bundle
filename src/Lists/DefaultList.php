@@ -842,7 +842,7 @@ class DefaultList implements ListInterface, \JsonSerializable
      *
      * @return int|mixed
      */
-    protected function getTotalCountByQuery(FilterQueryBuilder $queryBuilder)
+    public function getTotalCountByQuery(FilterQueryBuilder $queryBuilder): int
     {
         if (!Config::get('activateDbCache') || System::getContainer()->get('kernel')->isDebug()) {
             return $queryBuilder->execute()->rowCount();

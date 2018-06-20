@@ -366,13 +366,11 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
         $twig = $this->_manager->getTwig();
 
-        $templateName = $listConfig->itemTemplate;
-        $templateData = $this->jsonSerialize();
-
-        $event = $this->_dispatcher->dispatch(ListBeforeRenderItemEvent::NAME, new ListBeforeRenderItemEvent($templateName, $templateData, $this));
+        $event = $this->_dispatcher->dispatch(ListBeforeRenderItemEvent::NAME, new ListBeforeRenderItemEvent($listConfig->itemTemplate, $this->jsonSerialize(), $this));
+        $templateName = $this->_manager->getItemTemplateByName($event->getTemplateName() ?: 'default');
 
         return $twig->render(
-            $this->_manager->getItemTemplateByName($event->getTemplateName() ?: 'default'),
+            $templateName,
             $event->getTemplateData()
         );
     }

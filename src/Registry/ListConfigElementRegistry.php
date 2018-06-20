@@ -51,10 +51,15 @@ class ListConfigElementRegistry
      * @param mixed $value
      * @param array $options
      *
-     * @return \Contao\Model\Collection|ListConfigElementModel|null
+     * @return ListConfigElementModel|null
      */
     public function findOneBy($column, $value, array $options = [])
     {
+        $options = array_merge(
+            ['limit' => 1, 'return' => 'Model'],
+            $options
+        );
+
         return System::getContainer()->get('huh.utils.model')->findModelInstancesBy(
             'tl_list_config_element', $column, $value, $options);
     }

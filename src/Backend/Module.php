@@ -11,16 +11,20 @@ namespace HeimrichHannot\ListBundle\Backend;
 use Contao\DataContainer;
 use Contao\ModuleModel;
 use Contao\System;
+use HeimrichHannot\ListBundle\Module\ModuleList;
 
 class Module
 {
+    /**
+     * @deprecated use ModuleList::TYPE instead
+     */
     const MODULE_LIST = 'huhlist';
 
     public function getAllListModules()
     {
         $listModules = [];
-        /** @var \Contao\ModuleModel $adapter */
-        $modules = \Contao\ModuleModel::findBy('type', static::MODULE_LIST);
+        /** @var ModuleModel $adapter */
+        $modules = ModuleModel::findBy('type', ModuleList::TYPE);
 
         if (null === $modules) {
             return $listModules;

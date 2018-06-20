@@ -18,12 +18,12 @@ $lang['filter'][0] = 'Filter';
 $lang['filter'][1] = 'Bitte wählen Sie hier bei Bedarf einen Filter aus.';
 
 // config
-$lang['manager'][0]                      = 'Manager-Service';
-$lang['manager'][1]                      = 'Wählen Sie hier einen individuellen Manager-Service aus.';
-$lang['list'][0]                         = 'List-Klasse';
-$lang['list'][1]                         = 'Wählen Sie hier eine individuelle List-Klasse aus.';
-$lang['item'][0]                         = 'Item-Klasse';
-$lang['item'][1]                         = 'Wählen Sie hier eine individuelle Item-Klasse aus.';
+$lang['manager'][0]              = 'Manager-Service';
+$lang['manager'][1]              = 'Wählen Sie hier einen individuellen Manager-Service aus.';
+$lang['list'][0]                 = 'List-Klasse';
+$lang['list'][1]                 = 'Wählen Sie hier eine individuelle List-Klasse aus.';
+$lang['item'][0]                 = 'Item-Klasse';
+$lang['item'][1]                 = 'Wählen Sie hier eine individuelle Item-Klasse aus.';
 $lang['limitFormattedFields'][0] = 'Formatierte Felder einschränken (Geschwindigkeit verbessern)';
 $lang['limitFormattedFields'][1] = 'Wählen Sie diese Option, wenn nur bestimmte Felder auf Basis der Data-Containers-Konfiguration formatiert werden sollen möchten.';
 $lang['formattedFields'][0]      = 'Formatierte Felder';
@@ -38,6 +38,8 @@ $lang['noItemsText'][0]          = 'Individueller "Keine Ergebnisse"-Text';
 $lang['noItemsText'][1]          = 'Wählen Sie hier eine Symfony-Message aus.';
 $lang['showInitialResults'][0]   = 'Initial Ergebnisse anzeigen';
 $lang['showInitialResults'][1]   = 'Wählen Sie diese Option, wenn initial eine Ergebnisliste angezeigt werden soll.';
+$lang['doNotRenderEmpty'][0]     = 'Nicht anzeigen, wenn keine Instanzen gefunden wurden';
+$lang['doNotRenderEmpty'][1]     = 'Aktivieren Sie diese Option, wenn die Liste nicht angezeigt werden soll (kein Markup), wenn keine Instanzen gefunden werden.';
 $lang['isTableList'][0]          = 'Als Tabelle ausgeben';
 $lang['isTableList'][1]          = 'Wählen Sie diese Option, die Liste in Form einer Tabelle ausgegeben werden soll.';
 $lang['hasHeader'][0]            = 'Kopfzeile ausgeben';
@@ -78,15 +80,13 @@ $lang['shareAutoItem'][1] = 'Wählen Sie diese Option aus, um das Share Token al
 
 // misc
 $lang['addAjaxPagination'][0]           = 'Ajax-Paginierung hinzufügen';
-$lang['addAjaxPagination'][1]           =
-    'Wählen Sie diese Option, wenn eine Ajax-Paginierung genutzt werden soll. Dafür muss ein Wert > 0 in "Elemente pro Seite" gesetzt sein. Die Seitenzahlen werden durch einen einzelnen "Weiter"-Button ersetzt.';
+$lang['addAjaxPagination'][1]           = 'Wählen Sie diese Option, wenn eine Ajax-Paginierung genutzt werden soll. Dafür muss ein Wert > 0 in "Elemente pro Seite" gesetzt sein. Die Seitenzahlen werden durch einen einzelnen "Weiter"-Button ersetzt.';
 $lang['addInfiniteScroll'][0]           = 'Infinite Scroll hinzufügen';
 $lang['addInfiniteScroll'][1]           = 'Wählen Sie diese Option, um die Ajax-Paginierung im UI-Muster "Infinite Scroll" umzusetzen.';
 $lang['addMasonry'][0]                  = 'Masonry hinzufügen';
 $lang['addMasonry'][1]                  = 'Wählen Sie diese Option, wenn das Masonry-JavaScript-Plugin auf die Liste angewendet werden soll.';
 $lang['masonryStampContentElements'][0] = 'Fixierte Blöcke festlegen';
-$lang['masonryStampContentElements'][1] =
-    'Hier können Sie Blöcke festlegen, die immer gerendert werden sollen. Die Position muss anschließend per CSS festgelegt werden (-> Responsive).';
+$lang['masonryStampContentElements'][1] = 'Hier können Sie Blöcke festlegen, die immer gerendert werden sollen. Die Position muss anschließend per CSS festgelegt werden (-> Responsive).';
 $lang['stampBlock'][0]                  = 'Block';
 $lang['stampBlock'][1]                  = 'Wählen Sie hier einen Block aus.';
 

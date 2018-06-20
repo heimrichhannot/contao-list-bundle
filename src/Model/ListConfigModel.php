@@ -8,6 +8,8 @@
 
 namespace HeimrichHannot\ListBundle\Model;
 
+use Contao\Model;
+
 /**
  * @property int    $id
  * @property int    $tstamp
@@ -16,6 +18,7 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property int    $numberOfItems
  * @property int    $perPage
  * @property int    $skipFirst
+ * @property bool   $doNotRenderEmpty
  * @property bool   $showItemCount
  * @property string $itemCountText
  * @property bool   $showNoItemsText
@@ -51,7 +54,7 @@ namespace HeimrichHannot\ListBundle\Model;
  * @property string $manager
  * @property string $item
  */
-class ListConfigModel extends \Model
+class ListConfigModel extends Model
 {
     protected static $strTable = 'tl_list_config';
 }

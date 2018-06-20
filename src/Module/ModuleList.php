@@ -15,6 +15,7 @@ use Contao\ModuleModel;
 use Contao\System;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Manager\FilterManager;
+use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Event\ListCompileEvent;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
@@ -25,6 +26,8 @@ use Patchwork\Utf8;
 
 class ModuleList extends Module
 {
+    const TYPE = 'huhlist';
+
     protected $strTemplate = 'mod_list';
 
     /**
@@ -135,6 +138,15 @@ class ModuleList extends Module
 
             $this->manager->setList(new $listClass($this->manager));
         }
+        if (true === (bool) $this->manager->getListConfig()->doNotRenderEmpty && empty($this->manager->getList()->getItems())) {
+            /** @var FilterQueryBuilder $queryBuilder */
+            $queryBuilder = $this->manager->getFilterManager()->getQueryBuilder($this->filter->id);
+            $fields = $this->filter->dataContainer.'.* ';
+
+            if ($totalCount = $queryBuilder->select($fields)->execute()->rowCount() < 1) {
+                return '';
+            }
+        }
 
         return parent::generate();
     }
@@ -146,9 +158,7 @@ class ModuleList extends Module
         }
 
         // compute list config respecting the inheritance hierarchy
-        $listConfig = $this->listConfigRegistry->computeListConfig(
-            $listConfigId
-        );
+        $listConfig = $this->listConfigRegistry->computeListConfig($listConfigId);
 
         return $listConfig;
     }
@@ -159,6 +169,14 @@ class ModuleList extends Module
     public function getFilterConfig(): FilterConfig
     {
         return $this->filterConfig;
+    }
+
+    /**
+     * @return ListManagerInterface
+     */
+    public function getManager(): ListManagerInterface
+    {
+        return $this->manager;
     }
 
     protected function compile()

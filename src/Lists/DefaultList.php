@@ -835,4 +835,57 @@ class DefaultList implements ListInterface, \JsonSerializable
     {
         return $this->_page;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchablePages(array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false): array
+    {
+        $filter = (object) $this->_manager->getFilterConfig()->getFilter();
+        $listConfig = $this->_manager->getListConfig();
+
+        /** @var FilterQueryBuilder $queryBuilder */
+        $queryBuilder = $this->_manager->getFilterManager()->getQueryBuilder($filter->id);
+
+        $fields = $filter->dataContainer.'.* ';
+
+        if (($totalCount = $queryBuilder->select($fields)->execute()->rowCount()) < 1) {
+            return $arrPages;
+        }
+
+        $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig));
+
+        $items = $queryBuilder->execute()->fetchAll();
+
+        if (null !== ($itemClass = $this->getItemClassByName($listConfig->item ?: 'default'))) {
+            $reflection = new \ReflectionClass($itemClass);
+
+            if (!$reflection->implementsInterface(ItemInterface::class)) {
+                return $arrPages;
+            }
+        }
+
+        foreach ($items as $item) {
+            /** @var ItemInterface $result */
+            $result = new $itemClass($this->_manager, $item);
+
+            // id or alias
+            if (null === ($idOrAlias = $result->generateIdOrAlias($result, $listConfig))) {
+                continue;
+            }
+
+            $result->setIdOrAlias($idOrAlias);
+            $result->addDetailsUrl($idOrAlias, $result, $listConfig, true);
+
+            $url = $result->getDetailsUrl(false);
+
+            if (null === $url || empty($url)) {
+                continue;
+            }
+
+            $arrPages[] = $url;
+        }
+
+        return $arrPages;
+    }
 }

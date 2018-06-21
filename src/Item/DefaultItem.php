@@ -155,7 +155,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
      * Magic setter.
      *
      * @param string $name
-     * @param $value
+     * @param        $value
      */
     public function __set(string $name, $value)
     {
@@ -394,7 +394,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         return $idOrAlias;
     }
 
-    public function addDetailsUrl($idOrAlias, ItemInterface $item, ListConfigModel $listConfig): void
+    public function addDetailsUrl($idOrAlias, ItemInterface $item, ListConfigModel $listConfig, bool $absolute = false): void
     {
         $this->setAddDetails($listConfig->addDetails);
 
@@ -413,7 +413,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
                         $this->setModalUrl($controller->replaceInsertTags(sprintf('{{modal_url::%s::%s::%s}}', $modal->id, $listConfig->jumpToDetails, $idOrAlias), true));
                     }
                 } else {
-                    $this->setDetailsUrl($pageJumpTo->getFrontendUrl('/'.$idOrAlias));
+                    $this->setDetailsUrl(true === $absolute ? $pageJumpTo->getAbsoluteUrl('/'.$idOrAlias) : $pageJumpTo->getFrontendUrl('/'.$idOrAlias));
                 }
             }
         }
@@ -431,9 +431,14 @@ class DefaultItem implements ItemInterface, \JsonSerializable
             if (null !== $pageJumpTo) {
                 $shareUrl = Environment::get('url').'/'.$pageJumpTo->getFrontendUrl();
 
-                $url = $urlUtil->addQueryString('act='.ListBundle::ACTION_SHARE, $urlUtil->getCurrentUrl([
-                    'skipParams' => true,
-                ]));
+                $url = $urlUtil->addQueryString(
+                    'act='.ListBundle::ACTION_SHARE,
+                    $urlUtil->getCurrentUrl(
+                        [
+                            'skipParams' => true,
+                        ]
+                    )
+                );
 
                 $url = $urlUtil->addQueryString('url='.urlencode($shareUrl), $url);
 
@@ -499,7 +504,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function getDetailsUrl(): ?string
+    public function getDetailsUrl(bool $external = true): ?string
     {
         return $this->_detailsUrl;
     }

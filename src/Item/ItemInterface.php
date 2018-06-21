@@ -121,11 +121,12 @@ interface ItemInterface
     /**
      * Adds a details url to the item data.
      *
-     * @param $idOrAlias
+     * @param                 $idOrAlias
      * @param ItemInterface   $item
      * @param ListConfigModel $listConfig
+     * @param bool            $absolute
      */
-    public function addDetailsUrl($idOrAlias, self $item, ListConfigModel $listConfig): void;
+    public function addDetailsUrl($idOrAlias, self $item, ListConfigModel $listConfig, bool $absolute = false): void;
 
     /**
      * Adds a share url to the item data.
@@ -238,7 +239,9 @@ interface ItemInterface
     /**
      * Get the details url.
      *
+     * @param bool $external Determine if external urls should be returned as well (required by search index)
+     *
      * @return null|string
      */
-    public function getDetailsUrl(): ?string;
+    public function getDetailsUrl(bool $external = true): ?string;
 }

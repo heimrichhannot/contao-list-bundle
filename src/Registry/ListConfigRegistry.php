@@ -32,6 +32,21 @@ class ListConfigRegistry
     /**
      * Adapter function for the model's findBy method.
      *
+     * @param array $options
+     *
+     * @return \Contao\Model\Collection|ListConfigModel|null
+     */
+    public function findAll(array $options = [])
+    {
+        return System::getContainer()->get('huh.utils.model')->findAllModelInstances(
+            'tl_list_config',
+            $options
+        );
+    }
+
+    /**
+     * Adapter function for the model's findBy method.
+     *
      * @param mixed $column
      * @param mixed $value
      * @param array $options
@@ -41,7 +56,11 @@ class ListConfigRegistry
     public function findBy($column, $value, array $options = [])
     {
         return System::getContainer()->get('huh.utils.model')->findModelInstancesBy(
-            'tl_list_config', $column, $value, $options);
+            'tl_list_config',
+            $column,
+            $value,
+            $options
+        );
     }
 
     /**
@@ -56,7 +75,11 @@ class ListConfigRegistry
     public function findOneBy($column, $value, array $options = [])
     {
         return System::getContainer()->get('huh.utils.model')->findModelInstancesBy(
-            'tl_list_config', $column, $value, $options);
+            'tl_list_config',
+            $column,
+            $value,
+            $options
+        );
     }
 
     /**
@@ -71,7 +94,10 @@ class ListConfigRegistry
     public function findByPk($pk, array $options = [])
     {
         return System::getContainer()->get('huh.utils.model')->findModelInstanceByPk(
-            'tl_list_config', $pk, $options);
+            'tl_list_config',
+            $pk,
+            $options
+        );
     }
 
     /**
@@ -136,11 +162,15 @@ class ListConfigRegistry
         $computedListConfig = new ListConfigModel();
 
         $parentListConfigs = System::getContainer()->get('huh.utils.model')->findParentsRecursively(
-            'parentListConfig', 'tl_list_config', $listConfig
+            'parentListConfig',
+            'tl_list_config',
+            $listConfig
         );
 
         $rootListConfig = System::getContainer()->get('huh.utils.model')->findRootParentRecursively(
-            'parentListConfig', 'tl_list_config', $listConfig
+            'parentListConfig',
+            'tl_list_config',
+            $listConfig
         );
 
         foreach ($GLOBALS['TL_DCA']['tl_list_config']['fields'] as $field => $data) {

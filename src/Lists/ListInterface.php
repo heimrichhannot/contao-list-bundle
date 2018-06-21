@@ -83,9 +83,9 @@ interface ListInterface
     public function applyListConfigToQueryBuilder(int $totalCount, FilterQueryBuilder $queryBuilder): void;
 
     /**
-     * @param $offset
-     * @param $total
-     * @param $limit
+     * @param      $offset
+     * @param      $total
+     * @param      $limit
      * @param null $randomSeed
      *
      * @return array|null
@@ -240,4 +240,15 @@ interface ListInterface
      * @return int
      */
     public function getPage(): int;
+
+    /**
+     * Get list items as searchable pages.
+     *
+     * @param array $arrPages
+     * @param int   $intRoot
+     * @param bool  $blnIsSitemap
+     *
+     * @return array
+     */
+    public function getSearchablePages(array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false): array;
 }

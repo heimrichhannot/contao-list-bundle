@@ -213,6 +213,11 @@ class DefaultItem implements ItemInterface, \JsonSerializable
      */
     public function setFormattedValue(string $name, $value): void
     {
+        // do not format values in back end for performance reasons (sitemap…)
+        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
+            return;
+        }
+
         $dca = &$GLOBALS['TL_DCA'][$this->getDataContainer()];
 
         if (!$this->dc) {

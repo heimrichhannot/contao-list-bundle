@@ -228,18 +228,25 @@ interface ListInterface
     public function setSortingHeader(bool $sortingHeader);
 
     /**
-     * Set current page.
+     * Set current page of pagination.
      *
      * @param int $page
      */
     public function setPage(int $page): void;
 
     /**
-     * Get current page.
+     * Get current page of pagination.
      *
      * @return int
      */
     public function getPage(): int;
+
+    /**
+     * Get current details jumpTo page id.
+     *
+     * @return int
+     */
+    public function getJumpTo(): int;
 
     /**
      * Get list items as searchable pages.

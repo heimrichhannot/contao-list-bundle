@@ -841,6 +841,22 @@ class DefaultList implements ListInterface, \JsonSerializable
      */
     public function getSearchablePages(array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false): array
     {
+        if (!$this->getJumpTo()) {
+            return $arrPages;
+        }
+
+        $arrRoot = [];
+
+        if ($intRoot > 0) {
+            /** @var Database $database */
+            $database = $this->_manager->getFramework()->createInstance(Database::class);
+            $arrRoot = $database->getChildRecords($intRoot, 'tl_page');
+        }
+
+        if (!empty($arrRoot) && !in_array($this->getJumpTo(), $arrRoot, true)) {
+            return $arrPages;
+        }
+
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
         $listConfig = $this->_manager->getListConfig();
 
@@ -867,7 +883,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         foreach ($items as $item) {
             /** @var ItemInterface $result */
-            $result = new $itemClass($this->_manager, $item);
+            $result = new $itemClass($this->_manager, $item, false);
 
             // id or alias
             if (null === ($idOrAlias = $result->generateIdOrAlias($result, $listConfig))) {
@@ -887,5 +903,13 @@ class DefaultList implements ListInterface, \JsonSerializable
         }
 
         return $arrPages;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getJumpTo(): int
+    {
+        return (int) $this->_manager->getListConfig()->jumpToDetails;
     }
 }

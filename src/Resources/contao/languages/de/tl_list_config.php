@@ -90,6 +90,10 @@ $lang['masonryStampContentElements'][1] = 'Hier können Sie Blöcke festlegen, d
 $lang['stampBlock'][0]                  = 'Block';
 $lang['stampBlock'][1]                  = 'Wählen Sie hier einen Block aus.';
 
+// search
+$lang['noSearch'][0] = 'Nicht durchsuchen';
+$lang['noSearch'][1] = 'Diese Liste nicht in den Suchindex aufnehmen.';
+
 // template
 $lang['itemTemplate'][0] = 'Listen-Template';
 $lang['itemTemplate'][1] = 'Wählen Sie hier das Template aus, mit dem Liste gerendert werden sollen.';
@@ -107,6 +111,7 @@ $lang['overrideFilter_legend'] = 'Filter';
 $lang['sorting_legend']        = 'Sortierung';
 $lang['jumpto_legend']         = 'Weiterleitung';
 $lang['misc_legend']           = 'Verschiedenes';
+$lang['search_legend']         = 'Sucheinstellungen';
 $lang['template_legend']       = 'Template';
 
 /**

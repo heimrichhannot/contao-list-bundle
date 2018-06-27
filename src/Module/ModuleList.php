@@ -193,6 +193,8 @@ class ModuleList extends Module
 
         $this->cssID = $cssID;
 
+        $this->Template->noSearch = (bool) $this->manager->getListConfig()->noSearch;
+
         $this->Template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) {
             return $this->manager->getList()->parse($listTemplate, $itemTemplate, $data);
         };

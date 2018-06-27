@@ -53,6 +53,7 @@ use Contao\Model;
  * @property string $list
  * @property string $manager
  * @property string $item
+ * @property bool   $noSearch
  */
 class ListConfigModel extends Model
 {

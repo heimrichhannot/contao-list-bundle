@@ -86,28 +86,44 @@ let jQuery = require('jquery');
             });
         },
         initMasonry: function() {
-            if ($('.huh-list .wrapper[data-add-masonry="1"]').length < 1)
+            if (document.querySelectorAll('.huh-list .wrapper[data-add-masonry="1"]').length < 1)
             {
                 return;
             }
 
-            import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function() {
-                import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(function() {
-                    $('.huh-list .wrapper[data-add-masonry="1"]').each(function() {
-                        let $this = $(this).find('.items'),
-                            options = $(this).data('masonry-options');
-
-                        let $grid = $this.imagesLoaded(function() {
-                            $grid.masonry({
-                                // fitWidth: true,
-                                itemSelector: '.item',
-                                stamp: '.stamp-item'
-                            });
-
-                            // update due to stamps
-                            $grid.masonry();
-                        });
+            import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function(Masonry) {
+                import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(function(imagesLoaded) {
+                    document.querySelectorAll('.huh-list .wrapper[data-add-masonry="1"]').forEach(function(elem, index, list) {
+                        let items = elem.querySelector('.items');
+                        let options = {
+                            itemSelector: '.item',
+                            stamp: '.stamp-item'
+                        };
+                        let listOptions = elem.getAttribute('data-masonry');
+                        if (listOptions !== null && listOptions !== '') {
+                            options = Object.assign({}, options, JSON.parse(listOptions));
+                        }
+                        let grid = imagesLoaded(items, function(instance) {
+                            let msnry = new Masonry(items, options);
+                            msnry.layout();
+                        })
                     });
+
+                    // $('.huh-list .wrapper[data-add-masonry="1"]').each(function() {
+                    //     let $this = $(this).find('.items'),
+                    //         options = $(this).data('masonry-options');
+                    //
+                    //     let $grid = $this.imagesLoaded(function() {
+                    //         $grid.masonry({
+                    //             // fitWidth: true,
+                    //             itemSelector: '.item',
+                    //             stamp: '.stamp-item'
+                    //         });
+                    //
+                    //         // update due to stamps
+                    //         $grid.masonry();
+                    //     });
+                    // });
                 });
             });
         }

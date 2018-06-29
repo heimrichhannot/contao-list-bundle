@@ -1,4 +1,4 @@
-<div class="wrapper" id="{{ wrapperId }}"{{ dataAttributes|default()|raw }}>
+<div {% block attributes %}class="wrapper" id="{{ wrapperId }}"{{ dataAttributes|default()|raw }}{% endblock %}>
     {% if showInitialResults or submitted %}
         {% if showItemCount %}
             <p class="count">{{ itemsFoundText|raw }}</p>

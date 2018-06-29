@@ -102,6 +102,11 @@ class ListManager implements ListManagerInterface
      */
     protected $database;
 
+    /**
+     * @var array
+     */
+    protected static $listConfigCache = [];
+
     public function __construct(
         ContaoFrameworkInterface $framework,
         ListConfigRegistry $listConfigRegistry,
@@ -134,12 +139,14 @@ class ListManager implements ListManagerInterface
      */
     public function getListConfig(): ListConfigModel
     {
+        $listConfigId = $this->moduleData['listConfig'];
+
         // Caching
-        if (null !== $this->listConfig) {
+        if (isset(static::$listConfigCache[$listConfigId]) && null !== static::$listConfigCache[$listConfigId]) {
+            $this->listConfig = static::$listConfigCache[$listConfigId];
+
             return $this->listConfig;
         }
-
-        $listConfigId = $this->moduleData['listConfig'];
 
         if (!$listConfigId || null === ($listConfig = $this->listConfigRegistry->findByPk($listConfigId))) {
             throw new \Exception(sprintf('The module %s has no valid list config. Please set one.', $this->moduleData['id']));
@@ -149,6 +156,8 @@ class ListManager implements ListManagerInterface
         $listConfig = $this->listConfigRegistry->computeListConfig($listConfigId);
 
         $this->listConfig = $listConfig;
+
+        static::$listConfigCache[$listConfigId] = $this->listConfig;
 
         return $listConfig;
     }

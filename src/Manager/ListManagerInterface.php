@@ -36,9 +36,9 @@ interface ListManagerInterface
     /**
      * Get the list config model.
      *
-     * @return ListConfigModel
+     * @return ListConfigModel|null
      */
-    public function getListConfig(): ListConfigModel;
+    public function getListConfig(): ?ListConfigModel;
 
     /**
      * Get the filter config.

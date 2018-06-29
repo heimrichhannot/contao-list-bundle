@@ -137,7 +137,7 @@ class ListManager implements ListManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getListConfig(): ListConfigModel
+    public function getListConfig(): ?ListConfigModel
     {
         $listConfigId = $this->moduleData['listConfig'];
 
@@ -149,6 +149,10 @@ class ListManager implements ListManagerInterface
         }
 
         if (!$listConfigId || null === ($listConfig = $this->listConfigRegistry->findByPk($listConfigId))) {
+            if (System::getContainer()->get('huh.utils.container')->isBackend()) {
+                return null;
+            }
+
             throw new \Exception(sprintf('The module %s has no valid list config. Please set one.', $this->moduleData['id']));
         }
 

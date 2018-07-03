@@ -8,6 +8,10 @@ $lang = &$GLOBALS['TL_LANG']['tl_list_config_element'];
 $lang['title'] = ['Title', 'Please enter a title.'];
 $lang['tstamp'] = ['Revision date', ''];
 
+$lang['typeSelectorField'][0]     = 'Selector-Field';
+$lang['typeSelectorField'][1]     = 'Choose the field, which contains the boolean selector for the type.';
+$lang['typeField'][0]             = 'Field';
+$lang['typeField'][1]             = 'Choose the field containing the reference for the type.';
 /**
  * Legends
  */

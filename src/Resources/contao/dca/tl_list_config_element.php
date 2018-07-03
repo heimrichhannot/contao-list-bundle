@@ -10,6 +10,9 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         'onsubmit_callback' => [
             ['huh.utils.dca', 'setDateAdded'],
         ],
+        'onload_callback' => [
+            ['huh.list.listener.callback.listconfigelement', 'updateLabel']
+        ],
         'oncopy_callback'   => [
             ['huh.utils.dca', 'setDateAddedOnCopy'],
         ],
@@ -113,6 +116,26 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'reference' => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
             'eval'      => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true],
             'sql'       => "varchar(64) NOT NULL default ''",
+        ],
+        'typeSelectorField'     => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['typeSelectorField'],
+            'inputType'        => 'select',
+            'options_callback' => function (DataContainer $dc) {
+                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getCheckboxFields($dc);
+            },
+            'exclude'          => true,
+            'eval'             => ['includeBlankOption' => true, 'tl_class' => 'w50 autoheight'],
+            'sql'              => "varchar(64) NOT NULL default ''",
+        ],
+        'typeField'             => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['typeField'],
+            'inputType'        => 'select',
+            'options_callback' => function (DataContainer $dc) {
+                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+            },
+            'exclude'          => true,
+            'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
+            'sql'              => "varchar(64) NOT NULL default ''",
         ],
         'imageSelectorField'     => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['imageSelectorField'],

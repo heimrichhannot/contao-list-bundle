@@ -12,6 +12,10 @@ $lang['type'][0]   = 'Typ';
 $lang['type'][1]   = 'Wählen Sie hier den Typ des Elements aus.';
 
 // image
+$lang['typeSelectorField'][0]     = 'Selektor-Feld';
+$lang['typeSelectorField'][1]     = 'Wählen Sie hier das Feld aus, das den boolschen Selektor für den Typ enthält.';
+$lang['typeField'][0]             = 'Feld';
+$lang['typeField'][1]             = 'Wählen Sie hier das Feld aus, das die Referenz zum Typ enthält.';
 $lang['imageSelectorField'][0]     = 'Selektor-Feld';
 $lang['imageSelectorField'][1]     = 'Wählen Sie hier das Feld aus, das den boolschen Selektor für das Bild enthält.';
 $lang['imageField'][0]             = 'Feld';

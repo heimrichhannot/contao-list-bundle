@@ -1,7 +1,11 @@
 services:
   huh.list.listener.search:
-        class: HeimrichHannot\ListBundle\EventListener\SearchListener
-        arguments:
-              - "@contao.framework"
-              - "@huh.list.list-config-registry"
-              - "@huh.list.manager.list"
+    class: HeimrichHannot\ListBundle\EventListener\SearchListener
+    arguments:
+      - "@contao.framework"
+      - "@huh.list.list-config-registry"
+      - "@huh.list.manager.list"
+
+  huh.list.listener.callback.listconfigelement:
+    class: HeimrichHannot\ListBundle\EventListener\ListConfigElementCallbackListener
+    arguments: ['@contao.framework', '@translator', '@huh.utils.model']

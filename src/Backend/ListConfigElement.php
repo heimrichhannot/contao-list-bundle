@@ -17,6 +17,9 @@ use HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType;
 
 class ListConfigElement extends Backend
 {
+    /**
+     * @deprecated will be removed in future major version, use ImageConfigElementType::TYPE instead
+     */
     const TYPE_IMAGE = ImageConfigElementType::TYPE;
 
     const TYPES = [

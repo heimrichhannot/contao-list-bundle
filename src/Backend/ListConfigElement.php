@@ -13,13 +13,14 @@ use Contao\BackendUser;
 use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\Database;
 use Contao\System;
+use HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType;
 
 class ListConfigElement extends Backend
 {
-    const TYPE_IMAGE = 'image';
+    const TYPE_IMAGE = ImageConfigElementType::TYPE;
 
     const TYPES = [
-        self::TYPE_IMAGE,
+        ImageConfigElementType::TYPE,
     ];
 
     const PLACEHOLDER_IMAGE_MODE_NONE = 'none';

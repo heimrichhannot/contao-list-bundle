@@ -15,7 +15,17 @@ $lang['typeField'][1]             = 'Choose the field containing the reference f
 /**
  * Legends
  */
-$lang['general_legend'] = 'General settings';
+$lang['title_type_legend'] = 'Title and type';
+$lang['config_legend']     = 'Configuration';
+
+/**
+ * Reference
+ */
+$lang['reference'] = [
+    \HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType::TYPE => 'Image',
+    \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE   => 'simple',
+    \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'gendered',
+];
 
 /**
  * Buttons

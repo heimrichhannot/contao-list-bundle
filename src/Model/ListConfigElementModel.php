@@ -22,6 +22,7 @@ use Contao\Model;
  * @property string $typeSelectorField
  * @property string $typeField
  * @property string $imageSelectorField
+ * @property string $imageField
  * @property string $imgSize
  * @property string $placeholderImage
  * @property string $placeholderImageFemale

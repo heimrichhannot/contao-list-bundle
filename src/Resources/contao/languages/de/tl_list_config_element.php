@@ -39,7 +39,7 @@ $lang['config_legend']     = 'Konfiguration';
  * Reference
  */
 $lang['reference'] = [
-    \HeimrichHannot\ListBundle\Backend\ListConfigElement::TYPE_IMAGE                      => 'Bild',
+    \HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType::TYPE => 'Bild',
     \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE   => 'einfach',
     \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'geschlechtsspezifisch',
 ];

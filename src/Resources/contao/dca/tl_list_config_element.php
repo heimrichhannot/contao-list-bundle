@@ -73,7 +73,8 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'placeholderImageMode',
         ],
         'default'                                                        => '{title_type_legend},title,type;',
-        \HeimrichHannot\ListBundle\Backend\ListConfigElement::TYPE_IMAGE => '{title_type_legend},title,type;{config_legend},imageSelectorField,imageField,imgSize,placeholderImageMode;',
+        \HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType::TYPE
+            => '{title_type_legend},title,type;{config_legend},imageSelectorField,imageField,imgSize,placeholderImageMode;',
     ],
     'subpalettes' => [
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE   => 'placeholderImage',

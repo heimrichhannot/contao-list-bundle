@@ -171,6 +171,7 @@ class ListManager implements ListManagerInterface
      */
     public function setListConfig(ListConfigModel $listConfig): void
     {
+        $this->moduleData['listConfig'] = $listConfig->id;
         $this->listConfig = $listConfig;
     }
 
@@ -240,6 +241,28 @@ class ListManager implements ListManagerInterface
         }
 
         $templates = $config['list']['templates']['item'];
+
+        foreach ($templates as $template) {
+            if ($template['name'] == $name) {
+                return $template['template'];
+            }
+        }
+
+        return System::getContainer()->get('huh.utils.template')->getTemplate($name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getItemChoiceTemplateByName(string $name)
+    {
+        $config = System::getContainer()->getParameter('huh.list');
+
+        if (!isset($config['list']['templates']['item_choice'])) {
+            return System::getContainer()->get('huh.utils.template')->getTemplate($name);
+        }
+
+        $templates = $config['list']['templates']['item_choice'];
 
         foreach ($templates as $template) {
             if ($template['name'] == $name) {

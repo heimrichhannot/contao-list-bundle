@@ -7,6 +7,10 @@ services:
         class: HeimrichHannot\ListBundle\Choice\ListItemTemplateChoice
         arguments:
             - "@contao.framework"
+    huh.list.choice.template.item_choice:
+        class: HeimrichHannot\ListBundle\Choice\ListItemChoiceTemplateChoice
+        arguments:
+            - "@contao.framework"
     huh.list.choice.parent-list-config:
         class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice
         arguments:
@@ -35,6 +39,10 @@ services:
             - "@contao.framework"
     huh.list.backend.module:
         class: HeimrichHannot\ListBundle\Backend\Module
+    huh.list.backend.content:
+        class: HeimrichHannot\ListBundle\Backend\Content
+        arguments:
+            - "@contao.framework"
     huh.list.choice.manager:
         class: HeimrichHannot\ListBundle\Choice\ManagerChoice
         arguments:
@@ -71,3 +79,8 @@ services:
           -  "@twig.truncate.html.service"
         tags:
           - { name: twig.extension }
+    huh.list.util.manager:
+        class: HeimrichHannot\ListBundle\Util\ListManagerUtil
+        public: true
+        arguments:
+          - "@contao.framework"

@@ -85,6 +85,15 @@ interface ListManagerInterface
     public function getItemTemplateByName(string $name);
 
     /**
+     * Get the current item choice template path.
+     *
+     * @param string $name
+     *
+     * @return string|null
+     */
+    public function getItemChoiceTemplateByName(string $name);
+
+    /**
      * Get the list template path.
      *
      * @param string $name List template name

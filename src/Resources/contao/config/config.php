@@ -44,3 +44,8 @@ $GLOBALS['TL_MODELS']['tl_list_config_element'] = 'HeimrichHannot\ListBundle\Mod
  * Hooks
  */
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = ['huh.list.listener.search', 'getSearchablePages'];
+
+/**
+ * Content elements
+ */
+$GLOBALS['TL_CTE']['huh.list']['list_preselect'] = \HeimrichHannot\ListBundle\ContentElement\ContentListPreselect::class;

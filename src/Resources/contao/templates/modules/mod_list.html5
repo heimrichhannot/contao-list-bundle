@@ -1,0 +1,4 @@
+<?php $this->extend($this->noSearch ? 'block_unsearchable' : 'block_searchable'); ?>
+<?php $this->block('content'); ?>
+<?= $this->list(); ?>
+<?php $this->endblock(); ?>

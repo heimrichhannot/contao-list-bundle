@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addAjaxPagination',
             'addMasonry',
         ],
-        'default'      => '{general_legend},title,parentListConfig;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry;'.'{search_legend},noSearch;'.'{template_legend},listTemplate,itemTemplate;',
+        'default'      => '{general_legend},title,parentListConfig;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry;'.'{search_legend},noSearch;'.'{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
     ],
     'subpalettes' => [
         'showItemCount'                                                                   => 'itemCountText',
@@ -470,6 +470,14 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'exclude'          => true,
             'inputType'        => 'select',
             'options_callback' => ['huh.list.choice.template.item', 'getCachedChoices'],
+            'eval'             => ['tl_class' => 'w50 clr', 'includeBlankOption' => true],
+            'sql'              => "varchar(128) NOT NULL default ''",
+        ],
+        'itemChoiceTemplate'          => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['itemChoiceTemplate'],
+            'exclude'          => true,
+            'inputType'        => 'select',
+            'options_callback' => ['huh.list.choice.template.item_choice', 'getCachedChoices'],
             'eval'             => ['tl_class' => 'w50 clr', 'includeBlankOption' => true],
             'sql'              => "varchar(128) NOT NULL default ''",
         ],

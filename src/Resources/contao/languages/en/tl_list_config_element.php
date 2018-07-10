@@ -8,24 +8,10 @@ $lang = &$GLOBALS['TL_LANG']['tl_list_config_element'];
 $lang['title'] = ['Title', 'Please enter a title.'];
 $lang['tstamp'] = ['Revision date', ''];
 
-$lang['typeSelectorField'][0]     = 'Selector-Field';
-$lang['typeSelectorField'][1]     = 'Choose the field, which contains the boolean selector for the type.';
-$lang['typeField'][0]             = 'Field';
-$lang['typeField'][1]             = 'Choose the field containing the reference for the type.';
 /**
  * Legends
  */
-$lang['title_type_legend'] = 'Title and type';
-$lang['config_legend']     = 'Configuration';
-
-/**
- * Reference
- */
-$lang['reference'] = [
-    \HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType::TYPE => 'Image',
-    \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE   => 'simple',
-    \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'gendered',
-];
+$lang['general_legend'] = 'General settings';
 
 /**
  * Buttons

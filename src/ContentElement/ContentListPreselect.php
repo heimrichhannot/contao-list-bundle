@@ -6,34 +6,37 @@
  * @license LGPL-3.0-or-later
  */
 
-namespace HeimrichHannot\ListBundle\Module;
+namespace HeimrichHannot\ListBundle\ContentElement;
 
+use Contao\ContentElement;
+use Contao\ContentModel;
 use Contao\Controller;
-use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\Module;
-use Contao\ModuleModel;
+use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\Model;
+use Contao\StringUtil;
 use Contao\System;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Manager\FilterManager;
+use HeimrichHannot\FilterBundle\Model\FilterPreselectModel;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
-use HeimrichHannot\ListBundle\Event\ListCompileEvent;
-use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
-use HeimrichHannot\ListBundle\Exception\InvalidListManagerException;
+use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderEvent;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
-use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
-use Patchwork\Utf8;
+use HeimrichHannot\UtilsBundle\Database\DatabaseUtil;
 
-class ModuleList extends Module
+class ContentListPreselect extends ContentElement
 {
-    const TYPE = 'huhlist';
-
-    protected $strTemplate = 'mod_list';
+    /**
+     * Template.
+     *
+     * @var string
+     */
+    protected $strTemplate = 'ce_list_preselect';
 
     /**
-     * @var ContaoFramework
+     * @var ContaoFrameworkInterface
      */
     protected $framework;
 
@@ -63,39 +66,27 @@ class ModuleList extends Module
     protected $listConfigRegistry;
 
     /**
+     * @var FilterQueryBuilder
+     */
+    protected $queryBuilder;
+
+    /**
      * @var object
      */
     protected $filter;
 
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * ModuleList constructor.
-     *
-     * @param ModuleModel $objModule
-     * @param string      $strColumn
-     *
-     * @throws InvalidListManagerException
-     * @throws InvalidListConfigException
-     */
-    public function __construct(ModuleModel $objModule, $strColumn = 'main')
+    public function __construct(ContentModel $objElement, string $strColumn = 'main')
     {
         $this->framework = System::getContainer()->get('contao.framework');
 
-        parent::__construct($objModule, $strColumn);
-
-        Controller::loadDataContainer('tl_list_config');
-        System::loadLanguageFile('tl_list_config');
+        parent::__construct($objElement, $strColumn);
 
         $this->listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
         $this->filterManager = System::getContainer()->get('huh.filter.manager');
         $this->request = System::getContainer()->get('huh.request');
 
         // retrieve list config
-        $this->listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $objModule->listConfig);
+        $this->listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $objElement->listConfig);
 
         $this->manager = System::getContainer()->get('huh.list.util.manager')->getListManagerByName($this->listConfig->manager ?: 'default');
         $this->manager->setListConfig($this->listConfig);
@@ -107,20 +98,11 @@ class ModuleList extends Module
 
     public function generate()
     {
-        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
-            $objTemplate = new \BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD'][$this->type][0]).' ###';
-            $objTemplate->title = $this->headline;
-            $objTemplate->id = $this->id;
-            $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
-
-            return $objTemplate->parse();
-        }
-
         if (null === $this->manager) {
-            return parent::generate();
+            return '';
         }
+
+        $this->preselect();
 
         $this->framework->getAdapter(Controller::class)->loadDataContainer('tl_list_config');
         $this->framework->getAdapter(Controller::class)->loadDataContainer($this->filter->dataContainer);
@@ -139,6 +121,13 @@ class ModuleList extends Module
 
             $this->manager->setList(new $listClass($this->manager));
         }
+
+        /**
+         * @var \Symfony\Component\EventDispatcher\EventDispatcher
+         */
+        $dispatcher = \System::getContainer()->get('event_dispatcher');
+        $dispatcher->addListener(ListModifyQueryBuilderEvent::NAME, [$this, 'listModifyQueryBuilder']);
+
         if (true === (bool) $this->manager->getListConfig()->doNotRenderEmpty && empty($this->manager->getList()->getItems())) {
             /** @var FilterQueryBuilder $queryBuilder */
             $queryBuilder = $this->manager->getFilterManager()->getQueryBuilder($this->filter->id);
@@ -153,41 +142,75 @@ class ModuleList extends Module
     }
 
     /**
-     * @return FilterConfig
+     * Modify the list query builder.
      */
-    public function getFilterConfig(): FilterConfig
+    public function listModifyQueryBuilder(ListModifyQueryBuilderEvent $event)
     {
-        return $this->filterConfig;
+        $filter = (object) $event->getList()->getManager()->getFilterConfig()->getFilter();
+
+        $pk = 'id';
+        $model = Model::getClassFromTable($filter->dataContainer);
+
+        /** @var Model $model */
+        if (class_exists($model)) {
+            $pk = $model::getPk();
+        }
+
+        $queryBuilder = $event->getQueryBuilder();
+
+        $values = StringUtil::deserialize($this->objModel->listPreselect, true);
+
+        $queryBuilder->andWhere(System::getContainer()->get('huh.utils.database')->composeWhereForQueryBuilder($queryBuilder, $this->filter->dataContainer.'.'.$pk, DatabaseUtil::OPERATOR_IN, $GLOBALS['TL_DCA'][$filter->dataContainer], $values));
+
+        $queryBuilder->add(
+            'orderBy',
+            sprintf(
+                'FIELD(%s, %s)',
+                $filter->dataContainer.'.'.$pk,
+                implode(
+                    ',',
+                    array_map(
+                        function ($val) {
+                            return '"'.addslashes(Controller::replaceInsertTags(trim($val), false)).'"';
+                        },
+                        $values
+                    )
+                )
+            )
+        );
+        $event->setQueryBuilder($queryBuilder);
     }
 
     /**
-     * @return ListManagerInterface
+     * {@inheritdoc}
      */
-    public function getManager(): ListManagerInterface
-    {
-        return $this->manager;
-    }
-
     protected function compile()
     {
-        $this->manager->getList()->handleShare();
-
-        // apply module fields to template
-        $this->Template->headline = $this->headline;
-        $this->Template->hl = $this->hl;
-
-        // add class to every list template
-        $cssID = $this->cssID;
-        $cssID[1] = $cssID[1].($cssID[1] ? ' ' : '').'huh-list';
-
-        $this->cssID = $cssID;
-
         $this->Template->noSearch = (bool) $this->manager->getListConfig()->noSearch;
 
         $this->Template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) {
             return $this->manager->getList()->parse($listTemplate, $itemTemplate, $data);
         };
+    }
 
-        System::getContainer()->get('event_dispatcher')->dispatch(ListCompileEvent::NAME, new ListCompileEvent($this->Template, $this, $this->manager->getListConfig()));
+    /**
+     * Invoke preselection.
+     */
+    protected function preselect()
+    {
+        /** @var FilterPreselectModel $preselections */
+        $preselections = System::getContainer()->get('contao.framework')->createInstance(FilterPreselectModel::class);
+
+        if (null === ($preselections = $preselections->findPublishedByPidAndTableAndField($this->id, 'tl_content', 'filterPreselect'))) {
+            return;
+        }
+
+        $data = System::getContainer()->get('huh.filter.util.filter_preselect')->getPreselectData($this->filterConfig->getId(), $preselections->getModels());
+
+        if (null === ($filterConfig = System::getContainer()->get('huh.filter.manager')->findById($this->filterConfig->getId())) || null === ($elements = $filterConfig->getElements())) {
+            return;
+        }
+
+        $filterConfig->setData($data);
     }
 }

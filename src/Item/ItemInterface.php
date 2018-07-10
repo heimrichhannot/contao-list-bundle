@@ -16,6 +16,9 @@ interface ItemInterface
     /**
      * Parse the current item and return the parsed string.
      *
+     * @param string $class CSS classes
+     * @param int    $count Total count
+     *
      * @return string The parsed item
      */
     public function parse(string $class = '', int $count = 0): string;

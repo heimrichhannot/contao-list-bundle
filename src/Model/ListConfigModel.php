@@ -47,6 +47,7 @@ use Contao\Model;
  * @property string $masonryStampContentElements
  * @property string $itemTemplate
  * @property string $listTemplate
+ * @property string $itemChoiceTemplate
  * @property int    $filter
  * @property bool   $limitFormattedFields
  * @property string $formattedFields

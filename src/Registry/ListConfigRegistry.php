@@ -10,6 +10,7 @@ namespace HeimrichHannot\ListBundle\Registry;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\System;
+use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 
 class ListConfigRegistry
@@ -185,5 +186,24 @@ class ListConfigRegistry
         }
 
         return $computedListConfig;
+    }
+
+    /**
+     * Get computed list config by Id.
+     *
+     * @param int $listConfigId
+     *
+     * @return ListConfigModel|null
+     */
+    public function getComputedListConfig(int $listConfigId): ?ListConfigModel
+    {
+        if (!$listConfigId || null === ($listConfig = $this->findByPk($listConfigId))) {
+            throw new InvalidListConfigException(sprintf('No valid list config given. Please set one.'));
+        }
+
+        // compute list config respecting the inheritance hierarchy
+        $listConfig = $this->computeListConfig($listConfigId);
+
+        return $listConfig;
     }
 }

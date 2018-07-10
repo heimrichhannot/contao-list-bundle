@@ -9,7 +9,7 @@ This bundle offers a generic list module to use with arbitrary contao entities c
 
 ## Installation
 
-Install via composer: `composer require heimrichhannot/contao-encore-bundle` and update your database.
+Install via composer: `composer require heimrichhannot/contao-list-bundle` and update your database.
 
 ### Installation with frontend assets using webpack
 
@@ -123,34 +123,6 @@ huh:
                 - event_
 ```
 
-### Custom ConfigElementTypes
-
-You can add custom ConfigElementTypes by creating a class which inherits from `ConfigElementType` interface and register it in the list config file. 
-
-```yaml
-huh.list.config_element_types:
-  - { name: image, class: HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType }
-```
-
-In the most cases you also need to add a palette for the ConfigElementType to the `tl_list_config_element` table dca.
-
-#### Selector fields
-A typical scenario to use ConfigElementTypes is when you want to add additional template variables, if list item has a specific property, for example an image, an video etc.  There are already two general dca fields defined for that purpose, `typeSelectorField` (the field containing a booloan selector for the type, like "addImage") and `typeField` (the field containing the reference to the type, like "singleSRC").
-You can also customize the labels for this field by setting them in the messages.[local].yaml. The message ids are `huh.list.tl_list_config_element.field.[field].[type].name` and `huh.list.tl_list_config_element.field.[field].[type].desc`.
-
-Example:
-
-```yaml
-# message.de.yaml from heimrichhannot/contao-youtube-bundle
-
-huh.list.tl_list_config_element.field:
-  typeSelectorField.youtube:
-    name: YouTube Selektor Element
-    desc: Wählen Sie hier das Feld aus, welches den boolschen Selektor für das YouTube Feld enthält.
-  typeField.youtube:
-    name: YouTube Field
-    desc: Wählen Sie hier das Feld aus, welches die ID des YouTube Video enthält.
-```
 
 ### Masonry
 

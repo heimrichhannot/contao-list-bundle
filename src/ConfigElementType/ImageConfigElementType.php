@@ -18,8 +18,6 @@ use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 
 class ImageConfigElementType implements ConfigElementType
 {
-    const TYPE = 'image';
-
     /**
      * @var ContaoFrameworkInterface
      */

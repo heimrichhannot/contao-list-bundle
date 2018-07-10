@@ -19,10 +19,7 @@ use Contao\Model;
  * @property int    $dateAdded
  * @property string $title
  * @property string $type
- * @property string $typeSelectorField
- * @property string $typeField
  * @property string $imageSelectorField
- * @property string $imageField
  * @property string $imgSize
  * @property string $placeholderImage
  * @property string $placeholderImageFemale

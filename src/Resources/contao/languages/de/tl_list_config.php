@@ -95,10 +95,12 @@ $lang['noSearch'][0] = 'Nicht durchsuchen';
 $lang['noSearch'][1] = 'Diese Liste nicht in den Suchindex aufnehmen.';
 
 // template
-$lang['itemTemplate'][0] = 'Listen-Template';
-$lang['itemTemplate'][1] = 'Wählen Sie hier das Template aus, mit dem Liste gerendert werden sollen.';
-$lang['itemTemplate'][0] = 'Instanz-Template';
-$lang['itemTemplate'][1] = 'Wählen Sie hier das Template aus, mit dem die einzelnen Instanzen gerendert werden sollen.';
+$lang['listTemplate'][0]       = 'Listen-Template';
+$lang['listTemplate'][1]       = 'Wählen Sie hier das Template aus, mit dem Liste gerendert werden sollen.';
+$lang['itemTemplate'][0]       = 'Instanz-Template';
+$lang['itemTemplate'][1]       = 'Wählen Sie hier das Template aus, mit dem die einzelnen Instanzen gerendert werden sollen.';
+$lang['itemChoiceTemplate'][0] = 'Auswahloption-Template';
+$lang['itemChoiceTemplate'][1] = 'Wählen Sie hier das Template aus, mit dem die einzelnen Instanzen in einer Auswahllisete gerendert werden sollen.';
 
 /**
  * Legends
@@ -110,6 +112,7 @@ $lang['filter_legend']         = 'Filter';
 $lang['overrideFilter_legend'] = 'Filter';
 $lang['sorting_legend']        = 'Sortierung';
 $lang['jumpto_legend']         = 'Weiterleitung';
+$lang['preselect_legend']      = 'Vorauswahl-Einstellungen';
 $lang['misc_legend']           = 'Verschiedenes';
 $lang['search_legend']         = 'Sucheinstellungen';
 $lang['template_legend']       = 'Template';

@@ -1,0 +1,2 @@
+{% if raw.title|default %}{{ raw.title }}{% elseif raw.name|default %}{% endif %}
+{% if raw.id|default %}{{ '[ID:' ~ raw.id ~ ']' }}{% endif %}

@@ -102,6 +102,12 @@ class ContentListPreselect extends ContentElement
             return '';
         }
 
+        $values = array_filter(StringUtil::deserialize($this->objModel->listPreselect, true));
+
+        if (empty($values)) {
+            return '';
+        }
+
         $this->preselect();
 
         $this->framework->getAdapter(Controller::class)->loadDataContainer('tl_list_config');
@@ -158,7 +164,7 @@ class ContentListPreselect extends ContentElement
 
         $queryBuilder = $event->getQueryBuilder();
 
-        $values = StringUtil::deserialize($this->objModel->listPreselect, true);
+        $values = array_filter(StringUtil::deserialize($this->objModel->listPreselect, true));
 
         $queryBuilder->andWhere(System::getContainer()->get('huh.utils.database')->composeWhereForQueryBuilder($queryBuilder, $this->filter->dataContainer.'.'.$pk, DatabaseUtil::OPERATOR_IN, $GLOBALS['TL_DCA'][$filter->dataContainer], $values));
 
@@ -178,6 +184,7 @@ class ContentListPreselect extends ContentElement
                 )
             )
         );
+
         $event->setQueryBuilder($queryBuilder);
     }
 

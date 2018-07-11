@@ -205,18 +205,19 @@ class ContentListPreselect extends ContentElement
      */
     protected function preselect()
     {
+        if (null === ($filterConfig = System::getContainer()->get('huh.filter.manager')->findById($this->filterConfig->getId())) || null === ($elements = $filterConfig->getElements())) {
+            return;
+        }
+
         /** @var FilterPreselectModel $preselections */
         $preselections = System::getContainer()->get('contao.framework')->createInstance(FilterPreselectModel::class);
 
         if (null === ($preselections = $preselections->findPublishedByPidAndTableAndField($this->id, 'tl_content', 'filterPreselect'))) {
+            $filterConfig->resetData(); // reset previous filters
             return;
         }
 
         $data = System::getContainer()->get('huh.filter.util.filter_preselect')->getPreselectData($this->filterConfig->getId(), $preselections->getModels());
-
-        if (null === ($filterConfig = System::getContainer()->get('huh.filter.manager')->findById($this->filterConfig->getId())) || null === ($elements = $filterConfig->getElements())) {
-            return;
-        }
 
         $filterConfig->setData($data);
     }

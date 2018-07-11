@@ -7,7 +7,7 @@ services:
         class: HeimrichHannot\ListBundle\Choice\ListItemTemplateChoice
         arguments:
             - "@contao.framework"
-    huh.list.choice.template.item_choice:
+    huh.list.choice.template.item-choice:
         class: HeimrichHannot\ListBundle\Choice\ListItemChoiceTemplateChoice
         arguments:
             - "@contao.framework"

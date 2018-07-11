@@ -477,7 +477,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['itemChoiceTemplate'],
             'exclude'          => true,
             'inputType'        => 'select',
-            'options_callback' => ['huh.list.choice.template.item_choice', 'getCachedChoices'],
+            'options_callback' => ['huh.list.choice.template.item-choice', 'getCachedChoices'],
             'eval'             => ['tl_class' => 'w50 clr', 'includeBlankOption' => true],
             'sql'              => "varchar(128) NOT NULL default ''",
         ],

@@ -148,5 +148,6 @@ class Content
         }
 
         $GLOBALS['TL_DCA']['tl_content']['palettes']['list_preselect'] = str_replace('listConfig;', 'listConfig,filterPreselect,listPreselect;', $GLOBALS['TL_DCA']['tl_content']['palettes']['list_preselect']);
+        $GLOBALS['TL_DCA']['tl_content']['fields']['filterPreselect']['eval']['submitOnChange'] = true;
     }
 }

@@ -2,6 +2,7 @@
 Thumbs.db
 .DS_Store
 .sass-cache
-vendor
+/vendor
 component
 composer.lock
+composer.json~

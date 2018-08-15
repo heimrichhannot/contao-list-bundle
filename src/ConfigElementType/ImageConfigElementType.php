@@ -93,7 +93,7 @@ class ImageConfigElementType implements ConfigElementType
 
             $imageArray[$imageField] = $imageFile->path;
 
-            $templateData['images'] = $item->images ?? [];
+            $templateData['images'] = $item->getFormattedValue('images') ?? [];
             $templateData['images'][$imageField] = [];
 
             System::getContainer()->get('huh.utils.image')->addToTemplateData(

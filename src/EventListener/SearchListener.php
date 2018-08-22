@@ -9,6 +9,7 @@
 namespace HeimrichHannot\ListBundle\EventListener;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\System;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
@@ -61,8 +62,22 @@ class SearchListener
                 }
 
                 $this->manager->setListConfig($listConfig);
-                $this->manager->setList(new $listClass($this->manager));
+                $filter = System::getContainer()->get('huh.filter.manager')->findById($listConfig->filter);
 
+                if (null === $filter) {
+                    continue;
+                }
+                $filter = $filter->getFilter();
+
+                if (empty($filter) || !isset($filter['dataContainer']) || null === $filter['dataContainer']) {
+                    continue;
+                }
+
+                if ('tl_news' === $filter['dataContainer'] || 'tl_calendar' === $filter['dataContainer'] || 'tl_comments' === $filter['dataContainer'] || 'tl_faq' === $filter['dataContainer']) {
+                    continue;
+                }
+
+                $this->manager->setList(new $listClass($this->manager));
                 $arrPages = $this->manager->getList()->getSearchablePages($arrPages, $intRoot, $blnIsSitemap);
             }
         }

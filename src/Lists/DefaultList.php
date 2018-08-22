@@ -899,6 +899,10 @@ class DefaultList implements ListInterface, \JsonSerializable
                 continue;
             }
 
+            if (in_array($url, $arrPages)) {
+                continue;
+            }
+
             $arrPages[] = $url;
         }
 

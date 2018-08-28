@@ -32,8 +32,8 @@ class ImageConfigElementType implements ConfigElementType
     {
         $image = null;
 
-        if ($listConfigElement->imageSelectorField && $item->getRawValue($listConfigElement->imageSelectorField) &&
-            $item->getRawValue($listConfigElement->imageField)) {
+        if ($listConfigElement->imageSelectorField && $item->getRawValue($listConfigElement->imageSelectorField)
+            && $item->getRawValue($listConfigElement->imageField)) {
             $imageSelectorField = $listConfigElement->imageSelectorField;
             $image = $item->getRawValue($listConfigElement->imageField);
             $imageField = $listConfigElement->imageField;
@@ -47,8 +47,7 @@ class ImageConfigElementType implements ConfigElementType
 
             switch ($listConfigElement->placeholderImageMode) {
                 case ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED:
-                    if ($item->getRawValue($listConfigElement->genderField) && 'female' == $item->getRawValue($listConfigElement->genderField)
-                    ) {
+                    if ($item->getRawValue($listConfigElement->genderField) && 'female' == $item->getRawValue($listConfigElement->genderField)) {
                         $image = $listConfigElement->placeholderImageFemale;
                     } else {
                         $image = $listConfigElement->placeholderImage;
@@ -77,9 +76,7 @@ class ImageConfigElementType implements ConfigElementType
             $imageFile = $filesModel->findByUuid($uuid);
         }
 
-        if (null !== $imageFile
-            && file_exists(System::getContainer()->get('huh.utils.container')->getProjectDir().'/'.$imageFile->path)
-        ) {
+        if (null !== $imageFile && file_exists(System::getContainer()->get('huh.utils.container')->getProjectDir().'/'.$imageFile->path) && getimagesize(System::getContainer()->get('huh.utils.container')->getProjectDir().'/'.$imageFile->path)) {
             $imageArray = $item->getRaw();
 
             // Override the default image size
@@ -96,16 +93,7 @@ class ImageConfigElementType implements ConfigElementType
             $templateData['images'] = $item->getFormattedValue('images') ?? [];
             $templateData['images'][$imageField] = [];
 
-            System::getContainer()->get('huh.utils.image')->addToTemplateData(
-                $imageField,
-                $imageSelectorField,
-                $templateData['images'][$imageField],
-                $imageArray,
-                null,
-                null,
-                null,
-                $imageFile
-            );
+            System::getContainer()->get('huh.utils.image')->addToTemplateData($imageField, $imageSelectorField, $templateData['images'][$imageField], $imageArray, null, null, null, $imageFile);
 
             $item->setFormattedValue('images', $templateData['images']);
         }

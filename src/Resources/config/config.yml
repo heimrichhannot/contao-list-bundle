@@ -18,7 +18,7 @@ huh:
                 - { name: default, template: "@HeimrichHannotContaoList/item/list_item_default.html.twig" }
                 - { name: table_default, template: "@HeimrichHannotContaoList/item/list_item_table_default.html.twig" }
             item_prefixes:
-                - list_item_(?!choice)_
+                - list_item_
                 - item_
                 - news_
                 - event_

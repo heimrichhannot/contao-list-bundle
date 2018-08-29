@@ -20,7 +20,7 @@
                                     {% endif %}
                                 </th>
                             {% endfor %}
-                            {% if addDetails %}
+                            {% if addDetails|default() %}
                                 <th class="actions"></th>
                             {% endif %}
                         </tr>

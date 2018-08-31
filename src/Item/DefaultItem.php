@@ -224,26 +224,17 @@ class DefaultItem implements ItemInterface, \JsonSerializable
             $this->dc = DC_Table_Utils::createFromModelData($this->getRaw(), $this->getDataContainer());
         }
 
-        $fields = $this->getManager()->getListConfig()->limitFormattedFields ? StringUtil::deserialize(
-            $this->getManager()->getListConfig()->formattedFields,
-            true
-        ) : (isset($dca['fields']) && is_array($dca['fields']) ? array_keys($dca['fields']) : []);
+        $fields = $this->getManager()->getListConfig()->limitFormattedFields ? StringUtil::deserialize($this->getManager()->getListConfig()->formattedFields, true) : (isset($dca['fields']) && is_array($dca['fields']) ? array_keys($dca['fields']) : []);
 
         if (in_array($name, $fields, true)) {
             $this->dc->field = $name;
 
-            $value = $this->_manager->getFormUtil()->prepareSpecialValueForOutput(
-                $name,
-                $value,
-                $this->dc
-            );
+            $value = $this->_manager->getFormUtil()->prepareSpecialValueForOutput($name, $value, $this->dc);
+
+            $value = Controller::replaceInsertTags($value);
 
             // anti-xss: escape everything besides some tags
-            $value = $this->_manager->getFormUtil()->escapeAllHtmlEntities(
-                $this->getDataContainer(),
-                $name,
-                $value
-            );
+            $value = $this->_manager->getFormUtil()->escapeAllHtmlEntities($this->getDataContainer(), $name, $value);
 
             // overwrite existing property with formatted value
             if (property_exists($this, $name)) {
@@ -374,10 +365,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         $event = $this->_dispatcher->dispatch(ListBeforeRenderItemEvent::NAME, new ListBeforeRenderItemEvent($listConfig->itemTemplate, $this->jsonSerialize(), $this));
         $templateName = $this->_manager->getItemTemplateByName($event->getTemplateName() ?: 'default');
 
-        return $twig->render(
-            $templateName,
-            $event->getTemplateData()
-        );
+        return $twig->render($templateName, $event->getTemplateData());
     }
 
     /**
@@ -436,14 +424,9 @@ class DefaultItem implements ItemInterface, \JsonSerializable
             if (null !== $pageJumpTo) {
                 $shareUrl = Environment::get('url').'/'.$pageJumpTo->getFrontendUrl();
 
-                $url = $urlUtil->addQueryString(
-                    'act='.ListBundle::ACTION_SHARE,
-                    $urlUtil->getCurrentUrl(
-                        [
-                            'skipParams' => true,
-                        ]
-                    )
-                );
+                $url = $urlUtil->addQueryString('act='.ListBundle::ACTION_SHARE, $urlUtil->getCurrentUrl([
+                    'skipParams' => true,
+                ]));
 
                 $url = $urlUtil->addQueryString('url='.urlencode($shareUrl), $url);
 

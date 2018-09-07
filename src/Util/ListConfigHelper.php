@@ -8,7 +8,6 @@
 
 namespace HeimrichHannot\ListBundle\Util;
 
-use Contao\Config;
 use Contao\DataContainer;
 use Contao\System;
 

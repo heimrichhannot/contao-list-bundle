@@ -38,7 +38,7 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
             'huh_list',
             $extensionName,
             $extensionConfigs,
-            $container->getParameter('kernel.project_dir').'/vendor/heimrichhannot/contao-list-bundle/src/Resources/config/config.yml'
+            __DIR__.'/../Resources/config/config.yml'
         );
 
         if (in_array(
@@ -48,7 +48,7 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
                 'huh_encore',
                 $extensionName,
                 $extensionConfigs,
-                $container->getParameter('kernel.project_dir').'/vendor/heimrichhannot/contao-list-bundle/src/Resources/config/config_encore.yml'
+                __DIR__.'/../Resources/config/config_encore.yml'
             );
         }
 

@@ -234,12 +234,15 @@ class ContentListPreselectTest extends ContaoTestCase
         $listConfig->list = 'noInterface';
         $listConfigProperty->setValue($contentElement, $listConfig);
         $error = false;
+        $errorInterface = null;
         try {
             $contentElement->doGenerate();
         } catch (InterfaceNotImplementedException $e) {
             $error = true;
+            $errorInterface = $e->getInterface();
         }
         $this->assertTrue($error);
+        $this->assertSame(ListInterface::class, $errorInterface);
 
         $listConfig = new \stdClass();
         $listConfig->list = 'list';
@@ -249,8 +252,10 @@ class ContentListPreselectTest extends ContaoTestCase
             $contentElement->doGenerate();
         } catch (InterfaceNotImplementedException $e) {
             $error = true;
+            $errorInterface = $e->getInterface();
         }
         $this->assertTrue($error);
+        $this->assertSame(\JsonSerializable::class, $errorInterface);
     }
 
     public function skiptestDoGenerateWithException()

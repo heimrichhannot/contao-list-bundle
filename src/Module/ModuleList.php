@@ -8,22 +8,25 @@
 
 namespace HeimrichHannot\ListBundle\Module;
 
+use Contao\BackendTemplate;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\Module;
 use Contao\ModuleModel;
 use Contao\System;
+use Contao\Template;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Manager\FilterManager;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Event\ListCompileEvent;
+use HeimrichHannot\ListBundle\Exception\InterfaceNotImplementedException;
 use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
 use HeimrichHannot\ListBundle\Exception\InvalidListManagerException;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
-use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
 use Patchwork\Utf8;
 
 class ModuleList extends Module
@@ -40,7 +43,7 @@ class ModuleList extends Module
     /**
      * @var ListManagerInterface
      */
-    protected $manager;
+    protected $listManager;
 
     /**
      * @var ListConfigModel
@@ -68,11 +71,6 @@ class ModuleList extends Module
     protected $filter;
 
     /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
      * ModuleList constructor.
      *
      * @param ModuleModel $objModule
@@ -80,76 +78,128 @@ class ModuleList extends Module
      *
      * @throws InvalidListManagerException
      * @throws InvalidListConfigException
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(ModuleModel $objModule, $strColumn = 'main')
     {
-        $this->framework = System::getContainer()->get('contao.framework');
+        $framework = System::getContainer()->get('contao.framework');
 
         parent::__construct($objModule, $strColumn);
 
         Controller::loadDataContainer('tl_list_config');
         System::loadLanguageFile('tl_list_config');
 
-        $this->listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
-        $this->filterManager = System::getContainer()->get('huh.filter.manager');
-        $this->request = System::getContainer()->get('huh.request');
+        $listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
+        $filterManager = System::getContainer()->get('huh.filter.manager');
 
         // retrieve list config
-        $this->listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $objModule->listConfig);
+        $listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $objModule->listConfig);
 
-        $this->manager = System::getContainer()->get('huh.list.util.manager')->getListManagerByName($this->listConfig->manager ?: 'default');
-        $this->manager->setListConfig($this->listConfig);
-        $this->manager->setModuleData($this->arrData);
+        $manager = System::getContainer()->get('huh.list.util.manager')->getListManagerByName($listConfig->manager ?: 'default');
+        $manager->setListConfig($listConfig);
+        $manager->setModuleData($this->arrData);
 
-        $this->filterConfig = $this->manager->getFilterConfig();
-        $this->filter = (object) $this->filterConfig->getFilter();
+        $filterConfig = $manager->getFilterConfig();
+
+        $this->initModule($objModule, $framework, $listConfigRegistry, $filterManager, $manager, $listConfig, $filterConfig);
     }
 
+    /**
+     * Testable init method.
+     *
+     * @param ModuleModel              $model
+     * @param ContaoFrameworkInterface $framework
+     * @param ListConfigRegistry       $listConfigRegistry
+     * @param FilterManager            $filterManager
+     * @param ListManagerInterface     $listManager
+     * @param ListConfigModel          $listConfigModel
+     * @param FilterConfig             $filterConfig
+     */
+    public function initModule(ModuleModel $model, ContaoFrameworkInterface $framework, ListConfigRegistry $listConfigRegistry, FilterManager $filterManager, ListManagerInterface $listManager, ListConfigModel $listConfigModel, FilterConfig $filterConfig)
+    {
+        if (!$this->objModel) {
+            $this->objModel = $model;
+        }
+        $this->framework = $framework;
+        $this->listConfigRegistry = $listConfigRegistry;
+        $this->filterManager = $filterManager;
+        $this->listManager = $listManager;
+        $this->listConfig = $listConfigModel;
+        $this->filterConfig = $filterConfig;
+        $this->filter = (object) $filterConfig->getFilter();
+    }
+
+    /**
+     * @throws \Exception
+     *
+     * @return string
+     *
+     * @codeCoverageIgnore
+     */
     public function generate()
     {
         if (System::getContainer()->get('huh.utils.container')->isBackend()) {
-            $objTemplate = new \BackendTemplate('be_wildcard');
+            $objTemplate = new BackendTemplate('be_wildcard');
             $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD'][$this->type][0]).' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;
-            $objTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
+            $objTemplate->href = 'contao?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
 
             return $objTemplate->parse();
         }
 
-        if (null === $this->manager) {
+        if (null === $this->listManager) {
             return parent::generate();
         }
 
-        $this->framework->getAdapter(Controller::class)->loadDataContainer('tl_list_config');
-        $this->framework->getAdapter(Controller::class)->loadDataContainer($this->filter->dataContainer);
-        $this->framework->getAdapter(System::class)->loadLanguageFile($this->filter->dataContainer);
-
-        if (null !== ($listClass = $this->manager->getListByName($this->listConfig->list ?: 'default'))) {
-            $reflection = new \ReflectionClass($listClass);
-
-            if (!$reflection->implementsInterface(ListInterface::class)) {
-                throw new \Exception(sprintf('List class %s must implement %s', $listClass, ListInterface::class));
-            }
-
-            if (!$reflection->implementsInterface(\JsonSerializable::class)) {
-                throw new \Exception(sprintf('List class %s must implement %s', $listClass, \JsonSerializable::class));
-            }
-
-            $this->manager->setList(new $listClass($this->manager));
-        }
-        if (true === (bool) $this->manager->getListConfig()->doNotRenderEmpty && empty($this->manager->getList()->getItems())) {
-            /** @var FilterQueryBuilder $queryBuilder */
-            $queryBuilder = $this->manager->getFilterManager()->getQueryBuilder($this->filter->id);
-            $fields = $this->filter->dataContainer.'.* ';
-
-            if ($totalCount = $queryBuilder->select($fields)->execute()->rowCount() < 1) {
-                return '';
-            }
+        if (!$this->doGenerate()) {
+            return '';
         }
 
         return parent::generate();
+    }
+
+    /**
+     * Testable generate function.
+     *
+     * @throws InterfaceNotImplementedException
+     * @throws \ReflectionException
+     *
+     * @return bool
+     */
+    public function doGenerate()
+    {
+        $this->framework->getAdapter(Controller::class)->loadDataContainer('tl_list_config');
+        $this->framework->getAdapter(Controller::class)->loadDataContainer($this->filter->dataContainer);
+        $this->framework->getAdapter(Controller::class)->loadLanguageFile($this->filter->dataContainer);
+
+        if (null !== ($listClass = $this->listManager->getListByName($this->listConfig->list ?: 'default'))) {
+            $reflection = new \ReflectionClass($listClass);
+
+            if (!$reflection->implementsInterface(ListInterface::class)) {
+                throw new InterfaceNotImplementedException(ListInterface::class, $listClass);
+            }
+
+            if (!$reflection->implementsInterface(\JsonSerializable::class)) {
+                throw new InterfaceNotImplementedException(\JsonSerializable::class, $listClass);
+            }
+
+            $this->listManager->setList(new $listClass($this->listManager));
+        }
+        if (true === (bool) $this->listManager->getListConfig()->doNotRenderEmpty
+            && empty($this->listManager->getList()->getItems())) {
+            /** @var FilterQueryBuilder $queryBuilder */
+            $queryBuilder = $this->listManager->getFilterManager()->getQueryBuilder($this->filter->id);
+            $fields = $this->filter->dataContainer.'.* ';
+
+            if ($totalCount = $queryBuilder->select($fields)->execute()->rowCount() < 1) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -162,32 +212,55 @@ class ModuleList extends Module
 
     /**
      * @return ListManagerInterface
+     *
+     * @deprecated Use getListManager instead
      */
     public function getManager(): ListManagerInterface
     {
-        return $this->manager;
+        return $this->listManager;
     }
 
-    protected function compile()
+    /**
+     * @return ListManagerInterface
+     */
+    public function getListManager(): ListManagerInterface
     {
-        $this->manager->getList()->handleShare();
+        return $this->listManager;
+    }
+
+    public function doCompile(Template &$template, array &$css)
+    {
+        $this->listManager->getList()->handleShare();
 
         // apply module fields to template
-        $this->Template->headline = $this->headline;
-        $this->Template->hl = $this->hl;
+        $template->headline = $this->headline;
+        $template->hl = $this->hl;
 
         // add class to every list template
-        $cssID = $this->cssID;
+        $cssID = $css;
         $cssID[1] = $cssID[1].($cssID[1] ? ' ' : '').'huh-list';
 
-        $this->cssID = $cssID;
+        $css = $cssID;
 
-        $this->Template->noSearch = (bool) $this->manager->getListConfig()->noSearch;
+        $noSearch = $this->listManager->getListConfig()->noSearch;
 
-        $this->Template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) {
-            return $this->manager->getList()->parse($listTemplate, $itemTemplate, $data);
+        $template->noSearch = (bool) $this->listManager->getListConfig()->noSearch;
+
+        $template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) {
+            return $this->listManager->getList()->parse($listTemplate, $itemTemplate, $data);
         };
 
-        System::getContainer()->get('event_dispatcher')->dispatch(ListCompileEvent::NAME, new ListCompileEvent($this->Template, $this, $this->manager->getListConfig()));
+        System::getContainer()->get('event_dispatcher')->dispatch(
+            ListCompileEvent::NAME,
+            new ListCompileEvent($template, $this, $this->listManager->getListConfig())
+        );
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    protected function compile()
+    {
+        $this->doCompile($this->Template, $this->cssID);
     }
 }

@@ -125,15 +125,11 @@ class ContentListPreselect extends ContentElement
             $reflection = new \ReflectionClass($listClass);
 
             if (!$reflection->implementsInterface(ListInterface::class)) {
-                throw new InterfaceNotImplementedException(
-                    sprintf('List class %s must implement %s', $listClass, ListInterface::class)
-                );
+                throw new InterfaceNotImplementedException(ListInterface::class, $listClass);
             }
 
             if (!$reflection->implementsInterface(\JsonSerializable::class)) {
-                throw new InterfaceNotImplementedException(
-                    sprintf('List class %s must implement %s', $listClass, \JsonSerializable::class)
-                );
+                throw new InterfaceNotImplementedException(\JsonSerializable::class, $listClass);
             }
 
             $this->manager->setList(new $listClass($this->manager));

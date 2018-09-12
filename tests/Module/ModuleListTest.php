@@ -8,260 +8,247 @@
 
 namespace HeimrichHannot\ListBundle\Test\Module;
 
-use Contao\Config;
-use Contao\CoreBundle\Config\ResourceFinder;
-use Contao\CoreBundle\Routing\ScopeMatcher;
-use Contao\Model;
+use Contao\Controller;
+use Contao\FrontendTemplate;
 use Contao\ModuleModel;
-use Contao\PageModel;
 use Contao\System;
-use Contao\TemplateLoader;
 use Contao\TestCase\ContaoTestCase;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\MySqlPlatform;
-use Doctrine\DBAL\Schema\MySqlSchemaManager;
+use Doctrine\DBAL\Driver\Statement;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Manager\FilterManager;
-use HeimrichHannot\FilterBundle\Session\FilterSession;
+use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
+use HeimrichHannot\ListBundle\Exception\InterfaceNotImplementedException;
+use HeimrichHannot\ListBundle\Lists\DefaultList;
+use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManager;
+use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Module\ModuleList;
-use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
-use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
-use HeimrichHannot\UtilsBundle\Form\FormUtil;
-use HeimrichHannot\UtilsBundle\Image\ImageUtil;
-use HeimrichHannot\UtilsBundle\Model\ModelUtil;
-use HeimrichHannot\UtilsBundle\String\StringUtil;
-use HeimrichHannot\UtilsBundle\Url\UrlUtil;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
-use Symfony\Component\HttpKernel\Config\FileLocator;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class ModuleListTest extends ContaoTestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
-        if (!\defined('TL_ROOT')) {
-            \define('TL_ROOT', $this->getFixturesDir());
-        }
-
-        $objPage = $this->getMockBuilder(PageModel::class)->disableOriginalConstructor()->getMock();
-        $objPage->outputFormat = '';
-
-        $GLOBALS['TL_LANGUAGE'] = 'de';
-        $GLOBALS['objPage'] = $objPage;
-        $GLOBALS['TL_DCA']['tl_list_config']['fields']['abc']['eval']['addAsDataAttribute'] = true;
-        $GLOBALS['TL_DCA']['tl_list_config']['fields']['fieldWithData']['eval']['addAsDataAttribute'] = true;
-        $GLOBALS['TL_DCA']['tl_list_config']['fields']['fieldWithoutData']['eval']['addAsDataAttribute'] = false;
-
-        $router = $this->createRouterMock();
-        $requestStack = $this->createRequestStackMock();
-        $framework = $this->mockContaoFramework($this->createMockAdapater());
-
-        $config = $this->createMock(Config::class);
-        $database = $this->createMock(Connection::class);
-
-        $finder = new ResourceFinder([
-            __DIR__.'/../../vendor/contao/core-bundle/src/Resources/contao',
-        ]);
-
-        $containerUtil = new ContainerUtil($framework, $this->createMock(FileLocator::class), $this->createMock(ScopeMatcher::class));
-        $modelUtil = new ModelUtil($framework, $containerUtil);
-
         $container = $this->mockContainer();
-        $container->set('request_stack', $requestStack);
-        $container->set('router', $router);
-        $container->set('contao.framework', $framework);
-        $container->set('database_connection', $database);
-        $container->set('huh.request', new \HeimrichHannot\RequestBundle\Component\HttpFoundation\Request($this->mockContaoFramework(), $requestStack, $this->mockScopeMatcher()));
-        $container->set('huh.list.list-config-registry', $this->createListConfigRegistry());
-        $container->set('huh.list.manager.list', new ListManager(
-                $framework,
-                $container->get('huh.list.list-config-registry'),
-                new ListConfigElementRegistry($framework),
-                new FilterManager($framework, new FilterSession($framework, new Session(new MockArraySessionStorage()))),
-                $container->get('huh.request'),
-                $modelUtil,
-                new UrlUtil($framework),
-                $containerUtil,
-                new ImageUtil($framework),
-                new FormUtil($container, $framework),
-                new \Twig_Environment($this->getMockBuilder('Twig_LoaderInterface')->getMock())
-            )
-        );
-
-        $container->set('huh.utils.container', $containerUtil);
-
-        $container->setParameter('huh.list', [
-            'list' => [
-                'managers' => [
-                    [
-                        'name' => 'default',
-                        'id' => 'huh.list.manager.list',
-                    ],
-                ],
-            ],
-        ]);
-        $container->set('huh.utils.model', $modelUtil);
-        $container->set('huh.filter.manager', $this->createFilterManager());
-        $container->set('huh.utils.string', new StringUtil($framework));
-
-        $container->set('contao.resource_finder', $finder);
-        $container->setParameter('kernel.debug', true);
-        $container->setParameter('kernel.default_locale', 'de');
-
-        $connection = $this->createMock(Connection::class);
-        $connection
-            ->method('getDatabasePlatform')
-            ->willReturn(new MySqlPlatform());
-
-        $connection
-            ->expects(!empty($metadata) ? $this->once() : $this->never())
-            ->method('getSchemaManager')
-            ->willReturn(new MySqlSchemaManager($connection));
-
-        $container->set('database_connection', $connection);
-
-        $kernel = $this->createMock(Kernel::class);
-        $kernel->method('getContainer')->willReturn($container);
-
+        $container->set('event_dispatcher', $this->createMock(EventDispatcher::class));
         System::setContainer($container);
     }
 
-    public function testCanBeInstantiated()
+    public function getContaoFramework()
     {
-        $model = $this->mockClassWithProperties(ModuleModel::class, ['id' => 1, 'type' => 'list', 'listConfig' => 12]);
-        $model->method('row')->willReturn(['id' => 1, 'type' => 'list', 'listConfig' => 12]);
+        $controllerMock = $this->mockAdapter(['loadDataContainer', 'loadLanguageFile']);
 
-        $module = new ModuleList($model);
+        $framework = $this->mockContaoFramework([
+            Controller::class => $controllerMock,
+        ]);
 
-        $this->assertInstanceOf(ModuleList::class, $module);
+        return $framework;
     }
 
     /**
-     * Noch nicht fertiggestellt.
+     * @return \PHPUnit_Framework_MockObject_MockObject|ListManagerInterface
      */
-    public function skip_testGenerate()
+    public function getListManagerMock(string $doNotRenderEmpty = '0', int $itemCount = 0, int $queryResults = 0)
     {
-        TemplateLoader::addFiles(['mod_list' => '../src/Resources/contao/templates']);
-
-        $moduleModelConfig = [
-            'id' => 1,
-            'listConfig' => 5,
-            'cssID' => [0 => 'phpunit', 1 => 'test'],
-        ];
-        $moduleModel = $this->getMockBuilder(ModuleModel::class)->disableOriginalConstructor()->setMethods(['row'])->getMock();
-        $moduleModel->method('row')->willReturn($moduleModelConfig);
-        foreach ($moduleModelConfig as $key => $value) {
-            $moduleModel->$key = $value;
-        }
-        $module = new ModuleList($moduleModel);
-        $module->generate();
-    }
-
-    public function createRouterMock()
-    {
-        $router = $this->createMock(RouterInterface::class);
-        $router->method('generate')->with('contao_backend', $this->anything())->will($this->returnCallback(function ($route, $params = []) {
-            $url = '/contao';
-            if (!empty($params)) {
-                $count = 0;
-                foreach ($params as $key => $value) {
-                    $url .= (0 === $count ? '?' : '&');
-                    $url .= $key.'='.$value;
-                    ++$count;
-                }
+        $listManager = $this->createMock(ListManager::class);
+        $listManager->method('getListByName')->willReturnCallback(function ($listName) {
+            switch ($listName) {
+                case 'default':
+                    return DefaultList::class;
+                case 'listOnly':
+                    return ListInterface::class;
+                case 'none':
+                    return \stdClass::class;
             }
-
-            return $url;
-        }));
-
-        return $router;
-    }
-
-    public function createRequestStackMock()
-    {
-        $requestStack = new RequestStack();
-        $request = new Request();
-        $request->attributes->set('_contao_referer_id', 'foobar');
-        $requestStack->push($request);
-
-        return $requestStack;
-    }
-
-    public function createMockAdapater()
-    {
-        $systemAdapter = $this->mockAdapter(['loadLanguageFile']);
-        $modelAdapter = $this->mockAdapter(['getClassFromTable']);
-
-        return [
-            Model::class => $modelAdapter,
-            System::class => $systemAdapter,
-        ];
-    }
-
-    public function createListConfigRegistry()
-    {
-        $listModelData = [
-            'id' => 5,
-            'filter' => 3,
-        ];
-
-        $listRegistryModel = $this->mockClassWithProperties(ListConfigModel::class, $listModelData);
-        $listRegistryModel->method('row')->willReturn($listModelData);
-
-        $listRegistryModel->filter = 3;
-
-        $listRegistry = $this->createConfiguredMock(ListConfigRegistry::class, [
-            'findByPk' => $listRegistryModel,
-            'computeListConfig' => $listRegistryModel,
+        });
+        $listConfig = $this->mockClassWithProperties(ListConfigModel::class, [
+            'doNotRenderEmpty' => $doNotRenderEmpty,
+            'noSearch' => '0',
         ]);
+        $listManager->method('getListConfig')->willReturn($listConfig);
+        $listManager->method('getList')->willReturn($this->getListMock($itemCount));
+        $listManager->method('getFilterManager')->willReturn($this->getFilterManager($queryResults));
 
-        return $listRegistry;
+        return $listManager;
     }
 
-    public function createFilterManager()
+    /**
+     * @param int $itemCount
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject|ListInterface
+     */
+    public function getListMock(int $itemCount = 0)
     {
-        $filterConfig = $this->getMockBuilder(FilterConfig::class)->disableOriginalConstructor()->setMethods(['getFilter', 'hasData'])->getMock();
-        $filterConfig->method('getFilter')->willReturn([
-            'dataContainer' => 'tl_news',
-        ]);
-        $filterConfig->method('hasData')->willReturn(true);
+        $list = $this->getMockBuilder([ListInterface::class, \JsonSerializable::class])->getMock();
 
-        $filterManagerConfig = [
-            'findById' => $filterConfig,
-        ];
-        $filterManager = $this->createConfiguredMock(FilterManager::class, $filterManagerConfig);
+        $items = null;
+        if ($itemCount > 0) {
+            $items = array_fill(0, $itemCount, null);
+        }
+        $list->method('getItems')->willReturn($items);
+        $list->method('handleShare');
+        $list->method('parse')->willReturn('');
+
+        return $list;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|ListConfigModel
+     */
+    public function getListConfigModelMock(array $listConfigData = [])
+    {
+        $listConfigModel = $this->mockClassWithProperties(ListConfigModel::class, $listConfigData);
+
+        return $listConfigModel;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|FilterManager
+     */
+    public function getFilterManager(int $queryResults = 0)
+    {
+        $filterManager = $this->createMock(FilterManager::class);
+        $filterManager->method('getQueryBuilder')->willReturnCallback(function ($id) use ($queryResults) {
+            $statement = $this->createMock(Statement::class);
+            $statement->method('rowCount')->willReturn($queryResults);
+
+            $filterQueryBuilder = $this->createMock(FilterQueryBuilder::class);
+            $filterQueryBuilder->method('select')->willReturnSelf();
+            $filterQueryBuilder->method('execute')->willReturn($statement);
+
+            return $filterQueryBuilder;
+        });
 
         return $filterManager;
     }
 
-    /**
-     * @return string
-     */
-    protected function getFixturesDir(): string
-    {
-        return __DIR__.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'Fixtures';
+    public function getModuleMock(
+        ?array $listConfigData = [],
+        ?array $filter = ['dataContainer' => 'tl_content'],
+        ?string $doNotRenderEmpty = '0',
+        ?int $itemCount = 0,
+        ?int $queryResults = 0
+    ) {
+        $listConfigData = $listConfigData ?? [];
+        $filter = $filter ?? ['dataContainer' => 'tl_content'];
+        $doNotRenderEmpty = $doNotRenderEmpty ?? '0';
+        $itemCount = $itemCount ?? 0;
+        $queryResults = $queryResults ?? 0;
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ModuleList $module */
+        $module = $this->getMockBuilder(ModuleList::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $model = $this->mockClassWithProperties(ModuleModel::class, []);
+        $listConfigRegistry = $this->createMock(ListConfigRegistry::class);
+
+        $filterConfig = $this->createMock(FilterConfig::class);
+        $filterConfig->method('getFilter')->willReturn($filter);
+
+        $module->initModule(
+            $model,
+            $this->getContaoFramework(),
+            $listConfigRegistry,
+            $this->getFilterManager(),
+            $this->getListManagerMock($doNotRenderEmpty, $itemCount, $queryResults),
+            $this->getListConfigModelMock($listConfigData),
+            $filterConfig
+        );
+
+        return $module;
     }
 
-    /**
-     * Mocks a request scope matcher.
-     *
-     * @return ScopeMatcher
-     */
-    protected function mockScopeMatcher(): ScopeMatcher
+    public function testDoGenerate()
     {
-        return new ScopeMatcher(
-            new RequestMatcher(null, null, null, null, ['_scope' => 'backend']),
-            new RequestMatcher(null, null, null, null, ['_scope' => 'frontend'])
-        );
+        $listConfigData = ['list' => 'none'];
+        $module = $this->getModuleMock($listConfigData);
+        $error = false;
+        $errorInterface = '';
+        try {
+            $module->doGenerate();
+        } catch (InterfaceNotImplementedException $e) {
+            $error = true;
+            $errorInterface = $e->getInterface();
+        }
+        $this->assertTrue($error);
+        $this->assertSame(ListInterface::class, $errorInterface);
+
+        $listConfigData = ['list' => 'listOnly'];
+        $module = $this->getModuleMock($listConfigData);
+        $error = false;
+        $errorInterface = '';
+        try {
+            $module->doGenerate();
+        } catch (InterfaceNotImplementedException $e) {
+            $error = true;
+            $errorInterface = $e->getInterface();
+        }
+        $this->assertTrue($error);
+        $this->assertSame(\JsonSerializable::class, $errorInterface);
+
+        $module = $this->getModuleMock(null, null, '0');
+        $this->assertTrue($module->doGenerate());
+
+        $module = $this->getModuleMock(null, null, '1', 2);
+        $this->assertTrue($module->doGenerate());
+
+        $module = $this->getModuleMock(null, ['dataContainer' => 'tl_content', 'id' => '4'], '1', 0, 2);
+        $this->assertTrue($module->doGenerate());
+
+        $module = $this->getModuleMock(null, ['dataContainer' => 'tl_content', 'id' => '4'], '1', 0, 0);
+        $this->assertFalse($module->doGenerate());
+    }
+
+    public function testGetFilterConfig()
+    {
+        $module = $this->getModuleMock();
+        $this->assertInstanceOf(FilterConfig::class, $module->getFilterConfig());
+    }
+
+    public function testGetManager()
+    {
+        $module = $this->getModuleMock();
+        $this->assertInstanceOf(ListManagerInterface::class, $module->getManager());
+    }
+
+    public function testGetListManager()
+    {
+        $module = $this->getModuleMock();
+        $this->assertInstanceOf(ListManagerInterface::class, $module->getListManager());
+    }
+
+    public function testDoCompile()
+    {
+        $module = $this->getModuleMock();
+
+        $properties = [
+            'noSearch' => true,
+        ];
+
+        $template = $this->mockClassWithProperties(FrontendTemplate::class, []);
+
+        $template
+            ->method('__set')
+            ->willReturnCallback(
+                function (string $key, $value) use (&$properties) {
+                    $properties[$key] = $value;
+                }
+            );
+        $cssID = ['id', 'class'];
+
+        $module->doCompile($template, $cssID);
+
+        $this->assertSame('id', $cssID[0]);
+        $this->assertSame('class huh-list', $cssID[1]);
+
+        $this->assertFalse($properties['noSearch']);
+
+        \call_user_func($properties['list'], 'default', 'default', []);
     }
 }

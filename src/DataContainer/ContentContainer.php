@@ -6,28 +6,55 @@
  * @license LGPL-3.0-or-later
  */
 
-namespace HeimrichHannot\ListBundle\Backend;
+namespace HeimrichHannot\ListBundle\DataContainer;
 
 use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\DataContainer;
 use Contao\Model;
-use Contao\System;
 use HeimrichHannot\FilterBundle\Model\FilterPreselectModel;
+use HeimrichHannot\FilterBundle\Util\FilterPreselectUtil;
 use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
 use HeimrichHannot\ListBundle\Exception\InvalidListManagerException;
-use HeimrichHannot\ListBundle\Item\ItemInterface;
+use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
+use HeimrichHannot\ListBundle\Util\ListManagerUtil;
+use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 
-class Content
+class ContentContainer
 {
     /**
      * @var ContaoFrameworkInterface
      */
     protected $framework;
+    /**
+     * @var ModelUtil
+     */
+    private $modelUtil;
+    /**
+     * @var ListConfigRegistry
+     */
+    private $listConfigRegistry;
+    /**
+     * @var ListManagerUtil
+     */
+    private $listManagerUtil;
+    /**
+     * @var FilterPreselectUtil
+     */
+    private $filterPreselectUtil;
+    /**
+     * @var \Twig_Environment
+     */
+    private $twig;
 
-    public function __construct(ContaoFrameworkInterface $framework)
+    public function __construct(ContaoFrameworkInterface $framework, ModelUtil $modelUtil, ListConfigRegistry $listConfigRegistry, ListManagerUtil $listManagerUtil, FilterPreselectUtil $filterPreselectUtil, \Twig_Environment $twig)
     {
         $this->framework = $framework;
+        $this->modelUtil = $modelUtil;
+        $this->listConfigRegistry = $listConfigRegistry;
+        $this->listManagerUtil = $listManagerUtil;
+        $this->filterPreselectUtil = $filterPreselectUtil;
+        $this->twig = $twig;
     }
 
     /**
@@ -37,7 +64,7 @@ class Content
      */
     public function onLoad(DataContainer $dc)
     {
-        if (null === ($content = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($dc->table, $dc->id))) {
+        if (null === ($content = $this->modelUtil->findModelInstanceByPk($dc->table, $dc->id))) {
             return;
         }
 
@@ -60,22 +87,23 @@ class Content
     {
         $choices = [];
 
-        if (null === ($content = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($dc->table, $dc->id))) {
+        /* @var ContentModel */
+        if (!$content = $this->modelUtil->findModelInstanceByPk($dc->table, $dc->id)) {
             return $choices;
         }
 
-        if ($content->listConfig < 1) {
+        if (!$content->listConfig || $content->listConfig < 1) {
             return $choices;
         }
 
         try {
-            $listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $content->listConfig);
+            $listConfig = $this->listConfigRegistry->getComputedListConfig((int) $content->listConfig);
         } catch (InvalidListConfigException $e) {
             return $choices;
         }
 
         try {
-            $manager = System::getContainer()->get('huh.list.util.manager')->getListManagerByName($listConfig->manager ?: 'default');
+            $manager = $this->listManagerUtil->getListManagerByName($listConfig->manager ?: 'default');
         } catch (InvalidListManagerException $e) {
             return $choices;
         }
@@ -89,28 +117,25 @@ class Content
         $fields = $filter->dataContainer.'.* ';
 
         $pk = 'id';
-        $model = Model::getClassFromTable($filter->dataContainer);
-
         /** @var Model $model */
+        $model = $this->framework->getAdapter(Model::class)->getClassFromTable($filter->dataContainer);
+
         if (class_exists($model)) {
             $pk = $model::getPk();
         }
 
         /** @var FilterPreselectModel $preselections */
-        $data = [];
-        $preselections = System::getContainer()->get('contao.framework')->createInstance(FilterPreselectModel::class);
+        $preselections = $this->framework->createInstance(FilterPreselectModel::class);
 
         $queryBuilder = $manager->getFilterConfig()->getQueryBuilder()->resetQueryParts();
 
-        if (null !== ($preselections = $preselections->findPublishedByPidAndTableAndField($content->id, 'tl_content', 'filterPreselect'))) {
-            $queryBuilder = System::getContainer()->get('huh.filter.util.filter_preselect')->getPreselectQueryBuilder($filterConfig->getId(), $queryBuilder, $preselections->getModels());
+        if ($preselections = $preselections->findPublishedByPidAndTableAndField($content->id, 'tl_content', 'filterPreselect')) {
+            $queryBuilder = $this->filterPreselectUtil->getPreselectQueryBuilder($filterConfig->getId(), $queryBuilder, $preselections->getModels());
         }
 
         $items = $queryBuilder->select($fields)->from($filter->dataContainer)->execute()->fetchAll();
 
-        $total = count($items);
-
-        $twig = System::getContainer()->get('twig');
+        $total = \count($items);
 
         /*
          * For performance reasons do not use ItemInterface
@@ -119,7 +144,7 @@ class Content
             $data = [];
             $data['raw'] = $item;
             $data['total'] = $total;
-            $choices[$item[$pk]] = $twig->render($manager->getItemChoiceTemplateByName($listConfig->itemChoiceTemplate ?: 'default'), $data);
+            $choices[$item[$pk]] = $this->twig->render($manager->getItemChoiceTemplateByName($listConfig->itemChoiceTemplate ?: 'default'), $data);
         }
 
         return $choices;
@@ -133,11 +158,11 @@ class Content
      */
     protected function toggleFilterPreselect(ContentModel $content, DataContainer $dc)
     {
-        if ($content->listConfig < 1) {
+        if (!$content->listConfig || $content->listConfig < 1) {
             return;
         }
 
-        if (null === ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->findByPk($content->listConfig)) || $listConfig->filter < 1) {
+        if (null === ($listConfig = $this->listConfigRegistry->findByPk($content->listConfig)) || !$listConfig->filter || $listConfig->filter < 1) {
             return;
         }
 
@@ -147,7 +172,11 @@ class Content
             $content->save();
         }
 
-        $GLOBALS['TL_DCA']['tl_content']['palettes']['list_preselect'] = str_replace('listConfig;', 'listConfig,filterPreselect,listPreselect;', $GLOBALS['TL_DCA']['tl_content']['palettes']['list_preselect']);
+        $GLOBALS['TL_DCA']['tl_content']['palettes']['list_preselect'] = str_replace(
+            'listConfig;',
+            'listConfig,filterPreselect,listPreselect;',
+            $GLOBALS['TL_DCA']['tl_content']['palettes']['list_preselect']
+        );
         $GLOBALS['TL_DCA']['tl_content']['fields']['filterPreselect']['eval']['submitOnChange'] = true;
     }
 }

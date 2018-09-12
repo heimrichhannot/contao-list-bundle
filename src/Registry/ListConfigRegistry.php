@@ -90,7 +90,7 @@ class ListConfigRegistry
      * @param mixed $value
      * @param array $options
      *
-     * @return \Contao\Model\Collection|ListConfigModel|null
+     * @return ListConfigModel|null
      */
     public function findByPk($pk, array $options = [])
     {

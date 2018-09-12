@@ -41,7 +41,7 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
             __DIR__.'/../Resources/config/config.yml'
         );
 
-        if (in_array(
+        if (\in_array(
             'HeimrichHannot\EncoreBundle\HeimrichHannotContaoEncoreBundle',
             $container->getParameter('kernel.bundles'), true)) {
             $extensionConfigs = ContainerUtil::mergeConfigFile(

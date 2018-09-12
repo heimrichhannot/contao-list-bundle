@@ -6,7 +6,7 @@
  * @license LGPL-3.0-or-later
  */
 
-namespace HeimrichHannot\ListBundle\Tests\Module;
+namespace HeimrichHannot\ListBundle\Test\Module;
 
 use Contao\Config;
 use Contao\CoreBundle\Config\ResourceFinder;
@@ -39,6 +39,7 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\HttpKernel\Config\FileLocator;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -48,7 +49,7 @@ class ModuleListTest extends ContaoTestCase
     {
         parent::setUp();
 
-        if (!defined('TL_ROOT')) {
+        if (!\defined('TL_ROOT')) {
             \define('TL_ROOT', $this->getFixturesDir());
         }
 
@@ -72,6 +73,9 @@ class ModuleListTest extends ContaoTestCase
             __DIR__.'/../../vendor/contao/core-bundle/src/Resources/contao',
         ]);
 
+        $containerUtil = new ContainerUtil($framework, $this->createMock(FileLocator::class), $this->createMock(ScopeMatcher::class));
+        $modelUtil = new ModelUtil($framework, $containerUtil);
+
         $container = $this->mockContainer();
         $container->set('request_stack', $requestStack);
         $container->set('router', $router);
@@ -85,16 +89,16 @@ class ModuleListTest extends ContaoTestCase
                 new ListConfigElementRegistry($framework),
                 new FilterManager($framework, new FilterSession($framework, new Session(new MockArraySessionStorage()))),
                 $container->get('huh.request'),
-                new ModelUtil($framework),
+                $modelUtil,
                 new UrlUtil($framework),
-                new ContainerUtil($framework),
+                $containerUtil,
                 new ImageUtil($framework),
-                new FormUtil($framework),
+                new FormUtil($container, $framework),
                 new \Twig_Environment($this->getMockBuilder('Twig_LoaderInterface')->getMock())
             )
         );
 
-        $container->set('huh.utils.container', new ContainerUtil($framework));
+        $container->set('huh.utils.container', $containerUtil);
 
         $container->setParameter('huh.list', [
             'list' => [
@@ -106,7 +110,7 @@ class ModuleListTest extends ContaoTestCase
                 ],
             ],
         ]);
-        $container->set('huh.utils.model', new ModelUtil($framework));
+        $container->set('huh.utils.model', $modelUtil);
         $container->set('huh.filter.manager', $this->createFilterManager());
         $container->set('huh.utils.string', new StringUtil($framework));
 

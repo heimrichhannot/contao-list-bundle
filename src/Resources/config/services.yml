@@ -37,12 +37,14 @@ services:
         class: HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry
         arguments:
             - "@contao.framework"
-    huh.list.backend.module:
-        class: HeimrichHannot\ListBundle\Backend\Module
-    huh.list.backend.content:
-        class: HeimrichHannot\ListBundle\Backend\Content
-        arguments:
-            - "@contao.framework"
+    huh.list.datacontainer.module:
+        class: HeimrichHannot\ListBundle\DataContainer\ModuleContainer
+        public: true
+        autowire: true
+    huh.list.datacontainer.content:
+        class: HeimrichHannot\ListBundle\DataContainer\ContentContainer
+        public: true
+        autowire: true
     huh.list.choice.manager:
         class: HeimrichHannot\ListBundle\Choice\ManagerChoice
         arguments:

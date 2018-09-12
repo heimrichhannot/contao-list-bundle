@@ -6,7 +6,7 @@
  * @license LGPL-3.0-or-later
  */
 
-namespace HeimrichHannot\ListBundle\Tests;
+namespace HeimrichHannot\ListBundle\Test;
 
 use HeimrichHannot\ListBundle\DependencyInjection\ListExtension;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;

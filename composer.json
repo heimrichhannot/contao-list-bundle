@@ -17,7 +17,7 @@
     "urodoz/truncate-html": "^1.0"
   },
   "require-dev": {
-    "contao/test-case": "^1.1",
+    "contao/test-case": "1.1.*",
     "contao/manager-plugin": "^2.0",
     "friendsofphp/php-cs-fixer": "^2.2",
     "phpunit/phpunit": "^6.5",

@@ -1,2 +1,2 @@
-{% if raw.title|default %}{{ raw.title }}{% elseif raw.name|default %}{% endif %}
+{% if raw.title|default %}{{ raw.title }}{% elseif raw.name|default %}{{ raw.name }}{% elseif raw.headline|default %}{{ raw.headline }}{% endif %}
 {% if raw.id|default %}{{ '[ID:' ~ raw.id ~ ']' }}{% endif %}

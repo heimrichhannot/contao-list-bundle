@@ -2,7 +2,7 @@
 
 $dc = &$GLOBALS['TL_DCA']['tl_content'];
 
-$dc['config']['onload_callback'][] = ['huh.list.backend.content', 'onLoad'];
+$dc['config']['onload_callback'][] = ['huh.list.datacontainer.content', 'onLoad'];
 
 /**
  * Palettes
@@ -27,7 +27,7 @@ $fields = [
         'label'            => &$GLOBALS['TL_LANG']['tl_content']['listPreselect'],
         'exclude'          => true,
         'inputType'        => 'checkboxWizard',
-        'options_callback' => ['huh.list.backend.content', 'getListPreselectChoices'],
+        'options_callback' => ['huh.list.datacontainer.content', 'getListPreselectChoices'],
         'eval'             => ['tl_class' => 'wizard clr', 'mandatory' => true, 'includeBlankOption' => true, 'multiple' => true],
         'sql'              => "blob NULL",
     ],

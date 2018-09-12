@@ -186,7 +186,7 @@ class DefaultList implements ListInterface, \JsonSerializable
                 $itemFields = array_keys($item);
 
                 foreach (array_keys($GLOBALS['TL_DCA'][$filter->dataContainer]['fields']) as $field) {
-                    if (!in_array($field, $itemFields, true)) {
+                    if (!\in_array($field, $itemFields, true)) {
                         $item[$field] = null;
                     }
                 }
@@ -215,7 +215,7 @@ class DefaultList implements ListInterface, \JsonSerializable
     {
         $listConfig = $this->_manager->getListConfig();
 
-        $limit = count($items);
+        $limit = \count($items);
 
         if ($limit < 1) {
             return [];
@@ -518,7 +518,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             $db = $this->_manager->getFramework()->getAdapter(Database::class);
 
             if ($db->getInstance()->fieldExists($orderField, $filter->dataContainer)
-                && in_array($sort, ListConfig::SORTING_DIRECTIONS, true)) {
+                && \in_array($sort, ListConfig::SORTING_DIRECTIONS, true)) {
                 $currentSorting = [
                     'order' => $request->getGet('order'),
                     'sort' => $request->getGet('sort'),
@@ -853,7 +853,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             $arrRoot = $database->getChildRecords($intRoot, 'tl_page');
         }
 
-        if (!empty($arrRoot) && !in_array($this->getJumpTo(), $arrRoot, true)) {
+        if (!empty($arrRoot) && !\in_array($this->getJumpTo(), $arrRoot, true)) {
             return $arrPages;
         }
 
@@ -899,7 +899,7 @@ class DefaultList implements ListInterface, \JsonSerializable
                 continue;
             }
 
-            if (in_array($url, $arrPages)) {
+            if (\in_array($url, $arrPages)) {
                 continue;
             }
 

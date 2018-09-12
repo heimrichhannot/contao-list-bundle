@@ -49,13 +49,13 @@ class ListConfigElement extends Backend
         }
 
         // Set the root IDs
-        if (!is_array($user->listbundles) || empty($user->listbundles)) {
+        if (!\is_array($user->listbundles) || empty($user->listbundles)) {
             $root = [0];
         } else {
             $root = $user->listbundles;
         }
 
-        $id = strlen($request->getGet('id')) ? $request->getGet('id') : CURRENT_ID;
+        $id = \strlen($request->getGet('id')) ? $request->getGet('id') : CURRENT_ID;
 
         // Check current action
         switch ($request->getGet('act')) {
@@ -64,7 +64,7 @@ class ListConfigElement extends Backend
                 break;
 
             case 'create':
-                if (!strlen($request->getGet('pid')) || !in_array($request->getGet('pid'), $root, true)) {
+                if (!\strlen($request->getGet('pid')) || !\in_array($request->getGet('pid'), $root, true)) {
                     throw new AccessDeniedException(
                         'Not enough permissions to create list_config_element items in list_config_element archive ID '.$request->getGet('pid').'.'
                     );
@@ -73,7 +73,7 @@ class ListConfigElement extends Backend
 
             case 'cut':
             case 'copy':
-                if (!in_array($request->getGet('pid'), $root, true)) {
+                if (!\in_array($request->getGet('pid'), $root, true)) {
                     throw new AccessDeniedException(
                         'Not enough permissions to '.$request->getGet('act').' list_config_element item ID '.$id
                         .' to list_config_element archive ID '.$request->getGet('pid').'.'
@@ -92,7 +92,7 @@ class ListConfigElement extends Backend
                     throw new AccessDeniedException('Invalid list_config_element item ID '.$id.'.');
                 }
 
-                if (!in_array($objArchive->pid, $root, true)) {
+                if (!\in_array($objArchive->pid, $root, true)) {
                     throw new AccessDeniedException(
                         'Not enough permissions to '.$request->getGet('act').' list_config_element item ID '.$id
                         .' of list_config_element archive ID '.$objArchive->pid.'.'
@@ -106,7 +106,7 @@ class ListConfigElement extends Backend
             case 'overrideAll':
             case 'cutAll':
             case 'copyAll':
-                if (!in_array($id, $root, true)) {
+                if (!\in_array($id, $root, true)) {
                     throw new AccessDeniedException(
                         'Not enough permissions to access list_config_element archive ID '.$id.'.'
                     );
@@ -127,9 +127,9 @@ class ListConfigElement extends Backend
                 break;
 
             default:
-                if (strlen($request->getGet('act'))) {
+                if (\strlen($request->getGet('act'))) {
                     throw new AccessDeniedException('Invalid command "'.$request->getGet('act').'".');
-                } elseif (!in_array($id, $root, true)) {
+                } elseif (!\in_array($id, $root, true)) {
                     throw new AccessDeniedException(
                         'Not enough permissions to access list_config_element archive ID '.$id.'.'
                     );

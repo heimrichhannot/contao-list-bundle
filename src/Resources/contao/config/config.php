@@ -14,7 +14,7 @@ array_insert(
     $GLOBALS['FE_MOD']['list'],
     3,
     [
-        \HeimrichHannot\ListBundle\Backend\Module::MODULE_LIST => 'HeimrichHannot\ListBundle\Module\ModuleList',
+        \HeimrichHannot\ListBundle\Module\ModuleList::TYPE => 'HeimrichHannot\ListBundle\Module\ModuleList',
     ]
 );
 

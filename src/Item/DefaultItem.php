@@ -165,7 +165,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
             $this->dc = DC_Table_Utils::createFromModelData($this->getRaw(), $this->getDataContainer());
         }
 
-        if (isset($dca['fields'][$name]['load_callback']) && is_array($dca['fields'][$name]['load_callback'])) {
+        if (isset($dca['fields'][$name]['load_callback']) && \is_array($dca['fields'][$name]['load_callback'])) {
             foreach ($dca['fields'][$name]['load_callback'] as $callback) {
                 $this->dc->field = $name;
 
@@ -224,9 +224,9 @@ class DefaultItem implements ItemInterface, \JsonSerializable
             $this->dc = DC_Table_Utils::createFromModelData($this->getRaw(), $this->getDataContainer());
         }
 
-        $fields = $this->getManager()->getListConfig()->limitFormattedFields ? StringUtil::deserialize($this->getManager()->getListConfig()->formattedFields, true) : (isset($dca['fields']) && is_array($dca['fields']) ? array_keys($dca['fields']) : []);
+        $fields = $this->getManager()->getListConfig()->limitFormattedFields ? StringUtil::deserialize($this->getManager()->getListConfig()->formattedFields, true) : (isset($dca['fields']) && \is_array($dca['fields']) ? array_keys($dca['fields']) : []);
 
-        if (in_array($name, $fields, true)) {
+        if (\in_array($name, $fields, true)) {
             $this->dc->field = $name;
 
             $value = $this->_manager->getFormUtil()->prepareSpecialValueForOutput($name, $value, $this->dc);

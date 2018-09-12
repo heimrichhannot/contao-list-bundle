@@ -67,7 +67,7 @@ class ImageConfigElementType implements ConfigElementType
         // support for multifileupload
         $image = StringUtil::deserialize($image);
 
-        if (is_array($image)) {
+        if (\is_array($image)) {
             $image = $image[0];
         }
 

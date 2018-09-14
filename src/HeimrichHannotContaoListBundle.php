@@ -13,6 +13,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class HeimrichHannotContaoListBundle extends Bundle
 {
+    const ACTION_SHARE = 'share';
+
     /**
      * {@inheritdoc}
      */

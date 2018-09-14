@@ -16,13 +16,13 @@ use Contao\StringUtil;
 use Contao\System;
 use HeimrichHannot\Blocks\BlockModuleModel;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
-use HeimrichHannot\ListBundle\Backend\ListBundle;
 use HeimrichHannot\ListBundle\Backend\ListConfig;
 use HeimrichHannot\ListBundle\Event\ListAfterParseItemsEvent;
 use HeimrichHannot\ListBundle\Event\ListAfterRenderEvent;
 use HeimrichHannot\ListBundle\Event\ListBeforeParseItemsEvent;
 use HeimrichHannot\ListBundle\Event\ListBeforeRenderEvent;
 use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderEvent;
+use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\ListBundle\Item\ItemInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
@@ -460,7 +460,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $request = $this->_manager->getRequest();
         $action = $request->getGet('act');
 
-        if (ListBundle::ACTION_SHARE == $action && $listConfig->addShare) {
+        if (HeimrichHannotContaoListBundle::ACTION_SHARE == $action && $listConfig->addShare) {
             $url = $request->getGet('url');
             $id = $request->getGet($listConfig->useAlias ? $listConfig->aliasField : 'id');
 

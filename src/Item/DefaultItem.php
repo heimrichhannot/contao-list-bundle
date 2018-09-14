@@ -13,9 +13,9 @@ use Contao\DataContainer;
 use Contao\Environment;
 use Contao\StringUtil;
 use Contao\System;
-use HeimrichHannot\ListBundle\Backend\ListBundle;
 use HeimrichHannot\ListBundle\ConfigElementType\ConfigElementType;
 use HeimrichHannot\ListBundle\Event\ListBeforeRenderItemEvent;
+use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\Modal\ModalModel;
@@ -424,7 +424,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
             if (null !== $pageJumpTo) {
                 $shareUrl = Environment::get('url').'/'.$pageJumpTo->getFrontendUrl();
 
-                $url = $urlUtil->addQueryString('act='.ListBundle::ACTION_SHARE, $urlUtil->getCurrentUrl([
+                $url = $urlUtil->addQueryString('act='.HeimrichHannotContaoListBundle::ACTION_SHARE, $urlUtil->getCurrentUrl([
                     'skipParams' => true,
                 ]));
 

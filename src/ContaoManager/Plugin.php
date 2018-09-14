@@ -41,16 +41,12 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
             __DIR__.'/../Resources/config/config.yml'
         );
 
-        if (\in_array(
-            'HeimrichHannot\EncoreBundle\HeimrichHannotContaoEncoreBundle',
-            $container->getParameter('kernel.bundles'), true)) {
-            $extensionConfigs = ContainerUtil::mergeConfigFile(
-                'huh_encore',
-                $extensionName,
-                $extensionConfigs,
-                __DIR__.'/../Resources/config/config_encore.yml'
-            );
-        }
+        $extensionConfigs = ContainerUtil::mergeConfigFile(
+            'huh_encore',
+            $extensionName,
+            $extensionConfigs,
+            __DIR__.'/../Resources/config/config_encore.yml'
+        );
 
         return $extensionConfigs;
     }

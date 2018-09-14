@@ -28,6 +28,9 @@
     "satooshi/php-coveralls": "^2.0",
     "symfony/phpunit-bridge": "^3.2"
   },
+  "conflict": {
+    "heimrichhannot/contao-reader-bundle": "<=1.0.0-beta54"
+  },
   "autoload": {
     "psr-4": {
       "HeimrichHannot\\ListBundle\\": "src/"

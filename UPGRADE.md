@@ -6,7 +6,12 @@ Breaking changes
 
 ### Constants
 
-`\HeimrichHannot\ListBundle\Backend\Module::MODULE_LIST` changes to `\HeimrichHannot\ListBundle\Module\ModuleList::TYPE`
+#### Moved
+
+Old                                                           | New
+--------------------------------------------------------------|----
+`\HeimrichHannot\ListBundle\Backend\Module::MODULE_LIST`      | `\HeimrichHannot\ListBundle\Module\ModuleList::TYPE`
+`\HeimrichHannot\ListBundle\Backend\ListBundle::ACTION_SHARE` | `\HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle::ACTION_SHARE`
 
 ### Services
 

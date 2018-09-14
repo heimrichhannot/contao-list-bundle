@@ -32,6 +32,9 @@ class ListItemTemplateChoice extends AbstractChoice
                 if (false !== ($idx = array_search($template['template'], $choices, true))) {
                     unset($choices[$idx]);
                 }
+                if (false !== ($idx = array_search($template['template'].' (Yaml)', $choices, true))) {
+                    unset($choices[$idx]);
+                }
 
                 $choices[$template['name']] = $template['template'].' (Yaml)';
             }

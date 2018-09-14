@@ -18,9 +18,8 @@ class ParentListConfigChoice extends AbstractChoice
      */
     protected function collect()
     {
-        $id = $this->getContext()['id'];
-
-        if (!$id
+        if (!isset($this->getContext()['id'])
+            || (!$id = $this->getContext()['id'])
             || null === ($listConfigs = System::getContainer()->get('huh.list.list-config-registry')->findBy(
                 [
                     'tl_list_config.id != ?',

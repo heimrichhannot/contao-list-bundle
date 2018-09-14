@@ -47,11 +47,7 @@ class ImageConfigElementType implements ConfigElementType
 
             switch ($listConfigElement->placeholderImageMode) {
                 case ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED:
-                    if ($item->getRawValue($listConfigElement->genderField) && 'female' == $item->getRawValue($listConfigElement->genderField)) {
-                        $image = $listConfigElement->placeholderImageFemale;
-                    } else {
-                        $image = $listConfigElement->placeholderImage;
-                    }
+                    $image = $this->getGenderedPlaceholderImage($item, $listConfigElement);
                     break;
                 case ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE:
                     $image = $listConfigElement->placeholderImage;
@@ -76,7 +72,13 @@ class ImageConfigElementType implements ConfigElementType
             $imageFile = $filesModel->findByUuid($uuid);
         }
 
-        if (null !== $imageFile && file_exists(System::getContainer()->get('huh.utils.container')->getProjectDir().'/'.$imageFile->path) && getimagesize(System::getContainer()->get('huh.utils.container')->getProjectDir().'/'.$imageFile->path)) {
+        $projectDir = System::getContainer()->get('huh.utils.container')->getProjectDir();
+
+        if (null !== $imageFile) {
+            $fileExist = file_exists($projectDir.'/'.$imageFile->path);
+        }
+
+        if (null !== $imageFile && file_exists($projectDir.'/'.$imageFile->path) && getimagesize($projectDir.'/'.$imageFile->path)) {
             $imageArray = $item->getRaw();
 
             // Override the default image size
@@ -90,6 +92,7 @@ class ImageConfigElementType implements ConfigElementType
 
             $imageArray[$imageField] = $imageFile->path;
 
+            $templateData = [];
             $templateData['images'] = $item->getFormattedValue('images') ?? [];
             $templateData['images'][$imageField] = [];
 
@@ -97,5 +100,22 @@ class ImageConfigElementType implements ConfigElementType
 
             $item->setFormattedValue('images', $templateData['images']);
         }
+    }
+
+    /**
+     * @param ItemInterface          $item
+     * @param ListConfigElementModel $listConfigElement
+     *
+     * @return string
+     */
+    public function getGenderedPlaceholderImage(ItemInterface $item, ListConfigElementModel $listConfigElement): string
+    {
+        if ($item->getRawValue($listConfigElement->genderField) && 'female' == $item->getRawValue($listConfigElement->genderField)) {
+            $image = $listConfigElement->placeholderImageFemale;
+        } else {
+            $image = $listConfigElement->placeholderImage;
+        }
+
+        return $image;
     }
 }

@@ -2,11 +2,27 @@
   "name": "heimrichhannot/contao-list-bundle",
   "type": "contao-bundle",
   "description": "This bundle offers a generic list module to use with arbitrary contao entities containing standard list handling like pagination, sorting, and filtering.",
+  "keywords": [
+    "contao",
+    "list"
+  ],
   "license": "LGPL-3.0-or-later",
+  "homepage": "https://github.com/heimrichhannot/contao-list-bundle",
+  "authors": [
+    {
+      "name": "Heimrich & Hannot",
+      "email": "digitales@heimrich-hannot.de",
+      "homepage": "https://www.heimrich-hannot.de",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/heimrichhannot/contao-list-bundle/issues"
+  },
   "require": {
     "php": "^7.1",
     "contao/core-bundle": "^4.4",
-    "heimrichhannot/contao-utils-bundle": "^2.0.16",
+    "heimrichhannot/contao-utils-bundle": "^2.1",
     "heimrichhannot/contao-filter-bundle": "^1.0-beta",
     "heimrichhannot/contao-modal": "^1.4",
     "heimrichhannot-contao-components/masonry": ">=4.2, <=4.3",
@@ -34,9 +50,6 @@
     "psr-4": {
       "HeimrichHannot\\ListBundle\\": "src/"
     },
-    "classmap": [
-      "src/"
-    ],
     "exclude-from-classmap": [
       "src/Resources/contao/config/",
       "src/Resources/contao/dca/",

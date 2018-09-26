@@ -248,11 +248,6 @@ class ModuleList extends Module
             return $this->listManager->getList()->parse($listTemplate, $itemTemplate, $data);
         };
 
-        System::getContainer()->get('event_dispatcher')->dispatch(
-            ListCompileEvent::NAME,
-            new ListCompileEvent($template, $this, $this->listManager->getListConfig())
-        );
-
         return $css;
     }
 
@@ -262,7 +257,10 @@ class ModuleList extends Module
     protected function compile()
     {
         $css = $this->doCompile($this->Template, $this->cssID);
-
         $this->cssID = $css;
+        System::getContainer()->get('event_dispatcher')->dispatch(
+            ListCompileEvent::NAME,
+            new ListCompileEvent($this->Template, $this, $this->listManager->getListConfig())
+        );
     }
 }

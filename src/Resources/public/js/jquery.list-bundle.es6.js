@@ -10,6 +10,7 @@ let jQuery = require('jquery');
             $('.huh-list .ajax-pagination').each(function() {
                 import(/* webpackChunkName: "jscroll" */ 'jscroll').then(() =>
                 {
+                    let event = new Event('huh_list_pagination_loaded');
                     let $list = $(this).closest('.huh-list'),
                         $items = $list.find('.items'),
                         $wrapper = $list.find('.wrapper'),
@@ -74,6 +75,8 @@ let jQuery = require('jquery');
                                         {
                                             $item.addClass('last');
                                         }
+
+                                        $items[0].dispatchEvent(event);
                                     });
 
                                     $jscrollAdded.find('.ajax-pagination').appendTo($jscrollAdded.closest('.jscroll-inner'));

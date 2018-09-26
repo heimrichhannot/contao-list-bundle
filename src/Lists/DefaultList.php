@@ -352,10 +352,11 @@ class DefaultList implements ListInterface, \JsonSerializable
             // Set limit and offset
             $limit = $listConfig->perPage;
             $offset += (max($page, 1) - 1) * $listConfig->perPage;
+            $skip = (int) $listConfig->skipFirst;
 
             // Overall limit
-            if ($offset + $limit > $offsettedTotal) {
-                $limit = $offsettedTotal - $offset;
+            if ($offset + $limit > $offsettedTotal + $skip) {
+                $limit = $offsettedTotal + $skip - $offset;
             }
 
             // Add the pagination menu

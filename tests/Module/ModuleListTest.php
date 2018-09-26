@@ -242,7 +242,7 @@ class ModuleListTest extends ContaoTestCase
             );
         $cssID = ['id', 'class'];
 
-        $module->doCompile($template, $cssID);
+        $cssID = $module->doCompile($template, $cssID);
 
         $this->assertSame('id', $cssID[0]);
         $this->assertSame('class huh-list', $cssID[1]);

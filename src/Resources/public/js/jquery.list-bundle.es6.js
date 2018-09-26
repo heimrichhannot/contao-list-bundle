@@ -48,11 +48,11 @@ let jQuery = require('jquery');
                                     });
 
                                     //... and readd them again
-                                    $items.find('.item').each(index => {
+                                    $items.find('.item').each(function(index) {
                                         let $item = $(this),
                                             itemIndex = index + 1;
 
-                                        $(this).addClass('item_' + itemIndex).removeClass('odd even first last');
+                                        $item.addClass('item_' + itemIndex).removeClass('odd even first last');
 
                                         // odd/even
                                         if (itemIndex % 2 == 0)
@@ -129,9 +129,9 @@ let jQuery = require('jquery');
         }
     };
 
-    module.exports = listBundle;
-
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function() {
         listBundle.init();
-    });
+    }, true);
+
+    module.exports = listBundle;
 })(jQuery);

@@ -228,7 +228,7 @@ class ModuleList extends Module
         return $this->listManager;
     }
 
-    public function doCompile(Template &$template, array &$css)
+    public function doCompile(Template $template, array $css)
     {
         $this->listManager->getList()->handleShare();
 
@@ -242,8 +242,6 @@ class ModuleList extends Module
 
         $css = $cssID;
 
-        $noSearch = $this->listManager->getListConfig()->noSearch;
-
         $template->noSearch = (bool) $this->listManager->getListConfig()->noSearch;
 
         $template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) {
@@ -254,6 +252,8 @@ class ModuleList extends Module
             ListCompileEvent::NAME,
             new ListCompileEvent($template, $this, $this->listManager->getListConfig())
         );
+
+        return $css;
     }
 
     /**
@@ -261,6 +261,8 @@ class ModuleList extends Module
      */
     protected function compile()
     {
-        $this->doCompile($this->Template, $this->cssID);
+        $css = $this->doCompile($this->Template, $this->cssID);
+
+        $this->cssID = $css;
     }
 }

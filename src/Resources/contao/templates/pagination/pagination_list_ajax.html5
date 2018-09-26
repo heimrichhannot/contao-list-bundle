@@ -1,0 +1,7 @@
+<!-- indexer::stop -->
+<div class="ajax-pagination block">
+	<?php if ($this->hasNext): ?>
+        <a href="<?= $this->next['href'] ?>" class="next" title="<?= $this->next['title'] ?>"><?= $this->next['link'] ?></a>
+	<?php endif; ?>
+</div>
+<!-- indexer::continue -->

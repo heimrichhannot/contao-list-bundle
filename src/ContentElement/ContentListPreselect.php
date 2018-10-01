@@ -145,6 +145,7 @@ class ContentListPreselect extends ContentElement
             && empty($this->manager->getList()->getItems())) {
             /** @var FilterQueryBuilder $queryBuilder */
             $queryBuilder = $this->manager->getFilterManager()->getQueryBuilder($this->filter->id);
+
             if (!$queryBuilder) {
                 return false;
             }
@@ -226,6 +227,7 @@ class ContentListPreselect extends ContentElement
     protected function preselect()
     {
         $filterConfig = System::getContainer()->get('huh.filter.manager')->findById($this->filterConfig->getId());
+
         if (!$filterConfig || !$elements = $filterConfig->getElements()) {
             return;
         }

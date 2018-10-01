@@ -158,6 +158,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         // initial results
         $this->setShowInitialResults($listConfig->showInitialResults);
+
         if ($isSubmitted || $listConfig->showInitialResults) {
             $totalCount = $queryBuilder->select($fields)->execute()->rowCount();
         }
@@ -258,6 +259,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
             if (empty(trim($parsedResult))) {
                 --$count;
+
                 continue;
             }
 
@@ -534,22 +536,29 @@ class DefaultList implements ListInterface, \JsonSerializable
                     $currentSorting = [
                         'order' => $listConfig->sortingText,
                     ];
+
                     break;
+
                 case ListConfig::SORTING_MODE_RANDOM:
                     $currentSorting = [
                         'order' => ListConfig::SORTING_MODE_RANDOM,
                     ];
+
                     break;
+
                 case ListConfig::SORTING_MODE_MANUAL:
                     $currentSorting = [
                         'order' => ListConfig::SORTING_MODE_MANUAL,
                     ];
+
                     break;
+
                 default:
                     $currentSorting = [
                         'order' => $listConfig->sortingField,
                         'sort' => $listConfig->sortingDirection,
                     ];
+
                     break;
             }
         }

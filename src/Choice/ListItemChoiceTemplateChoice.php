@@ -33,6 +33,7 @@ class ListItemChoiceTemplateChoice extends AbstractChoice
                 if (false !== ($idx = array_search($template['template'], $choices, true))) {
                     unset($choices[$idx]);
                 }
+
                 if (false !== ($idx = array_search($templateName, $choices, true))) {
                     unset($choices[$idx]);
                 }

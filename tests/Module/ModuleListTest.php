@@ -59,8 +59,10 @@ class ModuleListTest extends ContaoTestCase
             switch ($listName) {
                 case 'default':
                     return DefaultList::class;
+
                 case 'listOnly':
                     return ListInterface::class;
+
                 case 'none':
                     return \stdClass::class;
             }
@@ -86,6 +88,7 @@ class ModuleListTest extends ContaoTestCase
         $list = $this->getMockBuilder([ListInterface::class, \JsonSerializable::class])->getMock();
 
         $items = null;
+
         if ($itemCount > 0) {
             $items = array_fill(0, $itemCount, null);
         }
@@ -170,6 +173,7 @@ class ModuleListTest extends ContaoTestCase
         $module = $this->getModuleMock($listConfigData);
         $error = false;
         $errorInterface = '';
+
         try {
             $module->doGenerate();
         } catch (InterfaceNotImplementedException $e) {
@@ -183,6 +187,7 @@ class ModuleListTest extends ContaoTestCase
         $module = $this->getModuleMock($listConfigData);
         $error = false;
         $errorInterface = '';
+
         try {
             $module->doGenerate();
         } catch (InterfaceNotImplementedException $e) {

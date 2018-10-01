@@ -69,6 +69,7 @@ class ListConfigElement extends Backend
                         'Not enough permissions to create list_config_element items in list_config_element archive ID '.$request->getGet('pid').'.'
                     );
                 }
+
                 break;
 
             case 'cut':
@@ -98,6 +99,7 @@ class ListConfigElement extends Backend
                         .' of list_config_element archive ID '.$objArchive->pid.'.'
                     );
                 }
+
                 break;
 
             case 'select':
@@ -124,6 +126,7 @@ class ListConfigElement extends Backend
                 $session = $session->all();
                 $session['CURRENT']['IDS'] = array_intersect($session['CURRENT']['IDS'], $objArchive->fetchEach('id'));
                 $session->replace($session);
+
                 break;
 
             default:
@@ -134,6 +137,7 @@ class ListConfigElement extends Backend
                         'Not enough permissions to access list_config_element archive ID '.$id.'.'
                     );
                 }
+
                 break;
         }
     }

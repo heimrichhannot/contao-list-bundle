@@ -42,6 +42,7 @@ class ImageConfigElementTypeTest extends ContaoTestCase
                     ]);
 
                     return $file;
+
                 case 'null':
                 default:
                     return null;
@@ -81,6 +82,7 @@ class ImageConfigElementTypeTest extends ContaoTestCase
             switch ($field) {
                 case 'addImage':
                     return '1';
+
                 case 'singleSRC':
                     return 'null';
             }
@@ -98,6 +100,7 @@ class ImageConfigElementTypeTest extends ContaoTestCase
             switch ($field) {
                 case 'addImage':
                     return '1';
+
                 case 'singleSRC':
                     return 'null';
             }
@@ -138,6 +141,7 @@ class ImageConfigElementTypeTest extends ContaoTestCase
             switch ($field) {
                 case 'addImage':
                     return '1';
+
                 case 'singleSRC':
                     return serialize(['image', 'test']);
             }

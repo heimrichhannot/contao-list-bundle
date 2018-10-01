@@ -80,6 +80,7 @@ class ContentListPreselectTest extends ContaoTestCase
                     $filterConfig->expects($this->exactly(1))->method('setData');
 
                     return $filterConfig;
+
                 case 3:
                     $filterConfig = $this->createMock(FilterConfig::class);
                     $filterConfig->method('getId')->willReturn('3');
@@ -88,6 +89,7 @@ class ContentListPreselectTest extends ContaoTestCase
                     $filterConfig->expects($this->never())->method('setData');
 
                     return $filterConfig;
+
                 case 2:
                     $filterConfig = $this->createMock(FilterConfig::class);
                     $filterConfig->method('getId')->willReturn('2');
@@ -96,11 +98,13 @@ class ContentListPreselectTest extends ContaoTestCase
                     $filterConfig->expects($this->never())->method('setData');
 
                     return $filterConfig;
+
                 case 1:
                     $filterConfig = $this->createMock(FilterConfig::class);
                     $filterConfig->method('getId')->willReturn('1');
 
                     return $filterConfig;
+
                 case 0:
                 default:
                     return null;
@@ -113,10 +117,13 @@ class ContentListPreselectTest extends ContaoTestCase
             switch ($listName) {
                 case 'noInterface':
                     return \stdClass::class;
+
                 case 'list':
                     return ListInterface::class;
+
                 case 'default':
                     return DefaultList::class;
+
                 case 'null':
                 default:
                     return null;
@@ -235,6 +242,7 @@ class ContentListPreselectTest extends ContaoTestCase
         $listConfigProperty->setValue($contentElement, $listConfig);
         $error = false;
         $errorInterface = null;
+
         try {
             $contentElement->doGenerate();
         } catch (InterfaceNotImplementedException $e) {
@@ -248,6 +256,7 @@ class ContentListPreselectTest extends ContaoTestCase
         $listConfig->list = 'list';
         $listConfigProperty->setValue($contentElement, $listConfig);
         $error = false;
+
         try {
             $contentElement->doGenerate();
         } catch (InterfaceNotImplementedException $e) {

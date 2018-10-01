@@ -188,6 +188,7 @@ class ModuleList extends Module
 
             $this->listManager->setList(new $listClass($this->listManager));
         }
+
         if (true === (bool) $this->listManager->getListConfig()->doNotRenderEmpty
             && empty($this->listManager->getList()->getItems())) {
             /** @var FilterQueryBuilder $queryBuilder */

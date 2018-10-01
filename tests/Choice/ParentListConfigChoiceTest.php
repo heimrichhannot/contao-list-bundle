@@ -23,6 +23,7 @@ class ParentListConfigChoiceTest extends ContaoTestCase
             if (\is_array($value)) {
                 $value = $value[0];
             }
+
             switch ($value) {
                 case 1:
                     $collection = $this->createMock(Collection::class);
@@ -30,12 +31,14 @@ class ParentListConfigChoiceTest extends ContaoTestCase
                         switch ($key) {
                             case 'id':
                                 return [1, 2, 3];
+
                             case 'title':
                                 return ['A', 'B', 'C'];
                         }
                     });
 
                     return $collection;
+
                 case 0:
                 default:
                     return null;

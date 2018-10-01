@@ -40,6 +40,7 @@ class ContentContainerTest extends ContaoTestCase
 //					return $model;
             }
         });
+
         if (!$framework) {
             $framework = $this->mockContaoFramework([
                 Model::class => $modelMock,
@@ -68,35 +69,54 @@ class ContentContainerTest extends ContaoTestCase
             switch ($id) {
                 case 9:
                     $model = $this->mockClassWithProperties(ContentModel::class, ['id' => 9, 'listConfig' => 6, 'filterConfig' => 1]);
+
                     break;
+
                 case 8:
                     $model = $this->mockClassWithProperties(ContentModel::class, ['id' => 8, 'listConfig' => 5, 'filterConfig' => 2]);
                     $model->expects($this->exactly(1))->method('save')->willReturn(true);
+
                     break;
+
                 case 7:
                     $model = $this->mockClassWithProperties(ContentModel::class, ['id' => 7, 'listConfig' => 4]);
+
                     break;
+
                 case 6:
                     $model = $this->mockClassWithProperties(ContentModel::class, ['id' => 6, 'listConfig' => 3]);
+
                     break;
+
                 case 5:
                     $model = $this->mockClassWithProperties(ContentModel::class, ['id' => 5, 'listConfig' => 2]);
+
                     break;
+
                 case 4:
                     $model = $this->mockClassWithProperties(ContentModel::class, ['id' => 4, 'listConfig' => 1]);
+
                     break;
+
                 case 3:
                     $model = $this->mockClassWithProperties(ContentModel::class, ['id' => 3, 'listConfig' => 0]);
+
                     break;
+
                 case 2:
                     $model = $this->mockClassWithProperties(ContentModel::class, ['id' => 2, 'listConfig' => null]);
+
                     break;
+
                 case 1:
                     $model = $this->mockClassWithProperties(ContentModel::class, ['id' => 1, 'listConfig' => '']);
+
                     break;
+
                 case 0:
                 default:
                     $model = null;
+
                     break;
             }
 
@@ -107,14 +127,19 @@ class ContentContainerTest extends ContaoTestCase
             switch ($pk) {
                 case 6:
                     return $this->mockClassWithProperties(ListConfigModel::class, ['filter' => 1]);
+
                 case 5:
                     return $this->mockClassWithProperties(ListConfigModel::class, ['filter' => 1]);
+
                 case 4:
                     return $this->mockClassWithProperties(ListConfigModel::class, ['filter' => 0]);
+
                 case 3:
                     return $this->mockClassWithProperties(ListConfigModel::class, ['filter' => null]);
+
                 case 2:
                     return $this->mockClassWithProperties(ListConfigModel::class, []);
+
                 case 1:
                 case 0:
                 default:
@@ -125,10 +150,13 @@ class ContentContainerTest extends ContaoTestCase
             switch ($listConfig) {
                 case 4:
                     return $this->mockClassWithProperties(ListConfigModel::class, ['manager' => 'default']);
+
                 case 3:
                     return $this->mockClassWithProperties(ListConfigModel::class, ['manager' => 'default']);
+
                 case 2:
                     return $this->mockClassWithProperties(ListConfigModel::class, ['manager' => 'error']);
+
                 case 1:
                 default:
                     throw new InvalidListConfigException();
@@ -159,6 +187,7 @@ class ContentContainerTest extends ContaoTestCase
                     $manager->method('getFilterConfig')->willReturn($filterConfigMock);
 
                     return $manager;
+
                 case 'error':
                 default:
                     throw new InvalidListManagerException();

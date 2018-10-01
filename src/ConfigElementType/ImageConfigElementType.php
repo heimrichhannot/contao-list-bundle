@@ -48,9 +48,12 @@ class ImageConfigElementType implements ConfigElementType
             switch ($listConfigElement->placeholderImageMode) {
                 case ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED:
                     $image = $this->getGenderedPlaceholderImage($item, $listConfigElement);
+
                     break;
+
                 case ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE:
                     $image = $listConfigElement->placeholderImage;
+
                     break;
             }
         } else {

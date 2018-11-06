@@ -18,7 +18,6 @@ use HeimrichHannot\ListBundle\Event\ListBeforeRenderItemEvent;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
-use HeimrichHannot\Modal\ModalModel;
 use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
 
 class DefaultItem implements ItemInterface, \JsonSerializable
@@ -399,7 +398,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
             if (null !== $pageJumpTo) {
                 if ($listConfig->useModal && isset(System::getContainer()->getParameter('kernel.bundles')['modal'])) {
-                    if (null !== ($modal = ModalModel::findPublishedByTargetPage($pageJumpTo))) {
+                    if (null !== ($modal = \HeimrichHannot\Modal\ModalModel::findPublishedByTargetPage($pageJumpTo))) {
                         /** @var Controller $controller */
                         $controller = $this->_manager->getFramework()->getAdapter(Controller::class);
 

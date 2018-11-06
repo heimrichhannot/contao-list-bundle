@@ -398,7 +398,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
             $pageJumpTo = System::getContainer()->get('huh.utils.url')->getJumpToPageObject($listConfig->jumpToDetails);
 
             if (null !== $pageJumpTo) {
-                if ($listConfig->useModal) {
+                if ($listConfig->useModal && isset(System::getContainer()->getParameter('kernel.bundles')['modal'])) {
                     if (null !== ($modal = ModalModel::findPublishedByTargetPage($pageJumpTo))) {
                         /** @var Controller $controller */
                         $controller = $this->_manager->getFramework()->getAdapter(Controller::class);

@@ -24,7 +24,6 @@
     "contao/core-bundle": "^4.4",
     "heimrichhannot/contao-utils-bundle": "^2.1",
     "heimrichhannot/contao-filter-bundle": "^1.0-beta",
-    "heimrichhannot/contao-modal": "^1.4",
     "heimrichhannot-contao-components/masonry": ">=4.2, <=4.3",
     "heimrichhannot-contao-components/imagesloaded": "4.1.*",
     "heimrichhannot-contao-components/jscroll": "2.3.*",
@@ -68,5 +67,8 @@
   "extra": {
     "contao-manager-plugin": "HeimrichHannot\\ListBundle\\ContaoManager\\Plugin",
     "foxy": true
+  },
+  "suggest": {
+    "heimrichhannot/contao-modal": "Allows display of list items in modal window."
   }
 }

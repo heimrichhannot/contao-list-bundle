@@ -98,7 +98,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'sortingMode_'.\HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_TEXT   => 'sortingText',
         'sortingMode_'.\HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_MANUAL => 'sortingItems',
         'useAlias'                                                                        => 'aliasField',
-        'addDetails'                                                                      => 'useModalExplanation,useModal,jumpToDetails',
+        'addDetails'                                                                      => 'jumpToDetails',
         'addShare'                                                                        => 'jumpToShare,shareAutoItem',
         'addAjaxPagination'                                                               => 'addInfiniteScroll',
         'addMasonry'                                                                      => 'masonryStampContentElements',
@@ -374,8 +374,6 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'eval'      => ['tl_class' => 'w50 clr', 'submitOnChange' => true],
             'sql'       => "char(1) NOT NULL default ''",
         ],
-        'useModal'                    => $GLOBALS['TL_DCA']['tl_module']['fields']['useModal'],
-        'useModalExplanation'         => $GLOBALS['TL_DCA']['tl_module']['fields']['useModalExplanation'],
         'jumpToDetails'               => [
             'label'      => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetails'],
             'exclude'    => true,
@@ -492,7 +490,14 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
     ],
 ];
 
-$GLOBALS['TL_DCA']['tl_list_config']['fields']['useModalExplanation']['eval']['notOverridable'] = true;
 $GLOBALS['TL_DCA']['tl_list_config']['fields']['numberOfItems']['eval']['tl_class']             = 'w50 clr';
 
 \HeimrichHannot\ListBundle\Backend\ListConfig::addOverridableFields();
+
+
+if(isset(System::getContainer()->getParameter('kernel.bundles')['modal'])){
+    $GLOBALS['TL_DCA']['tl_list_config']['fields']['useModal'] = $GLOBALS['TL_DCA']['tl_module']['fields']['useModal'];
+    $GLOBALS['TL_DCA']['tl_list_config']['fields']['useModalExplanation'] = $GLOBALS['TL_DCA']['tl_module']['fields']['useModalExplanation'];
+    $GLOBALS['TL_DCA']['tl_list_config']['fields']['useModalExplanation']['eval']['notOverridable'] = true;
+    $GLOBALS['TL_DCA']['tl_list_config']['subpalettes']['addDetails'] = 'useModalExplanation,useModal,' . $GLOBALS['TL_DCA']['tl_list_config']['subpalettes']['addDetails'];
+}

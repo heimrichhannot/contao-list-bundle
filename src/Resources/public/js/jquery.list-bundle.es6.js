@@ -33,8 +33,9 @@ let jQuery = require('jquery');
 
                                     if ($wrapper.attr('data-add-masonry') === "1") {
                                         import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function() {
-                                            $items.masonry('appended', $newItems);
-                                            $items.masonry();
+                                            listBundle.initMasonry();
+                                            // $items.masonry('appended', $newItems);
+                                            // $items.masonry();
                                         });
                                     }
 

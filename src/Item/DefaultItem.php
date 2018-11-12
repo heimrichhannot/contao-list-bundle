@@ -587,7 +587,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function setUseModal(bool $useModal)
+    public function setUseModal(?bool $useModal)
     {
         $this->_useModal = $useModal;
     }

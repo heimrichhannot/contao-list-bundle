@@ -5,11 +5,13 @@ $lang = &$GLOBALS['TL_LANG']['tl_list_config_element'];
 /**
  * Fields
  */
-$lang['tstamp'][0] = 'Änderungsdatum';
-$lang['title'][0]  = 'Titel';
-$lang['title'][1]  = 'Geben Sie hier einen Titel ein.';
-$lang['type'][0]   = 'Typ';
-$lang['type'][1]   = 'Wählen Sie hier den Typ des Elements aus.';
+$lang['tstamp'][0]           = 'Änderungsdatum';
+$lang['title'][0]            = 'Titel';
+$lang['title'][1]            = 'Geben Sie hier einen Titel ein.';
+$lang['type'][0]             = 'Typ';
+$lang['type'][1]             = 'Wählen Sie hier den Typ des Elements aus.';
+$lang['templateVariable'][0] = 'Template-Variable';
+$lang['templateVariable'][1] = 'Geben Sie hier den Namen für die Template-Variable ein. Unter diesem Namen wird das Objekt für das Template sichtbar gemacht.';
 
 // image
 $lang['imageSelectorField'][0]     = 'Selektor-Feld';
@@ -28,7 +30,7 @@ $lang['genderField'][1]            = 'Wählen Sie hier das Feld aus, das das Ges
 /**
  * Legends
  */
-$lang['title_type_legend'] = 'Titel & Typ';
+$lang['title_type_legend'] = 'Allgemeines';
 $lang['config_legend']     = 'Konfiguration';
 
 /**

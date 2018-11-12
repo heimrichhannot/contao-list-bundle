@@ -70,7 +70,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'placeholderImageMode',
         ],
         'default'                                                        => '{title_type_legend},title,type;',
-        \HeimrichHannot\ListBundle\Backend\ListConfigElement::TYPE_IMAGE => '{title_type_legend},title,type;{config_legend},imageSelectorField,imageField,imgSize,placeholderImageMode;',
+        \HeimrichHannot\ListBundle\Backend\ListConfigElement::TYPE_IMAGE => '{title_type_legend},title,type,templateVariable;{config_legend},imageSelectorField,imageField,imgSize,placeholderImageMode;',
     ],
     'subpalettes' => [
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE   => 'placeholderImage',
@@ -113,6 +113,14 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'reference' => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
             'eval'      => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true],
             'sql'       => "varchar(64) NOT NULL default ''",
+        ],
+        'templateVariable' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['templateVariable'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
+            'sql'                     => "varchar(255) NOT NULL default ''"
         ],
         'imageSelectorField'     => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['imageSelectorField'],

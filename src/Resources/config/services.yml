@@ -75,10 +75,8 @@ services:
           - { name: twig.extension }
         arguments:
           - "@translator"
-    twig.extension.truncate.html:
-        class: Urodoz\Truncate\Bridge\Twig\TruncateExtension
-        arguments:
-          -  "@twig.truncate.html.service"
+    dzango.twig.truncate_extension:
+        class: Dzango\Twig\Extension\Truncate
         tags:
           - { name: twig.extension }
     huh.list.util.manager:
@@ -86,3 +84,6 @@ services:
         public: true
         arguments:
           - "@contao.framework"
+    # Symfony 4 autowire convention fix (ambiguous namespace alias)
+    HeimrichHannot\ListBundle\Registry\ListConfigRegistry: '@huh.list.list-config-registry'
+    HeimrichHannot\ListBundle\Util\ListManagerUtil: '@huh.list.util.manager'

@@ -1,89 +1,111 @@
 services:
-    huh.list.choice.template.list:
-        class: HeimrichHannot\ListBundle\Choice\ListTemplateChoice
-        arguments:
-            - "@contao.framework"
-    huh.list.choice.template.item:
-        class: HeimrichHannot\ListBundle\Choice\ListItemTemplateChoice
-        arguments:
-            - "@contao.framework"
-    huh.list.choice.template.item-choice:
-        class: HeimrichHannot\ListBundle\Choice\ListItemChoiceTemplateChoice
-        arguments:
-            - "@contao.framework"
-    huh.list.choice.parent-list-config:
-        class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice
-        arguments:
-            - "@contao.framework"
-    huh.list.manager.list:
-        class: HeimrichHannot\ListBundle\Manager\ListManager
-        arguments:
-            - "@contao.framework"
-            - "@huh.list.list-config-registry"
-            - "@huh.list.list-config-element-registry"
-            - "@huh.filter.manager"
-            - "@huh.request"
-            - "@huh.utils.model"
-            - "@huh.utils.url"
-            - "@huh.utils.container"
-            - "@huh.utils.image"
-            - "@huh.utils.form"
-            - "@twig"
-    huh.list.list-config-registry:
-        class: HeimrichHannot\ListBundle\Registry\ListConfigRegistry
-        arguments:
-            - "@contao.framework"
-    huh.list.list-config-element-registry:
-        class: HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry
-        arguments:
-            - "@contao.framework"
-    huh.list.datacontainer.module:
-        class: HeimrichHannot\ListBundle\DataContainer\ModuleContainer
-        public: true
-        autowire: true
-    huh.list.datacontainer.content:
-        class: HeimrichHannot\ListBundle\DataContainer\ContentContainer
-        public: true
-        autowire: true
-    huh.list.choice.manager:
-        class: HeimrichHannot\ListBundle\Choice\ManagerChoice
-        arguments:
-            - "@contao.framework"
-    huh.list.choice.list:
-        class: HeimrichHannot\ListBundle\Choice\ListChoice
-        arguments:
-            - "@contao.framework"
-    huh.list.choice.item:
-        class: HeimrichHannot\ListBundle\Choice\ItemChoice
-        arguments:
-            - "@contao.framework"
-    twig.extension.text:
-        class: Twig_Extensions_Extension_Text
-        tags:
-          - { name: twig.extension }
-    twig.extension.intl:
-        class: Twig_Extensions_Extension_Intl
-        tags:
-          - { name: twig.extension }
-    twig.extension.array:
-        class: Twig_Extensions_Extension_Array
-        tags:
-          - { name: twig.extension }
-    twig.extension.date:
-        class: Twig_Extensions_Extension_Date
-        tags:
-          - { name: twig.extension }
-        arguments:
-          - "@translator"
-    dzango.twig.truncate_extension:
-        class: Dzango\Twig\Extension\Truncate
-        tags:
-          - { name: twig.extension }
-    huh.list.util.manager:
-        class: HeimrichHannot\ListBundle\Util\ListManagerUtil
-        public: true
-        arguments:
-          - "@contao.framework"
-    # Symfony 4 autowire convention fix (ambiguous namespace alias)
-    HeimrichHannot\ListBundle\Registry\ListConfigRegistry: '@huh.list.list-config-registry'
-    HeimrichHannot\ListBundle\Util\ListManagerUtil: '@huh.list.util.manager'
+  huh.list.choice.template.list:
+    class: HeimrichHannot\ListBundle\Choice\ListTemplateChoice
+    arguments:
+    - "@contao.framework"
+
+  huh.list.choice.template.item:
+    class: HeimrichHannot\ListBundle\Choice\ListItemTemplateChoice
+    arguments:
+    - "@contao.framework"
+
+  huh.list.choice.template.item-choice:
+    class: HeimrichHannot\ListBundle\Choice\ListItemChoiceTemplateChoice
+    arguments:
+    - "@contao.framework"
+
+  huh.list.choice.parent-list-config:
+    class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice
+    arguments:
+    - "@contao.framework"
+
+  huh.list.manager.list:
+    class: HeimrichHannot\ListBundle\Manager\ListManager
+    arguments:
+    - "@contao.framework"
+    - "@huh.list.list-config-registry"
+    - "@huh.list.list-config-element-registry"
+    - "@huh.filter.manager"
+    - "@huh.request"
+    - "@huh.utils.model"
+    - "@huh.utils.url"
+    - "@huh.utils.container"
+    - "@huh.utils.image"
+    - "@huh.utils.form"
+    - "@twig"
+
+  huh.list.list-config-registry:
+    class: HeimrichHannot\ListBundle\Registry\ListConfigRegistry
+    arguments:
+    - "@contao.framework"
+
+  huh.list.list-config-element-registry:
+    class: HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry
+    arguments:
+    - "@contao.framework"
+
+  huh.list.datacontainer.module:
+    class: HeimrichHannot\ListBundle\DataContainer\ModuleContainer
+    public: true
+    autowire: true
+
+  huh.list.datacontainer.content:
+    class: HeimrichHannot\ListBundle\DataContainer\ContentContainer
+    public: true
+    autowire: true
+
+  huh.list.choice.manager:
+    class: HeimrichHannot\ListBundle\Choice\ManagerChoice
+    arguments:
+    - "@contao.framework"
+
+  huh.list.choice.list:
+    class: HeimrichHannot\ListBundle\Choice\ListChoice
+    arguments:
+    - "@contao.framework"
+
+  huh.list.choice.item:
+    class: HeimrichHannot\ListBundle\Choice\ItemChoice
+    arguments:
+    - "@contao.framework"
+
+  twig.extension.text:
+    class: Twig_Extensions_Extension_Text
+    tags:
+    - { name: twig.extension }
+
+  twig.extension.intl:
+    class: Twig_Extensions_Extension_Intl
+    tags:
+    - { name: twig.extension }
+
+  twig.extension.array:
+    class: Twig_Extensions_Extension_Array
+    tags:
+    - { name: twig.extension }
+
+  twig.extension.date:
+    class: Twig_Extensions_Extension_Date
+    tags:
+    - { name: twig.extension }
+    arguments:
+    - "@translator"
+
+  huh.list.util.manager:
+    class: HeimrichHannot\ListBundle\Util\ListManagerUtil
+    public: true
+    arguments:
+    - "@contao.framework"
+
+  twig.truncate.service:
+    class: Urodoz\Truncate\TruncateService
+
+  twig.extension.truncate.html:
+    class: Urodoz\Truncate\Bridge\Twig\TruncateExtension
+    arguments:
+    - "@twig.truncate.service"
+    tags:
+    - { name: twig.extension }
+  # Symfony 4 autowire convention fix (ambiguous namespace alias)
+  HeimrichHannot\ListBundle\Registry\ListConfigRegistry: '@huh.list.list-config-registry'
+  HeimrichHannot\ListBundle\Util\ListManagerUtil: '@huh.list.util.manager'

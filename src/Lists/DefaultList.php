@@ -15,6 +15,7 @@ use Contao\FrontendTemplate;
 use Contao\StringUtil;
 use Contao\System;
 use HeimrichHannot\Blocks\BlockModuleModel;
+use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Backend\ListConfig;
 use HeimrichHannot\ListBundle\Event\ListAfterParseItemsEvent;
@@ -117,6 +118,11 @@ class DefaultList implements ListInterface, \JsonSerializable
     protected $_page = 0;
 
     /**
+     * @var FilterConfig
+     */
+    protected $_filterConfig;
+
+    /**
      * Constructor.
      *
      * @param ListManagerInterface $_manager
@@ -132,6 +138,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $isSubmitted = $this->_manager->getFilterConfig()->hasData();
         $listConfig = $this->_manager->getListConfig();
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
+        $this->_filterConfig = $this->_manager->getFilterConfig();
 
         $this->setWrapperId('huh-list-'.$this->getModule()['id']);
 
@@ -925,5 +932,10 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function getJumpTo(): int
     {
         return (int) $this->_manager->getListConfig()->jumpToDetails;
+    }
+
+    public function getFilterConfig(): ?FilterConfig
+    {
+        return $this->_filterConfig;
     }
 }

@@ -54,7 +54,7 @@ class ListManagerUtil
                 $manager = System::getContainer()->get($manager['id']);
                 $interfaces = class_implements($manager);
 
-                if (!\is_array($interfaces) || !\in_array(ListManagerInterface::class, $interfaces, true)) {
+                if (!\is_array($interfaces) || !\in_array(ListManagerInterface::class, $interfaces)) {
                     throw new InvalidListManagerException(sprintf('List manager service %s must implement %s', $manager['id'], ListManagerInterface::class));
                 }
 

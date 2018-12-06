@@ -69,7 +69,7 @@ $lang['aliasField'][1] = 'Wählen Sie hier das zu verwendende Alias-Feld aus (Hi
 
 $lang['addDetails'][0]    = 'Details-Weiterleitung hinzufügen';
 $lang['addDetails'][1]    = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Anzeigen von Details hinzuzufügen.';
-$lang['jumpToDetails'][0] = 'Weiterleitungsseite (Details)';
+$lang['jumpToDetails'][0] = 'Weiterleitungsseite (Details; MUSS für die Einbeziehung in die Sitemap gesetzt sein!)';
 $lang['jumpToDetails'][1] = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn es eine Detailseite gibt.';
 $lang['addShare'][0]      = 'Teilen-Weiterleitung hinzufügen';
 $lang['addShare'][1]      = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Teilen des aktuellen Listeneintrags hinzuzufügen.';

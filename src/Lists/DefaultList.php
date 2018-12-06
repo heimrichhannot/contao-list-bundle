@@ -194,7 +194,7 @@ class DefaultList implements ListInterface, \JsonSerializable
                 $itemFields = array_keys($item);
 
                 foreach (array_keys($GLOBALS['TL_DCA'][$filter->dataContainer]['fields']) as $field) {
-                    if (!\in_array($field, $itemFields, true)) {
+                    if (!\in_array($field, $itemFields)) {
                         $item[$field] = null;
                     }
                 }
@@ -528,7 +528,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             $db = $this->_manager->getFramework()->getAdapter(Database::class);
 
             if ($db->getInstance()->fieldExists($orderField, $filter->dataContainer)
-                && \in_array($sort, ListConfig::SORTING_DIRECTIONS, true)) {
+                && \in_array($sort, ListConfig::SORTING_DIRECTIONS)) {
                 $currentSorting = [
                     'order' => $request->getGet('order'),
                     'sort' => $request->getGet('sort'),
@@ -870,7 +870,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             $arrRoot = $database->getChildRecords($intRoot, 'tl_page');
         }
 
-        if (!empty($arrRoot) && !\in_array($this->getJumpTo(), $arrRoot, true)) {
+        if (!empty($arrRoot) && !\in_array($this->getJumpTo(), $arrRoot)) {
             return $arrPages;
         }
 

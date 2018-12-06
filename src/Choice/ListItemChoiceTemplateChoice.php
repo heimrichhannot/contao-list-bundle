@@ -30,11 +30,11 @@ class ListItemChoiceTemplateChoice extends AbstractChoice
             foreach ($config['list']['templates']['item_choice'] as $template) {
                 $templateName = $template['template'].' (Yaml)';
                 // remove duplicates returned by `huh.utils.choice.twig_template`
-                if (false !== ($idx = array_search($template['template'], $choices, true))) {
+                if (false !== ($idx = array_search($template['template'], $choices))) {
                     unset($choices[$idx]);
                 }
 
-                if (false !== ($idx = array_search($templateName, $choices, true))) {
+                if (false !== ($idx = array_search($templateName, $choices))) {
                     unset($choices[$idx]);
                 }
                 $choices[$template['name']] = $templateName;

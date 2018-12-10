@@ -8,6 +8,7 @@
 
 namespace HeimrichHannot\ListBundle\Registry;
 
+use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\System;
 use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
@@ -173,6 +174,8 @@ class ListConfigRegistry
             'tl_list_config',
             $listConfig
         );
+
+        Controller::loadDataContainer('tl_list_config');
 
         foreach ($GLOBALS['TL_DCA']['tl_list_config']['fields'] as $field => $data) {
             if ($data['eval']['notOverridable']) {

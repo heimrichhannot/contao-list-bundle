@@ -209,6 +209,10 @@ class ContentListPreselect extends ContentElement
         );
 
         $event->setQueryBuilder($queryBuilder);
+
+        // always remove listener afterwards in order to add query not again on next content element
+        $dispatcher = System::getContainer()->get('event_dispatcher');
+        $dispatcher->removeListener(ListModifyQueryBuilderEvent::NAME, [$this, 'listModifyQueryBuilder']);
     }
 
     /**

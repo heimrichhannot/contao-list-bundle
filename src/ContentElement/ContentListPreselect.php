@@ -76,6 +76,10 @@ class ContentListPreselect extends ContentElement
     {
         parent::__construct($objElement, $strColumn);
 
+        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
+            return;
+        }
+
         $this->listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
         $this->request = System::getContainer()->get('huh.request');
 

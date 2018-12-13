@@ -17,7 +17,7 @@ use Contao\System;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Model\FilterPreselectModel;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
-use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderEvent;
+use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderForCountEvent;
 use HeimrichHannot\ListBundle\Exception\InterfaceNotImplementedException;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
@@ -143,7 +143,7 @@ class ContentListPreselect extends ContentElement
          * @var \Symfony\Component\EventDispatcher\EventDispatcher
          */
         $dispatcher = System::getContainer()->get('event_dispatcher');
-        $dispatcher->addListener(ListModifyQueryBuilderEvent::NAME, [$this, 'listModifyQueryBuilder']);
+        $dispatcher->addListener(ListModifyQueryBuilderForCountEvent::NAME, [$this, 'listModifyQueryBuilderForCount']);
 
         if (true === (bool) $this->manager->getListConfig()->doNotRenderEmpty
             && empty($this->manager->getList()->getItems())) {
@@ -166,7 +166,7 @@ class ContentListPreselect extends ContentElement
     /**
      * Modify the list query builder.
      */
-    public function listModifyQueryBuilder(ListModifyQueryBuilderEvent $event)
+    public function listModifyQueryBuilderForCount(ListModifyQueryBuilderForCountEvent $event)
     {
         $framework = System::getContainer()->get('contao.framework');
         $filter = (object) $event->getList()->getManager()->getFilterConfig()->getFilter();
@@ -212,7 +212,7 @@ class ContentListPreselect extends ContentElement
 
         // always remove listener afterwards in order to add query not again on next content element
         $dispatcher = System::getContainer()->get('event_dispatcher');
-        $dispatcher->removeListener(ListModifyQueryBuilderEvent::NAME, [$this, 'listModifyQueryBuilder']);
+        $dispatcher->removeListener(ListModifyQueryBuilderForCountEvent::NAME, [$this, 'listModifyQueryBuilderForCount']);
     }
 
     /**

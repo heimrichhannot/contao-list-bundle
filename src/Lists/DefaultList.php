@@ -23,6 +23,7 @@ use HeimrichHannot\ListBundle\Event\ListAfterRenderEvent;
 use HeimrichHannot\ListBundle\Event\ListBeforeParseItemsEvent;
 use HeimrichHannot\ListBundle\Event\ListBeforeRenderEvent;
 use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderEvent;
+use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderForCountEvent;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\ListBundle\Item\ItemInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
@@ -162,6 +163,8 @@ class DefaultList implements ListInterface, \JsonSerializable
         $fields = $filter->dataContainer.'.* ';
 
         $totalCount = 0;
+
+        $this->_dispatcher->dispatch(ListModifyQueryBuilderForCountEvent::NAME, new ListModifyQueryBuilderForCountEvent($queryBuilder, $this, $listConfig));
 
         // initial results
         $this->setShowInitialResults($listConfig->showInitialResults);

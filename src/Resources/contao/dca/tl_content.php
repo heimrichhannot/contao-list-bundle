@@ -8,7 +8,7 @@ $dc['config']['onload_callback'][] = ['huh.list.datacontainer.content', 'onLoad'
  * Palettes
  */
 $dc['palettes']['__selector__'][] = 'list';
-$dc['palettes']['list_preselect'] = '{type_legend},type,headline;{huh.list_legend},listConfig;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests;{invisible_legend:hide},invisible,start,stop';
+$dc['palettes']['list_preselect'] = '{type_legend},type,headline;{huh.list_legend},listConfig;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID,guests;{invisible_legend:hide},invisible,start,stop';
 
 /**
  * Fields

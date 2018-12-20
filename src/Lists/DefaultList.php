@@ -877,6 +877,8 @@ class DefaultList implements ListInterface, \JsonSerializable
             return $arrPages;
         }
 
+        $this->_manager->getFilterConfig()->resetData();
+
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
         $listConfig = $this->_manager->getListConfig();
 

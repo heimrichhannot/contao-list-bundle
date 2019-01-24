@@ -89,6 +89,8 @@ $lang['masonryStampContentElements'][0] = 'Fixierte Blöcke festlegen';
 $lang['masonryStampContentElements'][1] = 'Hier können Sie Blöcke festlegen, die immer gerendert werden sollen. Die Position muss anschließend per CSS festgelegt werden (-> Responsive).';
 $lang['stampBlock'][0]                  = 'Block';
 $lang['stampBlock'][1]                  = 'Wählen Sie hier einen Block aus.';
+$lang['addDcMultilingualSupport'][0]    = 'Support für DC_Multilingual hinzufügen';
+$lang['addDcMultilingualSupport'][1]    = 'Wählen Sie diese Option, die verknüpfte Entität durch das Bundle "terminal42/contao-DC_Multilingual" übersetzbar ist.';
 
 // search
 $lang['noSearch'][0] = 'Nicht durchsuchen';

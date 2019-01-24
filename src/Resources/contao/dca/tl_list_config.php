@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addAjaxPagination',
             'addMasonry',
         ],
-        'default'      => '{general_legend},title,parentListConfig;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry;'.'{search_legend},noSearch;'.'{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
+        'default'      => '{general_legend},title,parentListConfig;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry,addDcMultilingualSupport;'.'{search_legend},noSearch;'.'{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
     ],
     'subpalettes' => [
         'showItemCount'                                                                   => 'itemCountText',
@@ -490,14 +490,29 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
     ],
 ];
 
-$GLOBALS['TL_DCA']['tl_list_config']['fields']['numberOfItems']['eval']['tl_class']             = 'w50 clr';
+$dca = &$GLOBALS['TL_DCA']['tl_list_config'];
+
+$dca['fields']['numberOfItems']['eval']['tl_class'] = 'w50 clr';
+
+if (System::getContainer()->get('huh.utils.container')->isBundleActive('modal'))
+{
+    $dca['fields']['useModal'] = $GLOBALS['TL_DCA']['tl_module']['fields']['useModal'];
+    $dca['fields']['useModalExplanation'] = $GLOBALS['TL_DCA']['tl_module']['fields']['useModalExplanation'];
+    $dca['fields']['useModalExplanation']['eval']['notOverridable'] = true;
+    $dca['subpalettes']['addDetails'] = 'useModalExplanation,useModal,' . $dca['subpalettes']['addDetails'];
+}
+
+if (System::getContainer()->get('huh.utils.container')->isBundleActive('Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle'))
+{
+    $dca['fields'] += [
+        'addDcMultilingualSupport' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config']['addDcMultilingualSupport'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => ['tl_class' => 'w50'],
+            'sql'                     => "char(1) NOT NULL default ''"
+        ]
+    ];
+}
 
 \HeimrichHannot\ListBundle\Backend\ListConfig::addOverridableFields();
-
-
-if(isset(System::getContainer()->getParameter('kernel.bundles')['modal'])){
-    $GLOBALS['TL_DCA']['tl_list_config']['fields']['useModal'] = $GLOBALS['TL_DCA']['tl_module']['fields']['useModal'];
-    $GLOBALS['TL_DCA']['tl_list_config']['fields']['useModalExplanation'] = $GLOBALS['TL_DCA']['tl_module']['fields']['useModalExplanation'];
-    $GLOBALS['TL_DCA']['tl_list_config']['fields']['useModalExplanation']['eval']['notOverridable'] = true;
-    $GLOBALS['TL_DCA']['tl_list_config']['subpalettes']['addDetails'] = 'useModalExplanation,useModal,' . $GLOBALS['TL_DCA']['tl_list_config']['subpalettes']['addDetails'];
-}

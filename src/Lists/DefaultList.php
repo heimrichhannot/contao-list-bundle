@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2018 Heimrich & Hannot GmbH
+ * Copyright (c) 2019 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -9,7 +9,6 @@
 namespace HeimrichHannot\ListBundle\Lists;
 
 use Contao\Config;
-use Contao\Controller;
 use Contao\Database;
 use Contao\FrontendTemplate;
 use Contao\StringUtil;
@@ -141,6 +140,9 @@ class DefaultList implements ListInterface, \JsonSerializable
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
         $this->_filterConfig = $this->_manager->getFilterConfig();
 
+        System::getContainer()->get('huh.utils.dca')->loadDc($filter->dataContainer);
+        $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
+
         $this->setWrapperId('huh-list-'.$this->getModule()['id']);
 
         $this->addDataAttributes();
@@ -158,9 +160,43 @@ class DefaultList implements ListInterface, \JsonSerializable
         /** @var FilterQueryBuilder $queryBuilder */
         $queryBuilder = $this->_manager->getFilterManager()->getQueryBuilder($filter->id);
 
-        $this->setIsSubmitted($isSubmitted);
+        // compute fields
+        /** @var Database $db */
+        $db = $this->_manager->getFramework()->createInstance(Database::class);
 
-        $fields = $filter->dataContainer.'.* ';
+        $dbFields = $db->getFieldNames($filter->dataContainer);
+
+        // support for terminal42/contao-DC_Multilingual
+        if ($listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.container')->isBundleActive(
+            'Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle')) {
+            $suffixedTable = $filter->dataContainer.ListInterface::DC_MULTILINGUAL_SUFFIX;
+
+            $queryBuilder->innerJoin(
+                $filter->dataContainer,
+                $filter->dataContainer,
+                $suffixedTable,
+                $filter->dataContainer.'.id = '.$suffixedTable.'.langPid AND '.$suffixedTable.'.language = "'.$GLOBALS['TL_LANGUAGE'].'"'
+            );
+
+            // compute fields
+            $fieldNames = [];
+
+            foreach ($dca['fields'] as $field => $data) {
+                if ('*' === $data['eval']['translatableFor'] || $data['eval']['translatableFor'] === $GLOBALS['TL_LANGUAGE']) {
+                    $fieldNames[] = $suffixedTable.'.'.$field;
+                } else {
+                    $fieldNames[] = $filter->dataContainer.'.'.$field;
+                }
+            }
+
+            $fields = implode(', ', $fieldNames);
+        } else {
+            $fields = implode(', ', array_map(function ($field) use ($filter) {
+                return $filter->dataContainer.'.'.$field;
+            }, $dbFields));
+        }
+
+        $this->setIsSubmitted($isSubmitted);
 
         $totalCount = 0;
 
@@ -191,12 +227,10 @@ class DefaultList implements ListInterface, \JsonSerializable
             $items = $queryBuilder->execute()->fetchAll();
 
             // add fields without sql key in DCA (could have a value by load_callback)
-            Controller::loadDataContainer($filter->dataContainer);
-
             foreach ($items as &$item) {
                 $itemFields = array_keys($item);
 
-                foreach (array_keys($GLOBALS['TL_DCA'][$filter->dataContainer]['fields']) as $field) {
+                foreach (array_keys($dca['fields']) as $field) {
                     if (!\in_array($field, $itemFields)) {
                         $item[$field] = null;
                     }

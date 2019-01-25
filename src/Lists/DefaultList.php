@@ -26,6 +26,7 @@ use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderForCountEvent;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\ListBundle\Item\ItemInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
+use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -167,8 +168,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $dbFields = $db->getFieldNames($filter->dataContainer);
 
         // support for terminal42/contao-DC_Multilingual
-        if ($listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.container')->isBundleActive(
-            'Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle')) {
+        if ($this->isDcMultilingualActive($listConfig, $dca)) {
             $suffixedTable = $filter->dataContainer.ListInterface::DC_MULTILINGUAL_SUFFIX;
 
             $queryBuilder->innerJoin(
@@ -251,6 +251,13 @@ class DefaultList implements ListInterface, \JsonSerializable
         $event = $this->_dispatcher->dispatch(ListAfterRenderEvent::NAME, new ListAfterRenderEvent($rendered, $event->getTemplateData(), $this, $listConfig));
 
         return $event->getRendered();
+    }
+
+    public function isDcMultilingualActive(ListConfigModel $listConfig, array $dca)
+    {
+        return $GLOBALS['TL_LANGUAGE'] !== $dca['config']['fallbackLang'] &&
+            $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.container')->isBundleActive(
+                'Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle');
     }
 
     /**

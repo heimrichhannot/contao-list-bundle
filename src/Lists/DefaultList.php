@@ -175,7 +175,7 @@ class DefaultList implements ListInterface, \JsonSerializable
                 $filter->dataContainer,
                 $filter->dataContainer,
                 $suffixedTable,
-                $filter->dataContainer.'.id = '.$suffixedTable.'.langPid AND '.$suffixedTable.'.language = "'.$GLOBALS['TL_LANGUAGE'].'"'
+                $filter->dataContainer.'.id = '.$suffixedTable.'.'.$dca['config']['langPid'].' AND '.$suffixedTable.'.language = "'.$GLOBALS['TL_LANGUAGE'].'"'
             );
 
             // compute fields

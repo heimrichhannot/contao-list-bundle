@@ -10,6 +10,7 @@ namespace HeimrichHannot\ListBundle\DataContainer;
 
 use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\Database;
 use Contao\DataContainer;
 use Contao\Model;
 use HeimrichHannot\FilterBundle\Model\FilterPreselectModel;
@@ -169,7 +170,11 @@ class ContentContainer
         // update filterConfig from listConfig to maintain tl_filter_preselect requirements
         if ($content->filterConfig !== $listConfig->filter) {
             $content->filterConfig = $listConfig->filter;
-            $content->save();
+
+            // handle $blnPreventSaving from Multilingual Model (do not use $content->save())
+            $this->framework->createInstance(Database::class)->prepare('UPDATE '.$content::getTable().' %s WHERE '.\Database::quoteIdentifier($content::getPk()).'=?')
+                ->set(['filterConfig' => $listConfig->filter])
+                ->execute($content->{$content::getPk()});
         }
 
         $GLOBALS['TL_DCA']['tl_content']['palettes']['list_preselect'] = str_replace(

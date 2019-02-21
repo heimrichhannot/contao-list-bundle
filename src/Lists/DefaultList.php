@@ -10,6 +10,7 @@ namespace HeimrichHannot\ListBundle\Lists;
 
 use Contao\Config;
 use Contao\Database;
+use Contao\Date;
 use Contao\FrontendTemplate;
 use Contao\StringUtil;
 use Contao\System;
@@ -194,6 +195,38 @@ class DefaultList implements ListInterface, \JsonSerializable
             }
 
             $fields = implode(', ', $fieldNames);
+
+            // add support for dc multilingual utils
+            if ($this->isDcMultilingualUtilsActive($listConfig, $dca)) {
+                if (isset($dca['config']['langPublished']) && isset($dca['fields'][$dca['config']['langPublished']]) && \is_array($dca['fields'][$dca['config']['langPublished']])) {
+                    $and = $queryBuilder->expr()->andX();
+
+                    if (isset($dca['config']['langStart']) && isset($dca['fields'][$dca['config']['langStart']]) && \is_array($dca['fields'][$dca['config']['langStart']]) &&
+                        isset($dca['config']['langStop']) && isset($dca['fields'][$dca['config']['langStop']]) && \is_array($dca['fields'][$dca['config']['langStop']])) {
+                        $time = Date::floorToMinute();
+
+                        $orStart = $queryBuilder->expr()->orX(
+                            $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStart'], '""'),
+                            $queryBuilder->expr()->lte($suffixedTable.'.'.$dca['config']['langStart'], ':'.$dca['config']['langStart'].'_time')
+                        );
+
+                        $and->add($orStart);
+                        $queryBuilder->setParameter(':'.$dca['config']['langStart'].'_time', $time);
+
+                        $orStop = $queryBuilder->expr()->orX(
+                            $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStop'], '""'),
+                            $queryBuilder->expr()->gt($suffixedTable.'.'.$dca['config']['langStop'], ':'.$dca['config']['langStop'].'_time')
+                        );
+
+                        $and->add($orStop);
+                        $queryBuilder->setParameter(':'.$dca['config']['langStop'].'_time', $time + 60);
+                    }
+
+                    $and->add($queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langPublished'], 1));
+
+                    $queryBuilder->andWhere($and);
+                }
+            }
         } else {
             $fields = implode(', ', array_map(function ($field) use ($filter) {
                 return $filter->dataContainer.'.'.$field;
@@ -262,6 +295,13 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $GLOBALS['TL_LANGUAGE'] !== $dca['config']['fallbackLang'] &&
             $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.container')->isBundleActive(
                 'Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle');
+    }
+
+    public function isDcMultilingualUtilsActive(ListConfigModel $listConfig, array $dca)
+    {
+        return $GLOBALS['TL_LANGUAGE'] !== $dca['config']['fallbackLang'] &&
+            $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.container')->isBundleActive(
+                'HeimrichHannot\DcMultilingualUtilsBundle\ContaoDcMultilingualUtilsBundle');
     }
 
     /**

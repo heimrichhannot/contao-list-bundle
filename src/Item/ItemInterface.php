@@ -244,7 +244,7 @@ interface ItemInterface
      *
      * @param bool $external Determine if external urls should be returned as well (required by search index)
      *
-     * @return null|string
+     * @return string|null
      */
     public function getDetailsUrl(bool $external = true): ?string;
 }

@@ -280,7 +280,7 @@ class ListManager implements ListManagerInterface
      *
      * @throws \Exception
      *
-     * @return null|ListInterface
+     * @return ListInterface|null
      */
     public function getListByName(string $name): ?string
     {

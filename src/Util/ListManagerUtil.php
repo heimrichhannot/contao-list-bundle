@@ -32,7 +32,7 @@ class ListManagerUtil
      *
      * @throws InvalidListManagerException
      *
-     * @return null|ListManagerInterface
+     * @return ListManagerInterface|null
      */
     public function getListManagerByName(string $name): ?ListManagerInterface
     {

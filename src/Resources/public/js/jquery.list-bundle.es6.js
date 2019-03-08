@@ -95,8 +95,9 @@ let jQuery = require('jquery');
                 return;
             }
 
-            import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function(Masonry) {
-                import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(function(imagesLoaded) {
+
+            import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(({default: Masonry}) => {
+                import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(({default: imagesLoaded}) => {
                     document.querySelectorAll('.huh-list .wrapper[data-add-masonry="1"]').forEach(function(elem, index, list) {
                         let items = elem.querySelector('.items');
                         let options = {
@@ -112,22 +113,6 @@ let jQuery = require('jquery');
                             msnry.layout();
                         })
                     });
-
-                    // $('.huh-list .wrapper[data-add-masonry="1"]').each(function() {
-                    //     let $this = $(this).find('.items'),
-                    //         options = $(this).data('masonry-options');
-                    //
-                    //     let $grid = $this.imagesLoaded(function() {
-                    //         $grid.masonry({
-                    //             // fitWidth: true,
-                    //             itemSelector: '.item',
-                    //             stamp: '.stamp-item'
-                    //         });
-                    //
-                    //         // update due to stamps
-                    //         $grid.masonry();
-                    //     });
-                    // });
                 });
             });
         }

@@ -28,7 +28,7 @@ $fields = [
         'exclude'          => true,
         'inputType'        => 'checkboxWizard',
         'options_callback' => ['huh.list.datacontainer.content', 'getListPreselectChoices'],
-        'eval'             => ['tl_class' => 'wizard clr', 'mandatory' => true, 'includeBlankOption' => true, 'multiple' => true],
+        'eval'             => ['tl_class' => 'wizard clr', 'includeBlankOption' => true, 'multiple' => true],
         'sql'              => "blob NULL",
     ],
 ];

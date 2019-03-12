@@ -77,7 +77,7 @@ class ContentListPreselect extends ContentElement
         parent::__construct($objElement, $strColumn);
 
         if (System::getContainer()->get('huh.utils.container')->isBackend()) {
-            return;
+            return $this->generate();
         }
 
         $this->listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
@@ -99,6 +99,14 @@ class ContentListPreselect extends ContentElement
      */
     public function generate()
     {
+        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
+            $objTemplate = new \BackendTemplate('be_wildcard');
+            $objTemplate->wildcard = implode("\n", $this->getWildcard());
+            $objTemplate->title = $this->getFilterTitle();
+
+            return $objTemplate->parse();
+        }
+
         if (!$this->doGenerate()) {
             return '';
         }
@@ -109,12 +117,6 @@ class ContentListPreselect extends ContentElement
     public function doGenerate()
     {
         if (!$this->manager) {
-            return false;
-        }
-
-        $values = array_filter(StringUtil::deserialize($this->objModel->listPreselect, true));
-
-        if (empty($values)) {
             return false;
         }
 
@@ -183,36 +185,96 @@ class ContentListPreselect extends ContentElement
 
         $values = array_filter(StringUtil::deserialize($this->objModel->listPreselect, true));
 
-        $queryBuilder->andWhere(System::getContainer()->get('huh.utils.database')->composeWhereForQueryBuilder(
-            $queryBuilder,
-            $this->filter->dataContainer.'.'.$pk,
-            DatabaseUtil::OPERATOR_IN,
-            $GLOBALS['TL_DCA'][$filter->dataContainer],
-            $values
-        ));
+        if (!empty($values)) {
+            $queryBuilder->andWhere(System::getContainer()->get('huh.utils.database')->composeWhereForQueryBuilder(
+                $queryBuilder,
+                $this->filter->dataContainer.'.'.$pk,
+                DatabaseUtil::OPERATOR_IN,
+                $GLOBALS['TL_DCA'][$filter->dataContainer],
+                $values
+            ));
 
-        $queryBuilder->add(
-            'orderBy',
-            sprintf(
-                'FIELD(%s, %s)',
-                $filter->dataContainer.'.'.$pk,
-                implode(
-                    ',',
-                    array_map(
-                        function ($val) use (&$framework) {
-                            return '"'.addslashes($framework->getAdapter(Controller::class)->replaceInsertTags(trim($val), false)).'"';
-                        },
-                        $values
+            $queryBuilder->add(
+                'orderBy',
+                sprintf(
+                    'FIELD(%s, %s)',
+                    $filter->dataContainer.'.'.$pk,
+                    implode(
+                        ',',
+                        array_map(
+                            function ($val) use (&$framework) {
+                                return '"'.addslashes($framework->getAdapter(Controller::class)->replaceInsertTags(trim($val), false)).'"';
+                            },
+                            $values
+                        )
                     )
                 )
-            )
-        );
+            );
 
-        $event->setQueryBuilder($queryBuilder);
+            $event->setQueryBuilder($queryBuilder);
+        }
 
         // always remove listener afterwards in order to add query not again on next content element
         $dispatcher = System::getContainer()->get('event_dispatcher');
         $dispatcher->removeListener(ListModifyQueryBuilderForCountEvent::NAME, [$this, 'listModifyQueryBuilderForCount']);
+    }
+
+    /**
+     * Get the wildcard from preselection.
+     *
+     * @return array
+     */
+    protected function getWildcard(): array
+    {
+        $wildcard = [];
+
+        if (null === ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $this->getModel()->listConfig))) {
+            return $wildcard;
+        }
+
+        if (null === ($manager = System::getContainer()->get('huh.list.util.manager')->getListManagerByName($listConfig->manager ?: 'default'))) {
+            return $wildcard;
+        }
+
+        if (null === ($filterConfig = $manager->getFilterConfig()) || null === ($elements = $filterConfig->getElements())) {
+            return $wildcard;
+        }
+
+        /** @var FilterPreselectModel $preselections */
+        $preselections = System::getContainer()->get('contao.framework')->createInstance(FilterPreselectModel::class);
+
+        if (null === ($preselections = $preselections->findPublishedByPidAndTableAndField($this->id, 'tl_content', 'filterPreselect'))) {
+            return $wildcard;
+        }
+
+        /** @var FilterPreselectModel $preselection */
+        foreach ($preselections as $preselection) {
+            $wildcard[] = System::getContainer()->get('huh.filter.backend.filter_preselect')->adjustLabel($preselection->row(), $preselection->id);
+        }
+
+        return $wildcard;
+    }
+
+    /**
+     * Get the filter title.
+     *
+     * @return string
+     */
+    protected function getFilterTitle(): string
+    {
+        if (null === ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $this->getModel()->listConfig))) {
+            return '';
+        }
+
+        if (null === ($manager = System::getContainer()->get('huh.list.util.manager')->getListManagerByName($listConfig->manager ?: 'default'))) {
+            return '';
+        }
+
+        if (null === ($filterConfig = $manager->getFilterConfig()) || null === ($elements = $filterConfig->getElements())) {
+            return '';
+        }
+
+        return $filterConfig->getFilter()['title'] ?? '';
     }
 
     /**

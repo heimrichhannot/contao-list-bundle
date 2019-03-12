@@ -294,7 +294,11 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType'  => 'select',
             'foreignKey' => 'tl_filter_config.title',
             'relation'   => ['type' => 'belongsTo', 'load' => 'eager'],
-            'eval'       => ['tl_class' => 'w50 clr', 'includeBlankOption' => true, 'chosen' => true, 'mandatory' => true, 'submitOnChange' => true],
+            'eval'       => ['tl_class' => 'w50 clr wizard', 'includeBlankOption' => true, 'chosen' => true, 'mandatory' => true, 'submitOnChange' => true],
+            'wizard' => array
+            (
+                array('HeimrichHannot\ListBundle\Backend\ListConfig', 'editFilter')
+            ),
             'sql'        => "int(10) NOT NULL default '0'",
         ],
         // sorting

@@ -37,6 +37,18 @@ class ListConfig extends Backend
         self::SORTING_DIRECTION_DESC,
     ];
 
+    /**
+     * Return the edit filter wizard.
+     *
+     * @param DataContainer $dc
+     *
+     * @return string
+     */
+    public function editFilter(DataContainer $dc)
+    {
+        return ($dc->value < 1) ? '' : ' <a href="contao/main.php?do=filter&amp;table=tl_filter_config_element&amp;id='.$dc->value.'&amp;popup=1&amp;nb=1&amp;rt='.REQUEST_TOKEN.'" title="'.sprintf(StringUtil::specialchars($GLOBALS['TL_LANG']['tl_list_config']['editFilter'][1]), $dc->value).'" onclick="Backend.openModalIframe({\'title\':\''.StringUtil::specialchars(str_replace("'", "\\'", sprintf($GLOBALS['TL_LANG']['tl_filter_config']['editFilter'][1], $dc->value))).'\',\'url\':this.href});return false">'.Image::getHtml('alias.svg', $GLOBALS['TL_LANG']['tl_filter_config']['editFilter'][0]).'</a>';
+    }
+
     public static function addOverridableFields()
     {
         $dca = &$GLOBALS['TL_DCA']['tl_list_config'];

@@ -141,3 +141,4 @@ $lang['copy']       = ['Listenkonfiguration duplizieren', 'Listenkonfiguration I
 $lang['delete']     = ['Listenkonfiguration löschen', 'Listenkonfiguration ID %s löschen'];
 $lang['toggle']     = ['Listenkonfiguration veröffentlichen', 'Listenkonfiguration ID %s veröffentlichen/verstecken'];
 $lang['show']       = ['Listenkonfiguration Details', 'Listenkonfiguration-Details ID %s anzeigen'];
+$lang['editFilter'] = ['Filter bearbeiten', 'Den Filter ID %s bearbeiten'];

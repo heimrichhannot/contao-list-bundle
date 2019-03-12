@@ -102,7 +102,7 @@ class ContentListPreselect extends ContentElement
         if (System::getContainer()->get('huh.utils.container')->isBackend()) {
             $objTemplate = new \BackendTemplate('be_wildcard');
             $objTemplate->wildcard = implode("\n", $this->getWildcard());
-            $objTemplate->title = $this->getFilterTitle();
+            $objTemplate->title = $this->getListTitle();
 
             return $objTemplate->parse();
         }
@@ -256,25 +256,17 @@ class ContentListPreselect extends ContentElement
     }
 
     /**
-     * Get the filter title.
+     * Get the list title.
      *
      * @return string
      */
-    protected function getFilterTitle(): string
+    protected function getListTitle(): string
     {
         if (null === ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $this->getModel()->listConfig))) {
             return '';
         }
 
-        if (null === ($manager = System::getContainer()->get('huh.list.util.manager')->getListManagerByName($listConfig->manager ?: 'default'))) {
-            return '';
-        }
-
-        if (null === ($filterConfig = $manager->getFilterConfig()) || null === ($elements = $filterConfig->getElements())) {
-            return '';
-        }
-
-        return $filterConfig->getFilter()['title'] ?? '';
+        return $listConfig->title ?? '';
     }
 
     /**

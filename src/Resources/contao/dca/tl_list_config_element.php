@@ -119,7 +119,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'exclude'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
-            'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
+            'eval'                    => ['maxlength' => 255, 'tl_class' => 'w50'],
             'sql'                     => "varchar(255) NOT NULL default ''"
         ],
         'imageSelectorField'     => [
@@ -129,7 +129,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
                 return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getCheckboxFields($dc);
             },
             'exclude'          => true,
-            'eval'             => ['includeBlankOption' => true, 'tl_class' => 'w50 autoheight'],
+            'eval'             => ['includeBlankOption' => true, 'tl_class' => 'w50 autoheight', 'chosen' => true],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
         'imageField'             => [

@@ -231,7 +231,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             } else {
                 // exclude translated records
                 $andNoLangPid = $queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->eq($filter->dataContainer.'.'.$dca['config']['langPid'], '0'),
+                    $queryBuilder->expr()->eq($filter->dataContainer.'.'.$dca['config']['langPid'], '0')
                 );
 
                 $queryBuilder->andWhere($andNoLangPid);

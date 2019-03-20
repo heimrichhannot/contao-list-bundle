@@ -231,8 +231,8 @@ class DefaultList implements ListInterface, \JsonSerializable
             } else {
                 // exclude translated records
                 $andNoLangPid = $queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->eq($filter->dataContainer.'.'.$dca['config']['langPid'], '0')
-                );
+                    $queryBuilder->expr()->eq($filter->dataContainer.'.'.$dca['config']['langPid'], '0'),
+                    );
 
                 $queryBuilder->andWhere($andNoLangPid);
 
@@ -240,6 +240,10 @@ class DefaultList implements ListInterface, \JsonSerializable
                     return $filter->dataContainer.'.'.$field;
                 }, $dbFields));
             }
+        } else {
+            $fields = implode(', ', array_map(function ($field) use ($filter) {
+                return $filter->dataContainer.'.'.$field;
+            }, $dbFields));
         }
 
         $this->setIsSubmitted($isSubmitted);

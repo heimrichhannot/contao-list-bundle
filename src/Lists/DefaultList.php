@@ -170,67 +170,76 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         // support for terminal42/contao-DC_Multilingual
         if ($this->isDcMultilingualActive($listConfig, $dca)) {
-            $suffixedTable = $filter->dataContainer.ListInterface::DC_MULTILINGUAL_SUFFIX;
+            if ($GLOBALS['TL_LANGUAGE'] !== $dca['config']['fallbackLang']) {
+                $suffixedTable = $filter->dataContainer.ListInterface::DC_MULTILINGUAL_SUFFIX;
 
-            $queryBuilder->innerJoin(
-                $filter->dataContainer,
-                $filter->dataContainer,
-                $suffixedTable,
-                $filter->dataContainer.'.id = '.$suffixedTable.'.'.$dca['config']['langPid'].' AND '.$suffixedTable.'.language = "'.$GLOBALS['TL_LANGUAGE'].'"'
-            );
+                $queryBuilder->innerJoin(
+                    $filter->dataContainer,
+                    $filter->dataContainer,
+                    $suffixedTable,
+                    $filter->dataContainer.'.id = '.$suffixedTable.'.'.$dca['config']['langPid'].' AND '.$suffixedTable.'.language = "'.$GLOBALS['TL_LANGUAGE'].'"'
+                );
 
-            // compute fields
-            $fieldNames = [];
+                // compute fields
+                $fieldNames = [];
 
-            foreach ($dca['fields'] as $field => $data) {
-                if (!isset($data['sql'])) {
-                    continue;
-                }
-
-                if ('*' === $data['eval']['translatableFor'] || $data['eval']['translatableFor'] === $GLOBALS['TL_LANGUAGE']) {
-                    $fieldNames[] = $suffixedTable.'.'.$field;
-                } else {
-                    $fieldNames[] = $filter->dataContainer.'.'.$field;
-                }
-            }
-
-            $fields = implode(', ', $fieldNames);
-
-            // add support for dc multilingual utils
-            if ($this->isDcMultilingualUtilsActive($listConfig, $dca)) {
-                if (isset($dca['config']['langPublished']) && isset($dca['fields'][$dca['config']['langPublished']]) && \is_array($dca['fields'][$dca['config']['langPublished']])) {
-                    $and = $queryBuilder->expr()->andX();
-
-                    if (isset($dca['config']['langStart']) && isset($dca['fields'][$dca['config']['langStart']]) && \is_array($dca['fields'][$dca['config']['langStart']]) &&
-                        isset($dca['config']['langStop']) && isset($dca['fields'][$dca['config']['langStop']]) && \is_array($dca['fields'][$dca['config']['langStop']])) {
-                        $time = Date::floorToMinute();
-
-                        $orStart = $queryBuilder->expr()->orX(
-                            $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStart'], '""'),
-                            $queryBuilder->expr()->lte($suffixedTable.'.'.$dca['config']['langStart'], ':'.$dca['config']['langStart'].'_time')
-                        );
-
-                        $and->add($orStart);
-                        $queryBuilder->setParameter(':'.$dca['config']['langStart'].'_time', $time);
-
-                        $orStop = $queryBuilder->expr()->orX(
-                            $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStop'], '""'),
-                            $queryBuilder->expr()->gt($suffixedTable.'.'.$dca['config']['langStop'], ':'.$dca['config']['langStop'].'_time')
-                        );
-
-                        $and->add($orStop);
-                        $queryBuilder->setParameter(':'.$dca['config']['langStop'].'_time', $time + 60);
+                foreach ($dca['fields'] as $field => $data) {
+                    if (!isset($data['sql'])) {
+                        continue;
                     }
 
-                    $and->add($queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langPublished'], 1));
-
-                    $queryBuilder->andWhere($and);
+                    if ('*' === $data['eval']['translatableFor'] || $data['eval']['translatableFor'] === $GLOBALS['TL_LANGUAGE']) {
+                        $fieldNames[] = $suffixedTable.'.'.$field;
+                    } else {
+                        $fieldNames[] = $filter->dataContainer.'.'.$field;
+                    }
                 }
+
+                $fields = implode(', ', $fieldNames);
+
+                // add support for dc multilingual utils
+                if ($this->isDcMultilingualUtilsActive($listConfig, $dca)) {
+                    if (isset($dca['config']['langPublished']) && isset($dca['fields'][$dca['config']['langPublished']]) && \is_array($dca['fields'][$dca['config']['langPublished']])) {
+                        $and = $queryBuilder->expr()->andX();
+
+                        if (isset($dca['config']['langStart']) && isset($dca['fields'][$dca['config']['langStart']]) && \is_array($dca['fields'][$dca['config']['langStart']]) &&
+                            isset($dca['config']['langStop']) && isset($dca['fields'][$dca['config']['langStop']]) && \is_array($dca['fields'][$dca['config']['langStop']])) {
+                            $time = Date::floorToMinute();
+
+                            $orStart = $queryBuilder->expr()->orX(
+                                $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStart'], '""'),
+                                $queryBuilder->expr()->lte($suffixedTable.'.'.$dca['config']['langStart'], ':'.$dca['config']['langStart'].'_time')
+                            );
+
+                            $and->add($orStart);
+                            $queryBuilder->setParameter(':'.$dca['config']['langStart'].'_time', $time);
+
+                            $orStop = $queryBuilder->expr()->orX(
+                                $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStop'], '""'),
+                                $queryBuilder->expr()->gt($suffixedTable.'.'.$dca['config']['langStop'], ':'.$dca['config']['langStop'].'_time')
+                            );
+
+                            $and->add($orStop);
+                            $queryBuilder->setParameter(':'.$dca['config']['langStop'].'_time', $time + 60);
+                        }
+
+                        $and->add($queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langPublished'], 1));
+
+                        $queryBuilder->andWhere($and);
+                    }
+                }
+            } else {
+                // exclude translated records
+                $andNoLangPid = $queryBuilder->expr()->andX(
+                    $queryBuilder->expr()->eq($filter->dataContainer.'.'.$dca['config']['langPid'], '0'),
+                );
+
+                $queryBuilder->andWhere($andNoLangPid);
+
+                $fields = implode(', ', array_map(function ($field) use ($filter) {
+                    return $filter->dataContainer.'.'.$field;
+                }, $dbFields));
             }
-        } else {
-            $fields = implode(', ', array_map(function ($field) use ($filter) {
-                return $filter->dataContainer.'.'.$field;
-            }, $dbFields));
         }
 
         $this->setIsSubmitted($isSubmitted);
@@ -292,15 +301,13 @@ class DefaultList implements ListInterface, \JsonSerializable
 
     public function isDcMultilingualActive(ListConfigModel $listConfig, array $dca)
     {
-        return $GLOBALS['TL_LANGUAGE'] !== $dca['config']['fallbackLang'] &&
-            $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.container')->isBundleActive(
+        return $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.container')->isBundleActive(
                 'Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle');
     }
 
     public function isDcMultilingualUtilsActive(ListConfigModel $listConfig, array $dca)
     {
-        return $GLOBALS['TL_LANGUAGE'] !== $dca['config']['fallbackLang'] &&
-            $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.container')->isBundleActive(
+        return $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.container')->isBundleActive(
                 'HeimrichHannot\DcMultilingualUtilsBundle\ContaoDcMultilingualUtilsBundle');
     }
 

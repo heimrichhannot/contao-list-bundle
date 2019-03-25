@@ -8,6 +8,7 @@
 
 namespace HeimrichHannot\ListBundle\Pagination;
 
+use Contao\Controller;
 use Contao\System;
 use Contao\Template;
 
@@ -27,6 +28,7 @@ class RandomPagination extends \Contao\Pagination
         $forceParam = false
     ) {
         $this->randomSeed = $randomSeed;
+        Controller::loadLanguageFile('default');
 
         parent::__construct($rows, $perPage, $numberOfLinks, $parameter, $template, $forceParam);
     }

@@ -5,6 +5,7 @@ let jQuery = require('jquery');
         init: function() {
             listBundle.initPagination();
             listBundle.initMasonry();
+            listBundle.initObserver();
         },
         initPagination: function() {
             $('.huh-list .ajax-pagination').each(function() {
@@ -115,6 +116,31 @@ let jQuery = require('jquery');
                     });
                 });
             });
+        },
+        initObserver: function() {
+            let initialized = false,
+                observer = new MutationObserver(function(mutations){
+                mutations.forEach((mutation) => {
+                    if(mutation.target.getAttribute('data-submit-success') && mutation.target.querySelector('[data-range]') && !initialized) {
+                        listBundle.updateList(mutation.target);
+                        initialized = true;
+                    }
+                });
+            });
+
+
+            document.querySelectorAll('.mod_filter form').forEach((form) => {
+                observer.observe(form, {attributes:true, childList:true, cahracterData:true});
+            });
+        },
+        updateList: function(target) {
+            let data = JSON.parse(target.getAttribute('data-response')),
+                id = target.getAttribute('data-list'),
+                list = document.querySelector(id).parentNode;
+
+            list.innerHTML = data.list;
+
+            listBundle.initObserver();
         }
     };
 

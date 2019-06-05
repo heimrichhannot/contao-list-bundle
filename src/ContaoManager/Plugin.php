@@ -14,6 +14,7 @@ use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Config\ContainerBuilder;
 use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
+use HeimrichHannot\FilterBundle\HeimrichHannotContaoFilterBundle;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
 
@@ -25,7 +26,7 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create(HeimrichHannotContaoListBundle::class)->setLoadAfter([ContaoCoreBundle::class]),
+            BundleConfig::create(HeimrichHannotContaoListBundle::class)->setLoadAfter([ContaoCoreBundle::class, HeimrichHannotContaoFilterBundle::class]),
         ];
     }
 

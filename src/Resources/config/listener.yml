@@ -5,3 +5,7 @@ services:
               - "@contao.framework"
               - "@huh.list.list-config-registry"
               - "@huh.list.manager.list"
+
+  HeimrichHannot\ListBundle\EventListener\ModifyJsonResponseEventListener:
+        tags:
+              - { name: kernel.event_listener, event: huh.filter.event.modify_json_response_event, method: modifyResponse }

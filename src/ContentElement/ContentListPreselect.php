@@ -236,10 +236,9 @@ class ContentListPreselect extends ContentElement
             return $wildcard;
         }
 
-        try{
+        try {
             $filterConfig = $manager->getFilterConfig();
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return $wildcard;
         }
 

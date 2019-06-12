@@ -170,6 +170,20 @@ interface ListInterface
     public function setItemsFoundText(string $itemsFoundText);
 
     /**
+     * Get all items data.
+     *
+     * @return array
+     */
+    public function getRawItems(): ?array;
+
+    /**
+     * Set all items data.
+     *
+     * @param array $items
+     */
+    public function setRawItems(array $items);
+
+    /**
      * @return array
      */
     public function getItems(): ?array;

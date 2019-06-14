@@ -83,6 +83,11 @@ class DefaultList implements ListInterface, \JsonSerializable
     protected $_items;
 
     /**
+     * @var array
+     */
+    protected $_rawItems;
+
+    /**
      * @var string
      */
     protected $_pagination;
@@ -288,6 +293,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             }
 
             $this->setItems($this->parseItems($items, $itemTemplate));
+            $this->setRawItems($items);
         }
 
         // render
@@ -374,6 +380,8 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         /** @var ListAfterParseItemsEvent $event */
         $event = $this->_dispatcher->dispatch(ListAfterParseItemsEvent::NAME, new ListAfterParseItemsEvent($items, $results, $this, $listConfig));
+
+        $this->setRawItems($event->getItems());
 
         return $event->getParsedItems();
     }
@@ -838,6 +846,22 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function setItems(array $items)
     {
         $this->_items = $items;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRawItems(): ?array
+    {
+        return $this->_rawItems;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRawItems(array $items)
+    {
+        $this->_rawItems = $items;
     }
 
     /**

@@ -12,31 +12,27 @@ matrix:
   include:
     - php: 7.1
       env: CONTAO_VERSION='4.4.*'
-    - php: 7.2
+    - php: 7.3
       env: CONTAO_VERSION='4.4.*'
     - php: 7.1
-      env: CONTAO_VERSION='4.5.*'
-    - php: 7.2
-      env: CONTAO_VERSION='4.5.*'
-    - php: 7.2
-      env: COVERAGE=1 CONTAO_VERSION='4.5.*'
+      env: CONTAO_VERSION='4.7.*'
+    - php: 7.3
+      env: CONTAO_VERSION='4.7.*'
+    - php: 7.3
+      env: COVERAGE=1 CONTAO_VERSION='4.7.*'
   allow_failures:
     - env: COVERAGE=1 DEFAULT=0
   fast_finish: true
 before_install:
 - if [[ "$COVERAGE" != "1" ]]; then phpenv config-rm xdebug.ini || true; fi
-- composer require contao/core-bundle:${CONTAO_VERSION} --no-update
 install:
-- composer update $COMPOSER_FLAGS --no-interaction --no-suggest
+- composer require contao/core-bundle:${CONTAO_VERSION} --no-update
 notifications:
   email:
     recipients:
     - digitales@heimrich-hannot.de
     on_success: never
     on_failure: always
-  hipchat:
-    rooms:
-      secure:  vN77hw6bknJvng66dmlU3dHAcZYlX8SoLspxSa6ndKdho/NM3CZHuG8dCbvQ0ZB24A5Uy/vAUV86hMq3C8Ndi5Umvfd2Sf/N0WYduETg1t3CE8YPgMrXn/FYs5pTbQEF7zOVZV1oityuij3ustabD5oido9Ubf9I3PIjsqOcOLOdvumG2TZpKvcoK1/yRbYQmDV+CWib+TvD1V32gpIEnuZJy3Vq8CsNj8fB7nR8q1eJOWP2V2TgK5ecz++i/7NloRexgSJqaEH4rBX3CFN+ctpO29/Fmke9B8VVr1GzLEuwgL5E/l8vDZ+JITYoi4QsfSH2F/uiCIM6eRjaumPtm04IepA7z/v6cTM1KRF574kw3cFMyjYnVt6hJJbj4lnGmcGG0MkXC8mh3JCiV1C6oD0F2a3hu1KW36bCh4EfkY9jcbmaUdm2hodixV/eKsVpnMZaxeFGcbMFoTMjkIEAmVWFznxAADdEGS+lXgd9L0xIJyEn3HO/2LhfPP7poK/jTnwkUeQjvc1GCAywJqRPHd/EkryDNLHiGKesmLAiI3FK1LamLl6Jcqy7lthztoPAdrP7eFX2zxdZvGs4xwXQMALpyNIYVOdzs621Ir3HELVUjxhe4bzY9XbJ868Y5Idkop8jIPk5ESuLVyvWM9y+P3Z30mr9tsSDy4WsOIQCtEM=
 before_script:
 - travis_wait composer install --no-interaction
 script:

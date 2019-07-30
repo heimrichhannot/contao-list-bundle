@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addAjaxPagination',
             'addMasonry',
         ],
-        'default'      => '{general_legend},title,parentListConfig;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry,addDcMultilingualSupport;'.'{search_legend},noSearch;'.'{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
+        'default'      => '{general_legend},title,parentListConfig;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry,addDcMultilingualSupport;'.'{search_legend},noSearch,doNotIndexItems;'.'{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
     ],
     'subpalettes' => [
         'showItemCount'                                                                   => 'itemCountText',
@@ -136,6 +136,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'exclude'          => true,
             'filter'           => true,
             'inputType'        => 'select',
+            'sorting'          => true,
             'options_callback' => function (DataContainer $dc) {
                 return \Contao\System::getContainer()->get('huh.list.choice.parent-list-config')->getCachedChoices(
                     [
@@ -164,6 +165,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType'        => 'select',
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['list'],
             'options_callback' => ['huh.list.choice.list', 'getChoices'],
+            'search'           => true,
+            'filter'           => true,
             'eval'             => [
                 'chosen'             => true,
                 'includeBlankOption' => true,
@@ -177,6 +180,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType'        => 'select',
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['item'],
             'options_callback' => ['huh.list.choice.item', 'getChoices'],
+            'search'           => true,
+            'filter'           => true,
             'eval'             => [
                 'chosen'             => true,
                 'includeBlankOption' => true,
@@ -216,7 +221,6 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'itemCountText'               => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['itemCountText'],
             'exclude'          => true,
-            'search'           => true,
             'inputType'        => 'select',
             'options_callback' => function (\DataContainer $dc) {
                 return \Contao\System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.count.text');
@@ -314,7 +318,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'sortingField'                => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['sortingField'],
             'exclude'          => true,
-            'filter'           => true,
+            'search'           => true,
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc) {
                 return \HeimrichHannot\ListBundle\Util\ListConfigHelper::getFields($dc);
@@ -326,7 +330,6 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'sortingDirection'            => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['sortingDirection'],
             'exclude'   => true,
-            'filter'    => true,
             'inputType' => 'select',
             'options'   => \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_DIRECTIONS,
             'reference' => &$GLOBALS['TL_LANG']['tl_list_config']['reference'],
@@ -363,7 +366,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'aliasField'                  => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['aliasField'],
             'exclude'          => true,
-            'filter'           => true,
+            'filter'           => false,
+            'search'           => true,
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc) {
                 return \HeimrichHannot\ListBundle\Util\ListConfigHelper::getFields($dc);
@@ -483,12 +487,22 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'eval'             => ['tl_class' => 'w50 clr', 'includeBlankOption' => true],
             'sql'              => "varchar(128) NOT NULL default ''",
         ],
-        'noSearch'                    => [
+        'noSearch'        => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['noSearch'],
             'exclude'   => true,
             'inputType' => 'checkbox',
             'default'   => true,
+            'search'    => true,
             'eval'      => ['tl_class' => 'w50 clr'],
+            'sql'       => "char(1) NOT NULL default ''",
+        ],
+        'doNotIndexItems' => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['doNotIndexItems'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'search'    => true,
+            'default'   => true,
+            'eval'      => ['tl_class' => 'w50'],
             'sql'       => "char(1) NOT NULL default ''",
         ],
     ],

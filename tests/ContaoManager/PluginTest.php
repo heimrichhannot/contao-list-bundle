@@ -15,6 +15,7 @@ use Contao\ManagerPlugin\PluginLoader;
 use Contao\TestCase\ContaoTestCase;
 use HeimrichHannot\ListBundle\ContaoManager\Plugin;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
+use PHPUnit\Framework\MockObject\Matcher\InvokedCount;
 
 class PluginTest extends ContaoTestCase
 {
@@ -51,12 +52,12 @@ class PluginTest extends ContaoTestCase
     /**
      * Mocks the plugin loader.
      *
-     * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects
-     * @param array                                              $plugins
+     * @param InvokedCount $expects
+     * @param array $plugins
      *
      * @return PluginLoader|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function mockPluginLoader(\PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects, array $plugins = [])
+    private function mockPluginLoader(InvokedCount $expects, array $plugins = [])
     {
         $pluginLoader = $this->createMock(PluginLoader::class);
 

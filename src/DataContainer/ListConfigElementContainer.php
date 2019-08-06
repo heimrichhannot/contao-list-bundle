@@ -13,8 +13,10 @@ namespace HeimrichHannot\ListBundle\DataContainer;
 
 
 use Contao\BackendUser;
+use Contao\Config;
 use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\Database;
+use Contao\Date;
 use Contao\DC_Table;
 use Contao\System;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
@@ -84,6 +86,6 @@ class ListConfigElementContainer
         $reference = $GLOBALS['TL_DCA']['tl_list_config_element']['fields']['type']['reference'];
         return '<div class="tl_content_left">'.($rows['title'] ?: $rows['id']).' <span style="color:#b3b3b3; padding-left:3px">['
             .$reference[$rows['type']].'] ('
-            .\Date::parse(\Contao\Config::get('datimFormat'), trim($rows['dateAdded'])).')</span></div>';
+            .Date::parse(Config::get('datimFormat'), trim($rows['dateAdded'])).')</span></div>';
     }
 }

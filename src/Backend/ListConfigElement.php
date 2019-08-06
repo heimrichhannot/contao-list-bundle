@@ -31,12 +31,6 @@ class ListConfigElement extends Backend
         self::PLACEHOLDER_IMAGE_MODE_SIMPLE,
     ];
 
-    public function listChildren($arrRow)
-    {
-        return '<div class="tl_content_left">'.($arrRow['title'] ?: $arrRow['id']).' <span style="color:#b3b3b3; padding-left:3px">['
-               .\Date::parse(\Contao\Config::get('datimFormat'), trim($arrRow['dateAdded'])).']</span></div>';
-    }
-
     public function checkPermission()
     {
         $user = BackendUser::getInstance();

@@ -16,8 +16,10 @@ use HeimrichHannot\ListBundle\Backend\ListConfigElement;
 use HeimrichHannot\ListBundle\Item\ItemInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 
-class ImageConfigElementType implements ConfigElementType
+class ImageConfigElementType implements ListConfigElementTypeInterface
 {
+    const TYPE = 'image';
+
     /**
      * @var ContaoFrameworkInterface
      */
@@ -120,5 +122,35 @@ class ImageConfigElementType implements ConfigElementType
         }
 
         return $image;
+    }
+
+    /**
+     * Return the list config element type alias.
+     *
+     * @return string
+     */
+    public static function getType(): string
+    {
+        return static::TYPE;
+    }
+
+    /**
+     * Return the list config element type palette
+     *
+     * @return string
+     */
+    public function getPalette(): string
+    {
+        return '{config_legend},imageSelectorField,imageField,imgSize,placeholderImageMode;';
+    }
+
+    /**
+     * Update the item data.
+     *
+     * @param ListConfigElementData $configElementData
+     */
+    public function addToListItemData(ListConfigElementData $configElementData): void
+    {
+        $this->addToItemData($configElementData->getItem(), $configElementData->getListConfigElement());
     }
 }

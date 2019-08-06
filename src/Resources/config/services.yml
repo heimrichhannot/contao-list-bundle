@@ -39,20 +39,9 @@ services:
     arguments:
     - "@contao.framework"
 
-  huh.list.list-config-element-registry:
-    class: HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry
-    arguments:
-    - "@contao.framework"
-
-  huh.list.datacontainer.module:
-    class: HeimrichHannot\ListBundle\DataContainer\ModuleContainer
-    public: true
+  HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry:
     autowire: true
-
-  huh.list.datacontainer.content:
-    class: HeimrichHannot\ListBundle\DataContainer\ContentContainer
-    public: true
-    autowire: true
+  huh.list.list-config-element-registry: '@HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry'
 
   huh.list.choice.manager:
     class: HeimrichHannot\ListBundle\Choice\ManagerChoice
@@ -109,3 +98,8 @@ services:
   # Symfony 4 autowire convention fix (ambiguous namespace alias)
   HeimrichHannot\ListBundle\Registry\ListConfigRegistry: '@huh.list.list-config-registry'
   HeimrichHannot\ListBundle\Util\ListManagerUtil: '@huh.list.util.manager'
+
+  # List config element types
+  HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType:
+    autowire: true
+    tags: ['huh.list.config_element_type']

@@ -11,7 +11,9 @@ $lang['tstamp'] = ['Revision date', ''];
 /**
  * Legends
  */
-$lang['general_legend'] = 'General settings';
+$lang['general_legend']  = 'General settings';
+$lang['config_legend']   = 'Configuration';
+$lang['template_legend'] = 'Template';
 
 /**
  * Buttons

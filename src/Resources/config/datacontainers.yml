@@ -1,0 +1,15 @@
+services:
+  _defaults:
+    autowire: true
+    public: true
+
+  HeimrichHannot\ListBundle\DataContainer\ContentContainer: ~
+  huh.list.datacontainer.content: '@HeimrichHannot\ListBundle\DataContainer\ContentContainer'
+
+  HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer: ~
+
+  HeimrichHannot\ListBundle\DataContainer\ModuleContainer: ~
+  huh.list.datacontainer.module: '@HeimrichHannot\ListBundle\DataContainer\ModuleContainer'
+
+
+

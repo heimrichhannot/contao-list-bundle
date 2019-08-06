@@ -124,11 +124,19 @@ huh:
 ```
 
 
+### Add list config element types
+
+1. Create a class that implements `HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementTypeInterface`
+1. Register the class as service with service tag `huh.list.config_element_type`
+1. Add a friendly type name (translation) into the `$GLOBALS['TL_LANG']['tl_list_config_element']['reference']` variable
+
+    ```php
+    $lang['reference'][\HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType::TYPE] = 'Image';
+    ```
+
 ### Masonry
 
-#### Template
-
-##### Stamps
+#### Stamps
 
 Stamp content is found in `masonryStampContentElements` template variable.
 

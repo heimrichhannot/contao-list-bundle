@@ -10,6 +10,7 @@ namespace HeimrichHannot\ListBundle\Registry;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\System;
+use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 
 class ListConfigElementRegistry
@@ -20,6 +21,11 @@ class ListConfigElementRegistry
     protected $framework;
 
     /**
+     * @var ListConfigElementTypeInterface[]|array
+     */
+    protected $configElementTypes = [];
+
+    /**
      * Constructor.
      *
      * @param ContaoFrameworkInterface $framework
@@ -28,6 +34,37 @@ class ListConfigElementRegistry
     {
         $this->framework = $framework;
     }
+
+    /**
+     * Add a list config element type to the registry
+     *
+     * @param ListConfigElementTypeInterface $listConfigElementType
+     */
+    public function addListConfigElementType(ListConfigElementTypeInterface $listConfigElementType): void
+    {
+        $this->configElementTypes[$listConfigElementType::getType()] = $listConfigElementType;
+    }
+
+    /**
+     * Get a list config element type from the registry
+     *
+     * @param string $type
+     * @return ListConfigElementTypeInterface|null
+     */
+    public function getListConfigElementType(string $type): ?ListConfigElementTypeInterface
+    {
+        return isset($this->configElementTypes[$type]) ? $this->configElementTypes[$type] : NULL;
+    }
+
+    /**
+     * @return array|ListConfigElementTypeInterface[]
+     */
+    public function getConfigElementTypes()
+    {
+        return $this->configElementTypes;
+    }
+
+
 
     /**
      * Adapter function for the model's findBy method.
@@ -101,6 +138,8 @@ class ListConfigElementRegistry
      * @param $name
      *
      * @return string|null
+     *
+     * @deprecated Will be removed next major version
      */
     public function getElementClassByName($name)
     {

@@ -12,6 +12,12 @@ use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use HeimrichHannot\ListBundle\Item\ItemInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 
+/**
+ * Interface ConfigElementType
+ * @package HeimrichHannot\ListBundle\ConfigElementType
+ *
+ * @deprecated Use ListConfigElementTypeInterface instead
+ */
 interface ConfigElementType
 {
     public function __construct(ContaoFrameworkInterface $framework);

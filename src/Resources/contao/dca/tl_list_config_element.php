@@ -7,6 +7,9 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         'dataContainer'     => 'Table',
         'ptable'            => 'tl_list_config',
         'enableVersioning'  => true,
+        'onload_callback' => [
+            [\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::class, 'onLoadCallback']
+        ],
         'onsubmit_callback' => [
             ['huh.utils.dca', 'setDateAdded'],
         ],
@@ -30,7 +33,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'fields'                => ['title'],
             'headerFields'          => ['title'],
             'panelLayout'           => 'filter;sort,search,limit',
-            'child_record_callback' => ['HeimrichHannot\ListBundle\Backend\ListConfigElement', 'listChildren'],
+            'child_record_callback' => [\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::class, 'listChildren'],
         ],
         'global_operations' => [
             'all' => [
@@ -70,7 +73,6 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'placeholderImageMode',
         ],
         'default'                                                        => '{title_type_legend},title,type;',
-        \HeimrichHannot\ListBundle\Backend\ListConfigElement::TYPE_IMAGE => '{title_type_legend},title,type,templateVariable;{config_legend},imageSelectorField,imageField,imgSize,placeholderImageMode;',
     ],
     'subpalettes' => [
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE   => 'placeholderImage',
@@ -100,6 +102,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['title'],
             'exclude'   => true,
             'search'    => true,
+            'sorting'   => true,
             'inputType' => 'text',
             'eval'      => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
             'sql'       => "varchar(255) NOT NULL default ''",
@@ -108,8 +111,9 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['type'],
             'exclude'   => true,
             'filter'    => true,
+            'sorting'   => true,
             'inputType' => 'select',
-            'options'   => \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getConfigElementTypes(),
+            'options_callback'   => [\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::class, 'getConfigElementTypes'],
             'reference' => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
             'eval'      => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true],
             'sql'       => "varchar(64) NOT NULL default ''",
@@ -146,7 +150,6 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         'placeholderImageMode'   => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['placeholderImageMode'],
             'exclude'   => true,
-            'filter'    => true,
             'inputType' => 'select',
             'options'   => \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODES,
             'reference' => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],

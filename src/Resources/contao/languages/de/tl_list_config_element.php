@@ -32,12 +32,13 @@ $lang['genderField'][1]            = 'Wählen Sie hier das Feld aus, das das Ges
  */
 $lang['title_type_legend'] = 'Allgemeines';
 $lang['config_legend']     = 'Konfiguration';
+$lang['template_legend']   = 'Template';
 
 /**
  * Reference
  */
 $lang['reference'] = [
-    \HeimrichHannot\ListBundle\Backend\ListConfigElement::TYPE_IMAGE                      => 'Bild',
+    \HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType::TYPE             => 'Bild',
     \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE   => 'einfach',
     \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'geschlechtsspezifisch',
 ];

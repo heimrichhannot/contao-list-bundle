@@ -14,9 +14,11 @@ use Contao\Environment;
 use Contao\StringUtil;
 use Contao\System;
 use HeimrichHannot\ListBundle\ConfigElementType\ConfigElementType;
+use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementData;
 use HeimrichHannot\ListBundle\Event\ListBeforeRenderItemEvent;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
+use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
 
@@ -329,17 +331,23 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
 
         // add list config element data
+        /** @var ListConfigElementModel[] $listConfigElements */
         if (null !== ($listConfigElements = $this->_manager->getListConfigElementRegistry()->findBy(['pid=?'], [$listConfig->id]))) {
             foreach ($listConfigElements as $listConfigElement) {
-                if (null === ($class = $this->_manager->getListConfigElementRegistry()->getElementClassByName($listConfigElement->type))) {
-                    continue;
+                if ($listConfigElementType = $this->_manager->getListConfigElementRegistry()->getListConfigElementType($listConfigElement->type)) {
+                    $listConfigElementType->addToListItemData(new ListConfigElementData($this, $listConfigElement));
                 }
+                else {
+                    if (null === ($class = $this->_manager->getListConfigElementRegistry()->getElementClassByName($listConfigElement->type))) {
+                        continue;
+                    }
 
-                /**
-                 * @var ConfigElementType
-                 */
-                $type = $this->_manager->getFramework()->createInstance($class, [$this->_manager->getFramework()]);
-                $type->addToItemData($this, $listConfigElement);
+                    /**
+                     * @var ConfigElementType
+                     */
+                    $type = $this->_manager->getFramework()->createInstance($class, [$this->_manager->getFramework()]);
+                    $type->addToItemData($this, $listConfigElement);
+                }
             }
         }
 

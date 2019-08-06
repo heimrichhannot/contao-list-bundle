@@ -35,18 +35,4 @@ class ListConfigElementHelper
             'inputTypes' => ['checkbox'],
         ]);
     }
-
-    public static function getConfigElementTypes()
-    {
-        $types = [];
-
-        $listConfig = System::getContainer()->getParameter('huh.list');
-        $configElementTypes = $listConfig['list']['config_element_types'];
-
-        foreach ($configElementTypes as $configElementType) {
-            $types[] = $configElementType['name'];
-        }
-
-        return $types;
-    }
 }

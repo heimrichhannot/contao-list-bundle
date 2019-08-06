@@ -8,7 +8,9 @@
 
 namespace HeimrichHannot\ListBundle;
 
+use HeimrichHannot\ListBundle\DependencyInjection\Compiler\ListCompilerPass;
 use HeimrichHannot\ListBundle\DependencyInjection\ListExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class HeimrichHannotContaoListBundle extends Bundle
@@ -22,4 +24,11 @@ class HeimrichHannotContaoListBundle extends Bundle
     {
         return new ListExtension();
     }
+
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new ListCompilerPass());
+    }
+
+
 }

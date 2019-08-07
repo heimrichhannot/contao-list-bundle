@@ -39,7 +39,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
             $imageSelectorField = $listConfigElement->imageSelectorField;
             $image = $item->getRawValue($listConfigElement->imageField);
             $imageField = $listConfigElement->imageField;
-        } elseif (!$listConfigElement->imageSelectorField && $item->getRawValue($listConfigElement->imageField)) {
+        } elseif (!$listConfigElement->imageSelectorField && $listConfigElement->imageField && $item->getRawValue($listConfigElement->imageField)) {
             $imageSelectorField = '';
             $image = $item->getRawValue($listConfigElement->imageField);
             $imageField = $listConfigElement->imageField;

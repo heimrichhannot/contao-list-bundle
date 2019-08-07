@@ -14,6 +14,7 @@ use Contao\FilesModel;
 use Contao\System;
 use Contao\TestCase\ContaoTestCase;
 use HeimrichHannot\ListBundle\Backend\ListConfigElement;
+use HeimrichHannot\ListBundle\Item\DefaultItem;
 use HeimrichHannot\ListBundle\Item\ItemInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
@@ -180,5 +181,34 @@ class ImageConfigElementTypeTest extends ContaoTestCase
         $this->assertSame('male', $configElement->getGenderedPlaceholderImage($item, $listConfigElement));
         $this->assertSame('female', $configElement->getGenderedPlaceholderImage($item, $listConfigElement));
         $this->assertSame('male', $configElement->getGenderedPlaceholderImage($item, $listConfigElement));
+    }
+
+    public function testGetType()
+    {
+        $this->assertSame(ImageConfigElementType::getType(), ImageConfigElementType::TYPE);
+    }
+
+    public function testGetGetPalette()
+    {
+        $framework = $this->mockContaoFramework();
+        $configElement = new ImageConfigElementType($framework);
+        $this->assertStringStartsWith('{config_legend},imageSelectorField', $configElement->getPalette());
+    }
+
+    public function testAddToListItemData()
+    {
+        /** @var ItemInterface $item */
+        $item = $this->mockClassWithProperties(DefaultItem::class, []);
+        $listConfigElementModel = $this->mockClassWithProperties(ListConfigElementModel::class, []);
+        $data = new ListConfigElementData($item, $listConfigElementModel);
+
+        $imageConfigElementType = new ImageConfigElementType($this->mockContaoFramework());
+
+        $before = $item->getRaw();
+
+        $imageConfigElementType->addToListItemData($data);
+
+        $this->assertSame($before, $item->getRaw());
+
     }
 }

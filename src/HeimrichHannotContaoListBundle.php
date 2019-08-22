@@ -29,6 +29,4 @@ class HeimrichHannotContaoListBundle extends Bundle
     {
         $container->addCompilerPass(new ListCompilerPass());
     }
-
-
 }

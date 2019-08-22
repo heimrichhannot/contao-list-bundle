@@ -336,8 +336,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
             foreach ($listConfigElements as $listConfigElement) {
                 if ($listConfigElementType = $this->_manager->getListConfigElementRegistry()->getListConfigElementType($listConfigElement->type)) {
                     $listConfigElementType->addToListItemData(new ListConfigElementData($this, $listConfigElement));
-                }
-                else {
+                } else {
                     if (null === ($class = $this->_manager->getListConfigElementRegistry()->getElementClassByName($listConfigElement->type))) {
                         continue;
                     }

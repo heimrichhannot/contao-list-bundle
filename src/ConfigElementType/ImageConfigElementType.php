@@ -135,7 +135,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
     }
 
     /**
-     * Return the list config element type palette
+     * Return the list config element type palette.
      *
      * @return string
      */

@@ -1,8 +1,13 @@
+/composer.lock
+/vendor
+/node_modules
 .idea
 Thumbs.db
 .DS_Store
 .sass-cache
-/vendor
-component
+/build
 composer.lock
 composer.json~
+composer.phar
+yarn.lock
+yarn-error.log

@@ -1,16 +1,12 @@
 <?php
-/**
- * Contao Open Source CMS
- *
+
+/*
  * Copyright (c) 2019 Heimrich & Hannot GmbH
  *
- * @author  Thomas Körner <t.koerner@heimrich-hannot.de>
- * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
+ * @license LGPL-3.0-or-later
  */
 
-
 namespace HeimrichHannot\ListBundle\Test\DataContainer;
-
 
 use Contao\DC_Table;
 use Contao\TestCase\ContaoTestCase;
@@ -31,9 +27,9 @@ class ListConfigElementContainerTest extends ContaoTestCase
             'list' => [
                 'config_element_types' => [
                     ['name' => 'image'],
-                    ['name' => 'watchlist']
-                ]
-            ]
+                    ['name' => 'watchlist'],
+                ],
+            ],
         ]);
 
         $configElementRegistry = $this->createMock(ListConfigElementRegistry::class);
@@ -54,7 +50,7 @@ class ListConfigElementContainerTest extends ContaoTestCase
         $configElementRegistry = $this->createMock(ListConfigElementRegistry::class);
         $configElementRegistry->method('getConfigElementTypes')->willReturn(['image' => $imageConfigElementType]);
         $listConfigElementContainer = new ListConfigElementContainer($configElementRegistry, $container);
-        
+
         $GLOBALS['TL_DCA'][ListConfigElementModel::getTable()]['palettes'] = [];
 
         $listConfigElementContainer->onLoadCallback([$this->createMock(DC_Table::class)]);
@@ -78,27 +74,26 @@ class ListConfigElementContainerTest extends ContaoTestCase
             'list' => [
                 'config_element_types' => [
                     ['name' => 'image'],
-                    ['name' => 'watchlist']
-                ]
-            ]
+                    ['name' => 'watchlist'],
+                ],
+            ],
         ]);
 
         $GLOBALS['TL_DCA']['tl_list_config_element']['fields']['type']['reference'] = [
             'image' => 'Image',
-            'watchlist' => 'Watchlist'
+            'watchlist' => 'Watchlist',
         ];
 
         $configElementRegistry = $this->createMock(ListConfigElementRegistry::class);
         $configElementRegistry->method('getConfigElementTypes')->willReturn(['image' => $imageConfigElementType]);
         $listConfigElementContainer = new ListConfigElementContainer($configElementRegistry, $container);
 
+        $result = $listConfigElementContainer->listChildren(['title' => 'Hallo', 'id' => 1, 'type' => 'image', 'dateAdded' => 0]);
+        $this->assertNotFalse(stripos($result, 'Hallo'));
+        $this->assertNotFalse(stripos($result, 'Image'));
 
-       $result = $listConfigElementContainer->listChildren(['title' => 'Hallo', 'id' => 1, 'type' => 'image', 'dateAdded' => 0]);
-       $this->assertNotFalse(stripos($result, 'Hallo'));
-       $this->assertNotFalse(stripos($result, 'Image'));
-
-       $result = $listConfigElementContainer->listChildren(['title' => '','id' => 1, 'type' => 'watchlist', 'dateAdded' => 951184922]);
-       $this->assertNotFalse(stripos($result, '1'));
-       $this->assertNotFalse(stripos($result, 'Watchlist'));
+        $result = $listConfigElementContainer->listChildren(['title' => '', 'id' => 1, 'type' => 'watchlist', 'dateAdded' => 951184922]);
+        $this->assertNotFalse(stripos($result, '1'));
+        $this->assertNotFalse(stripos($result, 'Watchlist'));
     }
 }

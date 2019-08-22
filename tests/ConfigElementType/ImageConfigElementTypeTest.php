@@ -209,6 +209,5 @@ class ImageConfigElementTypeTest extends ContaoTestCase
         $imageConfigElementType->addToListItemData($data);
 
         $this->assertSame($before, $item->getRaw());
-
     }
 }

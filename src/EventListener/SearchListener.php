@@ -42,11 +42,12 @@ class SearchListener
      * Add list items as searchable pages.
      *
      * @param array $arrPages
-     * @param int $intRoot
-     * @param bool $blnIsSitemap
+     * @param int   $intRoot
+     * @param bool  $blnIsSitemap
+     *
+     * @throws \ReflectionException
      *
      * @return array
-     * @throws \ReflectionException
      */
     public function getSearchablePages(array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false): array
     {
@@ -58,6 +59,7 @@ class SearchListener
             if ($listConfig->doNotIndexItems) {
                 continue;
             }
+
             if (null !== ($listClass = $this->manager->getListByName($listConfig->list ?: 'default'))) {
                 $reflection = new \ReflectionClass($listClass);
 

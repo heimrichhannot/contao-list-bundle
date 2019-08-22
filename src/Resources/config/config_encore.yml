@@ -1,10 +1,10 @@
 huh:
-    encore:
-        entries:
-            - { name: contao-list-bundle, file: "vendor/heimrichhannot/contao-list-bundle/src/Resources/public/js/jquery.list-bundle.es6.js" }
-        legacy:
-            js:
-                - contao-list-bundle
-                - huh_components_masonry
-                - huh_components_imagesloaded
-                - huh_components_jscroll
+  encore:
+    entries:
+      - { name: contao-list-bundle, file: "vendor/heimrichhannot/contao-list-bundle/src/Resources/assets/js/contao-list-bundle.js"}
+    legacy:
+      js:
+        - contao-list-bundle
+        - huh_components_masonry
+        - huh_components_imagesloaded
+        - huh_components_jscroll

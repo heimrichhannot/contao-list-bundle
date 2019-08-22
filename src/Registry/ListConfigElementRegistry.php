@@ -36,7 +36,7 @@ class ListConfigElementRegistry
     }
 
     /**
-     * Add a list config element type to the registry
+     * Add a list config element type to the registry.
      *
      * @param ListConfigElementTypeInterface $listConfigElementType
      */
@@ -46,14 +46,15 @@ class ListConfigElementRegistry
     }
 
     /**
-     * Get a list config element type from the registry
+     * Get a list config element type from the registry.
      *
      * @param string $type
+     *
      * @return ListConfigElementTypeInterface|null
      */
     public function getListConfigElementType(string $type): ?ListConfigElementTypeInterface
     {
-        return isset($this->configElementTypes[$type]) ? $this->configElementTypes[$type] : NULL;
+        return isset($this->configElementTypes[$type]) ? $this->configElementTypes[$type] : null;
     }
 
     /**
@@ -63,8 +64,6 @@ class ListConfigElementRegistry
     {
         return $this->configElementTypes;
     }
-
-
 
     /**
      * Adapter function for the model's findBy method.

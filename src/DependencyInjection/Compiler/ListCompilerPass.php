@@ -1,16 +1,12 @@
 <?php
-/**
- * Contao Open Source CMS
- *
+
+/*
  * Copyright (c) 2019 Heimrich & Hannot GmbH
  *
- * @author  Thomas Körner <t.koerner@heimrich-hannot.de>
- * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
+ * @license LGPL-3.0-or-later
  */
 
-
 namespace HeimrichHannot\ListBundle\DependencyInjection\Compiler;
-
 
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -19,7 +15,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ListCompilerPass implements CompilerPassInterface
 {
-
     /**
      * You can modify the container here before it is dumped to PHP code.
      */

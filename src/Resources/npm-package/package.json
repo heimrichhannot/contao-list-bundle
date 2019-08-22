@@ -1,0 +1,22 @@
+{
+  "name": "@hundh/contao-list-bundle",
+  "version": "1.0.2",
+  "description": "This package contains the frontend assets of the composer bundle heimrichhannot/contao-list-bundle.",
+  "main": "js/contao-list-bundle.js",
+  "dependencies": {
+    "imagesloaded": "^4.1",
+    "jscroll": "^2.3",
+    "masonry-layout": "^4.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heimrichhannot/contao-list-bundle.git",
+    "directory": "src/Resources/npm-package"
+  },
+  "author": "digitales@heimrich-hannot.de",
+  "license": "LGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/heimrichhannot/contao-list-bundle/issues"
+  },
+  "homepage": "https://github.com/heimrichhannot/contao-contao-list-bundle-bundle#readme"
+}

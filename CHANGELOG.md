@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2019-08-22
+
+### Added
+- list config wizard to list module
+
 ## [1.1.1] - 2019-08-07
 
 #### Fixed

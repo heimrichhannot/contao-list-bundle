@@ -8,6 +8,9 @@
 
 namespace HeimrichHannot\ListBundle\Test\DataContainer;
 
+use Contao\Controller;
+use Contao\DataContainer;
+use Contao\Image;
 use Contao\ModuleModel;
 use Contao\TestCase\ContaoTestCase;
 use HeimrichHannot\ListBundle\DataContainer\ModuleContainer;
@@ -29,5 +32,23 @@ class ModuleContainerTest extends ContaoTestCase
 
         $this->assertSame([], $moduleContainer->getAllListModules());
         $this->assertSame(['1' => 'Module A', '4' => 'Module B'], $moduleContainer->getAllListModules());
+    }
+
+    public function testEditListConfigurationWizard()
+    {
+        $framework = $this->mockContaoFramework([
+            Controller::class => $this->mockAdapter(['loadLanguageFile']),
+            Image::class => $this->mockAdapter(['getHtml']),
+        ]);
+        $moduleContainer = new ModuleContainer($framework);
+        $dataContainer = $this->mockClassWithProperties(DataContainer::class, ['value' => 0]);
+        $this->assertEmpty($moduleContainer->editListConfigurationWizard($dataContainer));
+
+        if (!\defined('REQUEST_TOKEN')) {
+            \define('REQUEST_TOKEN', 'ABCD');
+        }
+        $GLOBALS['TL_LANG']['tl_list_config']['edit'] = ['A', 'B'];
+        $dataContainer = $this->mockClassWithProperties(DataContainer::class, ['value' => 1]);
+        $this->assertStringStartsWith(' <a href="contao?do=list_configs&amp;table=tl_list_config_element&amp;id=1', $moduleContainer->editListConfigurationWizard($dataContainer));
     }
 }

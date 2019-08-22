@@ -20,7 +20,10 @@ $fields = [
         'inputType'  => 'select',
         'foreignKey' => 'tl_list_config.title',
         'relation'   => ['type' => 'belongsTo', 'load' => 'lazy'],
-        'eval'       => ['tl_class' => 'long clr', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
+        'eval'       => ['tl_class' => 'wizard clr', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
+        'wizard'           => [
+            [\HeimrichHannot\ListBundle\DataContainer\ModuleContainer::class, 'editListConfigurationWizard'],
+        ],
         'sql'        => "int(10) unsigned NOT NULL default '0'"
     ],
 ];

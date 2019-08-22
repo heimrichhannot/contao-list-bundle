@@ -8,8 +8,12 @@
 
 namespace HeimrichHannot\ListBundle\DataContainer;
 
+use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\DataContainer;
+use Contao\Image;
 use Contao\ModuleModel;
+use Contao\StringUtil;
 use HeimrichHannot\ListBundle\Module\ModuleList;
 
 class ModuleContainer
@@ -46,5 +50,21 @@ class ModuleContainer
         }
 
         return $listModules;
+    }
+
+    /**
+     * Return the list config wizard.
+     *
+     * @param DataContainer $dc
+     *
+     * @return string
+     */
+    public function editListConfigurationWizard(DataContainer $dc)
+    {
+        $this->framework->getAdapter(Controller::class)->loadLanguageFile('tl_list_config');
+        /** @var Image $image */
+        $image = $this->framework->getAdapter(Image::class);
+
+        return ($dc->value < 1) ? '' : ' <a href="contao?do=list_configs&amp;table=tl_list_config_element&amp;id='.$dc->value.'&amp;popup=1&amp;nb=1&amp;rt='.REQUEST_TOKEN.'" title="'.sprintf(StringUtil::specialchars($GLOBALS['TL_LANG']['tl_list_config']['edit'][1]), $dc->value).'" onclick="Backend.openModalIframe({\'title\':\''.StringUtil::specialchars(str_replace("'", "\\'", sprintf($GLOBALS['TL_LANG']['tl_list_config']['edit'][1], $dc->value))).'\',\'url\':this.href});return false">'.$image->getHtml('alias.svg', $GLOBALS['TL_LANG']['tl_list_config']['edit'][0]).'</a>';
     }
 }

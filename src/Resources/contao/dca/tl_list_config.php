@@ -100,7 +100,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'useAlias'                                                                        => 'aliasField',
         'addDetails'                                                                      => 'jumpToDetails',
         'addShare'                                                                        => 'jumpToShare,shareAutoItem',
-        'addAjaxPagination'                                                               => 'addInfiniteScroll',
+        'addAjaxPagination'                                                               => 'ajaxPaginationTemplate,addInfiniteScroll',
         'addMasonry'                                                                      => 'masonryStampContentElements',
     ],
     'fields'      => [
@@ -421,6 +421,16 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType' => 'checkbox',
             'eval'      => ['submitOnChange' => true, 'tl_class' => 'w50'],
             'sql'       => "char(1) NOT NULL default ''",
+        ],
+        'ajaxPaginationTemplate'                => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['ajaxPaginationTemplate'],
+            'exclude'          => true,
+            'inputType'        => 'select',
+            'options_callback' => function(\Contao\DataContainer $dc) {
+                return \Contao\Controller::getTemplateGroup('pagination');
+            },
+            'eval'             => ['tl_class' => 'w50 clr', 'includeBlankOption' => true],
+            'sql'              => "varchar(128) NOT NULL default ''",
         ],
         'addInfiniteScroll'           => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addInfiniteScroll'],

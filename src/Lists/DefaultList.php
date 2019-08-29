@@ -477,7 +477,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
             // Add the pagination menu
             if ($listConfig->addAjaxPagination) {
-                $pagination = new RandomPagination($randomSeed, $offsettedTotal, $listConfig->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate('pagination_list_ajax'));
+                $pagination = new RandomPagination($randomSeed, $offsettedTotal, $listConfig->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate($listConfig->ajaxPaginationTemplate ?: 'pagination_list_ajax'));
             } else {
                 $pagination = new RandomPagination($randomSeed, $offsettedTotal, $listConfig->perPage, Config::get('maxPaginationLinks'), $id);
             }
@@ -1035,7 +1035,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             $result->setIdOrAlias($idOrAlias);
             $result->addDetailsUrl($idOrAlias, $result, $listConfig, true);
 
-            $url = $result->getDetailsUrl(false);
+            $url = $result->getDetailsUrl($blnIsSitemap);
 
             if (null === $url || empty($url)) {
                 continue;

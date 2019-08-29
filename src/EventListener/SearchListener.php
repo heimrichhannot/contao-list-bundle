@@ -56,6 +56,8 @@ class SearchListener
         }
 
         foreach ($listConfigs as $listConfig) {
+            $listConfig = $this->listConfigRegistry->computeListConfig((int) $listConfig->id);
+
             if ($listConfig->doNotIndexItems) {
                 continue;
             }

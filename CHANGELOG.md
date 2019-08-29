@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2019-08-29
+
+#### Fixed
+- search listener issues
+
+#### Added
+- ajax pagination template
+
 ## [1.3.0] - 2019-08-22
 
 #### Changed

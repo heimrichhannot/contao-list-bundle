@@ -81,6 +81,8 @@ $lang['shareAutoItem'][1] = 'Wählen Sie diese Option aus, um das Share Token al
 // misc
 $lang['addAjaxPagination'][0]           = 'Ajax-Paginierung hinzufügen';
 $lang['addAjaxPagination'][1]           = 'Wählen Sie diese Option, wenn eine Ajax-Paginierung genutzt werden soll. Dafür muss ein Wert > 0 in "Elemente pro Seite" gesetzt sein. Die Seitenzahlen werden durch einen einzelnen "Weiter"-Button ersetzt.';
+$lang['ajaxPaginationTemplate'][0]      = 'IndividuellesTemplate für die Ajax-Paginierung hinzufügen';
+$lang['ajaxPaginationTemplate'][1]      = 'Wählen Sie diese Option, wenn für die Ajax-Paginierung ein individuelles Template genutzt werden soll.';
 $lang['addInfiniteScroll'][0]           = 'Infinite Scroll hinzufügen';
 $lang['addInfiniteScroll'][1]           = 'Wählen Sie diese Option, um die Ajax-Paginierung im UI-Muster "Infinite Scroll" umzusetzen.';
 $lang['addMasonry'][0]                  = 'Masonry hinzufügen';
@@ -93,8 +95,8 @@ $lang['addDcMultilingualSupport'][0]    = 'Support für DC_Multilingual hinzufü
 $lang['addDcMultilingualSupport'][1]    = 'Wählen Sie diese Option, die verknüpfte Entität durch das Bundle "terminal42/contao-DC_Multilingual" übersetzbar ist.';
 
 // search
-$lang['noSearch'][0] = 'Nicht durchsuchen';
-$lang['noSearch'][1] = 'Diese Liste nicht in den Suchindex aufnehmen.';
+$lang['noSearch'][0]        = 'Nicht durchsuchen';
+$lang['noSearch'][1]        = 'Diese Liste nicht in den Suchindex aufnehmen.';
 $lang['doNotIndexItems'][0] = 'Item-Detailseiten nicht indizieren';
 $lang['doNotIndexItems'][1] = 'Die Detailseiten der Items werden nicht in die Liste der durchsuchbaren Seiten aufgenommen.';
 

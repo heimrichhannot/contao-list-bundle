@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2019-09-12
+
+#### Added
+- random placeholder mode for image config element type
+
 ## [1.4.0] - 2019-08-29
 
 #### Fixed

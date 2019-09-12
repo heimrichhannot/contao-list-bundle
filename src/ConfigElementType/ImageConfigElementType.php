@@ -57,6 +57,13 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
                     $image = $listConfigElement->placeholderImage;
 
                     break;
+
+                case ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM:
+                    $images = StringUtil::deserialize($listConfigElement->placeholderImages, true);
+
+                    if (null !== ($randomKey = array_rand($images))) {
+                        $image = $images[$randomKey];
+                    }
             }
         } else {
             return;

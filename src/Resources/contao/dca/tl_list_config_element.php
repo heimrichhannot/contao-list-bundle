@@ -77,6 +77,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
     'subpalettes' => [
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE   => 'placeholderImage',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'genderField,placeholderImage,placeholderImageFemale',
+        'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM   => 'placeholderImages',
     ],
     'fields'      => [
         'id'                     => [
@@ -179,6 +180,13 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'exclude'          => true,
             'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
             'sql'              => "varchar(64) NOT NULL default ''",
+        ],
+        'placeholderImages'       => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['placeholderImages'],
+            'exclude'   => true,
+            'inputType' => 'fileTree',
+            'eval'      => ['tl_class' => 'w50 autoheight', 'fieldType' => 'checkbox', 'filesOnly' => true, 'extensions' => Config::get('validImageTypes'), 'mandatory' => true, 'multiple' => true],
+            'sql'       => "blob NULL",
         ],
     ],
 ];

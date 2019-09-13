@@ -157,6 +157,8 @@ class ListConfigRegistry
             return null;
         }
 
+        $listConfig->rootId = $listConfig->id;
+
         if (!$listConfig->parentListConfig) {
             return $listConfig;
         }
@@ -187,6 +189,9 @@ class ListConfigRegistry
                 );
             }
         }
+
+        $computedListConfig->id = $listConfigPk;
+        $computedListConfig->rootId = $rootListConfig->id;
 
         return $computedListConfig;
     }

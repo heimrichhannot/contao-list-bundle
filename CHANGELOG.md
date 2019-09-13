@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.6.0] - 2019-09-13
+
+#### Fixed
+- inheritance issues
+
+#### Added
+- random placeholder session persistence
+- pagination wrapper support for ajax pagination (.ajax-pagination can now have a wrapper div with the class ".pagination")
+
+## [1.5.1] - 2019-09-13
+
+#### Fixed
+- reset the list config while parsing the items since it might have been reset in parsing process
+
 ## [1.5.0] - 2019-09-12
 
 #### Added

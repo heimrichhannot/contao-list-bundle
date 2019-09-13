@@ -332,7 +332,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
         // add list config element data
         /** @var ListConfigElementModel[] $listConfigElements */
-        if (null !== ($listConfigElements = $this->_manager->getListConfigElementRegistry()->findBy(['pid=?'], [$listConfig->id]))) {
+        if (null !== ($listConfigElements = $this->_manager->getListConfigElementRegistry()->findBy(['pid=?'], [$listConfig->rootId]))) {
             foreach ($listConfigElements as $listConfigElement) {
                 if ($listConfigElementType = $this->_manager->getListConfigElementRegistry()->getListConfigElementType($listConfigElement->type)) {
                     $listConfigElementType->addToListItemData(new ListConfigElementData($this, $listConfigElement));

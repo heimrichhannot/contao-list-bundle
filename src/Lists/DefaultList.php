@@ -343,6 +343,9 @@ class DefaultList implements ListInterface, \JsonSerializable
         $items = $event->getItems() ?: [];
 
         foreach ($items as $item) {
+            // reset the list config since it might have been reset while parsing the items
+            $this->_manager->setListConfig($listConfig);
+
             ++$count;
             $first = 1 == $count ? ' first' : '';
             $last = $count == $limit ? ' last' : '';

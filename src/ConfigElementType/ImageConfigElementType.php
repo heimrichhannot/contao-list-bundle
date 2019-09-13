@@ -19,6 +19,7 @@ use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 class ImageConfigElementType implements ListConfigElementTypeInterface
 {
     const TYPE = 'image';
+    const RANDOM_IMAGE_PLACEHOLDERS_SESSION_KEY = 'huh.random-image-placeholders';
 
     /**
      * @var ContaoFrameworkInterface
@@ -61,9 +62,27 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
                 case ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM:
                     $images = StringUtil::deserialize($listConfigElement->placeholderImages, true);
 
-                    if (null !== ($randomKey = array_rand($images))) {
-                        $image = $images[$randomKey];
+                    $session = System::getContainer()->get('session');
+
+                    $randomImagePlaceholders = [];
+
+                    if (!$session->has(static::RANDOM_IMAGE_PLACEHOLDERS_SESSION_KEY)) {
+                        $session->set(static::RANDOM_IMAGE_PLACEHOLDERS_SESSION_KEY, $randomImagePlaceholders);
+                    } else {
+                        $randomImagePlaceholders = $session->get(static::RANDOM_IMAGE_PLACEHOLDERS_SESSION_KEY);
                     }
+
+                    $dataContainer = System::getContainer()->get('huh.list.manager.list')->getFilterConfig()->getFilter()['dataContainer'];
+
+                    $key = $dataContainer.'_'.$item->getRawValue('id');
+
+                    if (isset($randomImagePlaceholders[$key])) {
+                        $image = $randomImagePlaceholders[$key];
+                    } elseif (null !== ($randomKey = array_rand($images))) {
+                        $image = $randomImagePlaceholders[$key] = $images[$randomKey];
+                    }
+
+                    $session->set(static::RANDOM_IMAGE_PLACEHOLDERS_SESSION_KEY, $randomImagePlaceholders);
             }
         } else {
             return;

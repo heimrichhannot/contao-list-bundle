@@ -69,7 +69,13 @@ class ListBundle {
                                     }
                                 });
 
-                                $jscrollAdded.find('.ajax-pagination').appendTo($jscrollAdded.closest('.jscroll-inner'));
+                                if ($jscrollAdded.find('.pagination').length > 0) {
+                                    $jscrollAdded.closest('.jscroll-inner').find('> .pagination').remove();
+                                    $jscrollAdded.find('.pagination').appendTo($jscrollAdded.closest('.jscroll-inner'));
+                                } else {
+                                    $jscrollAdded.find('.ajax-pagination').appendTo($jscrollAdded.closest('.jscroll-inner'));
+                                }
+
                                 $jscrollAdded.remove();
                             });
                         });

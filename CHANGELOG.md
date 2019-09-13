@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.5.1] - 2019-09-13
+
+#### Fixed
+- reset the list config while parsing the items since it might have been reset in parsing process
+
 ## [1.5.0] - 2019-09-12
 
 #### Added

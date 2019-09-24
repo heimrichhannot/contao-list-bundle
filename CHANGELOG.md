@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.7.2] - 2019-09-24
+
+#### Changed
+- fixed form bug
+
 ## [1.7.1] - 2019-09-24
 
 #### Changed

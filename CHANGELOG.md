@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.7.0] - 2019-09-24
+
+#### Added
+- contact form config element type
+
 ## [1.6.0] - 2019-09-13
 
 #### Fixed

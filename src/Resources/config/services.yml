@@ -103,3 +103,7 @@ services:
   HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType:
     autowire: true
     tags: ['huh.list.config_element_type']
+
+  HeimrichHannot\ListBundle\ConfigElementType\ContactFormConfigElementType:
+    autowire: true
+    tags: ['huh.list.config_element_type']

@@ -188,5 +188,38 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'      => ['tl_class' => 'w50 autoheight', 'fieldType' => 'checkbox', 'filesOnly' => true, 'extensions' => Config::get('validImageTypes'), 'mandatory' => true, 'multiple' => true],
             'sql'       => "blob NULL",
         ],
+        'contactFormExplanation'       => [
+            'inputType' => 'explanation',
+            'eval'      => [
+                'text'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['contactFormExplanation'],
+                'class' => 'tl_info',
+                'tl_class' => 'long',
+            ]
+        ],
+        'submissionReader' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['submissionReader'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'inputType'               => 'select',
+            'options' => [],
+            'reference' => &$GLOBALS['TL_LANG']['tl_']['reference'],
+            'options_callback' => function () {
+                return System::getContainer()->get('huh.utils.choice.model_instance')->getCachedChoices([
+                    'dataContainer' => 'tl_module'
+                ]);
+            },
+            'eval'                    => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
+            'sql'                     => "varchar(64) NOT NULL default ''"
+        ],
+        'emailField'            => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['emailField'],
+            'inputType'        => 'select',
+            'options_callback' => function (DataContainer $dc) {
+                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+            },
+            'exclude'          => true,
+            'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
+            'sql'              => "varchar(64) NOT NULL default ''",
+        ],
     ],
 ];

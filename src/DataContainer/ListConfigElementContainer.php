@@ -40,7 +40,7 @@ class ListConfigElementContainer
      *
      * @return array
      */
-    public function getConfigElementTypes(DC_Table $dcTable)
+    public function getConfigElementTypes(DC_Table $dc)
     {
         $types = array_keys($this->configElementRegistry->getConfigElementTypes());
 
@@ -58,7 +58,7 @@ class ListConfigElementContainer
         return $types;
     }
 
-    public function onLoadCallback($dcTable)
+    public function onLoadCallback($dc)
     {
         $configElementTypes = $this->configElementRegistry->getConfigElementTypes();
 

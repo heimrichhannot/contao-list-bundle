@@ -14,9 +14,9 @@ use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 use Twig\Environment;
 
-class ContactFormConfigElementType implements ListConfigElementTypeInterface
+class SubmissionFormConfigElementType implements ListConfigElementTypeInterface
 {
-    const TYPE = 'contact_form';
+    const TYPE = 'submission_form';
 
     public static $recipientEmail;
     /**
@@ -47,7 +47,7 @@ class ContactFormConfigElementType implements ListConfigElementTypeInterface
 
         $identifier = $table.'_'.$moduleId.$item->getRawValue('id');
 
-        $item->setFormattedValue($configElement->templateVariable ?: 'contactForm', $this->twig->render('@HeimrichHannotContaoList/config_element/contact_form_modal_bootstrap4.html.twig', [
+        $item->setFormattedValue($configElement->templateVariable ?: 'submissionForm', $this->twig->render('@HeimrichHannotContaoList/config_element/submission_form_modal_bootstrap4.html.twig', [
             'identifier' => $identifier,
             'item' => $this,
             'form' => $this->generateSubmissionReader((int) $configElement->submissionReader),
@@ -56,7 +56,7 @@ class ContactFormConfigElementType implements ListConfigElementTypeInterface
 
     public function addEmailToTokens(&$submissionData, $submission)
     {
-        $submissionData['form_value_contact_form_email'] = static::$recipientEmail;
+        $submissionData['form_value_submission_form_email'] = static::$recipientEmail;
 
         return true;
     }
@@ -96,7 +96,7 @@ class ContactFormConfigElementType implements ListConfigElementTypeInterface
      */
     public function getPalette(): string
     {
-        return '{config_legend},contactFormExplanation,submissionReader,emailField;';
+        return '{config_legend},submissionFormExplanation,submissionReader,emailField;';
     }
 
     /**

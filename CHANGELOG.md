@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.7.1] - 2019-09-24
+
+#### Changed
+- renamed contact form config element type to submission form config element type
+
 ## [1.7.0] - 2019-09-24
 
 #### Added

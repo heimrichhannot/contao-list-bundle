@@ -32,7 +32,7 @@ $lang['submissionReader'][0]       = 'Einsendungsleser';
 $lang['submissionReader'][1]       = 'Wählen Sie hier ein Modul vom Typ "Einsendungsleser" aus.';
 $lang['emailField'][0]             = 'E-Mail-Feld';
 $lang['emailField'][1]             = 'Wählen Sie hier das Feld aus, an das die E-Mail verschickt werden soll.';
-$lang['contactFormExplanation']    = 'Die E-Mail-Adresse, an die das Formular verschickt wird, finden Sie im Notification-Center-Token ##form_value_contact_form_email##.';
+$lang['submissionFormExplanation'] = 'Die E-Mail-Adresse, an die das Formular verschickt wird, finden Sie im Notification-Center-Token ##form_value_submission_form_email##.';
 
 /**
  * Legends
@@ -46,7 +46,7 @@ $lang['template_legend']   = 'Template';
  */
 $lang['reference'] = [
     \HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType::TYPE             => 'Bild',
-    \HeimrichHannot\ListBundle\ConfigElementType\ContactFormConfigElementType::TYPE       => 'Kontaktformular',
+    \HeimrichHannot\ListBundle\ConfigElementType\SubmissionFormConfigElementType::TYPE    => 'Einsendungsformular',
     \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE   => 'einfach',
     \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'geschlechtsspezifisch',
     \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM   => 'zufällig',

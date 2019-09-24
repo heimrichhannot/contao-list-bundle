@@ -188,10 +188,10 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'      => ['tl_class' => 'w50 autoheight', 'fieldType' => 'checkbox', 'filesOnly' => true, 'extensions' => Config::get('validImageTypes'), 'mandatory' => true, 'multiple' => true],
             'sql'       => "blob NULL",
         ],
-        'contactFormExplanation'       => [
+        'submissionFormExplanation'       => [
             'inputType' => 'explanation',
             'eval'      => [
-                'text'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['contactFormExplanation'],
+                'text'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['submissionFormExplanation'],
                 'class' => 'tl_info',
                 'tl_class' => 'long',
             ]

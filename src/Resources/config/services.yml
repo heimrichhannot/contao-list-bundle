@@ -104,6 +104,6 @@ services:
     autowire: true
     tags: ['huh.list.config_element_type']
 
-  HeimrichHannot\ListBundle\ConfigElementType\ContactFormConfigElementType:
+  HeimrichHannot\ListBundle\ConfigElementType\SubmissionFormConfigElementType:
     autowire: true
     tags: ['huh.list.config_element_type']

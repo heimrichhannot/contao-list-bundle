@@ -86,7 +86,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addShare',
             'addAjaxPagination',
             'addMasonry',
-            'addOverview'
+            'addOverview',
+            'customJumpToOverviewLabel'
         ],
         'default'      => '{general_legend},title,parentListConfig;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare,addOverview;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry,addDcMultilingualSupport;'.'{search_legend},noSearch,doNotIndexItems;'.'{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
     ],
@@ -103,7 +104,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'addShare'                                                                        => 'jumpToShare,shareAutoItem',
         'addAjaxPagination'                                                               => 'ajaxPaginationTemplate,addInfiniteScroll',
         'addMasonry'                                                                      => 'masonryStampContentElements',
-        'addOverview'                                                                     => 'jumpToOverview'
+        'addOverview'                                                                     => 'jumpToOverview,customJumpToOverviewLabel',
+        'customJumpToOverviewLabel'                                                       => 'jumpToOverviewLabel'
     ],
     'fields'      => [
         'id'                          => [
@@ -534,6 +536,23 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'eval'       => ['fieldType' => 'radio', 'tl_class' => 'clr', 'mandatory' => true],
             'sql'        => "int(10) unsigned NOT NULL default '0'",
             'relation'   => ['type' => 'hasOne', 'load' => 'eager'],
+        ],
+        'customJumpToOverviewLabel'            => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['customJumpToOverviewLabel'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['submitOnChange' => true, 'tl_class' => 'w50'],
+            'sql'       => "char(1) NOT NULL default ''",
+        ],
+        'jumpToOverviewLabel'                  => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToOverviewLabel'],
+            'exclude'          => true,
+            'inputType'        => 'select',
+            'options_callback' => function (\DataContainer $dc) {
+                return \Contao\System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.label.overview');
+            },
+            'eval'             => ['chosen' => true, 'mandatory' => true, 'maxlength' => 128, 'includeBlankOption' => true, 'tl_class' => 'w50'],
+            'sql'              => "varchar(128) NOT NULL default ''",
         ],
     ],
 ];

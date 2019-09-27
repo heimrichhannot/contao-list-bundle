@@ -34,6 +34,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class DefaultList implements ListInterface, \JsonSerializable
 {
+    const JUMP_TO_OVERVIEW_LABEL_DEFAULT = 'huh.list.labels.overview.default';
+
     /**
      * Current List Manager.
      *
@@ -141,6 +143,11 @@ class DefaultList implements ListInterface, \JsonSerializable
      * @var string
      */
     protected $_jumpToOverview;
+
+    /**
+     * @var string
+     */
+    protected $_jumpToOverviewLabel;
 
     /**
      * Constructor.
@@ -599,6 +606,8 @@ class DefaultList implements ListInterface, \JsonSerializable
         if (null !== $pageJumpTo) {
             $this->setJumpToOverview($pageJumpTo->getAbsoluteUrl());
         }
+
+        $this->setJumpToOverviewLabel($this->getTranslatedJumpToOverviewLabel($listConfig));
     }
 
     /**
@@ -1128,5 +1137,32 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function getAddOverview(): bool
     {
         return $this->_addOverview;
+    }
+
+    /**
+     * @param string $label
+     */
+    public function setJumpToOverviewLabel(string $label)
+    {
+        $this->_jumpToOverviewLabel = $label;
+    }
+
+    /**
+     * @return string
+     */
+    public function getJumpToOverviewLabel(): ?string
+    {
+        return $this->_jumpToOverviewLabel;
+    }
+
+    /**
+     * @param ListConfigModel $listConfig
+     * @return string
+     */
+    public function getTranslatedJumpToOverviewLabel(ListConfigModel $listConfig): string
+    {
+        $label = $listConfig->customJumpToOverviewLabel ? $listConfig->jumpToOverviewLabel : static::JUMP_TO_OVERVIEW_LABEL_DEFAULT;
+
+        return System::getContainer()->get('translator')->trans($label);
     }
 }

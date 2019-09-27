@@ -81,6 +81,10 @@ $lang['addOverview'][0] = 'Link zur Übersichtsseite hinzufügen';
 $lang['addOverview'][1] = 'Wählen Sie diese Option aus, um der Liste einen Link zur Übersichtsseite hinzuzufügen.';
 $lang['jumpToOverview'][0] = 'Übersichtsseite';
 $lang['jumpToOverview'][1] = '';
+$lang['customJumpToOverviewLabel'][0] = 'Label für "zur Übersicht" überschreiben';
+$lang['customJumpToOverviewLabel'][1] = '';
+$lang['jumpToOverviewLabel'][0] = 'Label für "zur Übersicht"';
+$lang['jumpToOverviewLabel'][1] = '';
 
 // misc
 $lang['addAjaxPagination'][0]           = 'Ajax-Paginierung hinzufügen';

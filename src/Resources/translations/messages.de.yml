@@ -1,6 +1,6 @@
 # labels
 huh.list.labels.ajaxPaginationNext: Mehr laden
-huh.list.labels.overview: zur Übersicht
+huh.list.labels.overview.default: zur Übersicht
 
 # misc
 huh.list.misc.detailsTitle: Details

@@ -9,7 +9,6 @@
 namespace HeimrichHannot\ListBundle\Lists;
 
 use Contao\Config;
-use Contao\Controller;
 use Contao\Database;
 use Contao\Date;
 use Contao\FrontendTemplate;
@@ -175,7 +174,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->addDataAttributes();
         $this->addMasonry();
 
-        if($listConfig->addOverview) {
+        if ($listConfig->addOverview) {
             $this->addJumpToOverview($listConfig);
         }
 
@@ -1157,6 +1156,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
     /**
      * @param ListConfigModel $listConfig
+     *
      * @return string
      */
     public function getTranslatedJumpToOverviewLabel(ListConfigModel $listConfig): string

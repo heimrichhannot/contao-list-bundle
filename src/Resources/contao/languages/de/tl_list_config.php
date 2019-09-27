@@ -77,6 +77,10 @@ $lang['jumpToShare'][0]   = 'Weiterleitungsseite (Teilen)';
 $lang['jumpToShare'][1]   = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn ein Inhalt geteilt wurde.';
 $lang['shareAutoItem'][0] = 'Auto-Item für den Teilen-Link verwenden';
 $lang['shareAutoItem'][1] = 'Wählen Sie diese Option aus, um das Share Token als auto_item auszugeben.';
+$lang['addOverview'][0] = 'Link zur Übersichtsseite hinzufügen';
+$lang['addOverview'][1] = 'Wählen Sie diese Option aus, um der Liste einen Link zur Übersichtsseite hinzuzufügen.';
+$lang['jumpToOverview'][0] = 'Übersichtsseite';
+$lang['jumpToOverview'][1] = '';
 
 // misc
 $lang['addAjaxPagination'][0]           = 'Ajax-Paginierung hinzufügen';

@@ -9,6 +9,7 @@
 namespace HeimrichHannot\ListBundle\Lists;
 
 use Contao\Config;
+use Contao\Controller;
 use Contao\Database;
 use Contao\Date;
 use Contao\FrontendTemplate;
@@ -130,6 +131,18 @@ class DefaultList implements ListInterface, \JsonSerializable
     protected $_filterConfig;
 
     /**
+     * overview page.
+     *
+     * @var bool
+     */
+    protected $_addOverview = false;
+
+    /**
+     * @var string
+     */
+    protected $_jumpToOverview;
+
+    /**
      * Constructor.
      *
      * @param ListManagerInterface $_manager
@@ -154,6 +167,10 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $this->addDataAttributes();
         $this->addMasonry();
+
+        if($listConfig->addOverview) {
+            $this->addJumpToOverview($listConfig);
+        }
 
         if ($listConfig->isTableList) {
             $this->setSortingHeader($listConfig->sortingHeader);
@@ -567,6 +584,20 @@ class DefaultList implements ListInterface, \JsonSerializable
             }
 
             $this->setMasonryStampContentElements($stamps);
+        }
+    }
+
+    /**
+     * @param ListConfigModel $listConfig
+     */
+    public function addJumpToOverview(ListConfigModel $listConfig): void
+    {
+        $this->setAddOverview($listConfig->addOverview);
+
+        $pageJumpTo = System::getContainer()->get('huh.utils.url')->getJumpToPageObject($listConfig->jumpToOverview);
+
+        if (null !== $pageJumpTo) {
+            $this->setJumpToOverview($pageJumpTo->getAbsoluteUrl());
         }
     }
 
@@ -1065,5 +1096,37 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function getFilterConfig(): ?FilterConfig
     {
         return $this->_filterConfig;
+    }
+
+    /**
+     * @return string
+     */
+    public function getJumpToOverview(): ?string
+    {
+        return $this->_jumpToOverview;
+    }
+
+    /**
+     * @param string $jumpToOverview
+     */
+    public function setJumpToOverview(string $jumpToOverview): void
+    {
+        $this->_jumpToOverview = $jumpToOverview;
+    }
+
+    /**
+     * @param bool $addOverview
+     */
+    public function setAddOverview(bool $addOverview)
+    {
+        $this->_addOverview = $addOverview;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAddOverview(): bool
+    {
+        return $this->_addOverview;
     }
 }

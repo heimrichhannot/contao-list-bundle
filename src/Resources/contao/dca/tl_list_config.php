@@ -86,8 +86,9 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addShare',
             'addAjaxPagination',
             'addMasonry',
+            'addOverview'
         ],
-        'default'      => '{general_legend},title,parentListConfig;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry,addDcMultilingualSupport;'.'{search_legend},noSearch,doNotIndexItems;'.'{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
+        'default'      => '{general_legend},title,parentListConfig;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare,addOverview;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry,addDcMultilingualSupport;'.'{search_legend},noSearch,doNotIndexItems;'.'{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
     ],
     'subpalettes' => [
         'showItemCount'                                                                   => 'itemCountText',
@@ -102,6 +103,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'addShare'                                                                        => 'jumpToShare,shareAutoItem',
         'addAjaxPagination'                                                               => 'ajaxPaginationTemplate,addInfiniteScroll',
         'addMasonry'                                                                      => 'masonryStampContentElements',
+        'addOverview'                                                                     => 'jumpToOverview'
     ],
     'fields'      => [
         'id'                          => [
@@ -514,6 +516,24 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'default'   => true,
             'eval'      => ['tl_class' => 'w50'],
             'sql'       => "char(1) NOT NULL default ''",
+        ],
+        'addOverview' => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addOverview'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'search'    => true,
+            'default'   => true,
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'       => "char(1) NOT NULL default ''",
+        ],
+        'jumpToOverview'               => [
+            'label'      => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToOverview'],
+            'exclude'    => true,
+            'inputType'  => 'pageTree',
+            'foreignKey' => 'tl_page.title',
+            'eval'       => ['fieldType' => 'radio', 'tl_class' => 'clr', 'mandatory' => true],
+            'sql'        => "int(10) unsigned NOT NULL default '0'",
+            'relation'   => ['type' => 'hasOne', 'load' => 'eager'],
         ],
     ],
 ];

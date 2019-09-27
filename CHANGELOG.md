@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.8.0] - 2019-09-27
+
+#### Added
+- optional jumpTo overview page
+
 ## [1.7.2] - 2019-09-24
 
 #### Changed

@@ -274,4 +274,29 @@ interface ListInterface
      * @return array
      */
     public function getSearchablePages(array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false): array;
+
+
+    /**
+     * @param bool $addOverview
+     */
+    public function setAddOverview(bool $addOverview);
+
+    /**
+     * @return bool
+     */
+    public function getAddOverview(): bool;
+
+    /**
+     * get jumpTo page for list overview
+     *
+     * @return int
+     */
+    public function getJumpToOverview(): ?string;
+
+    /**
+     * set jumpTo page for list overview
+     *
+     * @param string $jumpToOverview
+     */
+    public function setJumpToOverview(string $jumpToOverview);
 }

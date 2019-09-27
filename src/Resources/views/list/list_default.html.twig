@@ -13,5 +13,11 @@
         {% elseif showNoItemsText %}
             <p class="no-items">{{ noItemsText|raw }}</p>
         {% endif %}
+
+        {% if addOverview|default %}
+            <div class="overview">
+                <a href="{{ jumpToOverview }}" role="button">{{ 'huh.list.labels.overview'|trans }}</a>
+            </div>
+        {% endif %}
     {% endif %}
 </div>

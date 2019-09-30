@@ -87,6 +87,10 @@ class ModuleList extends Module
 
         parent::__construct($objModule, $strColumn);
 
+        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
+            return;
+        }
+
         Controller::loadDataContainer('tl_list_config');
         System::loadLanguageFile('tl_list_config');
 

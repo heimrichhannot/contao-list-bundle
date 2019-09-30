@@ -275,7 +275,6 @@ interface ListInterface
      */
     public function getSearchablePages(array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false): array;
 
-
     /**
      * @param bool $addOverview
      */
@@ -287,14 +286,14 @@ interface ListInterface
     public function getAddOverview(): bool;
 
     /**
-     * get jumpTo page for list overview
+     * get jumpTo page for list overview.
      *
      * @return int
      */
     public function getJumpToOverview(): ?string;
 
     /**
-     * set jumpTo page for list overview
+     * set jumpTo page for list overview.
      *
      * @param string $jumpToOverview
      */

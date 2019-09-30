@@ -549,7 +549,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'exclude'          => true,
             'inputType'        => 'select',
             'options_callback' => function (\DataContainer $dc) {
-                return \Contao\System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.label.overview');
+                return \Contao\System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.labels.overview');
             },
             'eval'             => ['chosen' => true, 'mandatory' => true, 'maxlength' => 128, 'includeBlankOption' => true, 'tl_class' => 'w50'],
             'sql'              => "varchar(128) NOT NULL default ''",

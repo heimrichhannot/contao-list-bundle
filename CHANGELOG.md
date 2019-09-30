@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.8.2] - 2019-09-30
+
+#### Fixed
+- select options for customized overview label
+
 ## [1.8.1] - 2019-09-27
 
 #### Fixed

@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.8.4] - 2019-10-01
+
+#### Fixed
+- submission form
+
 ## [1.8.3] - 2019-09-30
 
 #### Fixed

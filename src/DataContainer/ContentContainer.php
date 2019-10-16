@@ -72,6 +72,21 @@ class ContentContainer
         $this->toggleFilterPreselect($content, $dc);
     }
 
+    public function getListPreselectListConfigs(DataContainer $dc): array
+    {
+        $options = [];
+
+        if (null !== ($listConfig = $this->modelUtil->findModelInstancesBy('tl_list_config', ['tl_list_config.hideForListPreselect!=?'], [true]))) {
+            while ($listConfig->next()) {
+                $options[$listConfig->id] = $listConfig->title;
+            }
+        }
+
+        asort($options);
+
+        return $options;
+    }
+
     /**
      * Get list of preselect choices.
      *
@@ -128,13 +143,15 @@ class ContentContainer
         /** @var FilterPreselectModel $preselections */
         $preselections = $this->framework->createInstance(FilterPreselectModel::class);
 
-        $queryBuilder = $manager->getFilterConfig()->getQueryBuilder()->resetQueryParts();
+        $queryBuilder = $manager->getFilterConfig()->getQueryBuilder();
 
         if ($preselections = $preselections->findPublishedByPidAndTableAndField($content->id, 'tl_content', 'filterPreselect')) {
             $queryBuilder = $this->filterPreselectUtil->getPreselectQueryBuilder($filterConfig->getId(), $queryBuilder, $preselections->getModels());
         }
 
-        $items = $queryBuilder->select($fields)->from($filter->dataContainer)->execute()->fetchAll();
+        $manager->applyListConfigSortingToQueryBuilder($queryBuilder);
+
+        $items = $queryBuilder->select($fields)->execute()->fetchAll();
 
         $total = \count($items);
 

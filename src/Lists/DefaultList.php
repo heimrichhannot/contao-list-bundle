@@ -436,7 +436,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             return;
         }
         // sorting
-        $currentSorting = $this->getCurrentSorting();
+        $currentSorting = $this->_manager->getCurrentSorting();
 
         if (ListConfig::SORTING_MODE_RANDOM == $currentSorting['order']) {
             $randomSeed = $this->_manager->getRequest()->getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
@@ -520,7 +520,7 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function generateTableHeader(): array
     {
         $headerFields = [];
-        $currentSorting = $this->getCurrentSorting();
+        $currentSorting = $this->_manager->getCurrentSorting();
         $listConfig = $this->_manager->getListConfig();
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
         $urlUtil = System::getContainer()->get('huh.utils.url');
@@ -658,68 +658,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         }
 
         return !$shareToken || !$entity->shareTokenTime || ($entity->shareTokenTime > $now + $interval);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCurrentSorting(): array
-    {
-        $listConfig = $this->_manager->getListConfig();
-        $filter = (object) $this->_manager->getFilterConfig();
-        $request = $this->_manager->getRequest();
-        $sortingAllowed = $listConfig->isTableList && $listConfig->hasHeader && $listConfig->sortingHeader;
-
-        // GET parameter
-        if ($sortingAllowed && ($orderField = $request->getGet('order')) && ($sort = $request->getGet('sort'))) {
-            // anti sql injection: check if field exists
-            /** @var Database $db */
-            $db = $this->_manager->getFramework()->getAdapter(Database::class);
-
-            if ($db->getInstance()->fieldExists($orderField, $filter->dataContainer)
-                && \in_array($sort, ListConfig::SORTING_DIRECTIONS)) {
-                $currentSorting = [
-                    'order' => $request->getGet('order'),
-                    'sort' => $request->getGet('sort'),
-                ];
-            } else {
-                $currentSorting = [];
-            }
-        } // initial
-        else {
-            switch ($listConfig->sortingMode) {
-                case ListConfig::SORTING_MODE_TEXT:
-                    $currentSorting = [
-                        'order' => $listConfig->sortingText,
-                    ];
-
-                    break;
-
-                case ListConfig::SORTING_MODE_RANDOM:
-                    $currentSorting = [
-                        'order' => ListConfig::SORTING_MODE_RANDOM,
-                    ];
-
-                    break;
-
-                case ListConfig::SORTING_MODE_MANUAL:
-                    $currentSorting = [
-                        'order' => ListConfig::SORTING_MODE_MANUAL,
-                    ];
-
-                    break;
-
-                default:
-                    $currentSorting = [
-                        'order' => $listConfig->sortingField,
-                        'sort' => $listConfig->sortingDirection,
-                    ];
-
-                    break;
-            }
-        }
-
-        return $currentSorting;
     }
 
     /**

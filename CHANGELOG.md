@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] - 2019-10-16
+
+#### Changed
+- list preselect to also take into account the filter and the sorting of the associated list config
+- moved getCurrentSorting to ListManager
+- made more select fields in backend "chosen"s
+
 ## [1.8.4] - 2019-10-01
 
 #### Fixed

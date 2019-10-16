@@ -70,11 +70,6 @@ interface ListInterface
     public function generateTableHeader(): ?array;
 
     /**
-     * @return array
-     */
-    public function getCurrentSorting(): ?array;
-
-    /**
      * Applies the list config to the query builder.
      *
      * @param int                $totalCount

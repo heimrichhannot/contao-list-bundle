@@ -15,13 +15,12 @@ $dc['palettes']['list_preselect'] = '{type_legend},type,headline;{huh.list_legen
  */
 $fields = [
     'listConfig'    => [
-        'label'      => &$GLOBALS['TL_LANG']['tl_content']['listConfig'],
-        'exclude'    => true,
-        'inputType'  => 'select',
-        'foreignKey' => 'tl_list_config.title',
-        'relation'   => ['type' => 'belongsTo', 'load' => 'lazy'],
-        'eval'       => ['tl_class' => 'w50 clr', 'mandatory' => true, 'submitOnChange' => true, 'includeBlankOption' => true],
-        'sql'        => "int(10) NOT NULL default '0'",
+        'label'            => &$GLOBALS['TL_LANG']['tl_content']['listConfig'],
+        'exclude'          => true,
+        'inputType'        => 'select',
+        'options_callback' => [\HeimrichHannot\ListBundle\DataContainer\ContentContainer::class, 'getListPreselectListConfigs'],
+        'eval'             => ['tl_class' => 'w50 clr', 'mandatory' => true, 'submitOnChange' => true, 'includeBlankOption' => true, 'chosen' => true],
+        'sql'              => "int(10) NOT NULL default '0'",
     ],
     'listPreselect' => [
         'label'            => &$GLOBALS['TL_LANG']['tl_content']['listPreselect'],

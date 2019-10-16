@@ -67,29 +67,29 @@ $lang['useAlias'][1]   = 'Wählen Sie diese Option, wenn erzeugte URLs statt der
 $lang['aliasField'][0] = 'Alias-Feld';
 $lang['aliasField'][1] = 'Wählen Sie hier das zu verwendende Alias-Feld aus (Hinweis: Nur Felder mit inputType="text" sind erlaubt).';
 
-$lang['addDetails'][0]    = 'Details-Weiterleitung hinzufügen';
-$lang['addDetails'][1]    = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Anzeigen von Details hinzuzufügen.';
-$lang['jumpToDetails'][0] = 'Weiterleitungsseite (Details; MUSS für die Einbeziehung in die Sitemap gesetzt sein!)';
-$lang['jumpToDetails'][1] = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn es eine Detailseite gibt.';
-$lang['addShare'][0]      = 'Teilen-Weiterleitung hinzufügen';
-$lang['addShare'][1]      = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Teilen des aktuellen Listeneintrags hinzuzufügen.';
-$lang['jumpToShare'][0]   = 'Weiterleitungsseite (Teilen)';
-$lang['jumpToShare'][1]   = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn ein Inhalt geteilt wurde.';
-$lang['shareAutoItem'][0] = 'Auto-Item für den Teilen-Link verwenden';
-$lang['shareAutoItem'][1] = 'Wählen Sie diese Option aus, um das Share Token als auto_item auszugeben.';
-$lang['addOverview'][0] = 'Link zur Übersichtsseite hinzufügen';
-$lang['addOverview'][1] = 'Wählen Sie diese Option aus, um der Liste einen Link zur Übersichtsseite hinzuzufügen.';
-$lang['jumpToOverview'][0] = 'Übersichtsseite';
-$lang['jumpToOverview'][1] = '';
+$lang['addDetails'][0]                = 'Details-Weiterleitung hinzufügen';
+$lang['addDetails'][1]                = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Anzeigen von Details hinzuzufügen.';
+$lang['jumpToDetails'][0]             = 'Weiterleitungsseite (Details; MUSS für die Einbeziehung in die Sitemap gesetzt sein!)';
+$lang['jumpToDetails'][1]             = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn es eine Detailseite gibt.';
+$lang['addShare'][0]                  = 'Teilen-Weiterleitung hinzufügen';
+$lang['addShare'][1]                  = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Teilen des aktuellen Listeneintrags hinzuzufügen.';
+$lang['jumpToShare'][0]               = 'Weiterleitungsseite (Teilen)';
+$lang['jumpToShare'][1]               = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn ein Inhalt geteilt wurde.';
+$lang['shareAutoItem'][0]             = 'Auto-Item für den Teilen-Link verwenden';
+$lang['shareAutoItem'][1]             = 'Wählen Sie diese Option aus, um das Share Token als auto_item auszugeben.';
+$lang['addOverview'][0]               = 'Link zur Übersichtsseite hinzufügen';
+$lang['addOverview'][1]               = 'Wählen Sie diese Option aus, um der Liste einen Link zur Übersichtsseite hinzuzufügen.';
+$lang['jumpToOverview'][0]            = 'Übersichtsseite';
+$lang['jumpToOverview'][1]            = '';
 $lang['customJumpToOverviewLabel'][0] = 'Label für "zur Übersicht" überschreiben';
 $lang['customJumpToOverviewLabel'][1] = '';
-$lang['jumpToOverviewLabel'][0] = 'Label für "zur Übersicht"';
-$lang['jumpToOverviewLabel'][1] = '';
+$lang['jumpToOverviewLabel'][0]       = 'Label für "zur Übersicht"';
+$lang['jumpToOverviewLabel'][1]       = '';
 
 // misc
 $lang['addAjaxPagination'][0]           = 'Ajax-Paginierung hinzufügen';
 $lang['addAjaxPagination'][1]           = 'Wählen Sie diese Option, wenn eine Ajax-Paginierung genutzt werden soll. Dafür muss ein Wert > 0 in "Elemente pro Seite" gesetzt sein. Die Seitenzahlen werden durch einen einzelnen "Weiter"-Button ersetzt.';
-$lang['ajaxPaginationTemplate'][0]      = 'IndividuellesTemplate für die Ajax-Paginierung hinzufügen';
+$lang['ajaxPaginationTemplate'][0]      = 'Individuelles Template für die Ajax-Paginierung hinzufügen';
 $lang['ajaxPaginationTemplate'][1]      = 'Wählen Sie diese Option, wenn für die Ajax-Paginierung ein individuelles Template genutzt werden soll.';
 $lang['addInfiniteScroll'][0]           = 'Infinite Scroll hinzufügen';
 $lang['addInfiniteScroll'][1]           = 'Wählen Sie diese Option, um die Ajax-Paginierung im UI-Muster "Infinite Scroll" umzusetzen.';
@@ -101,6 +101,8 @@ $lang['stampBlock'][0]                  = 'Block';
 $lang['stampBlock'][1]                  = 'Wählen Sie hier einen Block aus.';
 $lang['addDcMultilingualSupport'][0]    = 'Support für DC_Multilingual hinzufügen';
 $lang['addDcMultilingualSupport'][1]    = 'Wählen Sie diese Option, die verknüpfte Entität durch das Bundle "terminal42/contao-DC_Multilingual" übersetzbar ist.';
+$lang['hideForListPreselect'][0]        = 'Für Listenvorauswahl ausblenden';
+$lang['hideForListPreselect'][1]        = 'Wählen Sie diese Option, um diese Listenkonfiguration nicht für Listenvorauswahl-Elemente zu erlauben.';
 
 // search
 $lang['noSearch'][0]        = 'Nicht durchsuchen';

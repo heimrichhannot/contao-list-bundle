@@ -6,5 +6,5 @@ $lang = [
     'parentConfig' => 'Elterkonfiguration',
 ];
 
-$GLOBALS['TL_LANG']['CTE']['huh.list']       = 'Listen-Elemente';
-$GLOBALS['TL_LANG']['CTE']['list_preselect'] = ['Listen-Vorauswahl', 'Erzeugt eine Vorauswahl für eine Liste.'];
+$GLOBALS['TL_LANG']['CTE']['huh.list']       = 'Listenelemente';
+$GLOBALS['TL_LANG']['CTE']['list_preselect'] = ['Listenvorauswahl', 'Erzeugt eine Vorauswahl für eine Liste.'];

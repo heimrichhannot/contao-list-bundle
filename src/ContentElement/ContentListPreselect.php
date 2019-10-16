@@ -268,7 +268,7 @@ class ContentListPreselect extends ContentElement
      */
     protected function getListTitle(): string
     {
-        if (null === ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $this->getModel()->listConfig))) {
+        if (null === ($listConfig = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk('tl_list_config', $this->getModel()->listConfig))) {
             return '';
         }
 

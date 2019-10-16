@@ -11,11 +11,15 @@ namespace HeimrichHannot\ListBundle\Manager;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\Database;
 use Contao\DataContainer;
+use Contao\StringUtil;
 use Contao\System;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Manager\FilterManager;
+use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
+use HeimrichHannot\ListBundle\Backend\ListConfig;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
+use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
 use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
@@ -321,6 +325,86 @@ class ListManager implements ListManagerInterface
         }
 
         return System::getContainer()->get('huh.utils.template')->getTemplate($name);
+    }
+
+    public function getCurrentSorting(): array
+    {
+        $listConfig = $this->getListConfig();
+        $filter = (object) $this->getFilterConfig();
+        $request = $this->getRequest();
+        $sortingAllowed = $listConfig->isTableList && $listConfig->hasHeader && $listConfig->sortingHeader;
+
+        // GET parameter
+        if ($sortingAllowed && ($orderField = $request->getGet('order')) && ($sort = $request->getGet('sort'))) {
+            // anti sql injection: check if field exists
+            /** @var Database $db */
+            $db = $this->getFramework()->getAdapter(Database::class);
+
+            if ($db->getInstance()->fieldExists($orderField, $filter->dataContainer)
+                && \in_array($sort, ListConfig::SORTING_DIRECTIONS)) {
+                $currentSorting = [
+                    'order' => $request->getGet('order'),
+                    'sort' => $request->getGet('sort'),
+                ];
+            } else {
+                $currentSorting = [];
+            }
+        } // initial
+        else {
+            switch ($listConfig->sortingMode) {
+                case ListConfig::SORTING_MODE_TEXT:
+                    $currentSorting = [
+                        'order' => $listConfig->sortingText,
+                    ];
+
+                    break;
+
+                case ListConfig::SORTING_MODE_RANDOM:
+                    $currentSorting = [
+                        'order' => ListConfig::SORTING_MODE_RANDOM,
+                    ];
+
+                    break;
+
+                case ListConfig::SORTING_MODE_MANUAL:
+                    $currentSorting = [
+                        'order' => ListConfig::SORTING_MODE_MANUAL,
+                    ];
+
+                    break;
+
+                default:
+                    $currentSorting = [
+                        'order' => $listConfig->sortingField,
+                        'sort' => $listConfig->sortingDirection,
+                    ];
+
+                    break;
+            }
+        }
+
+        return $currentSorting;
+    }
+
+    public function applyListConfigSortingToQueryBuilder(FilterQueryBuilder $queryBuilder)
+    {
+        $listConfig = $this->getListConfig();
+        $currentSorting = $this->getCurrentSorting();
+
+        if (ListConfig::SORTING_MODE_RANDOM == $currentSorting['order']) {
+            $randomSeed = $this->getRequest()->getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
+            $queryBuilder->orderBy('RAND("'.(int) $randomSeed.'")');
+        } elseif (ListConfig::SORTING_MODE_MANUAL == $currentSorting['order']) {
+            $sortingItems = StringUtil::deserialize($listConfig->sortingItems, true);
+
+            if (!empty($sortingItems)) {
+                $queryBuilder->orderBy('FIELD(id,'.implode(',', $sortingItems).')', ' ');
+            }
+        } else {
+            if (!empty($currentSorting)) {
+                $queryBuilder->orderBy($currentSorting['order'], $currentSorting['sort']);
+            }
+        }
     }
 
     /**

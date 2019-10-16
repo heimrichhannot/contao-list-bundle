@@ -1,2 +1,2 @@
-{% if raw.title|default %}{{ raw.title }}{% elseif raw.name|default %}{{ raw.name }}{% elseif raw.headline|default %}{{ raw.headline }}{% endif %}
+{% if raw.title|default %}{{ raw.title|raw }}{% elseif raw.name|default %}{{ raw.name|raw }}{% elseif raw.headline|default %}{{ raw.headline|raw }}{% endif %}
 {% if raw.id|default %} <span style="color:#999; padding-left: 3px; display: inline-block;">[ID {{ raw.id }}]</span>{% endif %}

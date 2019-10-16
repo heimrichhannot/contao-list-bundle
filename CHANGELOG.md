@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.1] - 2019-10-16
+
+#### Fixed
+- list preselect option escaping issue
+
 ## [1.9.0] - 2019-10-16
 
 #### Changed

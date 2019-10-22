@@ -3,6 +3,13 @@ class ListBundle {
     static init() {
         ListBundle.initPagination();
         ListBundle.initMasonry();
+        ListBundle.initEvents();
+    }
+
+    static initEvents() {
+        document.addEventListener('filterAjaxComplete', function(e) {
+            ListBundle.updateList(e.detail);
+        });
     }
 
     static initPagination() {

@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.3] - 2019-10-24
+
+#### Fixed
+- jscroll offset rounding issue
+
 ## [1.9.2] - 2019-10-22
 
 #### Fixed

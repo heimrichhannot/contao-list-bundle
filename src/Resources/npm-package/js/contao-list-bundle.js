@@ -25,6 +25,7 @@ class ListBundle {
                     nextSelector: '.ajax-pagination a.next',
                     autoTrigger: $items.data('add-infinite-scroll') == 1,
                     contentSelector: id,
+                    padding: 50,
                     callback: function() {
                         let $jscrollAdded = jQuery(this),
                             $newItems = $jscrollAdded.find('.item');

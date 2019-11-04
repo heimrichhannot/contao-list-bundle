@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.4] - 2019-11-04
+
+#### Fixed
+- some methods not working on Item properties (like empty) (implemented _isset method)
+
 ## [1.9.3] - 2019-10-24
 
 #### Fixed

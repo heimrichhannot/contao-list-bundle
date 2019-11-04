@@ -153,6 +153,23 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     }
 
     /**
+     * @param $name
+     * @return bool
+     */
+    public function __isset($name)
+    {
+        if (property_exists($this, $name)) {
+            return true;
+        }
+
+        if (isset($this->_raw[$name])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Magic setter.
      *
      * @param string $name

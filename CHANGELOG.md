@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.5] - 2019-11-12
+
+- fixed dc_multilingual related bug
+
 ## [1.9.4] - 2019-11-04
 
 #### Fixed

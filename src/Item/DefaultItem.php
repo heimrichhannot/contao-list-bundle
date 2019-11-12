@@ -154,6 +154,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
     /**
      * @param $name
+     *
      * @return bool
      */
     public function __isset($name)

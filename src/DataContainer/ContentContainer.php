@@ -171,10 +171,10 @@ class ContentContainer
     /**
      * Toggle filterPreselect field on demand.
      *
-     * @param ContentModel  $content
+     * @param Model         $content
      * @param DataContainer $dc
      */
-    protected function toggleFilterPreselect(ContentModel $content, DataContainer $dc)
+    protected function toggleFilterPreselect(Model $content, DataContainer $dc)
     {
         if (!$content->listConfig || $content->listConfig < 1) {
             return;

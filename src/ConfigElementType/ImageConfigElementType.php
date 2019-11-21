@@ -95,7 +95,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
         $image = StringUtil::deserialize($image);
 
         if (\is_array($image)) {
-            $image = $image[0];
+            $image = array_values($image)[0];
         }
 
         if (null === ($imageFile = $filesModel->findByUuid($image))) {
@@ -104,10 +104,6 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
         }
 
         $projectDir = System::getContainer()->get('huh.utils.container')->getProjectDir();
-
-        if (null !== $imageFile) {
-            $fileExist = file_exists($projectDir.'/'.$imageFile->path);
-        }
 
         if (null !== $imageFile && file_exists($projectDir.'/'.$imageFile->path) && getimagesize($projectDir.'/'.$imageFile->path)) {
             $imageArray = $item->getRaw();

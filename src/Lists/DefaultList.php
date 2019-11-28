@@ -197,7 +197,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $dbFields = $db->getFieldNames($filter->dataContainer);
 
         // support for terminal42/contao-DC_Multilingual
-        if ($this->isDcMultilingualActive($listConfig, $dca)) {
+        if ($this->isDcMultilingualActive($listConfig, $dca, $filter->dataContainer)) {
             if ($GLOBALS['TL_LANGUAGE'] !== $dca['config']['fallbackLang']) {
                 $suffixedTable = $filter->dataContainer.ListInterface::DC_MULTILINGUAL_SUFFIX;
 
@@ -226,7 +226,7 @@ class DefaultList implements ListInterface, \JsonSerializable
                 $fields = implode(', ', $fieldNames);
 
                 // add support for dc multilingual utils
-                if ($this->isDcMultilingualUtilsActive($listConfig, $dca)) {
+                if ($this->isDcMultilingualUtilsActive($listConfig, $dca, $filter->dataContainer)) {
                     if (isset($dca['config']['langPublished']) && isset($dca['fields'][$dca['config']['langPublished']]) && \is_array($dca['fields'][$dca['config']['langPublished']])) {
                         $and = $queryBuilder->expr()->andX();
 
@@ -332,16 +332,15 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $event->getRendered();
     }
 
-    public function isDcMultilingualActive(ListConfigModel $listConfig, array $dca)
+    public function isDcMultilingualActive(ListConfigModel $listConfig, array $dca, string $table)
     {
-        return $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.container')->isBundleActive(
-                'Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle');
+        return $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.dca')->isDcMultilingual($table);
     }
 
-    public function isDcMultilingualUtilsActive(ListConfigModel $listConfig, array $dca)
+    public function isDcMultilingualUtilsActive(ListConfigModel $listConfig, array $dca, string $table)
     {
-        return $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.container')->isBundleActive(
-                'HeimrichHannot\DcMultilingualUtilsBundle\ContaoDcMultilingualUtilsBundle');
+        return $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.dca')->isDcMultilingual($table) &&
+            System::getContainer()->get('huh.utils.container')->isBundleActive('HeimrichHannot\DcMultilingualUtilsBundle\ContaoDcMultilingualUtilsBundle');
     }
 
     /**

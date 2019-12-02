@@ -389,6 +389,8 @@ class ListManager implements ListManagerInterface
     public function applyListConfigSortingToQueryBuilder(FilterQueryBuilder $queryBuilder)
     {
         $listConfig = $this->getListConfig();
+        $filter = (object) $this->getFilterConfig();
+
         $currentSorting = $this->getCurrentSorting();
 
         if (ListConfig::SORTING_MODE_RANDOM == $currentSorting['order']) {
@@ -398,7 +400,7 @@ class ListManager implements ListManagerInterface
             $sortingItems = StringUtil::deserialize($listConfig->sortingItems, true);
 
             if (!empty($sortingItems)) {
-                $queryBuilder->orderBy('FIELD(id,'.implode(',', $sortingItems).')', ' ');
+                $queryBuilder->orderBy('FIELD('.$filter->dataContainer.'.id,'.implode(',', $sortingItems).')', ' ');
             }
         } else {
             if (!empty($currentSorting)) {

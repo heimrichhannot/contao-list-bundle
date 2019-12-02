@@ -414,6 +414,7 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function applyListConfigToQueryBuilder(int $totalCount, FilterQueryBuilder $queryBuilder): void
     {
         $listConfig = $this->_manager->getListConfig();
+        $filter = (object) $this->_manager->getFilterConfig()->getFilter();
 
         // offset
         $offset = (int) ($listConfig->skipFirst);
@@ -445,7 +446,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             $sortingItems = StringUtil::deserialize($listConfig->sortingItems, true);
 
             if (!empty($sortingItems)) {
-                $queryBuilder->orderBy('FIELD(id,'.implode(',', $sortingItems).')', ' ');
+                $queryBuilder->orderBy('FIELD('.$filter->dataContainer.'.id,'.implode(',', $sortingItems).')', ' ');
             }
 
             list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit);

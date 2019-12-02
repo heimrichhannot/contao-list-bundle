@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.8] - 2019-12-02
+
+- fixed dc_multilingual related bug with order fields
+
 ## [1.9.7] - 2019-11-28
 
 - fixed dc_multilingual related bug

@@ -223,8 +223,8 @@ class DefaultList implements ListInterface, \JsonSerializable
                     }
                 }
 
-                $fields = implode(', ', array_map(function ($val) {
-                    return 'ANY_VALUE('.$val.')';
+                $fields = implode(', ', array_map(function ($val) use ($filter) {
+                    return 'ANY_VALUE('.$val.') AS "'.str_replace($filter->dataContainer.'.', '', $val).'"';
                 }, $fieldNames));
 
                 // add support for dc multilingual utils

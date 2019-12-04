@@ -1,0 +1,14 @@
+# labels
+huh.list.labels.ajaxPaginationNext: Load more
+huh.list.labels.overview.default: Overview
+
+# misc
+huh.list.misc.detailsTitle: Details
+huh.list.misc.shareTitle: Share
+huh.list.misc.contact: Contact
+
+# count items text
+huh.list.count.text.default: '{0} No items have been found.|{1}%count% item has been found.|]1,Inf[ %count% items have been found..'
+
+# empty list text
+huh.list.empty.text.default: No items have been found for your search query.

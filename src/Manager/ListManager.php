@@ -330,7 +330,7 @@ class ListManager implements ListManagerInterface
     public function getCurrentSorting(): array
     {
         $listConfig = $this->getListConfig();
-        $filter = (object) $this->getFilterConfig();
+        $filter = (object) $this->getFilterConfig()->getFilter();
         $request = $this->getRequest();
         $sortingAllowed = $listConfig->isTableList && $listConfig->hasHeader && $listConfig->sortingHeader;
 
@@ -375,7 +375,7 @@ class ListManager implements ListManagerInterface
 
                 default:
                     $currentSorting = [
-                        'order' => $listConfig->sortingField,
+                        'order' => $filter->dataContainer.'.'.$listConfig->sortingField,
                         'sort' => $listConfig->sortingDirection,
                     ];
 

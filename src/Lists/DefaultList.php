@@ -223,7 +223,9 @@ class DefaultList implements ListInterface, \JsonSerializable
                     }
                 }
 
-                $fields = implode(', ', $fieldNames);
+                $fields = implode(', ', array_map(function ($val) {
+                    return 'ANY_VALUE('.$val.')';
+                }, $fieldNames));
 
                 // add support for dc multilingual utils
                 if ($this->isDcMultilingualUtilsActive($listConfig, $dca, $filter->dataContainer)) {

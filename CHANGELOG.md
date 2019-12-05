@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.11] - 2019-12-05
+
+- fixed group by issue for multilingual
+
 ## [1.9.10] - 2019-12-04
 
 - fixed group by issue for multilingual

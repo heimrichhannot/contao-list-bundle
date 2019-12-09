@@ -103,6 +103,11 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     /**
      * @var string
      */
+    protected $_jumpToDetailsMultilingual;
+
+    /**
+     * @var string
+     */
     protected $_modalUrl;
 
     /**
@@ -418,8 +423,22 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         if ($listConfig->addDetails) {
             $this->setUseModal($listConfig->useModal);
             $this->setJumpToDetails($listConfig->jumpToDetails);
+            $this->setJumpToDetailsMultilingual($listConfig->jumpToDetailsMultilingual);
 
-            $pageJumpTo = System::getContainer()->get('huh.utils.url')->getJumpToPageObject($listConfig->jumpToDetails);
+            $jumpToDetails = $listConfig->jumpToDetails;
+            $jumpToDetailsMultilingual = StringUtil::deserialize($listConfig->jumpToDetailsMultilingual, true);
+
+            if (!empty($jumpToDetailsMultilingual)) {
+                foreach ($jumpToDetailsMultilingual as $item) {
+                    if (isset($item['language']) && $GLOBALS['TL_LANGUAGE'] === $item['language']) {
+                        $jumpToDetails = $item['jumpTo'];
+
+                        break;
+                    }
+                }
+            }
+
+            $pageJumpTo = System::getContainer()->get('huh.utils.url')->getJumpToPageObject($jumpToDetails);
 
             if (null !== $pageJumpTo) {
                 if ($listConfig->useModal && isset(System::getContainer()->getParameter('kernel.bundles')['modal'])) {
@@ -427,7 +446,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
                         /** @var Controller $controller */
                         $controller = $this->_manager->getFramework()->getAdapter(Controller::class);
 
-                        $this->setModalUrl($controller->replaceInsertTags(sprintf('{{modal_url::%s::%s::%s}}', $modal->id, $listConfig->jumpToDetails, $idOrAlias), true));
+                        $this->setModalUrl($controller->replaceInsertTags(sprintf('{{modal_url::%s::%s::%s}}', $modal->id, $jumpToDetails, $idOrAlias), true));
                     }
                 } else {
                     $this->setDetailsUrl(true === $absolute ? $pageJumpTo->getAbsoluteUrl('/'.$idOrAlias) : $pageJumpTo->getFrontendUrl('/'.$idOrAlias));
@@ -631,6 +650,22 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     public function setJumpToDetails(int $jumpToDetails)
     {
         $this->_jumpToDetails = $jumpToDetails;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getJumpToDetailsMultilingual(): ?string
+    {
+        return $this->_jumpToDetailsMultilingual;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setJumpToDetailsMultilingual(string $jumpToDetailsMultilingual)
+    {
+        $this->_jumpToDetailsMultilingual = $jumpToDetailsMultilingual;
     }
 
     /**

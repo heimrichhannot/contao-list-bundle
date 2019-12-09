@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.10.0] - 2019-12-09
+
+- added shortcut for list configs
+- added support for multilingual details and overview pages
+
 ## [1.9.11] - 2019-12-05
 
 - fixed group by issue for multilingual

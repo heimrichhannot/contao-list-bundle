@@ -100,11 +100,11 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_TEXT   => 'sortingText',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_MANUAL => 'sortingItems',
         'useAlias'                                                                          => 'aliasField',
-        'addDetails'                                                                        => 'jumpToDetails',
+        'addDetails'                                                                        => 'jumpToDetails,jumpToDetailsMultilingual',
         'addShare'                                                                          => 'jumpToShare,shareAutoItem',
         'addAjaxPagination'                                                                 => 'ajaxPaginationTemplate,addInfiniteScroll',
         'addMasonry'                                                                        => 'masonryStampContentElements',
-        'addOverview'                                                                       => 'jumpToOverview,customJumpToOverviewLabel',
+        'addOverview'                                                                       => 'jumpToOverview,jumpToOverviewMultilingual,customJumpToOverviewLabel',
         'customJumpToOverviewLabel'                                                         => 'jumpToOverviewLabel'
     ],
     'fields'      => [
@@ -148,6 +148,9 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
                     ]
                 );
             },
+            'wizard'           => [
+                ['HeimrichHannot\ListBundle\Backend\ListConfig', 'editList']
+            ],
             'eval'             => ['tl_class' => 'w50', 'includeBlankOption' => true, 'chosen' => true, 'notOverridable' => true, 'submitOnChange' => true],
             'sql'              => "int(10) unsigned NOT NULL default '0'",
         ],
@@ -576,13 +579,65 @@ if (System::getContainer()->get('huh.utils.container')->isBundleActive('modal'))
 
 if (System::getContainer()->get('huh.utils.container')->isBundleActive('Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle')) {
     $dca['fields'] += [
-        'addDcMultilingualSupport' => [
+        'addDcMultilingualSupport'  => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addDcMultilingualSupport'],
             'exclude'   => true,
             'inputType' => 'checkbox',
             'eval'      => ['tl_class' => 'w50'],
             'sql'       => "char(1) NOT NULL default ''"
-        ]
+        ],
+        'jumpToDetailsMultilingual' => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual'],
+            'inputType' => 'multiColumnEditor',
+            'eval'      => [
+                'tl_class'          => 'long clr',
+                'multiColumnEditor' => [
+                    'minRowCount' => 0,
+                    'fields'      => [
+                        'language' => [
+                            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['language'],
+                            'inputType' => 'select',
+                            'options'   => \Contao\System::getLanguages(),
+                            'eval'      => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true, 'groupStyle' => 'width: 400px;'],
+                        ],
+                        'jumpTo'   => [
+                            'label'      => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['jumpTo'],
+                            'inputType'  => 'pageTree',
+                            'foreignKey' => 'tl_page.title',
+                            'eval'       => ['fieldType' => 'radio', 'tl_class' => 'w50', 'mandatory' => true],
+                            'relation'   => ['type' => 'hasOne', 'load' => 'lazy']
+                        ],
+                    ],
+                ],
+            ],
+            'sql'       => "blob NULL",
+        ],
+        'jumpToOverviewMultilingual' => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToOverviewMultilingual'],
+            'inputType' => 'multiColumnEditor',
+            'eval'      => [
+                'tl_class'          => 'long clr',
+                'multiColumnEditor' => [
+                    'minRowCount' => 0,
+                    'fields'      => [
+                        'language' => [
+                            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['language'],
+                            'inputType' => 'select',
+                            'options'   => \Contao\System::getLanguages(),
+                            'eval'      => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true, 'groupStyle' => 'width: 400px;'],
+                        ],
+                        'jumpTo'   => [
+                            'label'      => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['jumpTo'],
+                            'inputType'  => 'pageTree',
+                            'foreignKey' => 'tl_page.title',
+                            'eval'       => ['fieldType' => 'radio', 'tl_class' => 'w50', 'mandatory' => true],
+                            'relation'   => ['type' => 'hasOne', 'load' => 'lazy']
+                        ],
+                    ],
+                ],
+            ],
+            'sql'       => "blob NULL",
+        ],
     ];
 }
 

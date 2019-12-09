@@ -146,6 +146,11 @@ class DefaultList implements ListInterface, \JsonSerializable
     /**
      * @var string
      */
+    protected $_jumpToOverviewMultilingual;
+
+    /**
+     * @var string
+     */
     protected $_jumpToOverviewLabel;
 
     /**
@@ -602,7 +607,20 @@ class DefaultList implements ListInterface, \JsonSerializable
     {
         $this->setAddOverview($listConfig->addOverview);
 
-        $pageJumpTo = System::getContainer()->get('huh.utils.url')->getJumpToPageObject($listConfig->jumpToOverview);
+        $jumpToOverviewMultilingual = StringUtil::deserialize($listConfig->jumpToOverviewMultilingual, true);
+        $jumpToOverview = $listConfig->jumpToOverview;
+
+        if (!empty($jumpToOverviewMultilingual)) {
+            foreach ($jumpToOverviewMultilingual as $item) {
+                if (isset($item['language']) && $GLOBALS['TL_LANGUAGE'] === $item['language']) {
+                    $jumpToOverview = $item['jumpTo'];
+
+                    break;
+                }
+            }
+        }
+
+        $pageJumpTo = System::getContainer()->get('huh.utils.url')->getJumpToPageObject($jumpToOverview);
 
         if (null !== $pageJumpTo) {
             $this->setJumpToOverview($pageJumpTo->getAbsoluteUrl());
@@ -1060,6 +1078,22 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function setJumpToOverview(string $jumpToOverview): void
     {
         $this->_jumpToOverview = $jumpToOverview;
+    }
+
+    /**
+     * @return string
+     */
+    public function getJumpToOverviewMultilingual(): ?string
+    {
+        return $this->_jumpToOverviewMultilingual;
+    }
+
+    /**
+     * @param string $jumpToOverviewMultilingual
+     */
+    public function setJumpToOverviewMultilingual(string $jumpToOverviewMultilingual): void
+    {
+        $this->_jumpToOverviewMultilingual = $jumpToOverviewMultilingual;
     }
 
     /**

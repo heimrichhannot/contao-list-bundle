@@ -65,6 +65,6 @@ class ModuleContainer
         /** @var Image $image */
         $image = $this->framework->getAdapter(Image::class);
 
-        return ($dc->value < 1) ? '' : ' <a href="contao?do=list_configs&amp;table=tl_list_config_element&amp;id='.$dc->value.'&amp;popup=1&amp;nb=1&amp;rt='.REQUEST_TOKEN.'" title="'.sprintf(StringUtil::specialchars($GLOBALS['TL_LANG']['tl_list_config']['edit'][1]), $dc->value).'" onclick="Backend.openModalIframe({\'title\':\''.StringUtil::specialchars(str_replace("'", "\\'", sprintf($GLOBALS['TL_LANG']['tl_list_config']['edit'][1], $dc->value))).'\',\'url\':this.href});return false">'.$image->getHtml('alias.svg', $GLOBALS['TL_LANG']['tl_list_config']['edit'][0]).'</a>';
+        return ($dc->value < 1) ? '' : ' <a href="contao?do=list_configs&amp;act=edit&amp;id='.$dc->value.'&amp;popup=1&amp;nb=1&amp;rt='.REQUEST_TOKEN.'" title="'.sprintf(StringUtil::specialchars($GLOBALS['TL_LANG']['tl_list_config']['edit'][1]), $dc->value).'" onclick="Backend.openModalIframe({\'title\':\''.StringUtil::specialchars(str_replace("'", "\\'", sprintf($GLOBALS['TL_LANG']['tl_list_config']['edit'][1], $dc->value))).'\',\'url\':this.href});return false">'.$image->getHtml('alias.svg', $GLOBALS['TL_LANG']['tl_list_config']['edit'][0]).'</a>';
     }
 }

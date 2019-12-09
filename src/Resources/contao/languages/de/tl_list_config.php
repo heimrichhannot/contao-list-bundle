@@ -67,24 +67,32 @@ $lang['useAlias'][1]   = 'Wählen Sie diese Option, wenn erzeugte URLs statt der
 $lang['aliasField'][0] = 'Alias-Feld';
 $lang['aliasField'][1] = 'Wählen Sie hier das zu verwendende Alias-Feld aus (Hinweis: Nur Felder mit inputType="text" sind erlaubt).';
 
-$lang['addDetails'][0]                = 'Details-Weiterleitung hinzufügen';
-$lang['addDetails'][1]                = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Anzeigen von Details hinzuzufügen.';
-$lang['jumpToDetails'][0]             = 'Weiterleitungsseite (Details; MUSS für die Einbeziehung in die Sitemap gesetzt sein!)';
-$lang['jumpToDetails'][1]             = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn es eine Detailseite gibt.';
-$lang['addShare'][0]                  = 'Teilen-Weiterleitung hinzufügen';
-$lang['addShare'][1]                  = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Teilen des aktuellen Listeneintrags hinzuzufügen.';
-$lang['jumpToShare'][0]               = 'Weiterleitungsseite (Teilen)';
-$lang['jumpToShare'][1]               = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn ein Inhalt geteilt wurde.';
-$lang['shareAutoItem'][0]             = 'Auto-Item für den Teilen-Link verwenden';
-$lang['shareAutoItem'][1]             = 'Wählen Sie diese Option aus, um das Share Token als auto_item auszugeben.';
-$lang['addOverview'][0]               = 'Link zur Übersichtsseite hinzufügen';
-$lang['addOverview'][1]               = 'Wählen Sie diese Option aus, um der Liste einen Link zur Übersichtsseite hinzuzufügen.';
-$lang['jumpToOverview'][0]            = 'Übersichtsseite';
-$lang['jumpToOverview'][1]            = '';
-$lang['customJumpToOverviewLabel'][0] = 'Label für "zur Übersicht" überschreiben';
-$lang['customJumpToOverviewLabel'][1] = '';
-$lang['jumpToOverviewLabel'][0]       = 'Label für "zur Übersicht"';
-$lang['jumpToOverviewLabel'][1]       = '';
+$lang['addDetails'][0]                 = 'Details-Weiterleitung hinzufügen';
+$lang['addDetails'][1]                 = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Anzeigen von Details hinzuzufügen.';
+$lang['jumpToDetails'][0]              = 'Weiterleitungsseite (Details; MUSS für die Einbeziehung in die Sitemap gesetzt sein!)';
+$lang['jumpToDetails'][1]              = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn es eine Detailseite gibt.';
+$lang['jumpToDetailsMultilingual']     = [
+    0          => 'Sprachenabhängige Weiterleitungsseite',
+    1          => 'Definieren Sie hier nur von der Standard-Weiterleitungsseite abweichende Seiten.',
+    'language' => ['Sprache'],
+    'jumpTo'   => ['Weiterleitungsseite']
+];
+$lang['jumpToOverviewMultilingual'][0] = 'Sprachenabhängige Übersichtsseite';
+$lang['jumpToOverviewMultilingual'][1] = 'Wählen Sie hier Übersichtsseiten aus.';
+$lang['addShare'][0]                   = 'Teilen-Weiterleitung hinzufügen';
+$lang['addShare'][1]                   = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Teilen des aktuellen Listeneintrags hinzuzufügen.';
+$lang['jumpToShare'][0]                = 'Weiterleitungsseite (Teilen)';
+$lang['jumpToShare'][1]                = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn ein Inhalt geteilt wurde.';
+$lang['shareAutoItem'][0]              = 'Auto-Item für den Teilen-Link verwenden';
+$lang['shareAutoItem'][1]              = 'Wählen Sie diese Option aus, um das Share Token als auto_item auszugeben.';
+$lang['addOverview'][0]                = 'Link zur Übersichtsseite hinzufügen';
+$lang['addOverview'][1]                = 'Wählen Sie diese Option aus, um der Liste einen Link zur Übersichtsseite hinzuzufügen.';
+$lang['jumpToOverview'][0]             = 'Übersichtsseite';
+$lang['jumpToOverview'][1]             = 'Wählen Sie hier eine Übersichtsseite aus.';
+$lang['customJumpToOverviewLabel'][0]  = 'Label für "zur Übersicht" überschreiben';
+$lang['customJumpToOverviewLabel'][1]  = '';
+$lang['jumpToOverviewLabel'][0]        = 'Label für "zur Übersicht"';
+$lang['jumpToOverviewLabel'][1]        = '';
 
 // misc
 $lang['addAjaxPagination'][0]           = 'Ajax-Paginierung hinzufügen';

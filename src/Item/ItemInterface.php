@@ -222,6 +222,16 @@ interface ItemInterface
     /**
      * @return string
      */
+    public function getJumpToDetailsMultilingual(): ?string;
+
+    /**
+     * @param string $jumpToDetailsMultilingual
+     */
+    public function setJumpToDetailsMultilingual(string $jumpToDetailsMultilingual);
+
+    /**
+     * @return string
+     */
     public function getModalUrl(): ?string;
 
     /**

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.11.0] - 2019-12-11
+
+- changed default value for doNotIndex and doNotSearch to 1
+
 ## [1.10.0] - 2019-12-09
 
 - added shortcut for list configs

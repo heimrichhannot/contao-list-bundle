@@ -517,7 +517,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'default'   => true,
             'search'    => true,
             'eval'      => ['tl_class' => 'w50 clr'],
-            'sql'       => "char(1) NOT NULL default ''",
+            'sql'       => "char(1) NOT NULL default '1'",
         ],
         'doNotIndexItems'             => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['doNotIndexItems'],
@@ -526,7 +526,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'search'    => true,
             'default'   => true,
             'eval'      => ['tl_class' => 'w50'],
-            'sql'       => "char(1) NOT NULL default ''",
+            'sql'       => "char(1) NOT NULL default '1'",
         ],
         'addOverview'                 => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addOverview'],

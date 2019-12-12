@@ -75,6 +75,7 @@ class SearchListener
                 if (null === $filter) {
                     continue;
                 }
+
                 $filter = $filter->getFilter();
 
                 if (empty($filter) || !isset($filter['dataContainer']) || null === $filter['dataContainer']) {

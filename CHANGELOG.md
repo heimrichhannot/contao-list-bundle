@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.12.0] - 2019-12-11
+
+- added support for multilingual jump to pages in sitemap generation
+
 ## [1.11.0] - 2019-12-11
 
 - changed default value for doNotIndex and doNotSearch to 1

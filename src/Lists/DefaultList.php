@@ -436,7 +436,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $queryParts = $queryBuilder->getQueryParts();
 
         if (!empty($queryParts['orderBy'])) {
-            list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit);
+            [$offset, $limit] = $this->splitResults($offset, $totalCount, $limit);
             // split the results
             $queryBuilder->setFirstResult($offset)->setMaxResults($limit);
 
@@ -448,7 +448,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         if (ListConfig::SORTING_MODE_RANDOM == $currentSorting['order']) {
             $randomSeed = $this->_manager->getRequest()->getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
             $queryBuilder->orderBy('RAND("'.(int) $randomSeed.'")');
-            list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit, $randomSeed);
+            [$offset, $limit] = $this->splitResults($offset, $totalCount, $limit, $randomSeed);
         } elseif (ListConfig::SORTING_MODE_MANUAL == $currentSorting['order']) {
             $sortingItems = StringUtil::deserialize($listConfig->sortingItems, true);
 
@@ -456,13 +456,13 @@ class DefaultList implements ListInterface, \JsonSerializable
                 $queryBuilder->orderBy('FIELD('.$filter->dataContainer.'.id,'.implode(',', $sortingItems).')', ' ');
             }
 
-            list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit);
+            [$offset, $limit] = $this->splitResults($offset, $totalCount, $limit);
         } else {
             if (!empty($currentSorting)) {
                 $queryBuilder->orderBy($currentSorting['order'], $currentSorting['sort']);
             }
 
-            list($offset, $limit) = $this->splitResults($offset, $totalCount, $limit);
+            [$offset, $limit] = $this->splitResults($offset, $totalCount, $limit);
         }
 
         // split the results
@@ -993,19 +993,38 @@ class DefaultList implements ListInterface, \JsonSerializable
             $arrRoot = $database->getChildRecords($intRoot, 'tl_page');
         }
 
-        if (!empty($arrRoot) && !\in_array($this->getJumpTo(), $arrRoot)) {
-            return $arrPages;
-        }
-
         $this->_manager->getFilterConfig()->resetData();
 
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
         $listConfig = $this->_manager->getListConfig();
 
+        $table = $filter->dataContainer;
+
+        $multilingualJumpTos = [];
+        $multilingualLanguages = [];
+        $dcMultilingualActive = System::getContainer()->get('huh.utils.dca')->isDcMultilingual($table);
+
+        if ($dcMultilingualActive) {
+            $jumpToDetailsMultilingual = StringUtil::deserialize($listConfig->jumpToDetailsMultilingual, true);
+
+            foreach ($jumpToDetailsMultilingual as $data) {
+                if (!$data['language'] || !$data['jumpTo'] || !\in_array($data['jumpTo'], $arrRoot)) {
+                    continue;
+                }
+
+                $multilingualJumpTos[] = $data['jumpTo'];
+                $multilingualLanguages[] = $data['language'];
+            }
+        }
+
+        if (!empty($arrRoot) && empty(array_intersect(array_merge([$this->getJumpTo()], $multilingualJumpTos), $arrRoot))) {
+            return $arrPages;
+        }
+
         /** @var FilterQueryBuilder $queryBuilder */
         $queryBuilder = $this->_manager->getFilterManager()->getQueryBuilder($filter->id);
 
-        $fields = $filter->dataContainer.'.* ';
+        $fields = $table.'.* ';
 
         if (($totalCount = $queryBuilder->select($fields)->execute()->rowCount()) < 1) {
             return $arrPages;
@@ -1032,20 +1051,62 @@ class DefaultList implements ListInterface, \JsonSerializable
                 continue;
             }
 
-            $result->setIdOrAlias($idOrAlias);
-            $result->addDetailsUrl($idOrAlias, $result, $listConfig, true);
+            $urls = [];
 
-            $url = $result->getDetailsUrl($blnIsSitemap);
+            if (\in_array($this->getJumpTo(), $arrRoot)) {
+                $result->setIdOrAlias($idOrAlias);
+                $result->addDetailsUrl($idOrAlias, $result, $listConfig, true);
 
-            if (null === $url || empty($url)) {
-                continue;
+                $url = $result->getDetailsUrl($blnIsSitemap);
+
+                if (null !== $url && !empty($url)) {
+                    $urls[] = $url;
+                }
             }
 
-            if (\in_array($url, $arrPages)) {
-                continue;
+            if ($dcMultilingualActive) {
+                $tmpLang = $GLOBALS['TL_LANGUAGE'];
+
+                foreach ($jumpToDetailsMultilingual as $data) {
+                    if (!$data['language'] || !$data['jumpTo'] || !\in_array($data['jumpTo'], $arrRoot)) {
+                        continue;
+                    }
+
+                    $GLOBALS['TL_LANGUAGE'] = $data['language'];
+
+                    $query = "SELECT $table.$listConfig->aliasField FROM $table WHERE $table.langPid=? AND $table.language=?";
+
+                    if ($this->isDcMultilingualUtilsActive($listConfig, [], $table)) {
+                        $time = Date::floorToMinute();
+
+                        $query .= " AND $table.langPublished=1 AND ($table.langStart = '' OR $table.langStart <= $time) AND ($table.langStop = '' OR $table.langStop > ".($time + 60).')';
+                    }
+
+                    $translatedResult = Database::getInstance()->prepare($query)->limit(1)->execute($result->getRawValue('id'), $data['language']);
+
+                    if ($translatedResult->numRows < 1) {
+                        continue;
+                    }
+
+                    $result->{$listConfig->aliasField} = $translatedResult->{$listConfig->aliasField};
+
+                    if (null === ($idOrAlias = $result->generateIdOrAlias($result, $listConfig))) {
+                        continue;
+                    }
+
+                    $result->addDetailsUrl($idOrAlias, $result, $listConfig, true);
+
+                    $url = $result->getDetailsUrl($blnIsSitemap);
+
+                    if (null !== $url && !empty($url)) {
+                        $urls[] = $url;
+                    }
+                }
+
+                $GLOBALS['TL_LANGUAGE'] = $tmpLang;
             }
 
-            $arrPages[] = $url;
+            $arrPages = array_unique(array_merge($arrPages, $urls));
         }
 
         return $arrPages;

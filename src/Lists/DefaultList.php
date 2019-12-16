@@ -1008,7 +1008,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             $jumpToDetailsMultilingual = StringUtil::deserialize($listConfig->jumpToDetailsMultilingual, true);
 
             foreach ($jumpToDetailsMultilingual as $data) {
-                if (!$data['language'] || !$data['jumpTo'] || !\in_array($data['jumpTo'], $arrRoot)) {
+                if (!$data['language'] || !$data['jumpTo'] || $intRoot > 0 && !\in_array($data['jumpTo'], $arrRoot)) {
                     continue;
                 }
 
@@ -1017,7 +1017,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             }
         }
 
-        if (!empty($arrRoot) && empty(array_intersect(array_merge([$this->getJumpTo()], $multilingualJumpTos), $arrRoot))) {
+        if ($intRoot > 0 && !empty($arrRoot) && empty(array_intersect(array_merge([$this->getJumpTo()], $multilingualJumpTos), $arrRoot))) {
             return $arrPages;
         }
 
@@ -1053,7 +1053,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
             $urls = [];
 
-            if (\in_array($this->getJumpTo(), $arrRoot)) {
+            if (!$intRoot || $intRoot > 0 && \in_array($this->getJumpTo(), $arrRoot)) {
                 $result->setIdOrAlias($idOrAlias);
                 $result->addDetailsUrl($idOrAlias, $result, $listConfig, true);
 
@@ -1068,7 +1068,7 @@ class DefaultList implements ListInterface, \JsonSerializable
                 $tmpLang = $GLOBALS['TL_LANGUAGE'];
 
                 foreach ($jumpToDetailsMultilingual as $data) {
-                    if (!$data['language'] || !$data['jumpTo'] || !\in_array($data['jumpTo'], $arrRoot)) {
+                    if (!$data['language'] || !$data['jumpTo'] || $intRoot > 0 && !\in_array($data['jumpTo'], $arrRoot)) {
                         continue;
                     }
 

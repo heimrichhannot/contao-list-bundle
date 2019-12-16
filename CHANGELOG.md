@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.12.1] - 2019-12-16
+
+- fixed search index issues
+
 ## [1.12.0] - 2019-12-11
 
 - added support for multilingual jump to pages in sitemap generation

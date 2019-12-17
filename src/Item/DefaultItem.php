@@ -663,7 +663,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function setJumpToDetailsMultilingual(string $jumpToDetailsMultilingual)
+    public function setJumpToDetailsMultilingual(?string $jumpToDetailsMultilingual)
     {
         $this->_jumpToDetailsMultilingual = $jumpToDetailsMultilingual;
     }

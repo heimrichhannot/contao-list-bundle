@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.12.2] - 2019-12-17
+- fixed exception when multilingual jump to page not set
+
 ## [1.12.1] - 2019-12-16
 
 - fixed search index issues

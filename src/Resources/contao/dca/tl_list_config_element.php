@@ -78,6 +78,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE   => 'placeholderImage',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'genderField,placeholderImage,placeholderImageFemale',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM   => 'placeholderImages',
+        'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_FIELD   => 'fieldDependentPlaceholderConfig',
     ],
     'fields'      => [
         'id'                        => [
@@ -220,5 +221,44 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
+        'fieldDependentPlaceholderConfig' => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['fieldDependentPlaceholderConfig'],
+            'inputType' => 'multiColumnEditor',
+            'eval'      => [
+                'tl_class'          => 'long clr',
+                'multiColumnEditor' => [
+                    'minRowCount' => 0,
+                    'fields'      => [
+                        'field' => [
+                            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['fieldDependentPlaceholderConfig']['field'],
+                            'inputType' => 'select',
+                            'options_callback' => function (DataContainer $dc) {
+                                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+                            },
+                            'eval'      => ['style' => 'width: 200px', 'mandatory' => true, 'includeBlankOption' => true],
+                        ],
+                        'operator' => [
+                            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['fieldDependentPlaceholderConfig']['operator'],
+                            'inputType' => 'select',
+                            'options'   => \HeimrichHannot\UtilsBundle\Comparison\CompareUtil::PHP_OPERATORS,
+                            'reference' => &$GLOBALS['TL_LANG']['MSC']['phpOperators'],
+                            'eval'      => ['style' => 'width: 200px', 'mandatory' => true, 'includeBlankOption' => true],
+                        ],
+                        'value' => [
+                            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['fieldDependentPlaceholderConfig']['value'],
+                            'inputType' => 'text',
+                            'eval'      => ['style' => 'width: 200px'],
+                        ],
+                        'placeholderImage' => [
+                            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['fieldDependentPlaceholderConfig']['placeholderImage'],
+                            'exclude'   => true,
+                            'inputType' => 'fileTree',
+                            'eval'      => ['style' => 'width: 200px', 'tl_class' => 'w50 autoheight', 'fieldType' => 'radio', 'filesOnly' => true, 'extensions' => Config::get('validImageTypes'), 'mandatory' => true],
+                        ]
+                    ]
+                ]
+            ],
+            'sql'       => "blob NULL"
+        ]
     ],
 ];

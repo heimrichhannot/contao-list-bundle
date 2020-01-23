@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.13.0] - 2020-01-23
+
+- added field dependent placeholder images
+
 ## [1.12.2] - 2019-12-17
 - fixed exception when multilingual jump to page not set
 

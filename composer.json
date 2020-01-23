@@ -24,7 +24,7 @@
     "contao/core-bundle": "^4.4",
     "heimrichhannot/contao-be_explanation-bundle": "^2.2",
     "heimrichhannot/contao-filter-bundle": "^1.0-beta",
-    "heimrichhannot/contao-utils-bundle": "^2.1",
+    "heimrichhannot/contao-utils-bundle": "^2.128",
     "heimrichhannot-contao-components/masonry": ">=4.2, <=4.3",
     "heimrichhannot-contao-components/imagesloaded": "4.1.*",
     "heimrichhannot-contao-components/jscroll": "2.3.*",

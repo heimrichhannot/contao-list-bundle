@@ -423,7 +423,9 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         if ($listConfig->addDetails) {
             $this->setUseModal($listConfig->useModal);
             $this->setJumpToDetails($listConfig->jumpToDetails);
-            $this->setJumpToDetailsMultilingual($listConfig->jumpToDetailsMultilingual);
+            if($listConfig->jumpToDetailsMultilingual) {
+                $this->setJumpToDetailsMultilingual($listConfig->jumpToDetailsMultilingual);
+            }
 
             $jumpToDetails = $listConfig->jumpToDetails;
             $jumpToDetailsMultilingual = StringUtil::deserialize($listConfig->jumpToDetailsMultilingual, true);

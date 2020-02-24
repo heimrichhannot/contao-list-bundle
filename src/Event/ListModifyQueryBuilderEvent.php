@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -31,17 +31,22 @@ class ListModifyQueryBuilderEvent extends Event
      * @var ListConfigModel
      */
     protected $listConfig;
+    /**
+     * @var string
+     */
+    private $fields;
 
     /**
      * @param QueryBuilder    $queryBuilder
      * @param ListInterface   $list
      * @param ListConfigModel $listConfig
      */
-    public function __construct(QueryBuilder $queryBuilder, ListInterface $list, ListConfigModel $listConfig)
+    public function __construct(QueryBuilder $queryBuilder, ListInterface $list, ListConfigModel $listConfig, string $fields)
     {
         $this->queryBuilder = $queryBuilder;
         $this->list = $list;
         $this->listConfig = $listConfig;
+        $this->fields = $fields;
     }
 
     /**
@@ -90,5 +95,21 @@ class ListModifyQueryBuilderEvent extends Event
     public function setListConfig(ListConfigModel $listConfig): void
     {
         $this->listConfig = $listConfig;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFields(): string
+    {
+        return $this->fields;
+    }
+
+    /**
+     * @param string $fields
+     */
+    public function setFields(string $fields): void
+    {
+        $this->fields = $fields;
     }
 }

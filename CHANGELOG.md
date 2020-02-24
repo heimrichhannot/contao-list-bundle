@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.14.0] - 2020-02-24
+
+- enhanced events
+
 ## [1.13.0] - 2020-01-23
 
 - added field dependent placeholder images

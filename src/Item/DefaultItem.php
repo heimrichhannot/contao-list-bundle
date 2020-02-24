@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -423,7 +423,8 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         if ($listConfig->addDetails) {
             $this->setUseModal($listConfig->useModal);
             $this->setJumpToDetails($listConfig->jumpToDetails);
-            if($listConfig->jumpToDetailsMultilingual) {
+
+            if ($listConfig->jumpToDetailsMultilingual) {
                 $this->setJumpToDetailsMultilingual($listConfig->jumpToDetailsMultilingual);
             }
 

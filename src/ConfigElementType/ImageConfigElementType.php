@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -20,7 +20,7 @@ use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 
 class ImageConfigElementType implements ListConfigElementTypeInterface
 {
-    const TYPE                                  = 'image';
+    const TYPE = 'image';
     const RANDOM_IMAGE_PLACEHOLDERS_SESSION_KEY = 'huh.random-image-placeholders';
 
     /**
@@ -35,21 +35,21 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 
     public function addToItemData(ItemInterface $item, ListConfigElementModel $listConfigElement)
     {
-        $image          = null;
+        $image = null;
         $validImageType = $this->isValidImageType($item, $listConfigElement);
 
         if ($listConfigElement->imageSelectorField && $item->getRawValue($listConfigElement->imageSelectorField)
             && $item->getRawValue($listConfigElement->imageField) && $validImageType) {
             $imageSelectorField = $listConfigElement->imageSelectorField;
-            $image              = $item->getRawValue($listConfigElement->imageField);
-            $imageField         = $listConfigElement->imageField;
+            $image = $item->getRawValue($listConfigElement->imageField);
+            $imageField = $listConfigElement->imageField;
         } elseif (!$listConfigElement->imageSelectorField && $listConfigElement->imageField && $item->getRawValue($listConfigElement->imageField) && $validImageType) {
             $imageSelectorField = '';
-            $image              = $item->getRawValue($listConfigElement->imageField);
-            $imageField         = $listConfigElement->imageField;
+            $image = $item->getRawValue($listConfigElement->imageField);
+            $imageField = $listConfigElement->imageField;
         } elseif ($listConfigElement->placeholderImageMode) {
             $imageSelectorField = $listConfigElement->imageSelectorField;
-            $imageField         = $listConfigElement->imageField;
+            $imageField = $listConfigElement->imageField;
 
             switch ($listConfigElement->placeholderImageMode) {
                 case ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED:
@@ -77,7 +77,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 
                     $dataContainer = System::getContainer()->get('huh.list.manager.list')->getFilterConfig()->getFilter()['dataContainer'];
 
-                    $key = $dataContainer . '_' . $item->getRawValue('id');
+                    $key = $dataContainer.'_'.$item->getRawValue('id');
 
                     if (isset($randomImagePlaceholders[$key])) {
                         $image = $randomImagePlaceholders[$key];
@@ -88,6 +88,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
                     $session->set(static::RANDOM_IMAGE_PLACEHOLDERS_SESSION_KEY, $randomImagePlaceholders);
 
                     break;
+
                 case ListConfigElement::PLACEHOLDER_IMAGE_MODE_FIELD:
                     if (empty($placeholderConfig = StringUtil::deserialize($listConfigElement->fieldDependentPlaceholderConfig,
                         true))) {
@@ -118,13 +119,13 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
         }
 
         if (null === ($imageFile = $filesModel->findByUuid($image))) {
-            $uuid      = StringUtil::deserialize($image, true)[0];
+            $uuid = StringUtil::deserialize($image, true)[0];
             $imageFile = $filesModel->findByUuid($uuid);
         }
 
         $projectDir = System::getContainer()->get('huh.utils.container')->getProjectDir();
 
-        if (null !== $imageFile && file_exists($projectDir . '/' . $imageFile->path) && getimagesize($projectDir . '/' . $imageFile->path)) {
+        if (null !== $imageFile && file_exists($projectDir.'/'.$imageFile->path) && getimagesize($projectDir.'/'.$imageFile->path)) {
             $imageArray = $item->getRaw();
 
             // Override the default image size
@@ -138,8 +139,8 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 
             $imageArray[$imageField] = $imageFile->path;
 
-            $templateData                                                                = [];
-            $templateData['images']                                                      = $item->getFormattedValue('images') ?: [];
+            $templateData = [];
+            $templateData['images'] = $item->getFormattedValue('images') ?: [];
             $templateData['images'][$listConfigElement->templateVariable ?: $imageField] = [];
 
             System::getContainer()->get('huh.utils.image')->addToTemplateData($imageField, $imageSelectorField,
@@ -198,10 +199,12 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
     }
 
     /**
-     * @param ItemInterface $item
+     * @param ItemInterface          $item
      * @param ListConfigElementModel $listConfigElement
-     * @return bool
+     *
      * @throws \Exception
+     *
+     * @return bool
      */
     protected function isValidImageType(ItemInterface $item, ListConfigElementModel $listConfigElement): bool
     {

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2019 Heimrich & Hannot GmbH
+ * Copyright (c) 2020 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -285,7 +285,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $totalCount = 0;
 
-        $this->_dispatcher->dispatch(ListModifyQueryBuilderForCountEvent::NAME, new ListModifyQueryBuilderForCountEvent($queryBuilder, $this, $listConfig));
+        $this->_dispatcher->dispatch(ListModifyQueryBuilderForCountEvent::NAME, new ListModifyQueryBuilderForCountEvent($queryBuilder, $this, $listConfig, $fields));
 
         // initial results
         $this->setShowInitialResults($listConfig->showInitialResults);
@@ -306,7 +306,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         // query builder
         $this->applyListConfigToQueryBuilder($totalCount, $queryBuilder);
 
-        $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig));
+        $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields));
 
         if ($isSubmitted || $listConfig->showInitialResults) {
             $items = $queryBuilder->execute()->fetchAll();
@@ -1030,7 +1030,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             return $arrPages;
         }
 
-        $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig));
+        $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields));
 
         $items = $queryBuilder->execute()->fetchAll();
 

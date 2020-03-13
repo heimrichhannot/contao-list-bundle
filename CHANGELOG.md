@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.14.1] - 2020-03-13
+- fixed load_callback to support callables
+
 ## [1.14.0] - 2020-02-24
 
 - enhanced events

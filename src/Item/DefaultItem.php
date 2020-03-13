@@ -193,8 +193,12 @@ class DefaultItem implements ItemInterface, \JsonSerializable
             foreach ($dca['fields'][$name]['load_callback'] as $callback) {
                 $this->dc->field = $name;
 
-                $instance = System::importStatic($callback[0]);
-                $value = $instance->{$callback[1]}($value, $this->dc);
+                if (\is_array($callback)) {
+                    $instance = System::importStatic($callback[0]);
+                    $value = $instance->{$callback[1]}($value, $this->dc);
+                } elseif (\is_callable($callback)) {
+                    $value = $callback($value, $this->dc);
+                }
             }
         }
 

@@ -7,18 +7,18 @@
 
     {% if addDetails|default() and (detailsUrl|default() or modalUrl|default()) %}
         {% if useModal|default() %}
-            <a class="details" href="{{ modalUrl }}" data-toggle="modal">
+            <a class="details" href="{{ modalUrl }}" data-toggle="modal" title="{{ 'huh.list.misc.detailsLinkTitle' | trans }}{% if headline|default() %} {{ headline|raw }}{% elseif title|default() %} {{ title|raw }}{% endif %}">
                 {{ 'huh.list.misc.detailsTitle' | trans }}
             </a>
         {% else %}
-            <a class="details" href="{{ detailsUrl }}">
+            <a class="details" href="{{ detailsUrl }}" title="{{ 'huh.list.misc.detailsLinkTitle' | trans }}{% if headline|default() %} {{ headline|raw }}{% elseif title|default() %} {{ title|raw }}{% endif %}">
                 {{ 'huh.list.misc.detailsTitle' | trans }}
             </a>
         {% endif %}
     {% endif %}
 
     {% if addShare|default() and shareUrl|default() %}
-        <a class="share" href="{{ shareUrl }}" data-message="{{ shareMessage }}">
+        <a class="share" href="{{ shareUrl }}" data-message="{{ shareMessage }}" title="{{ shareTitle }}">
             {{ shareTitle }}
         </a>
     {% endif %}

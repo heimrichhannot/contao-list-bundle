@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.14.2] - 2020-03-31
+- added title attribute to links in list_item_default template
+
 ## [1.14.1] - 2020-03-13
 - fixed load_callback to support callables
 

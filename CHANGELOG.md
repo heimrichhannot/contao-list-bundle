@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.14.4] - 2020-04-06
+- fixed some none-public service
+
 ## [1.14.3] - 2020-04-02
 - fixed localizations
 

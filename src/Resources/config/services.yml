@@ -1,4 +1,7 @@
 services:
+  _defaults:
+    public: true
+
   huh.list.choice.template.list:
     class: HeimrichHannot\ListBundle\Choice\ListTemplateChoice
     arguments:
@@ -16,11 +19,13 @@ services:
 
   huh.list.choice.parent-list-config:
     class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice
+    public: true
     arguments:
     - "@contao.framework"
 
   huh.list.manager.list:
     class: HeimrichHannot\ListBundle\Manager\ListManager
+    public: true
     arguments:
     - "@contao.framework"
     - "@huh.list.list-config-registry"
@@ -36,6 +41,7 @@ services:
 
   huh.list.list-config-registry:
     class: HeimrichHannot\ListBundle\Registry\ListConfigRegistry
+    public: true
     arguments:
     - "@contao.framework"
 

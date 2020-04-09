@@ -7,25 +7,30 @@
 
 This bundle offers a generic list module to use with arbitrary contao entities containing standard list handling like pagination, sorting, and filtering.
 
-## Installation
+## Features
+* generic list module to use with arbitrary contao entities
+* support all form of standard list handling like pagination, sorting, filtering
+* works together with filter bundle
+* inheritable list configurations
+* template are build in twig
+* [Encore Bundle]((https://github.com/heimrichhannot/contao-encore-bundle) support
 
-Install via composer: `composer require heimrichhannot/contao-list-bundle` and update your database.
+## Usage
 
-### Installation with frontend assets using webpack
+### Install
 
-If you want to add the frontend assets (JS & CSS) to your project using webpack, please
-add [foxy/foxy](https://github.com/fxpio/foxy) to the depndencies of your project's `composer.json` and add the following to its `config` section:
+1. Install via composer: `composer require heimrichhannot/contao-list-bundle` or contao manager
+1. Update your database
 
-```json
-"foxy": {
-  "manager": "yarn",
-  "manager-version": "^1.5.0"
-}
-```
+Recommendations:
+* use this bundle together with [Reader Bundle](https://github.com/heimrichhannot/contao-reader-bundle).
+* use [Encore Bundle](https://github.com/heimrichhannot/contao-encore-bundle) for managing your frontend assets
 
-Using this, foxy will automatically add the needed yarn packages to your project's `node_modules` folder.
-
-If you want to specify which frontend assets to use on a per page level, you can use [heimrichhannot/contao-encore-bundle](https://github.com/heimrichhannot/contao-encore-bundle).
+### Setup
+1. Setup a filter (see [Filter Bundle](https://github.com/heimrichhannot/contao-filter-bundle) setup)
+1. Create a list config (System -> List config)
+    * To add list elements like images, videos, slider etc, add list config elements (see Concepts -> List config elements for explanation)
+1. Create a list frontend module and output it, where you like it
 
 ## Concepts
 
@@ -47,117 +52,6 @@ Type  | Description
 ------|------------
 image | Configure the output of one or more image fields separately (image size, placeholder handling, ...)
 
-## Technical Instructions
+## Documentation
 
-### Templates (list and item)
-
-There are two ways to define your templates. 
-
-#### 1. By Prefix
-
-The first one is to simply deploy twig templates inside any `templates` or bundles `views` directory with the following prefixes:
-
-** list template prefixes**
-
-- `list_`
-
-** item template prefixes**
-
-- `list_item_`
-- `item_`
-- `news_`
-- `event_`
-
-**More prefixes can be defined, see 2nd way.**
-
-#### 2. By config.yml
-
-The second on is to extend the `config.yml` and define a strict template:
-
-**Plugin.php**
-```
-<?php
-
-class Plugin implements BundlePluginInterface, ExtensionPluginInterface
-{
-    /**
-     * {@inheritdoc}
-     */
-    public function getBundles(ParserInterface $parser)
-    {
-        …
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container)
-    {
-        return ContainerUtil::mergeConfigFile(
-            'huh_list',
-            $extensionName,
-            $extensionConfigs,
-            __DIR__ .'/../Resources/config/config.yml'
-        );
-    }
-}
-```
-
-**config.yml**
-```
-huh:
-    list:
-        templates:
-            list:
-                - { name: default, template: "@HeimrichHannotContaoList/list/list_default.html.twig" }
-                - { name: table_default, template: "@HeimrichHannotContaoList/list/list_table_default.html.twig" }
-            list_prefixes:
-                - list_(?!item)
-            item:
-                - { name: default, template: "@HeimrichHannotContaoList/item/list_item_default.html.twig" }
-                - { name: table_default, template: "@HeimrichHannotContaoList/item/list_item_table_default.html.twig" }
-            item_prefixes:
-                - list_item_
-                - item_
-                - news_
-                - event_
-```
-
-
-### Add list config element types
-
-1. Create a class that implements `HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementTypeInterface`
-1. Register the class as service with service tag `huh.list.config_element_type`
-1. Add a friendly type name (translation) into the `$GLOBALS['TL_LANG']['tl_list_config_element']['reference']` variable
-
-    ```php
-    $lang['reference'][\HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType::TYPE] = 'Image';
-    ```
-
-### Masonry
-
-#### Stamps
-
-Stamp content is found in `masonryStampContentElements` template variable.
-
-```
-masonryStampContentElements => [
-    0 => [
-        "content" => "<div>...</div>" // The rendered block
-        "class" => "stamp-item ..." // The given css classes 
-    ],
-    ...
-]
-```
-
-Output example (Twig):
-
-```
-{% for element in masonryStampContentElements %}
-    <div class="stamp-item {{ element.class }}">
-        {{ element.content|raw }}
-    </div>
-{% endfor %}
-```
-
-> The stamp item must use the css class `stamp-item` to be interpreted as stamp. 
+[Developer documentation](docs/developers.md)

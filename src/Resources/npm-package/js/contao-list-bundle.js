@@ -126,6 +126,15 @@ class ListBundle {
             list = document.querySelector(id).parentNode;
 
         list.outerHTML = data.list;
+        document.dispatchEvent(new CustomEvent('huh.list.list_update_complete', {
+            detail: {
+                list: list,
+                listId: id,
+                filter: target
+            },
+            bubbles: true,
+            cancelable: true
+        }));
     }
 }
 

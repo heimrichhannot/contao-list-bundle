@@ -13,7 +13,7 @@ This bundle offers a generic list module to use with arbitrary contao entities c
 * works together with filter bundle
 * inheritable list configurations
 * template are build in twig
-* [Encore Bundle]((https://github.com/heimrichhannot/contao-encore-bundle) support
+* [Encore Bundle](https://github.com/heimrichhannot/contao-encore-bundle) support
 
 ## Usage
 

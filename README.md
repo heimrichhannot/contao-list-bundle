@@ -19,7 +19,7 @@ This bundle offers a generic list module to use with arbitrary contao entities c
 
 ### Install
 
-1. Install via composer: `composer require heimrichhannot/contao-list-bundle` or contao manager
+1. Install via composer (`composer require heimrichhannot/contao-list-bundle`) or contao manager
 1. Update your database
 
 Recommendations:

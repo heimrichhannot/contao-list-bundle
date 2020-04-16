@@ -32,9 +32,7 @@ class ListBeforeRenderEvent extends Event
     protected $listConfig;
 
     /**
-     * @param mixed           $templateData
-     * @param ListInterface   $list
-     * @param ListConfigModel $listConfig
+     * @param mixed $templateData
      */
     public function __construct(array $templateData, ListInterface $list, ListConfigModel $listConfig)
     {
@@ -59,33 +57,21 @@ class ListBeforeRenderEvent extends Event
         $this->templateData = $templateData;
     }
 
-    /**
-     * @return ListInterface
-     */
     public function getList(): ListInterface
     {
         return $this->list;
     }
 
-    /**
-     * @param ListInterface $list
-     */
     public function setList(ListInterface $list): void
     {
         $this->list = $list;
     }
 
-    /**
-     * @return ListConfigModel
-     */
     public function getListConfig(): ListConfigModel
     {
         return $this->listConfig;
     }
 
-    /**
-     * @param ListConfigModel $listConfig
-     */
     public function setListConfig(ListConfigModel $listConfig): void
     {
         $this->listConfig = $listConfig;

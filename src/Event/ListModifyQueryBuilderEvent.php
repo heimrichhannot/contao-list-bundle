@@ -36,11 +36,6 @@ class ListModifyQueryBuilderEvent extends Event
      */
     private $fields;
 
-    /**
-     * @param QueryBuilder    $queryBuilder
-     * @param ListInterface   $list
-     * @param ListConfigModel $listConfig
-     */
     public function __construct(QueryBuilder $queryBuilder, ListInterface $list, ListConfigModel $listConfig, string $fields)
     {
         $this->queryBuilder = $queryBuilder;
@@ -49,65 +44,41 @@ class ListModifyQueryBuilderEvent extends Event
         $this->fields = $fields;
     }
 
-    /**
-     * @return QueryBuilder
-     */
     public function getQueryBuilder(): QueryBuilder
     {
         return $this->queryBuilder;
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     */
     public function setQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $this->queryBuilder = $queryBuilder;
     }
 
-    /**
-     * @return ListInterface
-     */
     public function getList(): ListInterface
     {
         return $this->list;
     }
 
-    /**
-     * @param ListInterface $list
-     */
     public function setList(ListInterface $list): void
     {
         $this->list = $list;
     }
 
-    /**
-     * @return ListConfigModel
-     */
     public function getListConfig(): ListConfigModel
     {
         return $this->listConfig;
     }
 
-    /**
-     * @param ListConfigModel $listConfig
-     */
     public function setListConfig(ListConfigModel $listConfig): void
     {
         $this->listConfig = $listConfig;
     }
 
-    /**
-     * @return string
-     */
     public function getFields(): string
     {
         return $this->fields;
     }
 
-    /**
-     * @param string $fields
-     */
     public function setFields(string $fields): void
     {
         $this->fields = $fields;

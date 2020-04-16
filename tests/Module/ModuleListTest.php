@@ -79,8 +79,6 @@ class ModuleListTest extends ContaoTestCase
     }
 
     /**
-     * @param int $itemCount
-     *
      * @return \PHPUnit_Framework_MockObject_MockObject|ListInterface
      */
     public function getListMock(int $itemCount = 0)

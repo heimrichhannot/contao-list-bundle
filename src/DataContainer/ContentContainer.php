@@ -60,8 +60,6 @@ class ContentContainer
 
     /**
      * Invoke onload_callback.
-     *
-     * @param DataContainer $dc
      */
     public function onLoad(DataContainer $dc)
     {
@@ -90,14 +88,10 @@ class ContentContainer
     /**
      * Get list of preselect choices.
      *
-     * @param DataContainer $dc
-     *
      * @throws \Twig_Error_Loader          When the template cannot be found
      * @throws \Twig_Error_Syntax          When an error occurred during compilation
      * @throws \Twig_Error_Runtime         When an error occurred during rendering
      * @throws InvalidListManagerException
-     *
-     * @return array
      */
     public function getListPreselectChoices(DataContainer $dc): array
     {
@@ -170,9 +164,6 @@ class ContentContainer
 
     /**
      * Toggle filterPreselect field on demand.
-     *
-     * @param Model         $content
-     * @param DataContainer $dc
      */
     protected function toggleFilterPreselect(Model $content, DataContainer $dc)
     {

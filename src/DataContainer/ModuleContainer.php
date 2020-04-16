@@ -55,8 +55,6 @@ class ModuleContainer
     /**
      * Return the list config wizard.
      *
-     * @param DataContainer $dc
-     *
      * @return string
      */
     public function editListConfigurationWizard(DataContainer $dc)

@@ -32,11 +32,6 @@ class ListCompileEvent extends Event
      */
     protected $listConfig;
 
-    /**
-     * @param FrontendTemplate $template
-     * @param Module           $module
-     * @param ListConfigModel  $listConfig
-     */
     public function __construct(FrontendTemplate $template, Module $module, ListConfigModel $listConfig)
     {
         $this->template = $template;
@@ -44,49 +39,31 @@ class ListCompileEvent extends Event
         $this->listConfig = $listConfig;
     }
 
-    /**
-     * @return FrontendTemplate
-     */
     public function getTemplate(): FrontendTemplate
     {
         return $this->template;
     }
 
-    /**
-     * @param FrontendTemplate $template
-     */
     public function setTemplate(FrontendTemplate $template): void
     {
         $this->template = $template;
     }
 
-    /**
-     * @return Module
-     */
     public function getModule(): Module
     {
         return $this->module;
     }
 
-    /**
-     * @param Module $module
-     */
     public function setModule(Module $module): void
     {
         $this->module = $module;
     }
 
-    /**
-     * @return ListConfigModel
-     */
     public function getListConfig(): ListConfigModel
     {
         return $this->listConfig;
     }
 
-    /**
-     * @param ListConfigModel $listConfig
-     */
     public function setListConfig(ListConfigModel $listConfig): void
     {
         $this->listConfig = $listConfig;

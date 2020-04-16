@@ -27,8 +27,6 @@ class ListConfigElementRegistry
 
     /**
      * Constructor.
-     *
-     * @param ContaoFrameworkInterface $framework
      */
     public function __construct(ContaoFrameworkInterface $framework)
     {
@@ -37,8 +35,6 @@ class ListConfigElementRegistry
 
     /**
      * Add a list config element type to the registry.
-     *
-     * @param ListConfigElementTypeInterface $listConfigElementType
      */
     public function addListConfigElementType(ListConfigElementTypeInterface $listConfigElementType): void
     {
@@ -47,10 +43,6 @@ class ListConfigElementRegistry
 
     /**
      * Get a list config element type from the registry.
-     *
-     * @param string $type
-     *
-     * @return ListConfigElementTypeInterface|null
      */
     public function getListConfigElementType(string $type): ?ListConfigElementTypeInterface
     {
@@ -70,7 +62,6 @@ class ListConfigElementRegistry
      *
      * @param mixed $column
      * @param mixed $value
-     * @param array $options
      *
      * @return \Contao\Model\Collection|ListConfigElementModel|null
      */
@@ -85,7 +76,6 @@ class ListConfigElementRegistry
      *
      * @param mixed $column
      * @param mixed $value
-     * @param array $options
      *
      * @return ListConfigElementModel|null
      */
@@ -105,7 +95,6 @@ class ListConfigElementRegistry
      *
      * @param mixed $column
      * @param mixed $value
-     * @param array $options
      *
      * @return \Contao\Model\Collection|ListConfigElementModel|null
      */

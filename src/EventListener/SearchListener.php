@@ -41,13 +41,7 @@ class SearchListener
     /**
      * Add list items as searchable pages.
      *
-     * @param array $arrPages
-     * @param int   $intRoot
-     * @param bool  $blnIsSitemap
-     *
      * @throws \ReflectionException
-     *
-     * @return array
      */
     public function getSearchablePages(array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false): array
     {

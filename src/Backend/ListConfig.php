@@ -40,8 +40,6 @@ class ListConfig extends Backend
     /**
      * Return the edit filter wizard.
      *
-     * @param DataContainer $dc
-     *
      * @return string
      */
     public function editFilter(DataContainer $dc)

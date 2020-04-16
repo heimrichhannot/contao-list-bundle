@@ -151,12 +151,6 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
         }
     }
 
-    /**
-     * @param ItemInterface          $item
-     * @param ListConfigElementModel $listConfigElement
-     *
-     * @return string
-     */
     public function getGenderedPlaceholderImage(ItemInterface $item, ListConfigElementModel $listConfigElement): string
     {
         if ($item->getRawValue($listConfigElement->genderField) && 'female' == $item->getRawValue($listConfigElement->genderField)) {
@@ -170,8 +164,6 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 
     /**
      * Return the list config element type alias.
-     *
-     * @return string
      */
     public static function getType(): string
     {
@@ -180,8 +172,6 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 
     /**
      * Return the list config element type palette.
-     *
-     * @return string
      */
     public function getPalette(): string
     {
@@ -190,8 +180,6 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 
     /**
      * Update the item data.
-     *
-     * @param ListConfigElementData $configElementData
      */
     public function addToListItemData(ListConfigElementData $configElementData): void
     {
@@ -199,12 +187,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
     }
 
     /**
-     * @param ItemInterface          $item
-     * @param ListConfigElementModel $listConfigElement
-     *
      * @throws \Exception
-     *
-     * @return bool
      */
     protected function isValidImageType(ItemInterface $item, ListConfigElementModel $listConfigElement): bool
     {

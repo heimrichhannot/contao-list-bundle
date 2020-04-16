@@ -36,12 +36,6 @@ class ListAfterParseItemsEvent extends Event
      */
     protected $listConfig;
 
-    /**
-     * @param array           $items
-     * @param array           $parsedItems
-     * @param ListInterface   $list
-     * @param ListConfigModel $listConfig
-     */
     public function __construct(array $items, array $parsedItems, ListInterface $list, ListConfigModel $listConfig)
     {
         $this->items = $items;
@@ -50,65 +44,41 @@ class ListAfterParseItemsEvent extends Event
         $this->listConfig = $listConfig;
     }
 
-    /**
-     * @return array
-     */
     public function getItems(): array
     {
         return $this->items;
     }
 
-    /**
-     * @param array $items
-     */
     public function setItems(array $items): void
     {
         $this->items = $items;
     }
 
-    /**
-     * @return array
-     */
     public function getParsedItems(): array
     {
         return $this->parsedItems;
     }
 
-    /**
-     * @param array $parsedItems
-     */
     public function setParsedItems(array $parsedItems): void
     {
         $this->parsedItems = $parsedItems;
     }
 
-    /**
-     * @return ListInterface
-     */
     public function getList(): ListInterface
     {
         return $this->list;
     }
 
-    /**
-     * @param ListInterface $list
-     */
     public function setList(ListInterface $list): void
     {
         $this->list = $list;
     }
 
-    /**
-     * @return ListConfigModel
-     */
     public function getListConfig(): ListConfigModel
     {
         return $this->listConfig;
     }
 
-    /**
-     * @param ListConfigModel $listConfig
-     */
     public function setListConfig(ListConfigModel $listConfig): void
     {
         $this->listConfig = $listConfig;

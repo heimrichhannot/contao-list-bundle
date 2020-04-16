@@ -67,9 +67,6 @@ class ContentListPreselect extends ContentElement
     /**
      * ContentListPreselect constructor.
      *
-     * @param ContentModel $objElement
-     * @param string       $strColumn
-     *
      * @codeCoverageIgnore
      */
     public function __construct(ContentModel $objElement, string $strColumn = 'main')
@@ -221,8 +218,6 @@ class ContentListPreselect extends ContentElement
 
     /**
      * Get the wildcard from preselection.
-     *
-     * @return array
      */
     protected function getWildcard(): array
     {
@@ -263,8 +258,6 @@ class ContentListPreselect extends ContentElement
 
     /**
      * Get the list title.
-     *
-     * @return string
      */
     protected function getListTitle(): string
     {

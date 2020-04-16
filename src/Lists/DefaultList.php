@@ -155,8 +155,6 @@ class DefaultList implements ListInterface, \JsonSerializable
 
     /**
      * Constructor.
-     *
-     * @param ListManagerInterface $_manager
      */
     public function __construct(ListManagerInterface $_manager)
     {
@@ -600,9 +598,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         }
     }
 
-    /**
-     * @param ListConfigModel $listConfig
-     */
     public function addJumpToOverview(ListConfigModel $listConfig): void
     {
         $this->setAddOverview($listConfig->addOverview);
@@ -744,9 +739,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_wrapperId;
     }
 
-    /**
-     * @param string $wrapperId
-     */
     public function setWrapperId(string $wrapperId)
     {
         $this->_wrapperId = $wrapperId;
@@ -760,9 +752,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_dataAttributes;
     }
 
-    /**
-     * @param string $dataAttributes
-     */
     public function setDataAttributes(string $dataAttributes)
     {
         $this->_dataAttributes = $dataAttributes;
@@ -776,9 +765,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_showInitialResults;
     }
 
-    /**
-     * @param bool $showInitialResults
-     */
     public function setShowInitialResults(bool $showInitialResults)
     {
         $this->_showInitialResults = $showInitialResults;
@@ -792,9 +778,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_isSubmitted;
     }
 
-    /**
-     * @param bool $isSubmitted
-     */
     public function setIsSubmitted(bool $isSubmitted)
     {
         $this->_isSubmitted = $isSubmitted;
@@ -808,9 +791,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_showItemCount;
     }
 
-    /**
-     * @param bool $showItemCount
-     */
     public function setShowItemCount(bool $showItemCount)
     {
         $this->_showItemCount = $showItemCount;
@@ -824,9 +804,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_itemsFoundText;
     }
 
-    /**
-     * @param string $itemsFoundText
-     */
     public function setItemsFoundText(string $itemsFoundText)
     {
         $this->_itemsFoundText = $itemsFoundText;
@@ -840,9 +817,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_items;
     }
 
-    /**
-     * @param array $items
-     */
     public function setItems(array $items)
     {
         $this->_items = $items;
@@ -872,9 +846,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_pagination;
     }
 
-    /**
-     * @param string $pagination
-     */
     public function setPagination(string $pagination)
     {
         $this->_pagination = $pagination;
@@ -888,9 +859,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_showNoItemsText;
     }
 
-    /**
-     * @param bool $showNoItemsText
-     */
     public function setShowNoItemsText(bool $showNoItemsText)
     {
         $this->_showNoItemsText = $showNoItemsText;
@@ -904,9 +872,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_noItemsText;
     }
 
-    /**
-     * @param string $noItemsText
-     */
     public function setNoItemsText(string $noItemsText)
     {
         $this->_noItemsText = $noItemsText;
@@ -920,9 +885,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_masonryStampContentElements;
     }
 
-    /**
-     * @param array $masonryStampContentElements
-     */
     public function setMasonryStampContentElements(array $masonryStampContentElements)
     {
         $this->_masonryStampContentElements = $masonryStampContentElements;
@@ -936,9 +898,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_header;
     }
 
-    /**
-     * @param array $header
-     */
     public function setHeader(array $header)
     {
         $this->_header = $header;
@@ -952,9 +911,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_sortingHeader;
     }
 
-    /**
-     * @param bool $sortingHeader
-     */
     public function setSortingHeader(bool $sortingHeader)
     {
         $this->_sortingHeader = $sortingHeader;
@@ -1133,9 +1089,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_jumpToOverview;
     }
 
-    /**
-     * @param string $jumpToOverview
-     */
     public function setJumpToOverview(string $jumpToOverview): void
     {
         $this->_jumpToOverview = $jumpToOverview;
@@ -1149,33 +1102,21 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_jumpToOverviewMultilingual;
     }
 
-    /**
-     * @param string $jumpToOverviewMultilingual
-     */
     public function setJumpToOverviewMultilingual(string $jumpToOverviewMultilingual): void
     {
         $this->_jumpToOverviewMultilingual = $jumpToOverviewMultilingual;
     }
 
-    /**
-     * @param bool $addOverview
-     */
     public function setAddOverview(bool $addOverview)
     {
         $this->_addOverview = $addOverview;
     }
 
-    /**
-     * @return bool
-     */
     public function getAddOverview(): bool
     {
         return $this->_addOverview;
     }
 
-    /**
-     * @param string $label
-     */
     public function setJumpToOverviewLabel(string $label)
     {
         $this->_jumpToOverviewLabel = $label;
@@ -1189,11 +1130,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_jumpToOverviewLabel;
     }
 
-    /**
-     * @param ListConfigModel $listConfig
-     *
-     * @return string
-     */
     public function getTranslatedJumpToOverviewLabel(ListConfigModel $listConfig): string
     {
         $label = $listConfig->customJumpToOverviewLabel ? $listConfig->jumpToOverviewLabel : static::JUMP_TO_OVERVIEW_LABEL_DEFAULT;

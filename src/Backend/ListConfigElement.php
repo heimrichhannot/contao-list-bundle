@@ -63,9 +63,7 @@ class ListConfigElement extends Backend
 
             case 'create':
                 if (!\strlen($request->getGet('pid')) || !\in_array($request->getGet('pid'), $root)) {
-                    throw new AccessDeniedException(
-                        'Not enough permissions to create list_config_element items in list_config_element archive ID '.$request->getGet('pid').'.'
-                    );
+                    throw new AccessDeniedException('Not enough permissions to create list_config_element items in list_config_element archive ID '.$request->getGet('pid').'.');
                 }
 
                 break;
@@ -73,10 +71,7 @@ class ListConfigElement extends Backend
             case 'cut':
             case 'copy':
                 if (!\in_array($request->getGet('pid'), $root)) {
-                    throw new AccessDeniedException(
-                        'Not enough permissions to '.$request->getGet('act').' list_config_element item ID '.$id
-                        .' to list_config_element archive ID '.$request->getGet('pid').'.'
-                    );
+                    throw new AccessDeniedException('Not enough permissions to '.$request->getGet('act').' list_config_element item ID '.$id.' to list_config_element archive ID '.$request->getGet('pid').'.');
                 }
             // no break STATEMENT HERE
 
@@ -92,10 +87,7 @@ class ListConfigElement extends Backend
                 }
 
                 if (!\in_array($objArchive->pid, $root)) {
-                    throw new AccessDeniedException(
-                        'Not enough permissions to '.$request->getGet('act').' list_config_element item ID '.$id
-                        .' of list_config_element archive ID '.$objArchive->pid.'.'
-                    );
+                    throw new AccessDeniedException('Not enough permissions to '.$request->getGet('act').' list_config_element item ID '.$id.' of list_config_element archive ID '.$objArchive->pid.'.');
                 }
 
                 break;
@@ -107,9 +99,7 @@ class ListConfigElement extends Backend
             case 'cutAll':
             case 'copyAll':
                 if (!\in_array($id, $root)) {
-                    throw new AccessDeniedException(
-                        'Not enough permissions to access list_config_element archive ID '.$id.'.'
-                    );
+                    throw new AccessDeniedException('Not enough permissions to access list_config_element archive ID '.$id.'.');
                 }
 
                 $objArchive = $database->prepare('SELECT id FROM tl_list_config_element WHERE pid=?')->execute($id);
@@ -131,9 +121,7 @@ class ListConfigElement extends Backend
                 if (\strlen($request->getGet('act'))) {
                     throw new AccessDeniedException('Invalid command "'.$request->getGet('act').'".');
                 } elseif (!\in_array($id, $root)) {
-                    throw new AccessDeniedException(
-                        'Not enough permissions to access list_config_element archive ID '.$id.'.'
-                    );
+                    throw new AccessDeniedException('Not enough permissions to access list_config_element archive ID '.$id.'.');
                 }
 
                 break;

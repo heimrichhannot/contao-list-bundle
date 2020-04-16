@@ -280,8 +280,6 @@ class ListManager implements ListManagerInterface
     /**
      * Get the list.
      *
-     * @param string $name
-     *
      * @throws \Exception
      *
      * @return ListInterface|null
@@ -452,33 +450,21 @@ class ListManager implements ListManagerInterface
         return $filterConfig;
     }
 
-    /**
-     * @return Request
-     */
     public function getRequest(): Request
     {
         return $this->request;
     }
 
-    /**
-     * @param Request $request
-     */
     public function setRequest(Request $request)
     {
         $this->request = $request;
     }
 
-    /**
-     * @return FilterManager
-     */
     public function getFilterManager(): FilterManager
     {
         return $this->filterManager;
     }
 
-    /**
-     * @param FilterManager $filterManager
-     */
     public function setFilterManager(FilterManager $filterManager)
     {
         $this->filterManager = $filterManager;

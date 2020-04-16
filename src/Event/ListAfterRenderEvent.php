@@ -37,10 +37,7 @@ class ListAfterRenderEvent extends Event
     protected $listConfig;
 
     /**
-     * @param string          $rendered
-     * @param mixed           $templateData
-     * @param ListInterface   $list
-     * @param ListConfigModel $listConfig
+     * @param mixed $templateData
      */
     public function __construct(string $rendered, $templateData, ListInterface $list, ListConfigModel $listConfig)
     {
@@ -50,17 +47,11 @@ class ListAfterRenderEvent extends Event
         $this->listConfig = $listConfig;
     }
 
-    /**
-     * @return string
-     */
     public function getRendered(): string
     {
         return $this->rendered;
     }
 
-    /**
-     * @param string $rendered
-     */
     public function setRendered(string $rendered): void
     {
         $this->rendered = $rendered;
@@ -82,33 +73,21 @@ class ListAfterRenderEvent extends Event
         $this->templateData = $templateData;
     }
 
-    /**
-     * @return ListInterface
-     */
     public function getList(): ListInterface
     {
         return $this->list;
     }
 
-    /**
-     * @param ListInterface $list
-     */
     public function setList(ListInterface $list): void
     {
         $this->list = $list;
     }
 
-    /**
-     * @return ListConfigModel
-     */
     public function getListConfig(): ListConfigModel
     {
         return $this->listConfig;
     }
 
-    /**
-     * @param ListConfigModel $listConfig
-     */
     public function setListConfig(ListConfigModel $listConfig): void
     {
         $this->listConfig = $listConfig;

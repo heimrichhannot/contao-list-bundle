@@ -1,11 +1,14 @@
 services:
+  _defaults:
+    public: true
+
   huh.list.listener.search:
-        class: HeimrichHannot\ListBundle\EventListener\SearchListener
-        arguments:
-              - "@contao.framework"
-              - "@huh.list.list-config-registry"
-              - "@huh.list.manager.list"
+    class: HeimrichHannot\ListBundle\EventListener\SearchListener
+    arguments:
+      - "@contao.framework"
+      - "@huh.list.list-config-registry"
+      - "@huh.list.manager.list"
 
   HeimrichHannot\ListBundle\EventListener\ModifyJsonResponseEventListener:
-        tags:
-              - { name: kernel.event_listener, event: huh.filter.event.modify_json_response_event, method: modifyResponse }
+    tags:
+      - { name: kernel.event_listener, event: huh.filter.event.modify_json_response_event, method: modifyResponse }

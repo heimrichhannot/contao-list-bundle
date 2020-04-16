@@ -127,8 +127,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     /**
      * DefaultItem constructor.
      *
-     * @param ListManagerInterface $_manager
-     * @param array                $data     Raw item data
+     * @param array $data Raw item data
      */
     public function __construct(ListManagerInterface $_manager, array $data = [])
     {
@@ -178,8 +177,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     /**
      * Magic setter.
      *
-     * @param string $name
-     * @param        $value
+     * @param $value
      */
     public function __set(string $name, $value)
     {

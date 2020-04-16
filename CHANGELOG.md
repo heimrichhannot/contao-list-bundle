@@ -1,12 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.15.1] - 2020-04-16
+- fixed some non-public service
+
+
 ## [1.15.0] - 2020-04-09
 - added `huh.list.list_update_complete` javascript event
 - improved documentation
 
 ## [1.14.4] - 2020-04-06
-- fixed some none-public service
+- fixed some non-public service
 
 ## [1.14.3] - 2020-04-02
 - fixed localizations

@@ -31,17 +31,11 @@ class InterfaceNotImplementedException extends \Exception
         $this->class = $class;
     }
 
-    /**
-     * @return string
-     */
     public function getInterface(): string
     {
         return $this->interface;
     }
 
-    /**
-     * @return string
-     */
     public function getClass(): string
     {
         return $this->class;

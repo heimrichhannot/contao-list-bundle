@@ -17,8 +17,6 @@ interface ListInterface
 
     /**
      * Get the list manager.
-     *
-     * @return ListManagerInterface
      */
     public function getManager(): ListManagerInterface;
 
@@ -38,12 +36,6 @@ interface ListInterface
 
     /**
      * Parse a given list.
-     *
-     * @param string|null $listTemplate
-     * @param string|null $itemTemplate
-     * @param array       $data
-     *
-     * @return string|null
      */
     public function parse(string $listTemplate = null, string $itemTemplate = null, array $data = []): ?string;
 
@@ -72,9 +64,6 @@ interface ListInterface
     /**
      * Applies the list config to the query builder.
      *
-     * @param int                $totalCount
-     * @param FilterQueryBuilder $queryBuilder
-     *
      * @return mixed
      */
     public function applyListConfigToQueryBuilder(int $totalCount, FilterQueryBuilder $queryBuilder): void;
@@ -84,22 +73,15 @@ interface ListInterface
      * @param      $total
      * @param      $limit
      * @param null $randomSeed
-     *
-     * @return array|null
      */
     public function splitResults($offset, $total, $limit, $randomSeed = null): ?array;
 
     /**
-     * @param array       $items
-     * @param string|null $itemTemplate
-     *
      * @return array
      */
     public function parseItems(array $items, string $itemTemplate = null): ?array;
 
     /**
-     * @param string $name
-     *
      * @return mixed
      */
     public function getItemClassByName(string $name);
@@ -109,9 +91,6 @@ interface ListInterface
      */
     public function getWrapperId(): ?string;
 
-    /**
-     * @param string $wrapperId
-     */
     public function setWrapperId(string $wrapperId);
 
     /**
@@ -119,9 +98,6 @@ interface ListInterface
      */
     public function getDataAttributes(): ?string;
 
-    /**
-     * @param string $dataAttributes
-     */
     public function setDataAttributes(string $dataAttributes);
 
     /**
@@ -129,9 +105,6 @@ interface ListInterface
      */
     public function isShowInitialResults(): ?bool;
 
-    /**
-     * @param bool $showInitialResults
-     */
     public function setShowInitialResults(bool $showInitialResults);
 
     /**
@@ -139,9 +112,6 @@ interface ListInterface
      */
     public function isSubmitted(): ?bool;
 
-    /**
-     * @param bool $isSubmitted
-     */
     public function setIsSubmitted(bool $isSubmitted);
 
     /**
@@ -149,9 +119,6 @@ interface ListInterface
      */
     public function isShowItemCount(): ?bool;
 
-    /**
-     * @param bool $showItemCount
-     */
     public function setShowItemCount(bool $showItemCount);
 
     /**
@@ -159,9 +126,6 @@ interface ListInterface
      */
     public function getItemsFoundText(): ?string;
 
-    /**
-     * @param string $itemsFoundText
-     */
     public function setItemsFoundText(string $itemsFoundText);
 
     /**
@@ -173,8 +137,6 @@ interface ListInterface
 
     /**
      * Set all items data.
-     *
-     * @param array $items
      */
     public function setRawItems(array $items);
 
@@ -183,9 +145,6 @@ interface ListInterface
      */
     public function getItems(): ?array;
 
-    /**
-     * @param array $items
-     */
     public function setItems(array $items);
 
     /**
@@ -193,9 +152,6 @@ interface ListInterface
      */
     public function getPagination(): ?string;
 
-    /**
-     * @param string $pagination
-     */
     public function setPagination(string $pagination);
 
     /**
@@ -203,9 +159,6 @@ interface ListInterface
      */
     public function isShowNoItemsText(): ?bool;
 
-    /**
-     * @param bool $showNoItemsText
-     */
     public function setShowNoItemsText(bool $showNoItemsText);
 
     /**
@@ -213,9 +166,6 @@ interface ListInterface
      */
     public function getNoItemsText(): ?string;
 
-    /**
-     * @param string $noItemsText
-     */
     public function setNoItemsText(string $noItemsText);
 
     /**
@@ -223,9 +173,6 @@ interface ListInterface
      */
     public function getHeader(): ?array;
 
-    /**
-     * @param array $header
-     */
     public function setHeader(array $header);
 
     /**
@@ -233,51 +180,30 @@ interface ListInterface
      */
     public function isSortingHeader(): ?bool;
 
-    /**
-     * @param bool $sortingHeader
-     */
     public function setSortingHeader(bool $sortingHeader);
 
     /**
      * Set current page of pagination.
-     *
-     * @param int $page
      */
     public function setPage(int $page): void;
 
     /**
      * Get current page of pagination.
-     *
-     * @return int
      */
     public function getPage(): int;
 
     /**
      * Get current details jumpTo page id.
-     *
-     * @return int
      */
     public function getJumpTo(): int;
 
     /**
      * Get list items as searchable pages.
-     *
-     * @param array $arrPages
-     * @param int   $intRoot
-     * @param bool  $blnIsSitemap
-     *
-     * @return array
      */
     public function getSearchablePages(array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false): array;
 
-    /**
-     * @param bool $addOverview
-     */
     public function setAddOverview(bool $addOverview);
 
-    /**
-     * @return bool
-     */
     public function getAddOverview(): bool;
 
     /**
@@ -289,8 +215,6 @@ interface ListInterface
 
     /**
      * set jumpTo page for list overview.
-     *
-     * @param string $jumpToOverview
      */
     public function setJumpToOverview(string $jumpToOverview);
 }

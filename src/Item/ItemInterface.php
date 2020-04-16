@@ -25,15 +25,11 @@ interface ItemInterface
 
     /**
      * Get entire raw item data.
-     *
-     * @return array
      */
     public function getRaw(): array;
 
     /**
      * Set entire raw item data.
-     *
-     * @param array $data
      */
     public function setRaw(array $data = []): void;
 
@@ -56,15 +52,11 @@ interface ItemInterface
 
     /**
      * Get the entire formatted data.
-     *
-     * @return array
      */
     public function getFormatted(): array;
 
     /**
      * Set entire formatted item data.
-     *
-     * @param array $data
      */
     public function setFormatted(array $data = []): void;
 
@@ -87,8 +79,6 @@ interface ItemInterface
 
     /**
      * Get the list manager.
-     *
-     * @return ListManagerInterface
      */
     public function getManager(): ListManagerInterface;
 
@@ -99,9 +89,6 @@ interface ItemInterface
      */
     public function getDataContainer(): ?string;
 
-    /**
-     * @param string $dataContainer
-     */
     public function setDataContainer(string $dataContainer);
 
     /**
@@ -114,8 +101,7 @@ interface ItemInterface
     /**
      * Compute id (or alias) for a given item.
      *
-     * @param ItemInterface   $item
-     * @param ListConfigModel $listConfig
+     * @param ItemInterface $item
      *
      * @return string
      */
@@ -124,18 +110,15 @@ interface ItemInterface
     /**
      * Adds a details url to the item data.
      *
-     * @param                 $idOrAlias
-     * @param ItemInterface   $item
-     * @param ListConfigModel $listConfig
-     * @param bool            $absolute
+     * @param               $idOrAlias
+     * @param ItemInterface $item
      */
     public function addDetailsUrl($idOrAlias, self $item, ListConfigModel $listConfig, bool $absolute = false): void;
 
     /**
      * Adds a share url to the item data.
      *
-     * @param ItemInterface   $item
-     * @param ListConfigModel $listConfig
+     * @param ItemInterface $item
      */
     public function addShareUrl(self $item, ListConfigModel $listConfig): void;
 
@@ -144,9 +127,6 @@ interface ItemInterface
      */
     public function getCssClass(): ?string;
 
-    /**
-     * @param string $cssClass
-     */
     public function setCssClass(string $cssClass);
 
     /**
@@ -154,9 +134,6 @@ interface ItemInterface
      */
     public function getCount(): ?int;
 
-    /**
-     * @param int $count
-     */
     public function setCount(int $count);
 
     /**
@@ -164,9 +141,6 @@ interface ItemInterface
      */
     public function getIdOrAlias(): ?string;
 
-    /**
-     * @param string $idOrAlias
-     */
     public function setIdOrAlias(string $idOrAlias);
 
     /**
@@ -174,9 +148,6 @@ interface ItemInterface
      */
     public function isActive(): ?bool;
 
-    /**
-     * @param bool $active
-     */
     public function setActive(bool $active);
 
     /**
@@ -184,9 +155,6 @@ interface ItemInterface
      */
     public function hasAddDetails();
 
-    /**
-     * @param bool $addDetails
-     */
     public function setAddDetails(bool $addDetails);
 
     /**
@@ -194,9 +162,6 @@ interface ItemInterface
      */
     public function hasAddShare(): ?bool;
 
-    /**
-     * @param bool $addShare
-     */
     public function setAddShare(bool $addShare);
 
     /**
@@ -204,9 +169,6 @@ interface ItemInterface
      */
     public function isUseModal();
 
-    /**
-     * @param bool $useModal
-     */
     public function setUseModal(bool $useModal);
 
     /**
@@ -214,9 +176,6 @@ interface ItemInterface
      */
     public function getJumpToDetails(): ?int;
 
-    /**
-     * @param int $jumpToDetails
-     */
     public function setJumpToDetails(int $jumpToDetails);
 
     /**
@@ -224,9 +183,6 @@ interface ItemInterface
      */
     public function getJumpToDetailsMultilingual(): ?string;
 
-    /**
-     * @param string $jumpToDetailsMultilingual
-     */
     public function setJumpToDetailsMultilingual(string $jumpToDetailsMultilingual);
 
     /**
@@ -234,9 +190,6 @@ interface ItemInterface
      */
     public function getModalUrl(): ?string;
 
-    /**
-     * @param string $modalUrl
-     */
     public function setModalUrl(string $modalUrl);
 
     /**
@@ -244,17 +197,12 @@ interface ItemInterface
      */
     public function getTableFields();
 
-    /**
-     * @param array $tableFields
-     */
     public function setTableFields(array $tableFields);
 
     /**
      * Get the details url.
      *
      * @param bool $external Determine if external urls should be returned as well (required by search index)
-     *
-     * @return string|null
      */
     public function getDetailsUrl(bool $external = true): ?string;
 }

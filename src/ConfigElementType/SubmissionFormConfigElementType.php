@@ -87,8 +87,6 @@ class SubmissionFormConfigElementType implements ListConfigElementTypeInterface
 
     /**
      * Return the list config element type alias.
-     *
-     * @return string
      */
     public static function getType(): string
     {
@@ -97,8 +95,6 @@ class SubmissionFormConfigElementType implements ListConfigElementTypeInterface
 
     /**
      * Return the list config element type palette.
-     *
-     * @return string
      */
     public function getPalette(): string
     {
@@ -107,8 +103,6 @@ class SubmissionFormConfigElementType implements ListConfigElementTypeInterface
 
     /**
      * Update the item data.
-     *
-     * @param ListConfigElementData $configElementData
      */
     public function addToListItemData(ListConfigElementData $configElementData): void
     {

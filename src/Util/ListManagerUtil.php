@@ -28,11 +28,7 @@ class ListManagerUtil
     /**
      * Get the list manager.
      *
-     * @param string $name
-     *
      * @throws InvalidListManagerException
-     *
-     * @return ListManagerInterface|null
      */
     public function getListManagerByName(string $name): ?ListManagerInterface
     {

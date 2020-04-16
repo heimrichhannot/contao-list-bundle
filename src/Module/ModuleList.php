@@ -73,8 +73,7 @@ class ModuleList extends Module
     /**
      * ModuleList constructor.
      *
-     * @param ModuleModel $objModule
-     * @param string      $strColumn
+     * @param string $strColumn
      *
      * @throws InvalidListManagerException
      * @throws InvalidListConfigException
@@ -111,14 +110,6 @@ class ModuleList extends Module
 
     /**
      * Testable init method.
-     *
-     * @param ModuleModel              $model
-     * @param ContaoFrameworkInterface $framework
-     * @param ListConfigRegistry       $listConfigRegistry
-     * @param FilterManager            $filterManager
-     * @param ListManagerInterface     $listManager
-     * @param ListConfigModel          $listConfigModel
-     * @param FilterConfig             $filterConfig
      */
     public function initModule(ModuleModel $model, ContaoFrameworkInterface $framework, ListConfigRegistry $listConfigRegistry, FilterManager $filterManager, ListManagerInterface $listManager, ListConfigModel $listConfigModel, FilterConfig $filterConfig)
     {
@@ -207,17 +198,12 @@ class ModuleList extends Module
         return true;
     }
 
-    /**
-     * @return FilterConfig
-     */
     public function getFilterConfig(): FilterConfig
     {
         return $this->filterConfig;
     }
 
     /**
-     * @return ListManagerInterface
-     *
      * @deprecated Use getListManager instead
      */
     public function getManager(): ListManagerInterface
@@ -225,9 +211,6 @@ class ModuleList extends Module
         return $this->listManager;
     }
 
-    /**
-     * @return ListManagerInterface
-     */
     public function getListManager(): ListManagerInterface
     {
         return $this->listManager;

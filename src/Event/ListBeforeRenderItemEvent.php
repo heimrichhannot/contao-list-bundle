@@ -31,8 +31,6 @@ class ListBeforeRenderItemEvent extends Event
      * ListBeforeRenderItemEvent constructor.
      *
      * @param $templateName
-     * @param array         $templateData
-     * @param ItemInterface $item
      */
     public function __construct(string $templateName, array $templateData, ItemInterface $item)
     {
@@ -41,49 +39,31 @@ class ListBeforeRenderItemEvent extends Event
         $this->item = $item;
     }
 
-    /**
-     * @return string
-     */
     public function getTemplateName(): string
     {
         return $this->templateName;
     }
 
-    /**
-     * @param string $templateName
-     */
     public function setTemplateName(string $templateName): void
     {
         $this->templateName = $templateName;
     }
 
-    /**
-     * @return array
-     */
     public function getTemplateData(): array
     {
         return $this->templateData;
     }
 
-    /**
-     * @param array $templateData
-     */
     public function setTemplateData(array $templateData): void
     {
         $this->templateData = $templateData;
     }
 
-    /**
-     * @return ItemInterface
-     */
     public function getItem(): ItemInterface
     {
         return $this->item;
     }
 
-    /**
-     * @param ItemInterface $item
-     */
     public function setItem(ItemInterface $item): void
     {
         $this->item = $item;

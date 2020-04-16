@@ -23,8 +23,6 @@ class ListConfigRegistry
 
     /**
      * Constructor.
-     *
-     * @param ContaoFrameworkInterface $framework
      */
     public function __construct(ContaoFrameworkInterface $framework)
     {
@@ -33,8 +31,6 @@ class ListConfigRegistry
 
     /**
      * Adapter function for the model's findBy method.
-     *
-     * @param array $options
      *
      * @return \Contao\Model\Collection|ListConfigModel|null
      */
@@ -51,7 +47,6 @@ class ListConfigRegistry
      *
      * @param mixed $column
      * @param mixed $value
-     * @param array $options
      *
      * @return \Contao\Model\Collection|ListConfigModel|null
      */
@@ -70,7 +65,6 @@ class ListConfigRegistry
      *
      * @param mixed $column
      * @param mixed $value
-     * @param array $options
      *
      * @return \Contao\Model\Collection|ListConfigModel|null
      */
@@ -89,7 +83,6 @@ class ListConfigRegistry
      *
      * @param mixed $column
      * @param mixed $value
-     * @param array $options
      *
      * @return ListConfigModel|null
      */
@@ -104,8 +97,6 @@ class ListConfigRegistry
 
     /**
      * Returns the filter associated to a list config.
-     *
-     * @param int $listConfigPk
      *
      * @return array|null
      */
@@ -146,8 +137,6 @@ class ListConfigRegistry
 
     /**
      * Computes the list config respecting the list config hierarchy (sub list configs can override parts of their ancestors).
-     *
-     * @param int $listConfigPk
      *
      * @return ListConfigModel|null
      */
@@ -198,10 +187,6 @@ class ListConfigRegistry
 
     /**
      * Get computed list config by Id.
-     *
-     * @param int $listConfigId
-     *
-     * @return ListConfigModel|null
      */
     public function getComputedListConfig(int $listConfigId): ?ListConfigModel
     {

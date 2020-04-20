@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.16.1] - 2020-04-20
+- fixed dca issues for contao 4.9
+
 ## [1.16.0] - 2020-04-20
 - fixed default value for addOverview
 

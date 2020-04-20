@@ -585,10 +585,26 @@ $dca = &$GLOBALS['TL_DCA']['tl_list_config'];
 $dca['fields']['numberOfItems']['eval']['tl_class'] = 'w50 clr';
 
 if (System::getContainer()->get('huh.utils.container')->isBundleActive('modal')) {
-    $dca['fields']['useModal']                                      = $GLOBALS['TL_DCA']['tl_module']['fields']['useModal'];
-    $dca['fields']['useModalExplanation']                           = $GLOBALS['TL_DCA']['tl_module']['fields']['useModalExplanation'];
-    $dca['fields']['useModalExplanation']['eval']['notOverridable'] = true;
-    $dca['subpalettes']['addDetails']                               = 'useModalExplanation,useModal,' . $dca['subpalettes']['addDetails'];
+    $dca['fields']['useModal'] = [
+        'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['useModal'],
+        'exclude'   => true,
+        'inputType' => 'checkbox',
+        'eval'      => ['tl_class' => 'w50 clr'],
+        'sql'       => "char(1) NOT NULL default ''",
+    ];
+
+    $dca['fields']['useModalExplanation'] = [
+        'inputType' => 'explanation',
+        'eval'      => [
+            'notOverridable' => true,
+            'text'           => &$GLOBALS['TL_LANG']['tl_list_config']['useModalExplanation'],
+            'class'          => 'tl_info',
+            'collapsible'    => true,
+            'tl_class'       => 'clr long',
+        ]
+    ];
+
+    $dca['subpalettes']['addDetails'] = 'useModalExplanation,useModal,' . $dca['subpalettes']['addDetails'];
 }
 
 if (System::getContainer()->get('huh.utils.container')->isBundleActive('Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle')) {

@@ -99,6 +99,9 @@ $lang['customJumpToOverviewLabel'][0]  = 'Label für "zur Übersicht" überschre
 $lang['customJumpToOverviewLabel'][1]  = '';
 $lang['jumpToOverviewLabel'][0]        = 'Label für "zur Übersicht"';
 $lang['jumpToOverviewLabel'][1]        = '';
+$lang['useModal'][0]                   = 'Elemente im Modalfenstern anzeigen';
+$lang['useModal'][1]                   = 'Wählen Sie diese Option, wenn die Elemente im Modalfenstern angezeigt werden sollen.';
+$lang['useModalExplanation']           = 'Zum Aufruf der Leser-Elemente (also den Entitäten) ist es nötig, die Weiterleitungsseite mit einem Modal zu verknüpfen. Dazu legen Sie das Modal an, hinterlegen in diesem ein Leser-Modul als Inhaltselement und weisen es über "Modal verknüpfen" an Ihrer Weiterleitungsseite in der Seitenstruktur zu. Wenn Sie keine Weiterleitungsseite auswählen, wird die aktuelle Seite genutzt, auf der sich dieses Modul befindet.<br/><br/>Hinweis: Sollten in Ihrem Modulkontext mehrere Leser-Module eine Rolle spielen (bspw. zum Lesen und Bearbeiten der Entität), nutzen Sie dafür bitte heimrichhannot/contao-blocks.';
 
 // misc
 $lang['addAjaxPagination'][0]           = 'Ajax-Paginierung hinzufügen';

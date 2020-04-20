@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.16.0] - 2020-04-20
+- fixed default value for addOverview
+
 ## [1.15.2] - 2020-04-20
 - fixed dca labels for contao 4.9
 

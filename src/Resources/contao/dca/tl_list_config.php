@@ -548,7 +548,6 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'exclude'   => true,
             'inputType' => 'checkbox',
             'search'    => true,
-            'default'   => true,
             'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
             'sql'       => "char(1) NOT NULL default ''",
         ],

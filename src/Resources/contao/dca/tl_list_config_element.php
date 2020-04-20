@@ -1,7 +1,5 @@
 <?php
 
-\Contao\Controller::loadDataContainer('tl_module');
-
 $GLOBALS['TL_DCA']['tl_list_config_element'] = [
     'config'      => [
         'dataContainer'     => 'Table',
@@ -78,29 +76,29 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE   => 'placeholderImage',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'genderField,placeholderImage,placeholderImageFemale',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM   => 'placeholderImages',
-        'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_FIELD   => 'fieldDependentPlaceholderConfig',
+        'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_FIELD    => 'fieldDependentPlaceholderConfig',
     ],
     'fields'      => [
-        'id'                        => [
+        'id'                              => [
             'sql' => "int(10) unsigned NOT NULL auto_increment",
         ],
-        'pid'                       => [
+        'pid'                             => [
             'foreignKey' => 'tl_list_config.title',
             'sql'        => "int(10) unsigned NOT NULL default '0'",
             'relation'   => ['type' => 'belongsTo', 'load' => 'eager'],
         ],
-        'tstamp'                    => [
+        'tstamp'                          => [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['tstamp'],
             'sql'   => "int(10) unsigned NOT NULL default '0'",
         ],
-        'dateAdded'                 => [
+        'dateAdded'                       => [
             'label'   => &$GLOBALS['TL_LANG']['MSC']['dateAdded'],
             'sorting' => true,
             'flag'    => 6,
             'eval'    => ['rgxp' => 'datim', 'doNotCopy' => true],
             'sql'     => "int(10) unsigned NOT NULL default '0'",
         ],
-        'title'                     => [
+        'title'                           => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['title'],
             'exclude'   => true,
             'search'    => true,
@@ -109,7 +107,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'      => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
             'sql'       => "varchar(255) NOT NULL default ''",
         ],
-        'type'                      => [
+        'type'                            => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['type'],
             'exclude'          => true,
             'filter'           => true,
@@ -120,7 +118,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'             => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true, 'chosen' => true],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
-        'templateVariable'          => [
+        'templateVariable'                => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['templateVariable'],
             'exclude'   => true,
             'search'    => true,
@@ -128,7 +126,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'      => ['maxlength' => 255, 'tl_class' => 'w50'],
             'sql'       => "varchar(255) NOT NULL default ''"
         ],
-        'imageSelectorField'        => [
+        'imageSelectorField'              => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['imageSelectorField'],
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc) {
@@ -138,7 +136,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'             => ['includeBlankOption' => true, 'tl_class' => 'w50 autoheight', 'chosen' => true],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
-        'imageField'                => [
+        'imageField'                      => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['imageField'],
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc) {
@@ -148,8 +146,17 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
-        'imgSize'                   => $GLOBALS['TL_DCA']['tl_module']['fields']['imgSize'],
-        'placeholderImageMode'      => [
+        'imgSize'                         => [
+            'exclude'          => true,
+            'inputType'        => 'imageSize',
+            'reference'        => &$GLOBALS['TL_LANG']['MSC'],
+            'eval'             => ['rgxp' => 'natural', 'includeBlankOption' => true, 'nospace' => true, 'helpwizard' => true, 'tl_class' => 'w50'],
+            'options_callback' => static function () {
+                return Contao\System::getContainer()->get('contao.image.image_sizes')->getOptionsForUser(Contao\BackendUser::getInstance());
+            },
+            'sql'              => "varchar(255) NOT NULL default ''"
+        ],
+        'placeholderImageMode'            => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['placeholderImageMode'],
             'exclude'   => true,
             'inputType' => 'select',
@@ -158,21 +165,21 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'      => ['tl_class' => 'w50', 'includeBlankOption' => true, 'submitOnChange' => true],
             'sql'       => "varchar(64) NOT NULL default ''",
         ],
-        'placeholderImage'          => [
+        'placeholderImage'                => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['placeholderImage'],
             'exclude'   => true,
             'inputType' => 'fileTree',
             'eval'      => ['tl_class' => 'w50 autoheight', 'fieldType' => 'radio', 'filesOnly' => true, 'extensions' => Config::get('validImageTypes'), 'mandatory' => true],
             'sql'       => "binary(16) NULL",
         ],
-        'placeholderImageFemale'    => [
+        'placeholderImageFemale'          => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['placeholderImageFemale'],
             'exclude'   => true,
             'inputType' => 'fileTree',
             'eval'      => ['tl_class' => 'w50 autoheight', 'fieldType' => 'radio', 'filesOnly' => true, 'extensions' => Config::get('validImageTypes'), 'mandatory' => true],
             'sql'       => "binary(16) NULL",
         ],
-        'genderField'               => [
+        'genderField'                     => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['genderField'],
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc) {
@@ -182,14 +189,14 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
-        'placeholderImages'         => [
+        'placeholderImages'               => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['placeholderImages'],
             'exclude'   => true,
             'inputType' => 'fileTree',
             'eval'      => ['tl_class' => 'w50 autoheight', 'fieldType' => 'checkbox', 'filesOnly' => true, 'extensions' => Config::get('validImageTypes'), 'mandatory' => true, 'multiple' => true],
             'sql'       => "blob NULL",
         ],
-        'submissionFormExplanation' => [
+        'submissionFormExplanation'       => [
             'inputType' => 'explanation',
             'eval'      => [
                 'text'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['submissionFormExplanation'],
@@ -197,7 +204,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
                 'tl_class' => 'long',
             ]
         ],
-        'submissionReader'          => [
+        'submissionReader'                => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['submissionReader'],
             'exclude'          => true,
             'filter'           => true,
@@ -211,7 +218,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'             => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
             'sql'              => "varchar(64) NOT NULL default ''"
         ],
-        'emailField'                => [
+        'emailField'                      => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['emailField'],
             'inputType'        => 'select',
             'options_callback' => function (DataContainer $dc) {
@@ -229,22 +236,22 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
                 'multiColumnEditor' => [
                     'minRowCount' => 0,
                     'fields'      => [
-                        'field' => [
-                            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['fieldDependentPlaceholderConfig']['field'],
-                            'inputType' => 'select',
+                        'field'            => [
+                            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['fieldDependentPlaceholderConfig']['field'],
+                            'inputType'        => 'select',
                             'options_callback' => function (DataContainer $dc) {
                                 return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
                             },
-                            'eval'      => ['style' => 'width: 200px', 'mandatory' => true, 'includeBlankOption' => true],
+                            'eval'             => ['style' => 'width: 200px', 'mandatory' => true, 'includeBlankOption' => true],
                         ],
-                        'operator' => [
+                        'operator'         => [
                             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['fieldDependentPlaceholderConfig']['operator'],
                             'inputType' => 'select',
                             'options'   => \HeimrichHannot\UtilsBundle\Comparison\CompareUtil::PHP_OPERATORS,
                             'reference' => &$GLOBALS['TL_LANG']['MSC']['phpOperators'],
                             'eval'      => ['style' => 'width: 200px', 'mandatory' => true, 'includeBlankOption' => true],
                         ],
-                        'value' => [
+                        'value'            => [
                             'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['fieldDependentPlaceholderConfig']['value'],
                             'inputType' => 'text',
                             'eval'      => ['style' => 'width: 200px'],

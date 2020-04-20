@@ -1,9 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.15.2] - 2020-04-20
+- fixed dca labels for contao 4.9
+
 ## [1.15.1] - 2020-04-16
 - fixed some non-public service
-
 
 ## [1.15.0] - 2020-04-09
 - added `huh.list.list_update_complete` javascript event

@@ -1,8 +1,5 @@
 <?php
 
-\Contao\Controller::loadDataContainer('tl_module');
-\Contao\System::loadLanguageFile('tl_module');
-
 $GLOBALS['TL_DCA']['tl_list_config'] = [
     'config'      => [
         'dataContainer'     => 'Table',
@@ -215,9 +212,27 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'eval'             => ['multiple' => true, 'includeBlankOption' => true, 'tl_class' => 'w50 clr autoheight'],
             'sql'              => "blob NULL",
         ],
-        'numberOfItems'               => $GLOBALS['TL_DCA']['tl_module']['fields']['numberOfItems'],
-        'perPage'                     => $GLOBALS['TL_DCA']['tl_module']['fields']['perPage'],
-        'skipFirst'                   => $GLOBALS['TL_DCA']['tl_module']['fields']['skipFirst'],
+        'numberOfItems'               => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['numberOfItems'],
+            'exclude'   => true,
+            'inputType' => 'text',
+            'eval'      => ['mandatory' => true, 'rgxp' => 'natural', 'tl_class' => 'w50'],
+            'sql'       => "smallint(5) unsigned NOT NULL default 3"
+        ],
+        'perPage'                     => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['perPage'],
+            'exclude'   => true,
+            'inputType' => 'text',
+            'eval'      => ['rgxp' => 'natural', 'tl_class' => 'w50'],
+            'sql'       => "smallint(5) unsigned NOT NULL default 0"
+        ],
+        'skipFirst'                   => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['skipFirst'],
+            'exclude'   => true,
+            'inputType' => 'text',
+            'eval'      => ['rgxp' => 'natural', 'tl_class' => 'w50'],
+            'sql'       => "smallint(5) unsigned NOT NULL default 0"
+        ],
         'showItemCount'               => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['showItemCount'],
             'exclude'   => true,
@@ -579,14 +594,14 @@ if (System::getContainer()->get('huh.utils.container')->isBundleActive('modal'))
 
 if (System::getContainer()->get('huh.utils.container')->isBundleActive('Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle')) {
     $dca['fields'] += [
-        'addDcMultilingualSupport'  => [
+        'addDcMultilingualSupport'   => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addDcMultilingualSupport'],
             'exclude'   => true,
             'inputType' => 'checkbox',
             'eval'      => ['tl_class' => 'w50'],
             'sql'       => "char(1) NOT NULL default ''"
         ],
-        'jumpToDetailsMultilingual' => [
+        'jumpToDetailsMultilingual'  => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual'],
             'inputType' => 'multiColumnEditor',
             'eval'      => [

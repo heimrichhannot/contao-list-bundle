@@ -39,7 +39,8 @@ $lang['fieldDependentPlaceholderConfig']['field'][0]            = 'Feld';
 $lang['fieldDependentPlaceholderConfig']['operator'][0]         = 'Operator';
 $lang['fieldDependentPlaceholderConfig']['value'][0]            = 'Wert';
 $lang['fieldDependentPlaceholderConfig']['placeholderImage'][0] = 'Bild';
-
+$lang['imgSize'][0]                                             = 'Bildgröße';
+$lang['imgSize'][1]                                             = 'Hier können Sie die Abmessungen des Bildes und den Skalierungsmodus festlegen.';
 
 /**
  * Legends

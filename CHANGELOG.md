@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.16.2] - 2020-04-22
+- increased `sortingText` size to 255
+
 ## [1.16.1] - 2020-04-20
 - fixed dca issues for contao 4.9
 

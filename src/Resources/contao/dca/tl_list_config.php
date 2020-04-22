@@ -362,8 +362,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'exclude'   => true,
             'search'    => true,
             'inputType' => 'text',
-            'eval'      => ['maxlength' => 64, 'tl_class' => 'w50', 'mandatory' => true],
-            'sql'       => "varchar(64) NOT NULL default ''",
+            'eval'      => ['maxlength' => 255, 'tl_class' => 'w50', 'mandatory' => true],
+            'sql'       => "varchar(255) NOT NULL default ''",
         ],
         'sortingItems'                => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['sortingItems'],

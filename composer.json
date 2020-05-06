@@ -70,6 +70,6 @@
     "foxy": true
   },
   "suggest": {
-    "heimrichhannot/contao-modal": "Allows display of list items in modal window."
+    "heimrichhannot/contao-reader-bundle": "This bundle offers a generic reader module to use with arbitrary contao entities containing standard reader specific functionality like field output, images and auto_item handling."
   }
 }

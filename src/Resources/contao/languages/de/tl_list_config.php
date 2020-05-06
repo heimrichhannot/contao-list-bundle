@@ -75,6 +75,16 @@ $lang['aliasField'][1] = 'Wählen Sie hier das zu verwendende Alias-Feld aus (Hi
 
 $lang['addDetails'][0]                 = 'Details-Weiterleitung hinzufügen';
 $lang['addDetails'][1]                 = 'Klicken Sie hier, um jedem Eintrag der Liste eine Weiterleitung zum Anzeigen von Details hinzuzufügen.';
+$lang['openListItemsInModal'][0]       = 'Instanzen in Modalfenstern öffnen';
+$lang['openListItemsInModal'][1]       = 'Klicken Sie hier, um Einträge der Liste beim Klick in einem Modalfenster zu öffnen.';
+$lang['listModalTemplate'][0]          = 'Modalfenster-Template';
+$lang['listModalTemplate'][1]          = 'Wählen Sie hier ein Template aus.';
+$lang['listModalReaderType'][0]        = 'Modus zum Auffinden des Lesers auf der Detailseite';
+$lang['listModalReaderType'][1]        = 'Wählen Sie hier auf, wie das Leser-Modul auf der Detailseite gefunden werden kann.';
+$lang['listModalReaderCssSelector'][0] = 'CSS-Selektor zum Auffinden des HTML-Codes des Lesers';
+$lang['listModalReaderCssSelector'][1] = 'Der HTML-Code des Lesers auf der Detailseite wird durch Angabe dieses CSS-Selektors gesucht. Idealerweise handelt es sich um eine CSS-ID (Beispiele: #reader-166, .mod_newsreader).';
+$lang['listModalReaderModule'][0]      = 'Leser-Modul';
+$lang['listModalReaderModule'][1]      = 'Wählen Sie hier das Leser-Modul aus, in dem die Instanzen auf der Detailseite angezeigt werden.';
 $lang['jumpToDetails'][0]              = 'Weiterleitungsseite (Details; MUSS für die Einbeziehung in die Sitemap gesetzt sein!)';
 $lang['jumpToDetails'][1]              = 'Wählen Sie hier die Seite aus, zu der weitergeleitet wird, wenn es eine Detailseite gibt.';
 $lang['jumpToDetailsMultilingual']     = [
@@ -99,7 +109,7 @@ $lang['customJumpToOverviewLabel'][0]  = 'Label für "zur Übersicht" überschre
 $lang['customJumpToOverviewLabel'][1]  = '';
 $lang['jumpToOverviewLabel'][0]        = 'Label für "zur Übersicht"';
 $lang['jumpToOverviewLabel'][1]        = '';
-$lang['useModal'][0]                   = 'Elemente im Modalfenstern anzeigen';
+$lang['useModal'][0]                   = 'Elemente im Modalfenstern anzeigen (DEPRECATED! Entfällt in v2)';
 $lang['useModal'][1]                   = 'Wählen Sie diese Option, wenn die Elemente im Modalfenstern angezeigt werden sollen.';
 $lang['useModalExplanation']           = 'Zum Aufruf der Leser-Elemente (also den Entitäten) ist es nötig, die Weiterleitungsseite mit einem Modal zu verknüpfen. Dazu legen Sie das Modal an, hinterlegen in diesem ein Leser-Modul als Inhaltselement und weisen es über "Modal verknüpfen" an Ihrer Weiterleitungsseite in der Seitenstruktur zu. Wenn Sie keine Weiterleitungsseite auswählen, wird die aktuelle Seite genutzt, auf der sich dieses Modul befindet.<br/><br/>Hinweis: Sollten in Ihrem Modulkontext mehrere Leser-Module eine Rolle spielen (bspw. zum Lesen und Bearbeiten der Entität), nutzen Sie dafür bitte heimrichhannot/contao-blocks.';
 
@@ -160,6 +170,8 @@ $lang['reference'] = [
     \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_MANUAL    => 'Manuell',
     \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_DIRECTION_ASC  => 'Aufsteigend',
     \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_DIRECTION_DESC => 'Absteigend',
+    'css_selector'                                                        => 'CSS-Selektor',
+    'huh_reader'                                                          => 'Leser-Modul (heimrichhannot/contao-reader-bundle)'
 ];
 
 /**

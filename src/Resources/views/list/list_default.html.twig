@@ -19,5 +19,7 @@
                 <a href="{{ jumpToOverview }}" role="button">{{ jumpToOverviewLabel }}</a>
             </div>
         {% endif %}
+
+        {{ modal|default|raw }}
     {% endif %}
 </div>

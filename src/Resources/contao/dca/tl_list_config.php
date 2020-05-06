@@ -80,6 +80,8 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sortingMode',
             'useAlias',
             'addDetails',
+            'openListItemsInModal',
+            'listModalReaderType',
             'addShare',
             'addAjaxPagination',
             'addMasonry',
@@ -97,7 +99,10 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_TEXT   => 'sortingText',
         'sortingMode_' . \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODE_MANUAL => 'sortingItems',
         'useAlias'                                                                          => 'aliasField',
-        'addDetails'                                                                        => 'jumpToDetails,jumpToDetailsMultilingual',
+        'addDetails'                                                                        => 'jumpToDetails,jumpToDetailsMultilingual,openListItemsInModal',
+        'openListItemsInModal'                                                              => 'listModalTemplate,listModalReaderType',
+        'listModalReaderType_css'                                                           => 'listModalReaderCssSelector',
+        'listModalReaderType_huh_reader'                                                    => 'listModalReaderModule',
         'addShare'                                                                          => 'jumpToShare,shareAutoItem',
         'addAjaxPagination'                                                                 => 'ajaxPaginationTemplate,addInfiniteScroll',
         'addMasonry'                                                                        => 'masonryStampContentElements',
@@ -411,6 +416,60 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'eval'       => ['fieldType' => 'radio', 'tl_class' => 'clr'],
             'sql'        => "int(10) unsigned NOT NULL default '0'",
             'relation'   => ['type' => 'hasOne', 'load' => 'eager'],
+        ],
+        'openListItemsInModal'        => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['openListItemsInModal'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true, 'addAsDataAttribute' => true],
+            'sql'       => "char(1) NOT NULL default ''"
+        ],
+        'listModalTemplate'           => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['listModalTemplate'],
+            'exclude'          => true,
+            'inputType'        => 'select',
+            'options_callback' => function (\Contao\DataContainer $dc) {
+                return System::getContainer()->get('huh.utils.choice.twig_template')->getCachedChoices([
+                    'list_modal_'
+                ]);
+            },
+            'eval'             => ['tl_class' => 'long clr', 'includeBlankOption' => true, 'chosen' => true],
+            'sql'              => "varchar(128) NOT NULL default ''",
+        ],
+        'listModalReaderType' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config']['listModalReaderType'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'inputType'               => 'select',
+            'options' => [
+                'css_selector',
+                'huh_reader'
+            ],
+            'reference' => &$GLOBALS['TL_LANG']['tl_list_config']['reference'],
+            'eval'                    => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'submitOnChange' => true, 'addAsDataAttribute' => true],
+            'sql'                     => "varchar(32) NOT NULL default ''"
+        ],
+        'listModalReaderCssSelector' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config']['listModalReaderCssSelector'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'eval'                    => ['maxlength' => 128, 'tl_class' => 'w50', 'mandatory' => true, 'addAsDataAttribute' => true],
+            'sql'                     => "varchar(128) NOT NULL default ''"
+        ],
+        'listModalReaderModule' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config']['listModalReaderModule'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'inputType'               => 'select',
+            'options_callback' => function (\Contao\DataContainer $dc) {
+                return System::getContainer()->get('huh.utils.choice.model_instance')->getCachedChoices([
+                    'dataContainer' => 'tl_module',
+                    'labelPattern' => '%name% (ID %id%)'
+                ]);
+            },
+            'eval'                    => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true, 'addAsDataAttribute' => true],
+            'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'addShare'                    => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addShare'],

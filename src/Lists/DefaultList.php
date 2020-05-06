@@ -154,6 +154,11 @@ class DefaultList implements ListInterface, \JsonSerializable
     protected $_jumpToOverviewLabel;
 
     /**
+     * @var string
+     */
+    protected $_modal;
+
+    /**
      * Constructor.
      */
     public function __construct(ListManagerInterface $_manager)
@@ -176,6 +181,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $this->addDataAttributes();
         $this->addMasonry();
+        $this->addModal();
 
         if ($listConfig->addOverview) {
             $this->addJumpToOverview($listConfig);
@@ -1135,5 +1141,33 @@ class DefaultList implements ListInterface, \JsonSerializable
         $label = $listConfig->customJumpToOverviewLabel ? $listConfig->jumpToOverviewLabel : static::JUMP_TO_OVERVIEW_LABEL_DEFAULT;
 
         return System::getContainer()->get('translator')->trans($label);
+    }
+
+    public function addModal()
+    {
+        $listConfig = $this->_manager->getListConfig();
+
+        if (!$listConfig->openListItemsInModal) {
+            return;
+        }
+
+        $templateName = $this->_manager->getItemTemplateByName($listConfig->listModalTemplate ?: 'list_modal_bs4');
+
+        $this->setModal(System::getContainer()->get('twig')->render($templateName, [
+            'module' => $this->getModule(),
+        ]));
+    }
+
+    /**
+     * @return string
+     */
+    public function getModal(): ?string
+    {
+        return $this->_modal;
+    }
+
+    public function setModal(string $modal): void
+    {
+        $this->_modal = $modal;
     }
 }

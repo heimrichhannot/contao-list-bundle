@@ -96,6 +96,11 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     protected $_useModal;
 
     /**
+     * @var bool
+     */
+    protected $_openListItemsInModal;
+
+    /**
      * @var int
      */
     protected $_jumpToDetails;
@@ -425,6 +430,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         if ($listConfig->addDetails) {
             $this->setUseModal($listConfig->useModal);
             $this->setJumpToDetails($listConfig->jumpToDetails);
+            $this->setOpenListItemsInModal($listConfig->openListItemsInModal);
 
             if ($listConfig->jumpToDetailsMultilingual) {
                 $this->setJumpToDetailsMultilingual($listConfig->jumpToDetailsMultilingual);
@@ -703,5 +709,15 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     public function setTableFields(array $tableFields)
     {
         $this->_tableFields = $tableFields;
+    }
+
+    public function isOpenListItemsInModal(): bool
+    {
+        return $this->_openListItemsInModal;
+    }
+
+    public function setOpenListItemsInModal(bool $openListItemsInModal): void
+    {
+        $this->_openListItemsInModal = $openListItemsInModal;
     }
 }

@@ -11,7 +11,7 @@
                 {{ 'huh.list.misc.detailsTitle' | trans }}
             </a>
         {% else %}
-            <a class="details" href="{{ detailsUrl }}" title="{{ 'huh.list.misc.detailsLinkTitle' | trans }}{% if headline|default() %} {{ headline|raw }}{% elseif title|default() %} {{ title|raw }}{% endif %}">
+            <a class="details{{ openListItemsInModal ? ' modal-link' : '' }}" href="{{ detailsUrl }}" title="{{ 'huh.list.misc.detailsLinkTitle' | trans }}{% if headline|default() %} {{ headline|raw }}{% elseif title|default() %} {{ title|raw }}{% endif %}">
                 {{ 'huh.list.misc.detailsTitle' | trans }}
             </a>
         {% endif %}

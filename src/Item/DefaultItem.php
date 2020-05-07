@@ -711,7 +711,10 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         $this->_tableFields = $tableFields;
     }
 
-    public function isOpenListItemsInModal(): bool
+    /**
+     * @return bool
+     */
+    public function isOpenListItemsInModal(): ?bool
     {
         return $this->_openListItemsInModal;
     }

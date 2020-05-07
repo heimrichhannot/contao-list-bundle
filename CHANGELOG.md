@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.17.1] - 2020-05-07
+- fixed type hint issue
+
 ## [1.17.0] - 2020-05-06
 - added new implementation for opening list items in modals (and deprecated the old modal module-based one)
 

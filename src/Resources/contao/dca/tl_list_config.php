@@ -339,7 +339,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'options'   => \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_MODES,
             'reference' => &$GLOBALS['TL_LANG']['tl_list_config']['reference'],
             'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
-            'sql'       => "varchar(16) NOT NULL default 'field'",
+            'sql'       => "varchar(32) NOT NULL default 'field'",
         ],
         'sortingField'                => [
             'label'            => &$GLOBALS['TL_LANG']['tl_list_config']['sortingField'],

@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.17.2] - 2020-05-08
+- increased row size of `sortingMode` to 32
+
 ## [1.17.1] - 2020-05-07
 - fixed type hint issue
 

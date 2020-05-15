@@ -125,7 +125,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 
         $projectDir = System::getContainer()->get('huh.utils.container')->getProjectDir();
 
-        if (null !== $imageFile && file_exists($projectDir.'/'.$imageFile->path) && getimagesize($projectDir.'/'.$imageFile->path)) {
+        if (null !== $imageFile && file_exists($projectDir.'/'.$imageFile->path) && (getimagesize($projectDir.'/'.$imageFile->path) || 'svg' === strtolower($imageFile->extension))) {
             $imageArray = $item->getRaw();
 
             // Override the default image size

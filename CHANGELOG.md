@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.17.3] - 2020-05-15
+- fixed image config element for svg files
+
 ## [1.17.2] - 2020-05-08
 - increased row size of `sortingMode` to 32
 

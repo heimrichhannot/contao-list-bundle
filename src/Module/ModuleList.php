@@ -226,7 +226,7 @@ class ModuleList extends Module
 
         // add class to every list template
         $cssID = $css;
-        $cssID[1] = $cssID[1].($cssID[1] ? ' ' : '').'huh-list';
+        $cssID[1] = $cssID[1].($cssID[1] ? ' ' : '').'huh-list '.$this->listManager->getList()->getDataContainer();
 
         $css = $cssID;
 

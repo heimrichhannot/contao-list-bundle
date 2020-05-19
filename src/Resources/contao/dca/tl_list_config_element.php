@@ -69,6 +69,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         '__selector__' => [
             'type',
             'placeholderImageMode',
+            'tagsAddLink'
         ],
         'default'      => '{title_type_legend},title,type;',
     ],
@@ -77,6 +78,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'genderField,placeholderImage,placeholderImageFemale',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM   => 'placeholderImages',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_FIELD    => 'fieldDependentPlaceholderConfig',
+        'tagsAddLink'                                                                                                   => 'tagsFilter,tagsFilterElement,tagsJumpTo'
     ],
     'fields'      => [
         'id'                              => [
@@ -266,6 +268,138 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
                 ]
             ],
             'sql'       => "blob NULL"
-        ]
+        ],
+        'relatedExplanation'              => [
+            'inputType' => 'explanation',
+            'eval'      => [
+                'text'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['relatedExplanation'],
+                'class'    => 'tl_info',
+                'tl_class' => 'long clr',
+            ]
+        ],
+        'relatedListModule'               => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['relatedListModule'],
+            'exclude'          => true,
+            'filter'           => true,
+            'inputType'        => 'select',
+            'options_callback' => function (\Contao\DataContainer $dc) {
+                return System::getContainer()->get('huh.utils.choice.model_instance')->getCachedChoices([
+                    'dataContainer' => 'tl_module',
+                    'labelPattern'  => '%name% (ID %id%)'
+                ]);
+            },
+            'eval'             => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
+            'sql'              => "varchar(64) NOT NULL default ''"
+        ],
+        'relatedCriteriaExplanation'      => [
+            'inputType' => 'explanation',
+            'eval'      => [
+                'text'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['relatedCriteriaExplanation'],
+                'class'    => 'tl_info',
+                'tl_class' => 'long clr',
+            ]
+        ],
+        'relatedCriteria'                 => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['relatedCriteria'],
+            'exclude'          => true,
+            'filter'           => true,
+            'inputType'        => 'checkbox',
+            'options_callback' => [\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::class, 'getRelatedCriteriaAsOptions'],
+            'reference'        => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
+            'eval'             => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'multiple' => true, 'submitOnChange' => true],
+            'sql'              => "blob NULL"
+        ],
+        'tagsField'                     => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['tagsField'],
+            'inputType'        => 'select',
+            'options_callback' => function (DataContainer $dc) {
+                if (!$dc->activeRecord->pid) {
+                    return [];
+                }
+
+                if (null === ($listConfig = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk('tl_list_config', $dc->activeRecord->pid)) || !$listConfig->filter)
+                {
+                    return [];
+                }
+
+                if (null === ($filterConfig = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk('tl_filter_config', $listConfig->filter)) || !$filterConfig->dataContainer)
+                {
+                    return [];
+                }
+
+                return System::getContainer()->get('huh.utils.choice.field')->getCachedChoices([
+                    'dataContainer' => $filterConfig->dataContainer,
+                    'inputTypes' => ['cfgTags']
+                ]);
+            },
+            'exclude'          => true,
+            'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50'],
+            'sql'              => "varchar(64) NOT NULL default ''",
+        ],
+        'tagsTemplate'             => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['tagsTemplate'],
+            'exclude'          => true,
+            'inputType'        => 'select',
+            'default'          => 'config_element_tags_default.html',
+            'options_callback' => function (\Contao\DataContainer $dc) {
+                return \Contao\System::getContainer()->get('huh.utils.choice.twig_template')->getCachedChoices(['config_element_tags_']);
+            },
+            'eval'             => ['tl_class' => 'w50', 'includeBlankOption' => true, 'mandatory' => true],
+            'sql'              => "varchar(64) NOT NULL default ''",
+        ],
+        'tagsAddLink' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['tagsAddLink'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'                     => "char(1) NOT NULL default ''"
+        ],
+        'tagsFilter' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['tagsFilter'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'inputType'               => 'select',
+            'options_callback' => function (\Contao\DataContainer $dc) {
+                return System::getContainer()->get('huh.utils.choice.model_instance')->getCachedChoices([
+                    'dataContainer' => 'tl_filter_config',
+                    'labelPattern' => '%title% (ID %id%)'
+                ]);
+            },
+            'eval'                    => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true, 'submitOnChange' => true],
+            'sql'                     => "varchar(64) NOT NULL default ''"
+        ],
+        'tagsFilterConfigElement' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['tagsFilterConfigElement'],
+            'exclude'                 => true,
+            'filter'                  => true,
+            'inputType'               => 'select',
+            'options_callback' => function (\Contao\DataContainer $dc) {
+                if (!$dc->activeRecord->tagsFilter) {
+                    return [];
+                }
+
+                return System::getContainer()->get('huh.utils.choice.model_instance')->getCachedChoices([
+                    'dataContainer' => 'tl_filter_config_element',
+                    'columns' => [
+                        'tl_filter_config_element.pid=?'
+                    ],
+                    'values' => [
+                        $dc->activeRecord->tagsFilter
+                    ],
+                    'labelPattern' => '%title% (ID %id%)'
+                ]);
+            },
+            'eval'                    => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true],
+            'sql'                     => "varchar(64) NOT NULL default ''"
+        ],
+        'tagsJumpTo' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['tagsJumpTo'],
+            'exclude'                 => true,
+            'inputType'               => 'pageTree',
+            'foreignKey'              => 'tl_page.title',
+            'eval'                    => ['fieldType'=>'radio', 'tl_class' => 'w50', 'mandatory' => true],
+            'sql'                     => "int(10) unsigned NOT NULL default '0'",
+            'relation'                => ['type'=>'hasOne', 'load'=>'lazy']
+        ],
     ],
 ];

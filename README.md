@@ -48,9 +48,11 @@ Every list config can have one or more list config elements. These are designed 
 
 Currently available list config element types:
 
-Type  | Description
-------|------------
-image | Configure the output of one or more image fields separately (image size, placeholder handling, ...)
+Type          | Description
+--------------|------------
+image         | Configure the output of one or more image fields separately (image size, placeholder handling, ...)
+tags          | Output one or more tag fields based on [codefog/tags-bundle](https://github.com/codefog/tags-bundle).
+related items | Output related items based on given tags (needs [codefog/tags-bundle](https://github.com/codefog/tags-bundle)) or categories (needs [heimrichhannot/contao-categories-bundle](https://github.com/heimrichhannot/contao-categories-bundle)).
 
 ## Documentation
 

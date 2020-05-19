@@ -18,6 +18,7 @@ use HeimrichHannot\Blocks\BlockModuleModel;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Backend\ListConfig;
+use HeimrichHannot\ListBundle\ConfigElementType\TagsConfigElementType;
 use HeimrichHannot\ListBundle\Event\ListAfterParseItemsEvent;
 use HeimrichHannot\ListBundle\Event\ListAfterRenderEvent;
 use HeimrichHannot\ListBundle\Event\ListBeforeParseItemsEvent;
@@ -283,6 +284,43 @@ class DefaultList implements ListInterface, \JsonSerializable
             $fields = implode(', ', array_map(function ($field) use ($filter) {
                 return $filter->dataContainer.'.'.$field;
             }, $dbFields));
+        }
+
+        // filter related items
+        if (isset($GLOBALS['HUH_LIST_RELATED'])) {
+            if (isset($GLOBALS['HUH_LIST_RELATED'][TagsConfigElementType::getType()])) {
+                System::getContainer()->get('huh.utils.dca')->loadDc($filter->dataContainer);
+
+                $field = $GLOBALS['HUH_LIST_RELATED'][TagsConfigElementType::getType()]['field'];
+                $item = $GLOBALS['HUH_LIST_RELATED'][TagsConfigElementType::getType()]['item'];
+
+                $source = $GLOBALS['TL_DCA'][$filter->dataContainer]['fields'][$field]['eval']['tagsManager'];
+
+                $nonTlTable = System::getContainer()->get('huh.utils.string')->removeLeadingString('tl_', $filter->dataContainer);
+                $cfgTable = 'tl_cfg_tag_'.$nonTlTable;
+
+                $tagRecords = Database::getInstance()->prepare("SELECT t.id FROM tl_cfg_tag t INNER JOIN $cfgTable t2 ON t.id = t2.cfg_tag_id".
+                    " WHERE t2.{$nonTlTable}_id=? AND t.source=?")->execute(
+                    $item->getRawValue('id'),
+                    $source
+                );
+
+                if ($tagRecords->numRows > 0) {
+                    $relatedIds = Database::getInstance()->prepare(
+                        "SELECT t.* FROM $cfgTable t WHERE t.cfg_tag_id IN (".implode(',', $tagRecords->fetchEach('id')).')'
+                    )->execute();
+
+                    if ($relatedIds->numRows > 0) {
+                        $itemIds = $relatedIds->fetchEach($nonTlTable.'_id');
+
+                        // exclude the item itself
+                        $itemIds = array_diff($itemIds, [$item->getRawValue('id')]);
+
+                        // if no items with the given tags are found, no related news should be displayed
+                        $queryBuilder->andWhere($queryBuilder->expr()->in($filter->dataContainer.'.id', empty($itemIds) ? [0] : $itemIds));
+                    }
+                }
+            }
         }
 
         $this->setIsSubmitted($isSubmitted);

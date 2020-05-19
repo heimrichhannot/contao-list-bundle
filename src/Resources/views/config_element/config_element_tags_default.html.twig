@@ -1,0 +1,13 @@
+{% if tags|length > 0 %}
+    <div class="tags">
+        <ul>
+            {% for tag in tags %}
+                <li class="tag">
+                    {% if configElement.tagsAddLink|default %}<a class="tag-link" href="{{ tag.url|default('#') }}">{% endif %}
+                        {{ tag.name }}
+                    {% if configElement.tagsAddLink|default %}</a>{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

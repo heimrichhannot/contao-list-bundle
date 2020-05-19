@@ -11,12 +11,17 @@ namespace HeimrichHannot\ListBundle\DataContainer;
 use Contao\Config;
 use Contao\Date;
 use Contao\DC_Table;
+use Contao\StringUtil;
+use HeimrichHannot\ListBundle\ConfigElementType\RelatedConfigElementType;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ListConfigElementContainer
 {
+    const RELATED_CRITERIUM_TAGS = 'tags';
+    const RELATED_CRITERIUM_CATEGORIES = 'categories';
+
     /**
      * @var ListConfigElementRegistry
      */
@@ -58,8 +63,28 @@ class ListConfigElementContainer
         return $types;
     }
 
+    public function getRelatedCriteriaAsOptions()
+    {
+        $options = [];
+
+        if (class_exists('\Codefog\TagsBundle\CodefogTagsBundle')) {
+            $options[] = static::RELATED_CRITERIUM_TAGS;
+        }
+
+        // TODO
+//        if (class_exists('\HeimrichHannot\CategoriesBundle\CategoriesBundle')) {
+//            $options[] = static::RELATED_CRITERIUM_CATEGORIES;
+//        }
+
+        return $options;
+    }
+
     public function onLoadCallback($dc)
     {
+        if (null === ($listConfigElement = $this->container->get('huh.utils.model')->findModelInstanceByPk('tl_list_config_element', $dc->id))) {
+            return;
+        }
+
         $configElementTypes = $this->configElementRegistry->getConfigElementTypes();
 
         if (empty($configElementTypes)) {
@@ -69,6 +94,18 @@ class ListConfigElementContainer
         foreach ($configElementTypes as $listConfigElementType) {
             $palette = '{title_type_legend},title,type,templateVariable;'.$listConfigElementType->getPalette();
             $GLOBALS['TL_DCA'][ListConfigElementModel::getTable()]['palettes'][$listConfigElementType::getType()] = $palette;
+        }
+
+        // related
+        if ($listConfigElement->type === RelatedConfigElementType::getType()) {
+            $criteria = StringUtil::deserialize($listConfigElement->relatedCriteria, true);
+
+            if (\in_array(static::RELATED_CRITERIUM_TAGS, $criteria)) {
+                $GLOBALS['TL_DCA']['tl_list_config_element']['palettes'][RelatedConfigElementType::getType()] = str_replace(
+                    'relatedCriteria;', 'relatedCriteria,tagsField;',
+                    $GLOBALS['TL_DCA']['tl_list_config_element']['palettes'][RelatedConfigElementType::getType()]
+                );
+            }
         }
     }
 

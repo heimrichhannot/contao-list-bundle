@@ -113,3 +113,11 @@ services:
   HeimrichHannot\ListBundle\ConfigElementType\SubmissionFormConfigElementType:
     autowire: true
     tags: ['huh.list.config_element_type']
+
+  HeimrichHannot\ListBundle\ConfigElementType\RelatedConfigElementType:
+    autowire: true
+    tags: ['huh.list.config_element_type']
+
+  HeimrichHannot\ListBundle\ConfigElementType\TagsConfigElementType:
+    autowire: true
+    tags: ['huh.list.config_element_type']

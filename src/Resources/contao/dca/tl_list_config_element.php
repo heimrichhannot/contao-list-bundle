@@ -78,7 +78,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'genderField,placeholderImage,placeholderImageFemale',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM   => 'placeholderImages',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_FIELD    => 'fieldDependentPlaceholderConfig',
-        'tagsAddLink'                                                                                                   => 'tagsFilter,tagsFilterElement,tagsJumpTo'
+        'tagsAddLink'                                                                                                   => 'tagsFilter,tagsFilterConfigElement,tagsJumpTo'
     ],
     'fields'      => [
         'id'                              => [

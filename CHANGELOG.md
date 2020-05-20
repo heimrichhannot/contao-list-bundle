@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.19.1] - 2020-05-20
+- fixed `RelatedConfigElementType`
+
 ## [1.19.0] - 2020-05-19
 - added new list config elements: `RelatedConfigElementType`, `TagsConfigElementType`
 

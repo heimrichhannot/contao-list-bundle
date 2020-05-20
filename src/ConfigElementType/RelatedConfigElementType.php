@@ -70,9 +70,16 @@ class RelatedConfigElementType implements ListConfigElementTypeInterface
 
         $this->applyTagsFilter($configElement, $item);
 
+        // store the module data in order to restore it after the list has been created
+        $moduleData = $item->getManager()->getModuleData();
+
         $result = Controller::getFrontendModule($configElement->relatedListModule);
 
         unset($GLOBALS['HUH_LIST_RELATED']);
+
+        // restore the list config
+        $item->getManager()->setModuleData($moduleData);
+        $item->getManager()->getListConfig();
 
         return $result;
     }

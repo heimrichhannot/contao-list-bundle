@@ -53,11 +53,15 @@ $lang['relatedListModule'][1] = 'Wählen Sie hier das Listenmodul aus, das die �
 $lang['relatedCriteriaExplanation'] = 'Bitte installieren Sie eine oder mehrere der folgenden Erweiterungen, um entsprechende Kriterien zu vergeben:
     <ul>
         <li>- <a href="https://github.com/codefog/tags-bundle" target="blank">codefog/tags-bundle</a></li>
-        <!-- <li>- <a href="https://github.com/heimrichhannot/contao-categories-bundle" target="blank">heimrichhannot/contao-categories-bundle</a></li> -->
+        <li>- <a href="https://github.com/heimrichhannot/contao-categories-bundle" target="blank">heimrichhannot/contao-categories-bundle</a></li>
     </ul>';
 
 $lang['relatedCriteria'][0] = 'Filterkriterien';
 $lang['relatedCriteria'][1] = 'Wählen Sie hier die Kriterien aus, die zum Auffinden ähnlicher Instanzen verwendet werden sollen.';
+
+// categories
+$lang['categoriesField'][0] = 'Kategorien-Feld';
+$lang['categoriesField'][1] = 'Wählen Sie hier ein Kategorien-Feld aus.';
 
 // tags
 $lang['tagsField'][0] = 'Tags-Feld';

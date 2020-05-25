@@ -71,10 +71,9 @@ class ListConfigElementContainer
             $options[] = static::RELATED_CRITERIUM_TAGS;
         }
 
-        // TODO
-//        if (class_exists('\HeimrichHannot\CategoriesBundle\CategoriesBundle')) {
-//            $options[] = static::RELATED_CRITERIUM_CATEGORIES;
-//        }
+        if (class_exists('\HeimrichHannot\CategoriesBundle\CategoriesBundle')) {
+            $options[] = static::RELATED_CRITERIUM_CATEGORIES;
+        }
 
         return $options;
     }
@@ -100,12 +99,20 @@ class ListConfigElementContainer
         if ($listConfigElement->type === RelatedConfigElementType::getType()) {
             $criteria = StringUtil::deserialize($listConfigElement->relatedCriteria, true);
 
+            $fields = [];
+
             if (\in_array(static::RELATED_CRITERIUM_TAGS, $criteria)) {
-                $GLOBALS['TL_DCA']['tl_list_config_element']['palettes'][RelatedConfigElementType::getType()] = str_replace(
-                    'relatedCriteria;', 'relatedCriteria,tagsField;',
-                    $GLOBALS['TL_DCA']['tl_list_config_element']['palettes'][RelatedConfigElementType::getType()]
-                );
+                $fields[] = 'tagsField';
             }
+
+            if (\in_array(static::RELATED_CRITERIUM_CATEGORIES, $criteria)) {
+                $fields[] = 'categoriesField';
+            }
+
+            $GLOBALS['TL_DCA']['tl_list_config_element']['palettes'][RelatedConfigElementType::getType()] = str_replace(
+                'relatedCriteria;', 'relatedCriteria,'.implode(',', $fields).';',
+                $GLOBALS['TL_DCA']['tl_list_config_element']['palettes'][RelatedConfigElementType::getType()]
+            );
         }
     }
 

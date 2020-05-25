@@ -149,6 +149,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
         'imgSize'                         => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['imgSize'],
             'exclude'          => true,
             'inputType'        => 'imageSize',
             'reference'        => &$GLOBALS['TL_LANG']['MSC'],
@@ -400,6 +401,33 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'                    => ['fieldType'=>'radio', 'tl_class' => 'w50', 'mandatory' => true],
             'sql'                     => "int(10) unsigned NOT NULL default '0'",
             'relation'                => ['type'=>'hasOne', 'load'=>'lazy']
+        ],
+        'categoriesField'                     => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['categoriesField'],
+            'inputType'        => 'select',
+            'options_callback' => function (DataContainer $dc) {
+                if (!$dc->activeRecord->pid) {
+                    return [];
+                }
+
+                if (null === ($listConfig = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk('tl_list_config', $dc->activeRecord->pid)) || !$listConfig->filter)
+                {
+                    return [];
+                }
+
+                if (null === ($filterConfig = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk('tl_filter_config', $listConfig->filter)) || !$filterConfig->dataContainer)
+                {
+                    return [];
+                }
+
+                return System::getContainer()->get('huh.utils.choice.field')->getCachedChoices([
+                    'dataContainer' => $filterConfig->dataContainer,
+                    'inputTypes' => ['categoryTree']
+                ]);
+            },
+            'exclude'          => true,
+            'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50'],
+            'sql'              => "varchar(64) NOT NULL default ''",
         ],
     ],
 ];

@@ -93,7 +93,7 @@ class TagsConfigElementType implements ListConfigElementTypeInterface
 
                     $sessionData = \is_array($sessionData) ? $sessionData : [];
 
-                    $sessionData[$filterConfigElement->name] = $tagId;
+                    $sessionData[$filterConfigElement->field] = $tagId;
 
                     System::getContainer()->get('huh.filter.session')->setData($sessionKey, $sessionData);
 

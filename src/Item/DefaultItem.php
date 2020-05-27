@@ -364,6 +364,10 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         /** @var ListConfigElementModel[] $listConfigElements */
         if (null !== ($listConfigElements = $this->_manager->getListConfigElementRegistry()->findBy(['pid=?'], [$listConfig->rootId]))) {
             foreach ($listConfigElements as $listConfigElement) {
+                // save the moduleData in order to restore it after the processing of the config element since it might
+                // have rendered a list itself and hence changed the list config (singleton issue...)
+                $moduleData = $this->getManager()->getModuleData();
+
                 if ($listConfigElementType = $this->_manager->getListConfigElementRegistry()->getListConfigElementType($listConfigElement->type)) {
                     $listConfigElementType->addToListItemData(new ListConfigElementData($this, $listConfigElement));
                 } else {
@@ -377,6 +381,9 @@ class DefaultItem implements ItemInterface, \JsonSerializable
                     $type = $this->_manager->getFramework()->createInstance($class, [$this->_manager->getFramework()]);
                     $type->addToItemData($this, $listConfigElement);
                 }
+
+                $this->getManager()->setModuleData($moduleData);
+                $this->getManager()->getListConfig();
             }
         }
 

@@ -537,6 +537,10 @@ class DefaultList implements ListInterface, \JsonSerializable
                 $limit = $offsettedTotal + $skip - $offset;
             }
 
+            if ($limit < 0) {
+                $limit = 0;
+            }
+
             // Add the pagination menu
             if ($listConfig->addAjaxPagination) {
                 $pagination = new RandomPagination($randomSeed, $offsettedTotal, $listConfig->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate($listConfig->ajaxPaginationTemplate ?: 'pagination_list_ajax'));

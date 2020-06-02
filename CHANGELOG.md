@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.20.2] - 2020-06-02
+- fixed negative limit issue
+
 ## [1.20.1] - 2020-05-27
 - restored the list config after every list config element rendering
 - skipped dc for default template

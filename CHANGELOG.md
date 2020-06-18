@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.20.3] - 2020-06-18
+- fixed typo in `SearchListener`
+
 ## [1.20.2] - 2020-06-02
 - fixed negative limit issue
 

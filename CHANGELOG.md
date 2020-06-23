@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.20.4] - 2020-06-23
+- fixed bug concerning dc_multilingual and frontend preview
+
 ## [1.20.3] - 2020-06-18
 - fixed typo in `SearchListener`
 

@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.21.0] - 2020-06-30
+- added option to open images processed by `ImageConfigElement`s in a lightbox
+
 ## [1.20.4] - 2020-06-23
 - fixed bug concerning dc_multilingual and frontend preview
 

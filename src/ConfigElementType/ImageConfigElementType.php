@@ -139,12 +139,14 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 
             $imageArray[$imageField] = $imageFile->path;
 
+            $imageArray['fullsize'] = $listConfigElement->openImageInLightbox;
+
             $templateData = [];
             $templateData['images'] = $item->getFormattedValue('images') ?: [];
             $templateData['images'][$listConfigElement->templateVariable ?: $imageField] = [];
 
             System::getContainer()->get('huh.utils.image')->addToTemplateData($imageField, $imageSelectorField,
-                $templateData['images'][$listConfigElement->templateVariable ?: $imageField], $imageArray, null, null,
+                $templateData['images'][$listConfigElement->templateVariable ?: $imageField], $imageArray, null, $listConfigElement->lightboxId ?: null,
                 null, $imageFile);
 
             $item->setFormattedValue('images', $templateData['images']);
@@ -175,7 +177,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
      */
     public function getPalette(): string
     {
-        return '{config_legend},imageSelectorField,imageField,imgSize,placeholderImageMode;';
+        return '{config_legend},imageSelectorField,imageField,imgSize,placeholderImageMode,openImageInLightbox;';
     }
 
     /**

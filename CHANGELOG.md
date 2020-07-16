@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.22.0] - 2020-07-16
+- added bootstrap row list template
+
 ## [1.21.0] - 2020-06-30
 - added option to open images processed by `ImageConfigElement`s in a lightbox
 

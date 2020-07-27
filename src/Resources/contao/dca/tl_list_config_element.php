@@ -69,7 +69,8 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         '__selector__' => [
             'type',
             'placeholderImageMode',
-            'tagsAddLink'
+            'tagsAddLink',
+            'openImageInLightbox'
         ],
         'default'      => '{title_type_legend},title,type;',
     ],
@@ -78,7 +79,8 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'genderField,placeholderImage,placeholderImageFemale',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM   => 'placeholderImages',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_FIELD    => 'fieldDependentPlaceholderConfig',
-        'tagsAddLink'                                                                                                   => 'tagsFilter,tagsFilterConfigElement,tagsJumpTo'
+        'tagsAddLink'                                                                                                   => 'tagsFilter,tagsFilterConfigElement,tagsJumpTo',
+        'openImageInLightbox' => 'lightboxId'
     ],
     'fields'      => [
         'id'                              => [
@@ -198,6 +200,21 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'inputType' => 'fileTree',
             'eval'      => ['tl_class' => 'w50 autoheight', 'fieldType' => 'checkbox', 'filesOnly' => true, 'extensions' => Config::get('validImageTypes'), 'mandatory' => true, 'multiple' => true],
             'sql'       => "blob NULL",
+        ],
+        'openImageInLightbox' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['openImageInLightbox'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'                     => "char(1) NOT NULL default ''"
+        ],
+        'lightboxId' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['lightboxId'],
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'eval'                    => ['maxlength' => 64, 'tl_class' => 'w50'],
+            'sql'                     => "varchar(64) NOT NULL default ''"
         ],
         'submissionFormExplanation'       => [
             'inputType' => 'explanation',

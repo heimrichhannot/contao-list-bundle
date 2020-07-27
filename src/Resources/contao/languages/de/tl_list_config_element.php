@@ -28,6 +28,10 @@ $lang['genderField'][0]            = 'Geschlecht-Feld';
 $lang['genderField'][1]            = 'Wählen Sie hier das Feld aus, das das Geschlecht der Instanz enthält.';
 $lang['placeholderImages'][0]      = 'Platzhalterbilder';
 $lang['placeholderImages'][1]      = 'Wählen Sie hier Platzhalterbilder aus.';
+$lang['openImageInLightbox'][0]    = 'Großansicht des Bildes in einem neuen Fenster öffnen';
+$lang['openImageInLightbox'][1]    = 'Wählen Sie diese Option, um das Bild in einer Lightbox zu öffnen.';
+$lang['lightboxId'][0]             = 'Lightbox-ID';
+$lang['lightboxId'][1]             = 'Geben Sie hier bei Bedarf eine ID an, um die Bilder in einer Gallerie zu gruppieren. Geben Sie keine ID an, wird jedes Bild in seiner eigenen Lightbox geöffnet.';
 
 // submission
 $lang['submissionReader'][0]                                    = 'Einsendungsleser';

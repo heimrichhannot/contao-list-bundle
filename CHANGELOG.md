@@ -1,8 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.21.0] - 2020-07-27
+## [1.23.0] - 2020-07-27
 - added `VideoConfigElementType`
+
+## [1.22.0] - 2020-07-16
+- added bootstrap row list template
+
+## [1.21.0] - 2020-06-30
+- added option to open images processed by `ImageConfigElement`s in a lightbox
+
+## [1.20.4] - 2020-06-23
+- fixed bug concerning dc_multilingual and frontend preview
+
+## [1.20.3] - 2020-06-18
+- fixed typo in `SearchListener`
+
+## [1.20.2] - 2020-06-02
+- fixed negative limit issue
 
 ## [1.20.1] - 2020-05-27
 - restored the list config after every list config element rendering

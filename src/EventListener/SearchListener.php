@@ -76,7 +76,7 @@ class SearchListener
                     continue;
                 }
 
-                if ('tl_news' === $filter['dataContainer'] || 'tl_calendar' === $filter['dataContainer'] || 'tl_comments' === $filter['dataContainer'] || 'tl_faq' === $filter['dataContainer']) {
+                if ('tl_news' === $filter['dataContainer'] || 'tl_calendar_events' === $filter['dataContainer'] || 'tl_comments' === $filter['dataContainer'] || 'tl_faq' === $filter['dataContainer']) {
                     continue;
                 }
 

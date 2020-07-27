@@ -1,3 +1,5 @@
+import UtilsBundle from "@hundh/contao-utils-bundle"
+
 class ListBundle {
 
     static init() {
@@ -5,6 +7,24 @@ class ListBundle {
         ListBundle.initMasonry();
         ListBundle.initEvents();
         ListBundle.initModal();
+        ListBundle.initVideo();
+    }
+
+    static initVideo() {
+        let videos = document.querySelectorAll('.video-player');
+
+        videos.forEach((elem) => {
+            let button = elem.querySelector('.play-button'),
+                poster = elem.querySelector('.poster'),
+                video  = elem.querySelector('video');
+
+            if(button) {
+                button.addEventListener('click', function() {
+                    video.play();
+                    poster.classList.add('d-none');
+                });
+            }
+        });
     }
 
     static initEvents() {

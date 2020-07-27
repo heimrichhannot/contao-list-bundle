@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.21.0] - 2020-07-27
+- added `VideoConfigElementType`
+
 ## [1.20.1] - 2020-05-27
 - restored the list config after every list config element rendering
 - skipped dc for default template

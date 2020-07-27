@@ -82,6 +82,22 @@ $lang['tagsJumpTo'][1] = 'Wählen Sie hier die Seite aus, die den o.g. Filter nu
 $lang['tagsTemplate'][0] = 'Template';
 $lang['tagsTemplate'][1] = 'Wählen Sie hier das gewünschte Template aus.';
 
+// video
+$lang['videoField'][0] = 'Feld';
+$lang['videoField'][1] = 'Wählen Sie hier das Feld aus, das die Referenz zur Bilddatei enthält.';
+$lang['videoSize'][0] = 'Videogröße';
+$lang['videoSize'][1] = 'Wählen Sie hier die Größe aus, in der das Video dargestellt werden soll.';
+$lang['posterImageField'][0] = 'Vorschaubild';
+$lang['posterImageField'][1] = 'Wählen Sie hier das Feld aus, das die Referenz zur Vorschaubild enthält.';
+$lang['autoplay'][0] = 'autoplay';
+$lang['autoplay'][1] = 'Wählen Sie hier, ob das Video automatisch gestartet werden soll.';
+$lang['loop'][0] = 'loop';
+$lang['loop'][1] = 'Wählen Sie hier, ob das Video in Dauerschleife abgespielt werden soll.';
+$lang['controls'][0] = 'controls';
+$lang['controls'][1] = 'Wählen Sie hier, ob die Bedienelemente des Videoplayers angezeigt werden sollen.';
+$lang['muted'][0] = 'muted';
+$lang['muted'][1] = 'Wählen Sie hier, ob das Video ohne ton gestartet werden soll.';
+
 /**
  * Legends
  */
@@ -101,7 +117,8 @@ $lang['reference'] = [
     \HeimrichHannot\ListBundle\ConfigElementType\RelatedConfigElementType::getType()                  => 'Ähnliche Instanzen',
     \HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERIUM_TAGS       => 'Schlagworte',
     \HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERIUM_CATEGORIES => 'Kategorien',
-    \HeimrichHannot\ListBundle\ConfigElementType\TagsConfigElementType::getType()                     => 'Schlagworte'
+    \HeimrichHannot\ListBundle\ConfigElementType\TagsConfigElementType::getType()                     => 'Schlagworte',
+    \HeimrichHannot\ListBundle\ConfigElementType\VideoConfigElementType::getType()                    => 'Video'
 
 ];
 

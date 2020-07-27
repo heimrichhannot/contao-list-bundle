@@ -429,5 +429,68 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50'],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
+        'videoField' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['videoField'],
+            'inputType' => 'select',
+            'exclude' => true,
+            'options_callback' => function (DataContainer $dc) {
+                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+            },
+            'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
+            'sql'              => "varchar(64) NOT NULL default ''",
+        ],
+        'videoSize' => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config_element']['videoSize'],
+            'exclude'          => true,
+            'inputType'        => 'imageSize',
+            'reference'        => &$GLOBALS['TL_LANG']['MSC'],
+            'eval'             => ['rgxp' => 'natural', 'includeBlankOption' => true, 'nospace' => true, 'helpwizard' => true, 'tl_class' => 'w50'],
+            'options_callback' => static function () {
+                return Contao\System::getContainer()->get('contao.image.image_sizes')->getOptionsForUser(Contao\BackendUser::getInstance());
+            },
+            'sql'              => "varchar(255) NOT NULL default ''"
+        ],
+        'posterImageField' => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['posterImageField'],
+            'inputType'        => 'select',
+            'options_callback' => function (DataContainer $dc) {
+                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+            },
+            'exclude'          => true,
+            'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
+            'sql'              => "varchar(64) NOT NULL default ''",
+        ],
+        'autoplay' => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['autoplay'],
+            'exclude'          => true,
+            'inputType'        => 'checkbox',
+            'reference'        => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
+            'eval'             => ['tl_class' => 'clr w50'],
+            'sql'              => "char(1) NOT NULL default ''"
+        ],
+        'loop' => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['loop'],
+            'exclude'          => true,
+            'inputType'        => 'checkbox',
+            'reference'        => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
+            'eval'             => ['tl_class' => 'w50'],
+            'sql'              => "char(1) NOT NULL default ''"
+        ],
+        'controls' => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['controls'],
+            'exclude'          => true,
+            'inputType'        => 'checkbox',
+            'reference'        => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
+            'eval'             => ['tl_class' => 'w50'],
+            'sql'              => "char(1) NOT NULL default ''"
+        ],
+        'muted' => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['muted'],
+            'exclude'          => true,
+            'inputType'        => 'checkbox',
+            'reference'        => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
+            'eval'             => ['tl_class' => 'w50'],
+            'sql'              => "char(1) NOT NULL default ''"
+        ]
     ],
 ];

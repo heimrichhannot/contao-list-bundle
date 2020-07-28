@@ -26,7 +26,7 @@ class VideoConfigElementType implements ListConfigElementTypeInterface
     /**
      * @var ImageUtil
      */
-    private ImageUtil $imageUtil;
+    private $imageUtil;
 
     public function __construct(ContaoFrameworkInterface $framework, ImageUtil $imageUtil)
     {

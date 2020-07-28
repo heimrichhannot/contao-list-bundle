@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.23.1] - 2020-07-28
+- removed php 7.4 typing
+
 ## [1.23.0] - 2020-07-27
 - added `VideoConfigElementType`
 

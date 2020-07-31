@@ -91,10 +91,10 @@ class VideoConfigElementType implements ListConfigElementTypeInterface
     public function getVideoConfig(ListConfigElementModel $listConfigElement, FilesModel $video): array
     {
         return [
-            'autoplay' => $listConfigElement->autoplay,
-            'loop' => $listConfigElement->loop,
-            'controls' => $listConfigElement->controls,
-            'muted' => $listConfigElement->muted,
+            'autoplay' => $listConfigElement->addAutoplay,
+            'loop' => $listConfigElement->addLoop,
+            'controls' => $listConfigElement->addControls,
+            'muted' => $listConfigElement->addMuted,
             'files' => [
                 $video,
             ],
@@ -115,7 +115,7 @@ class VideoConfigElementType implements ListConfigElementTypeInterface
      */
     public function getPalette(): string
     {
-        return '{config_legend},videoField,videoSize,posterImageField,autoplay,loop,controls,muted;';
+        return '{config_legend},videoField,videoSize,posterImageField,addAutoplay,addLoop,addControls,addMuted;';
     }
 
     /**

@@ -93,15 +93,18 @@ $lang['videoSize'][0] = 'Videogröße';
 $lang['videoSize'][1] = 'Wählen Sie hier die Größe aus, in der das Video dargestellt werden soll.';
 $lang['posterImageField'][0] = 'Vorschaubild';
 $lang['posterImageField'][1] = 'Wählen Sie hier das Feld aus, das die Referenz zur Vorschaubild enthält.';
-$lang['autoplay'][0] = 'autoplay';
-$lang['autoplay'][1] = 'Wählen Sie hier, ob das Video automatisch gestartet werden soll.';
-$lang['loop'][0] = 'loop';
-$lang['loop'][1] = 'Wählen Sie hier, ob das Video in Dauerschleife abgespielt werden soll.';
-$lang['controls'][0] = 'controls';
-$lang['controls'][1] = 'Wählen Sie hier, ob die Bedienelemente des Videoplayers angezeigt werden sollen.';
-$lang['muted'][0] = 'muted';
-$lang['muted'][1] = 'Wählen Sie hier, ob das Video ohne ton gestartet werden soll.';
-
+$lang['addAutoplay'][0] = 'autoplay';
+$lang['addAutoplay'][1] = 'Wählen Sie hier, ob das Video automatisch gestartet werden soll.';
+$lang['addLoop'][0] = 'loop';
+$lang['addLoop'][1] = 'Wählen Sie hier, ob das Video in Dauerschleife abgespielt werden soll.';
+$lang['addControls'][0] = 'controls';
+$lang['addControls'][1] = 'Wählen Sie hier, ob die Bedienelemente des Videoplayers angezeigt werden sollen.';
+$lang['addMuted'][0] = 'muted';
+$lang['addMuted'][1] = 'Wählen Sie hier, ob das Video ohne ton gestartet werden soll.';
+$lang['overrideTemplateContainerVariable'][0] = 'Template-Container-Variable überschreiben';
+$lang['overrideTemplateContainerVariable'][1] = 'Wählen Sie diese Option um die Variable anzupassen, in die Elemente diesen Typs zusammengefasst werden.';
+$lang['templateContainerVariable'][0] = 'Template-Container-Variable';
+$lang['templateContainerVariable'][1] = 'Tragen Sie hier den Namen der Variable ein, in der die Elemente diesen Typs zusammengefasst werden.';
 /**
  * Legends
  */

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.23.2] - 2020-07-31
+- fixed fields for video config element
+- added customization of templateContainerVariable for config elements 
+
 ## [1.23.1] - 2020-07-28
 - removed php 7.4 typing
 

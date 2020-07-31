@@ -70,7 +70,8 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'type',
             'placeholderImageMode',
             'tagsAddLink',
-            'openImageInLightbox'
+            'openImageInLightbox',
+            'overrideTemplateContainerVariable'
         ],
         'default'      => '{title_type_legend},title,type;',
     ],
@@ -80,7 +81,8 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM   => 'placeholderImages',
         'placeholderImageMode_' . \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_FIELD    => 'fieldDependentPlaceholderConfig',
         'tagsAddLink'                                                                                                   => 'tagsFilter,tagsFilterConfigElement,tagsJumpTo',
-        'openImageInLightbox' => 'lightboxId'
+        'openImageInLightbox' => 'lightboxId',
+        'overrideTemplateContainerVariable' => 'templateContainerVariable'
     ],
     'fields'      => [
         'id'                              => [
@@ -137,7 +139,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
                 return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getCheckboxFields($dc);
             },
             'exclude'          => true,
-            'eval'             => ['includeBlankOption' => true, 'tl_class' => 'w50 autoheight', 'chosen' => true],
+            'eval'             => ['includeBlankOption' => true, 'tl_class' => 'clr w50 autoheight', 'chosen' => true],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
         'imageField'                      => [
@@ -477,37 +479,51 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'eval'             => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
             'sql'              => "varchar(64) NOT NULL default ''",
         ],
-        'autoplay' => [
-            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['autoplay'],
+        'addAutoplay' => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['addAutoplay'],
             'exclude'          => true,
             'inputType'        => 'checkbox',
             'reference'        => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
             'eval'             => ['tl_class' => 'clr w50'],
             'sql'              => "char(1) NOT NULL default ''"
         ],
-        'loop' => [
-            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['loop'],
+        'addLoop' => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['addLoop'],
             'exclude'          => true,
             'inputType'        => 'checkbox',
             'reference'        => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
             'eval'             => ['tl_class' => 'w50'],
             'sql'              => "char(1) NOT NULL default ''"
         ],
-        'controls' => [
-            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['controls'],
+        'addControls' => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['addControls'],
             'exclude'          => true,
             'inputType'        => 'checkbox',
             'reference'        => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
             'eval'             => ['tl_class' => 'w50'],
             'sql'              => "char(1) NOT NULL default ''"
         ],
-        'muted' => [
-            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['muted'],
+        'addMuted' => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['addMuted'],
             'exclude'          => true,
             'inputType'        => 'checkbox',
             'reference'        => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
             'eval'             => ['tl_class' => 'w50'],
             'sql'              => "char(1) NOT NULL default ''"
-        ]
+        ],
+        'overrideTemplateContainerVariable' => [
+            'label'                   => &$GLOBALS['TL_LANG']['tl_list_config_element']['overrideTemplateContainerVariable'],
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'                     => "char(1) NOT NULL default ''"
+        ],
+        'templateContainerVariable'                      => [
+            'label'            => &$GLOBALS['TL_LANG']['tl_list_config_element']['templateContainerVariable'],
+            'inputType'        => 'text',
+            'exclude'          => true,
+            'eval'             => ['tl_class' => 'clr w50','mandatory' => true],
+            'sql'              => "varchar(64) NOT NULL default ''",
+        ],
     ],
 ];

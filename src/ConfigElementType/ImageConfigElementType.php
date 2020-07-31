@@ -22,6 +22,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 {
     const TYPE = 'image';
     const RANDOM_IMAGE_PLACEHOLDERS_SESSION_KEY = 'huh.random-image-placeholders';
+    const LIST_CONFIG_ELEMENT_TEMPLATE_CONTAINER_VARIABLE = 'images';
 
     /**
      * @var ContaoFrameworkInterface
@@ -142,15 +143,27 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
             $imageArray['fullsize'] = $listConfigElement->openImageInLightbox;
 
             $templateData = [];
-            $templateData['images'] = $item->getFormattedValue('images') ?: [];
-            $templateData['images'][$listConfigElement->templateVariable ?: $imageField] = [];
+
+            $templateContainer = $this->getTemplateContainerVariable($listConfigElement);
+
+            $templateData[$templateContainer] = $item->getFormattedValue($templateContainer) ?: [];
+            $templateData[$templateContainer][$listConfigElement->templateVariable ?: $imageField] = [];
 
             System::getContainer()->get('huh.utils.image')->addToTemplateData($imageField, $imageSelectorField,
-                $templateData['images'][$listConfigElement->templateVariable ?: $imageField], $imageArray, null, $listConfigElement->lightboxId ?: null,
+                $templateData[$templateContainer][$listConfigElement->templateVariable ?: $imageField], $imageArray, null, $listConfigElement->lightboxId ?: null,
                 null, $imageFile);
 
-            $item->setFormattedValue('images', $templateData['images']);
+            $item->setFormattedValue($templateContainer, $templateData[$templateContainer]);
         }
+    }
+
+    public function getTemplateContainerVariable(ListConfigElementModel $listConfigElement): string
+    {
+        if (!$listConfigElement->overrideTemplateContainerVariable || !$listConfigElement->templateContainerVariable) {
+            return self::LIST_CONFIG_ELEMENT_TEMPLATE_CONTAINER_VARIABLE;
+        }
+
+        return $listConfigElement->templateContainerVariable;
     }
 
     public function getGenderedPlaceholderImage(ItemInterface $item, ListConfigElementModel $listConfigElement): string
@@ -177,7 +190,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
      */
     public function getPalette(): string
     {
-        return '{config_legend},imageSelectorField,imageField,imgSize,placeholderImageMode,openImageInLightbox;';
+        return '{config_legend},overrideTemplateContainerVariable,imageSelectorField,imageField,imgSize,placeholderImageMode,openImageInLightbox;';
     }
 
     /**

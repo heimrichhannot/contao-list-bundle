@@ -24,3 +24,17 @@ $lang['copy'] = ['Duplicate Listenkonfigurations-Element', 'Duplicate Listenkonf
 $lang['delete'] = ['Delete Listenkonfigurations-Element', 'Delete Listenkonfigurations-Element ID %s'];
 $lang['toggle'] = ['Publish/unpublish Listenkonfigurations-Element', 'Publish/unpublish Listenkonfigurations-Element ID %s'];
 $lang['show'] = ['Listenkonfigurations-Element details', 'Show the details of Listenkonfigurations-Element ID %s'];
+
+/**
+ * Reference
+ */
+$lang['reference'][\HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType::TYPE] = 'Image';
+$lang['reference'][\HeimrichHannot\ListBundle\ConfigElementType\SubmissionFormConfigElementType::TYPE] = 'Submission form';
+$lang['reference'][\HeimrichHannot\ListBundle\ConfigElementType\RelatedConfigElementType::getType()] = 'Related instances';
+$lang['reference'][\HeimrichHannot\ListBundle\ConfigElementType\TagsConfigElementType::getType()] = 'Tags';
+
+$lang['reference'][\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE] = 'simple';
+$lang['reference'][\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED] = 'gendered';
+$lang['reference'][\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM] = 'random';
+$lang['reference'][\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERIUM_TAGS] = 'tags';
+$lang['reference'][\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERIUM_CATEGORIES] = 'categories';

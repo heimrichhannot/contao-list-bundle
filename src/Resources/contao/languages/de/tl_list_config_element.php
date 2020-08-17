@@ -115,19 +115,16 @@ $lang['template_legend']   = 'Template';
 /**
  * Reference
  */
-$lang['reference'] = [
-    \HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType::TYPE                         => 'Bild',
-    \HeimrichHannot\ListBundle\ConfigElementType\SubmissionFormConfigElementType::TYPE                => 'Einsendungsformular',
-    \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE               => 'einfach',
-    \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED             => 'geschlechtsspezifisch',
-    \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM               => 'zufällig',
-    \HeimrichHannot\ListBundle\ConfigElementType\RelatedConfigElementType::getType()                  => 'Ähnliche Instanzen',
-    \HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERIUM_TAGS       => 'Schlagworte',
-    \HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERIUM_CATEGORIES => 'Kategorien',
-    \HeimrichHannot\ListBundle\ConfigElementType\TagsConfigElementType::getType()                     => 'Schlagworte',
-    \HeimrichHannot\ListBundle\ConfigElementType\VideoConfigElementType::getType()                    => 'Video'
+$lang['reference'][\HeimrichHannot\ListBundle\ConfigElementType\ImageConfigElementType::TYPE] = 'Bild';
+$lang['reference'][\HeimrichHannot\ListBundle\ConfigElementType\SubmissionFormConfigElementType::TYPE] = 'Einsendungsformular';
+$lang['reference'][\HeimrichHannot\ListBundle\ConfigElementType\RelatedConfigElementType::getType()] = 'Ähnliche Instanzen';
+$lang['reference'][\HeimrichHannot\ListBundle\ConfigElementType\TagsConfigElementType::getType()] = 'Schlagworte';
 
-];
+$lang['reference'][\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE] = 'einfach';
+$lang['reference'][\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED] = 'geschlechtsspezifisch';
+$lang['reference'][\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM] = 'zufällig';
+$lang['reference'][\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERIUM_TAGS] = 'Schlagworte';
+$lang['reference'][\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERIUM_CATEGORIES] = 'Kategorien';
 
 /**
  * Buttons

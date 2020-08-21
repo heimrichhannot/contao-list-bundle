@@ -11,6 +11,12 @@ namespace HeimrichHannot\ListBundle\ConfigElementType;
 use HeimrichHannot\ListBundle\Item\ItemInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 
+/**
+ * Class ListConfigElementData
+ * @package HeimrichHannot\ListBundle\ConfigElementType
+ *
+ * @deprecated Use Use \HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface with ConfigElementData instead
+ */
 class ListConfigElementData
 {
     /**

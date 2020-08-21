@@ -12,6 +12,8 @@ use Contao\Config;
 use Contao\Date;
 use Contao\DC_Table;
 use Contao\StringUtil;
+use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface;
+use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\ConfigElementType\RelatedConfigElementType;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
@@ -19,6 +21,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ListConfigElementContainer
 {
+    const PREPEND_PALETTE = '{title_type_legend},title,type,templateVariable;';
+    const APPEND_PALETTE = '';
+
     const RELATED_CRITERIUM_TAGS = 'tags';
     const RELATED_CRITERIUM_CATEGORIES = 'categories';
 
@@ -91,7 +96,15 @@ class ListConfigElementContainer
         }
 
         foreach ($configElementTypes as $listConfigElementType) {
-            $palette = '{title_type_legend},title,type,templateVariable;'.$listConfigElementType->getPalette();
+
+            if ($listConfigElementType instanceof ConfigElementTypeInterface) {
+                /** @var ConfigElementTypeInterface $listConfigElementType */
+                $palette = $listConfigElementType->getPalette(static::PREPEND_PALETTE, static::APPEND_PALETTE);
+            } else {
+                /** @var ListConfigElementTypeInterface $listConfigElementType */
+                $palette = static::PREPEND_PALETTE.$listConfigElementType->getPalette().static::APPEND_PALETTE;
+            }
+
             $GLOBALS['TL_DCA'][ListConfigElementModel::getTable()]['palettes'][$listConfigElementType::getType()] = $palette;
         }
 

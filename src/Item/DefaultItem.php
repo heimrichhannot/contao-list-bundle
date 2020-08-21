@@ -8,11 +8,16 @@
 
 namespace HeimrichHannot\ListBundle\Item;
 
+use Contao\Config;
 use Contao\Controller;
 use Contao\DataContainer;
 use Contao\Environment;
 use Contao\StringUtil;
 use Contao\System;
+use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementData;
+use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementResult;
+use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeData;
+use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\ConfigElementType\ConfigElementType;
 use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementData;
 use HeimrichHannot\ListBundle\Event\ListBeforeRenderItemEvent;
@@ -369,7 +374,19 @@ class DefaultItem implements ItemInterface, \JsonSerializable
                 $moduleData = $this->getManager()->getModuleData();
 
                 if ($listConfigElementType = $this->_manager->getListConfigElementRegistry()->getListConfigElementType($listConfigElement->type)) {
-                    $listConfigElementType->addToListItemData(new ListConfigElementData($this, $listConfigElement));
+                    if ($listConfigElementType instanceof ConfigElementTypeInterface) {
+                        $result = $listConfigElementType->applyConfiguration(new ConfigElementData($this->getRaw(), $listConfigElement));
+                        switch ($result->getType()) {
+                            case ConfigElementResult::TYPE_FORMATTED_VALUE:
+                                $this->setFormattedValue($listConfigElement->templateVariable, $result->getValue());
+                                break;
+                            case ConfigElementResult::TYPE_RAW_VALUE:
+                                $this->setRawValue($listConfigElement->templateVariable, $result->getValue());
+                                break;
+                        }
+                    } else {
+                        $listConfigElementType->addToListItemData(new ListConfigElementData($this, $listConfigElement));
+                    }
                 } else {
                     if (null === ($class = $this->_manager->getListConfigElementRegistry()->getElementClassByName($listConfigElement->type))) {
                         continue;
@@ -405,10 +422,15 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
         $twig = $this->_manager->getTwig();
 
+        /** @var ListBeforeRenderItemEvent $event */
         $event = $this->_dispatcher->dispatch(ListBeforeRenderItemEvent::NAME, new ListBeforeRenderItemEvent($listConfig->itemTemplate, $this->jsonSerialize(), $this));
         $templateName = $this->_manager->getItemTemplateByName($event->getTemplateName() ?: 'default');
 
-        return $twig->render($templateName, $event->getTemplateData());
+        $buffer = $twig->render($templateName, $event->getTemplateData());
+        if (Config::get('debugMode')) {
+            $buffer = "\n<!-- LIST TEMPLATE START: $templateName -->\n$buffer\n<!-- LIST TEMPLATE END: $templateName -->\n";
+        }
+        return $buffer;
     }
 
     /**

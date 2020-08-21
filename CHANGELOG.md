@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.24.0] - 2020-07-31
+- added heimrichhannot/contao-config-element-type-bundle dependency
+- ConfigElementTypeInterface is now the default way to implement ConfigElementTypes
+- deprecated ListConfigElementTypeInterface and ListConfigElementData
+- added template comments in dev mode
+- fixed an issue in ImageConfigElementType
+
 ## [1.23.2] - 2020-07-31
 - fixed fields for video config element
 - added customization of templateContainerVariable for config elements 

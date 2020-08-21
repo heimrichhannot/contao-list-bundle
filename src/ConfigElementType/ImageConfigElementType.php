@@ -146,7 +146,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 
             $templateContainer = $this->getTemplateContainerVariable($listConfigElement);
 
-            $templateData[$templateContainer] = $item->getFormattedValue($templateContainer) ?: [];
+            $templateData[$templateContainer] = is_array($item->getFormattedValue($imageField)) ?: [];
             $templateData[$templateContainer][$listConfigElement->templateVariable ?: $imageField] = [];
 
             System::getContainer()->get('huh.utils.image')->addToTemplateData($imageField, $imageSelectorField,

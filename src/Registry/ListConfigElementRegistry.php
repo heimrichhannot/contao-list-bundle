@@ -10,6 +10,7 @@ namespace HeimrichHannot\ListBundle\Registry;
 
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\System;
+use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 
@@ -21,7 +22,7 @@ class ListConfigElementRegistry
     protected $framework;
 
     /**
-     * @var ListConfigElementTypeInterface[]|array
+     * @var ConfigElementTypeInterface[]|ListConfigElementTypeInterface[]|array
      */
     protected $configElementTypes = [];
 
@@ -35,22 +36,25 @@ class ListConfigElementRegistry
 
     /**
      * Add a list config element type to the registry.
+     * @param ConfigElementTypeInterface|ListConfigElementTypeInterface $listConfigElementType
      */
-    public function addListConfigElementType(ListConfigElementTypeInterface $listConfigElementType): void
+    public function addListConfigElementType($listConfigElementType): void
     {
         $this->configElementTypes[$listConfigElementType::getType()] = $listConfigElementType;
     }
 
     /**
      * Get a list config element type from the registry.
+     * @param string $type
+     * @return ConfigElementTypeInterface|ListConfigElementTypeInterface|mixed|null
      */
-    public function getListConfigElementType(string $type): ?ListConfigElementTypeInterface
+    public function getListConfigElementType(string $type)
     {
         return isset($this->configElementTypes[$type]) ? $this->configElementTypes[$type] : null;
     }
 
     /**
-     * @return array|ListConfigElementTypeInterface[]
+     * @return array|ListConfigElementTypeInterface[]|ConfigElementTypeInterface[]
      */
     public function getConfigElementTypes()
     {

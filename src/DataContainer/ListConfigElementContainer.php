@@ -96,7 +96,6 @@ class ListConfigElementContainer
         }
 
         foreach ($configElementTypes as $listConfigElementType) {
-
             if ($listConfigElementType instanceof ConfigElementTypeInterface) {
                 /** @var ConfigElementTypeInterface $listConfigElementType */
                 $palette = $listConfigElementType->getPalette(static::PREPEND_PALETTE, static::APPEND_PALETTE);

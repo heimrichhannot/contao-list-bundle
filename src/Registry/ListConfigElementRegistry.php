@@ -36,6 +36,7 @@ class ListConfigElementRegistry
 
     /**
      * Add a list config element type to the registry.
+     *
      * @param ConfigElementTypeInterface|ListConfigElementTypeInterface $listConfigElementType
      */
     public function addListConfigElementType($listConfigElementType): void
@@ -45,7 +46,7 @@ class ListConfigElementRegistry
 
     /**
      * Get a list config element type from the registry.
-     * @param string $type
+     *
      * @return ConfigElementTypeInterface|ListConfigElementTypeInterface|mixed|null
      */
     public function getListConfigElementType(string $type)

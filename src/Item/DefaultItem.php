@@ -16,7 +16,6 @@ use Contao\StringUtil;
 use Contao\System;
 use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementData;
 use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementResult;
-use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeData;
 use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\ConfigElementType\ConfigElementType;
 use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementData;
@@ -376,12 +375,16 @@ class DefaultItem implements ItemInterface, \JsonSerializable
                 if ($listConfigElementType = $this->_manager->getListConfigElementRegistry()->getListConfigElementType($listConfigElement->type)) {
                     if ($listConfigElementType instanceof ConfigElementTypeInterface) {
                         $result = $listConfigElementType->applyConfiguration(new ConfigElementData($this->getRaw(), $listConfigElement));
+
                         switch ($result->getType()) {
                             case ConfigElementResult::TYPE_FORMATTED_VALUE:
                                 $this->setFormattedValue($listConfigElement->templateVariable, $result->getValue());
+
                                 break;
+
                             case ConfigElementResult::TYPE_RAW_VALUE:
                                 $this->setRawValue($listConfigElement->templateVariable, $result->getValue());
+
                                 break;
                         }
                     } else {
@@ -427,9 +430,11 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         $templateName = $this->_manager->getItemTemplateByName($event->getTemplateName() ?: 'default');
 
         $buffer = $twig->render($templateName, $event->getTemplateData());
+
         if (Config::get('debugMode')) {
             $buffer = "\n<!-- LIST TEMPLATE START: $templateName -->\n$buffer\n<!-- LIST TEMPLATE END: $templateName -->\n";
         }
+
         return $buffer;
     }
 

@@ -142,15 +142,15 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 
             $imageArray['fullsize'] = $listConfigElement->openImageInLightbox;
 
-            $templateData = [];
-
             $templateContainer = $this->getTemplateContainerVariable($listConfigElement);
+            $templateVariable = $listConfigElement->templateVariable ?: $imageField;
 
-            $templateData[$templateContainer] = is_array($item->getFormattedValue($imageField)) ?: [];
-            $templateData[$templateContainer][$listConfigElement->templateVariable ?: $imageField] = [];
+            $templateData = [];
+            $templateData[$templateContainer] = $item->getFormattedValue($templateContainer) ?: [];
+            $templateData[$templateContainer][$templateVariable] = [];
 
             System::getContainer()->get('huh.utils.image')->addToTemplateData($imageField, $imageSelectorField,
-                $templateData[$templateContainer][$listConfigElement->templateVariable ?: $imageField], $imageArray, null, $listConfigElement->lightboxId ?: null,
+                $templateData[$templateContainer][$templateVariable], $imageArray, null, null,
                 null, $imageFile);
 
             $item->setFormattedValue($templateContainer, $templateData[$templateContainer]);

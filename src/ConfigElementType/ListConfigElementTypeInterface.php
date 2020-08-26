@@ -9,8 +9,7 @@
 namespace HeimrichHannot\ListBundle\ConfigElementType;
 
 /**
- * Interface ListConfigElementTypeInterface
- * @package HeimrichHannot\ListBundle\ConfigElementType
+ * Interface ListConfigElementTypeInterface.
  *
  * @deprecated Use \HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface instead
  */

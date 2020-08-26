@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.24.1] - 2020-08-26
+- fixed template var issue
+
 ## [1.24.0] - 2020-07-31
 - added heimrichhannot/contao-config-element-type-bundle dependency
 - ConfigElementTypeInterface is now the default way to implement ConfigElementTypes

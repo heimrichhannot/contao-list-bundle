@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.24.2] - 2020-08-27
+- fixed missing template comments for list templates
+
 ## [1.24.1] - 2020-08-26
 - fixed template var issue
 

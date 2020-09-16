@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.24.3] - 2020-09-16
+- fixed missing space at list modal templates
+
 ## [1.24.2] - 2020-08-27
 - fixed missing template comments for list templates
 

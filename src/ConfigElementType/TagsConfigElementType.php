@@ -12,6 +12,7 @@ use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\Database;
 use Contao\System;
 use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
+use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
 use HeimrichHannot\UtilsBundle\Dca\DcaUtil;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 use HeimrichHannot\UtilsBundle\String\StringUtil;
@@ -20,6 +21,10 @@ use Twig\Environment;
 
 class TagsConfigElementType implements ListConfigElementTypeInterface
 {
+    /**
+     * @var TwigTemplateLocator
+     */
+    protected $templateLocator;
     /**
      * @var Environment
      */
@@ -45,7 +50,7 @@ class TagsConfigElementType implements ListConfigElementTypeInterface
      */
     private $modelUtil;
 
-    public function __construct(Environment $twig, StringUtil $stringUtil, DcaUtil $dcaUtil, UrlUtil $urlUtil, Request $request, ModelUtil $modelUtil)
+    public function __construct(Environment $twig, StringUtil $stringUtil, DcaUtil $dcaUtil, UrlUtil $urlUtil, Request $request, ModelUtil $modelUtil, TwigTemplateLocator $templateLocator)
     {
         $this->twig = $twig;
         $this->stringUtil = $stringUtil;
@@ -53,6 +58,7 @@ class TagsConfigElementType implements ListConfigElementTypeInterface
         $this->urlUtil = $urlUtil;
         $this->request = $request;
         $this->modelUtil = $modelUtil;
+        $this->templateLocator = $templateLocator;
     }
 
     public function renderTags($configElement, $item): ?string
@@ -113,7 +119,7 @@ class TagsConfigElementType implements ListConfigElementTypeInterface
 
         $data['tags'] = $tags;
 
-        return $this->twig->render(System::getContainer()->get('huh.utils.template')->getTemplate($configElement->tagsTemplate), $data);
+        return $this->twig->render($this->templateLocator->getTemplatePath($configElement->tagsTemplate), $data);
     }
 
     /**

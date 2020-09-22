@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.25.0] - 2020-09-22
+- moved to twig support bundle for templates
+- updated callback services
+
 ## [1.24.3] - 2020-09-16
 - fixed missing space at list modal templates
 

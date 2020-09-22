@@ -23,6 +23,7 @@ use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
 use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
+use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
 use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
 use HeimrichHannot\UtilsBundle\Form\FormUtil;
 use HeimrichHannot\UtilsBundle\Image\ImageUtil;
@@ -110,6 +111,10 @@ class ListManager implements ListManagerInterface
      * @var array
      */
     protected static $listConfigCache = [];
+    /**
+     * @var TwigTemplateLocator
+     */
+    protected $templateLocator;
 
     public function __construct(
         ContaoFrameworkInterface $framework,
@@ -122,7 +127,8 @@ class ListManager implements ListManagerInterface
         ContainerUtil $containerUtil,
         ImageUtil $imageUtil,
         FormUtil $formUtil,
-        \Twig_Environment $twig
+        \Twig_Environment $twig,
+        TwigTemplateLocator $templateLocator
     ) {
         $this->framework = $framework;
         $this->listConfigRegistry = $listConfigRegistry;
@@ -136,6 +142,7 @@ class ListManager implements ListManagerInterface
         $this->imageUtil = $imageUtil;
         $this->twig = $twig;
         $this->database = $framework->createInstance(Database::class);
+        $this->templateLocator = $templateLocator;
     }
 
     /**
@@ -241,7 +248,7 @@ class ListManager implements ListManagerInterface
         $config = System::getContainer()->getParameter('huh.list');
 
         if (!isset($config['list']['templates']['item'])) {
-            return System::getContainer()->get('huh.utils.template')->getTemplate($name);
+            return $this->templateLocator->getTemplatePath($name);
         }
 
         $templates = $config['list']['templates']['item'];
@@ -252,7 +259,7 @@ class ListManager implements ListManagerInterface
             }
         }
 
-        return System::getContainer()->get('huh.utils.template')->getTemplate($name);
+        return $this->templateLocator->getTemplatePath($name);
     }
 
     /**
@@ -263,7 +270,7 @@ class ListManager implements ListManagerInterface
         $config = System::getContainer()->getParameter('huh.list');
 
         if (!isset($config['list']['templates']['item_choice'])) {
-            return System::getContainer()->get('huh.utils.template')->getTemplate($name);
+            return $this->templateLocator->getTemplatePath($name);
         }
 
         $templates = $config['list']['templates']['item_choice'];
@@ -274,7 +281,7 @@ class ListManager implements ListManagerInterface
             }
         }
 
-        return System::getContainer()->get('huh.utils.template')->getTemplate($name);
+        return $this->templateLocator->getTemplatePath($name);
     }
 
     /**
@@ -311,7 +318,7 @@ class ListManager implements ListManagerInterface
         $config = System::getContainer()->getParameter('huh.list');
 
         if (!isset($config['list']['templates']['list'])) {
-            return System::getContainer()->get('huh.utils.template')->getTemplate($name);
+            return $this->templateLocator->getTemplatePath($name);
         }
 
         $templates = $config['list']['templates']['list'];
@@ -322,7 +329,7 @@ class ListManager implements ListManagerInterface
             }
         }
 
-        return System::getContainer()->get('huh.utils.template')->getTemplate($name);
+        return $this->templateLocator->getTemplatePath($name);
     }
 
     public function getCurrentSorting(): array

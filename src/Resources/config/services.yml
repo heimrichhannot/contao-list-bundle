@@ -1,21 +1,13 @@
 services:
   _defaults:
     public: true
+    bind:
+      $bundleConfig: "%huh_list%"
 
-  huh.list.choice.template.list:
-    class: HeimrichHannot\ListBundle\Choice\ListTemplateChoice
-    arguments:
-    - "@contao.framework"
-
-  huh.list.choice.template.item:
-    class: HeimrichHannot\ListBundle\Choice\ListItemTemplateChoice
-    arguments:
-    - "@contao.framework"
-
-  huh.list.choice.template.item-choice:
-    class: HeimrichHannot\ListBundle\Choice\ListItemChoiceTemplateChoice
-    arguments:
-    - "@contao.framework"
+  HeimrichHannot\ListBundle\DataContainer\:
+    resource: '../../DataContainer/*'
+    public: true
+    autowire: true
 
   huh.list.choice.parent-list-config:
     class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice
@@ -26,18 +18,7 @@ services:
   huh.list.manager.list:
     class: HeimrichHannot\ListBundle\Manager\ListManager
     public: true
-    arguments:
-    - "@contao.framework"
-    - "@huh.list.list-config-registry"
-    - "@huh.list.list-config-element-registry"
-    - "@huh.filter.manager"
-    - "@huh.request"
-    - "@huh.utils.model"
-    - "@huh.utils.url"
-    - "@huh.utils.container"
-    - "@huh.utils.image"
-    - "@huh.utils.form"
-    - "@twig"
+    autowire: true
 
   huh.list.list-config-registry:
     class: HeimrichHannot\ListBundle\Registry\ListConfigRegistry

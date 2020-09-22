@@ -29,11 +29,11 @@ class ListExtension extends Extension
         $processedConfig = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('huh.list', $processedConfig);
+        $container->setParameter('huh_list', isset($processedConfig['list']) ? $processedConfig['list'] : []);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         $loader->load('services.yml');
         $loader->load('listener.yml');
-        $loader->load('datacontainers.yml');
     }
 }

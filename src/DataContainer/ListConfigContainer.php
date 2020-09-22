@@ -57,7 +57,7 @@ class ListConfigContainer
             $templates = array_column($this->bundleConfig['templates'][$templatesKey], 'template');
 
             foreach ($choices as $key => $choice) {
-                $templatePath = $this->templateLocator->getTemplatePath($choice);
+                $templatePath = $this->templateLocator->getTemplatePath($key);
 
                 // remove duplicates
                 if (false !== array_search($templatePath, $templates)) {

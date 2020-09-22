@@ -64,7 +64,7 @@ class ListConfigTest extends ContaoTestCase
         ])->onListTemplateOptionsCallback());
 
         $this->assertCount(3, $this->createTestInstance([
-            'templateGroup' => ['list_abc', 'rgreg', 'earg'],
+            'templateGroup' => ['list_abc' => '@App/list_abc.html.twig', 'rgreg' => '@Bundle/rgreg.html.twig', 'earg' => '@Bundle/earg.html.twig'],
             'bundleConfig' => [
                 'templates' => [
                     'item_prefixes' => ['item_prefixes'],
@@ -76,7 +76,7 @@ class ListConfigTest extends ContaoTestCase
         ])->onItemTemplateOptionsCallback());
 
         $this->assertArraySubset(['default' => '@ListBundle/default.html.twig (Yaml)'], $this->createTestInstance([
-            'templateGroup' => ['list_abc', 'default', 'earg'],
+            'templateGroup' => ['list_abc' => '@App/list_abc.html.twig', 'default' => '@ListBundle/default.html.twig', 'earg' => '@App/earg.html.twig'],
             'bundleConfig' => [
                 'templates' => [
                     'item_prefixes' => ['item_prefixes'],
@@ -86,8 +86,8 @@ class ListConfigTest extends ContaoTestCase
                 ],
             ],
         ])->onItemTemplateOptionsCallback());
-        $this->assertCount(2, $this->createTestInstance([
-            'templateGroup' => ['list_abc', 'default', 'default'],
+        $this->assertCount(3, $this->createTestInstance([
+            'templateGroup' => ['list_abc' => '@App/list_abc.html.twig', 'default' => '@ListBundle/default.html.twig', 'default2' => '@ListBundle/default.2html.twig'],
             'bundleConfig' => [
                 'templates' => [
                     'item_prefixes' => ['item_prefixes'],

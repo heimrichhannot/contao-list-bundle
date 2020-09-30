@@ -349,6 +349,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $event = $this->_dispatcher->dispatch(ListAfterRenderEvent::NAME, new ListAfterRenderEvent($rendered, $event->getTemplateData(), $this, $listConfig));
 
         $buffer = $event->getRendered();
+
         if (Config::get('debugMode')) {
             $buffer = "\n<!-- LIST TEMPLATE START: $listTemplate -->\n$buffer\n<!-- LIST TEMPLATE END: $listTemplate -->\n";
         }

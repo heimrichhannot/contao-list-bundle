@@ -11,6 +11,7 @@ namespace HeimrichHannot\ListBundle\ConfigElementType;
 use Contao\Config;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\Database;
 use Contao\FilesModel;
 use Contao\StringUtil;
 use Contao\System;
@@ -144,6 +145,10 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
 
             $templateContainer = $this->getTemplateContainerVariable($listConfigElement);
             $templateVariable = $listConfigElement->templateVariable ?: $imageField;
+
+            if (\in_array($templateContainer, Database::getInstance()->getFieldNames($item->getDataContainer()))) {
+                throw new \Exception('Contao List Bundle: You specified that images of a list config element should be added to an array called "'.$templateContainer.'" in your list config element ID '.$listConfigElement->id.'. The associated DCA '.$item->getDataContainer().' contains a field of the same name which isn\'t supported. Please adjust the template container variable name in the list config element to be different from "'.$templateContainer.'".');
+            }
 
             $templateData = [];
             $templateData[$templateContainer] = $item->getFormattedValue($templateContainer) ?: [];

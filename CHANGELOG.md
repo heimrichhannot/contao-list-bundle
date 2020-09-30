@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.26.0] - 2020-09-30
+- enhanced the README.md (now contains info about items and image config elements)
+
 ## [1.25.0] - 2020-09-22
 - moved to twig support bundle for templates
 - updated callback services

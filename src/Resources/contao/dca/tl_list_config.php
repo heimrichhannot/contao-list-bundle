@@ -423,6 +423,32 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
             'relation' => ['type' => 'hasOne', 'load' => 'eager'],
         ],
+        'jumpToDetailsMultilingual' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual'],
+            'inputType' => 'multiColumnEditor',
+            'eval' => [
+                'tl_class' => 'long clr',
+                'multiColumnEditor' => [
+                    'minRowCount' => 0,
+                    'fields' => [
+                        'language' => [
+                            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['language'],
+                            'inputType' => 'select',
+                            'options' => \Contao\System::getLanguages(),
+                            'eval' => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true, 'groupStyle' => 'width: 400px;'],
+                        ],
+                        'jumpTo' => [
+                            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['jumpTo'],
+                            'inputType' => 'pageTree',
+                            'foreignKey' => 'tl_page.title',
+                            'eval' => ['fieldType' => 'radio', 'tl_class' => 'w50', 'mandatory' => true],
+                            'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
+                        ],
+                    ],
+                ],
+            ],
+            'sql' => 'blob NULL',
+        ],
         'openListItemsInModal' => [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config']['openListItemsInModal'],
             'exclude' => true,
@@ -625,6 +651,32 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
             'relation' => ['type' => 'hasOne', 'load' => 'eager'],
         ],
+        'jumpToOverviewMultilingual' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToOverviewMultilingual'],
+            'inputType' => 'multiColumnEditor',
+            'eval' => [
+                'tl_class' => 'long clr',
+                'multiColumnEditor' => [
+                    'minRowCount' => 0,
+                    'fields' => [
+                        'language' => [
+                            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['language'],
+                            'inputType' => 'select',
+                            'options' => \Contao\System::getLanguages(),
+                            'eval' => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true, 'groupStyle' => 'width: 400px;'],
+                        ],
+                        'jumpTo' => [
+                            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['jumpTo'],
+                            'inputType' => 'pageTree',
+                            'foreignKey' => 'tl_page.title',
+                            'eval' => ['fieldType' => 'radio', 'tl_class' => 'w50', 'mandatory' => true],
+                            'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
+                        ],
+                    ],
+                ],
+            ],
+            'sql' => 'blob NULL',
+        ],
         'customJumpToOverviewLabel' => [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config']['customJumpToOverviewLabel'],
             'exclude' => true,
@@ -680,58 +732,6 @@ if (System::getContainer()->get('huh.utils.container')->isBundleActive('Terminal
             'inputType' => 'checkbox',
             'eval' => ['tl_class' => 'w50'],
             'sql' => "char(1) NOT NULL default ''",
-        ],
-        'jumpToDetailsMultilingual' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual'],
-            'inputType' => 'multiColumnEditor',
-            'eval' => [
-                'tl_class' => 'long clr',
-                'multiColumnEditor' => [
-                    'minRowCount' => 0,
-                    'fields' => [
-                        'language' => [
-                            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['language'],
-                            'inputType' => 'select',
-                            'options' => \Contao\System::getLanguages(),
-                            'eval' => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true, 'groupStyle' => 'width: 400px;'],
-                        ],
-                        'jumpTo' => [
-                            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['jumpTo'],
-                            'inputType' => 'pageTree',
-                            'foreignKey' => 'tl_page.title',
-                            'eval' => ['fieldType' => 'radio', 'tl_class' => 'w50', 'mandatory' => true],
-                            'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
-                        ],
-                    ],
-                ],
-            ],
-            'sql' => 'blob NULL',
-        ],
-        'jumpToOverviewMultilingual' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToOverviewMultilingual'],
-            'inputType' => 'multiColumnEditor',
-            'eval' => [
-                'tl_class' => 'long clr',
-                'multiColumnEditor' => [
-                    'minRowCount' => 0,
-                    'fields' => [
-                        'language' => [
-                            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['language'],
-                            'inputType' => 'select',
-                            'options' => \Contao\System::getLanguages(),
-                            'eval' => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true, 'groupStyle' => 'width: 400px;'],
-                        ],
-                        'jumpTo' => [
-                            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['jumpTo'],
-                            'inputType' => 'pageTree',
-                            'foreignKey' => 'tl_page.title',
-                            'eval' => ['fieldType' => 'radio', 'tl_class' => 'w50', 'mandatory' => true],
-                            'relation' => ['type' => 'hasOne', 'load' => 'lazy'],
-                        ],
-                    ],
-                ],
-            ],
-            'sql' => 'blob NULL',
         ],
     ];
 }

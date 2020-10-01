@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.27.0] - 2020-10-01
+- added multilingual details pages regardless of whether DC_Multilingual is installed (since this isn't the point)
+
 ## [1.26.0] - 2020-09-30
 - enhanced the README.md (now contains info about items and image config elements)
 

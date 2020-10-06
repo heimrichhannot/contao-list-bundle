@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.27.1] - 2020-10-06
+- fixed list preselect
+
 ## [1.27.0] - 2020-10-01
 - added multilingual details pages regardless of whether DC_Multilingual is installed (since this isn't the point)
 

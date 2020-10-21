@@ -12,13 +12,15 @@ use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
+use Contao\ManagerPlugin\Config\ConfigPluginInterface;
 use Contao\ManagerPlugin\Config\ContainerBuilder;
 use Contao\ManagerPlugin\Config\ExtensionPluginInterface;
 use HeimrichHannot\FilterBundle\HeimrichHannotContaoFilterBundle;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
+use Symfony\Component\Config\Loader\LoaderInterface;
 
-class Plugin implements BundlePluginInterface, ExtensionPluginInterface
+class Plugin implements BundlePluginInterface, ExtensionPluginInterface, ConfigPluginInterface
 {
     /**
      * {@inheritdoc}
@@ -28,6 +30,11 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface
         return [
             BundleConfig::create(HeimrichHannotContaoListBundle::class)->setLoadAfter([ContaoCoreBundle::class, HeimrichHannotContaoFilterBundle::class]),
         ];
+    }
+
+    public function registerContainerConfiguration(LoaderInterface $loader, array $managerConfig)
+    {
+        $loader->load('@HeimrichHannotContaoListBundle/Resources/config/commands.yml');
     }
 
     /**

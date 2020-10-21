@@ -28,7 +28,10 @@ Recommendations:
 - use this bundle together with [Reader Bundle](https://github.com/heimrichhannot/contao-reader-bundle).
 - use [Encore Bundle](https://github.com/heimrichhannot/contao-encore-bundle) for managing your frontend assets
 
-### Setup
+### Usage
+
+**HINT: You can do the following steps for a basic list setup also in an interactive command. Simply run `vendor/bin/contao-console huh-list:make` in your contao root.**
+
 1. Setup a filter (see [Filter Bundle](https://github.com/heimrichhannot/contao-filter-bundle) setup)
 1. Create a list config (System -> List config)
     * To add list elements like images, videos, slider etc, add list config elements (see Concepts -> List config elements for explanation)

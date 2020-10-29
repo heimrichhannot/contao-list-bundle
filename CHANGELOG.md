@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.28.1] - 2020-10-29
+- added missing dependency
+
 ## [1.28.0] - 2020-10-21
 - added new symfony command `huh-list:make` for easier creating list modules containing a list config and a filter
 

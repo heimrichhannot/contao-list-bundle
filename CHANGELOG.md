@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.29.0] - 2020-12-10
+- added more context to pagination template
+
 ## [1.28.1] - 2020-10-29
 - added missing dependency
 

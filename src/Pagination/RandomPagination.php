@@ -33,6 +33,15 @@ class RandomPagination extends \Contao\Pagination
         parent::__construct($rows, $perPage, $numberOfLinks, $parameter, $template, $forceParam);
     }
 
+    public function generate($strSeparator = ' ')
+    {
+        $this->objTemplate->perPage = $this->intRowsPerPage;
+        $this->objTemplate->page = $this->intPage;
+        $this->objTemplate->rowsTotal = $this->intRows;
+
+        return parent::generate($strSeparator);
+    }
+
     protected function linkToPage($page)
     {
         $urlUtil = System::getContainer()->get('huh.utils.url');

@@ -126,15 +126,34 @@ class ListBundle {
                 let list = ajaxPagination.closest('.huh-list'),
                     $items = jQuery(list.querySelectorAll('.items')),
                     wrapper = list.querySelector('.wrapper'),
-                    id = '#' + wrapper.getAttribute('id');
+                    id = '#' + wrapper.getAttribute('id'),
+                    pagination = list.querySelector('.ajax-pagination'),
+                    displaySrOnlyAppendedMessage = false,
+                    srOnlyAppendedMessage = "<span class=\"sr-only\">Es wurden neue Einträge zur Liste hinzugefügt.</span>";
+
+                if (pagination.hasAttribute('data-display-src-only-appended-message') && (
+                    pagination.getAttribute('data-display-src-only-appended-message') === true ||
+                    pagination.getAttribute('data-display-src-only-appended-message') === "1" ||
+                    pagination.getAttribute('data-display-src-only-appended-message') === "true"
+                )) {
+                    displaySrOnlyAppendedMessage = true;
+                }
+
+                if (pagination.hasAttribute('data-sr-only-appended-message')) {
+                    srOnlyAppendedMessage = pagination.getAttribute('data-sr-only-appended-message');
+                }
 
                 jQuery(wrapper).jscroll({
                     loadingHtml: '<div class="loading"><span class="text">Lade...</span></div>',
+                    loadingFunction: function() {
+                        $items.attr('aria-busy','true');
+                    },
                     nextSelector: '.ajax-pagination a.next',
                     autoTrigger: $items.data('add-infinite-scroll') == 1,
                     contentSelector: id,
                     padding: 50,
                     callback: function() {
+
                         let $jscrollAdded = jQuery(this),
                             $newItems = $jscrollAdded.find('.item');
 
@@ -142,6 +161,9 @@ class ListBundle {
 
                         import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(({default: imagesLoaded}) => {
                             imagesLoaded($newItems, function(instance) {
+                                if (true === displaySrOnlyAppendedMessage) {
+                                    $items.append(srOnlyAppendedMessage);
+                                }
                                 $items.append($newItems.fadeIn(300));
 
                                 if ($items.attr('data-add-masonry') === "1") {
@@ -184,6 +206,11 @@ class ListBundle {
                                         $item.addClass('last');
                                     }
                                 });
+
+                                $items.attr('aria-busy','false');
+                                $items.attr('aria-live','polite');
+                                $items.attr('aria-relevant','additions text');
+                                $items.attr('aria-atomic','false');
 
                                 if ($jscrollAdded.find('.pagination').length > 0) {
                                     $jscrollAdded.closest('.jscroll-inner').find('> .pagination').remove();

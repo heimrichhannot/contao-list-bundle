@@ -9,10 +9,11 @@
 namespace HeimrichHannot\ListBundle\Pagination;
 
 use Contao\Controller;
+use Contao\Pagination;
 use Contao\System;
 use Contao\Template;
 
-class RandomPagination extends \Contao\Pagination
+class RandomPagination extends Pagination
 {
     const PARAM_RANDOM = 'random';
 

@@ -4,7 +4,7 @@
             <p class="count">{{ itemsFoundText|raw }}</p>
         {% endif %}
         {% if items is not empty %}
-            <div class="items{{ itemsClass|default() ? ' ' ~ itemsClass : '' }}"{{ dataAttributes|default()|raw }}>
+            <div class="items{{ itemsClass|default() ? ' ' ~ itemsClass : '' }}" id="{{ itemsId }}"{{ dataAttributes|default()|raw }}>
                 {% for item in items %}
                     {{ item|raw }}
                 {% endfor %}

@@ -126,15 +126,55 @@ class ListBundle {
                 let list = ajaxPagination.closest('.huh-list'),
                     $items = jQuery(list.querySelectorAll('.items')),
                     wrapper = list.querySelector('.wrapper'),
-                    id = '#' + wrapper.getAttribute('id');
+                    id = '#' + wrapper.getAttribute('id'),
+                    pagination = list.querySelector('.ajax-pagination'),
+                    enableSreenReaderMessage = false,
+                    screenReaderMessage = "<span class=\"sr-only\">Es wurden neue Einträge zur Liste hinzugefügt.</span>",
+                    disableLiveRegion = false;
+
+                if (pagination.hasAttribute('data-disable-live-region') && (
+                    pagination.getAttribute('data-disable-live-region') === true ||
+                    pagination.getAttribute('data-disable-live-region') === "1" ||
+                    pagination.getAttribute('data-disable-live-region') === "true"
+                )) {
+                    disableLiveRegion = true;
+                }
+
+                if (!disableLiveRegion) {
+                    if (pagination.hasAttribute('data-enable-screen-reader-message') && (
+                        pagination.getAttribute('data-enable-screen-reader-message') === true ||
+                        pagination.getAttribute('data-enable-screen-reader-message') === "1" ||
+                        pagination.getAttribute('data-enable-screen-reader-message') === "true"
+                    )) {
+                        enableSreenReaderMessage = true;
+                    }
+
+                    if (pagination.hasAttribute('data-screen-reader-message')) {
+                        screenReaderMessage = pagination.getAttribute('data-screen-reader-message');
+                    }
+                }
 
                 jQuery(wrapper).jscroll({
                     loadingHtml: '<div class="loading"><span class="text">Lade...</span></div>',
+                    loadingFunction: function() {
+                        if (!disableLiveRegion) {
+                            $items.attr('aria-busy','true');
+                        }
+                        list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loading', {
+                            bubbles: true,
+                            detail: {
+                                wrapper: wrapper,
+                                pagination: pagination,
+                                items: $items
+                            }
+                        }))
+                    },
                     nextSelector: '.ajax-pagination a.next',
                     autoTrigger: $items.data('add-infinite-scroll') == 1,
                     contentSelector: id,
                     padding: 50,
                     callback: function() {
+
                         let $jscrollAdded = jQuery(this),
                             $newItems = $jscrollAdded.find('.item');
 
@@ -142,6 +182,9 @@ class ListBundle {
 
                         import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(({default: imagesLoaded}) => {
                             imagesLoaded($newItems, function(instance) {
+                                if (true === enableSreenReaderMessage) {
+                                    $items.append(screenReaderMessage);
+                                }
                                 $items.append($newItems.fadeIn(300));
 
                                 if ($items.attr('data-add-masonry') === "1") {
@@ -185,6 +228,13 @@ class ListBundle {
                                     }
                                 });
 
+                                if(!disableLiveRegion) {
+                                    $items.attr('aria-busy','false');
+                                    $items.attr('aria-live','polite');
+                                    $items.attr('aria-relevant','additions text');
+                                    $items.attr('aria-atomic','false');
+                                }
+
                                 if ($jscrollAdded.find('.pagination').length > 0) {
                                     $jscrollAdded.closest('.jscroll-inner').find('> .pagination').remove();
                                     $jscrollAdded.find('.pagination').appendTo($jscrollAdded.closest('.jscroll-inner'));
@@ -193,6 +243,15 @@ class ListBundle {
                                 }
 
                                 $jscrollAdded.remove();
+
+                                list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loaded', {
+                                    bubbles: true,
+                                    detail: {
+                                        wrapper: wrapper,
+                                        pagination: pagination,
+                                        items: $items
+                                    }
+                                }))
                             });
                         });
                     }

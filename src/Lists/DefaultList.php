@@ -58,6 +58,11 @@ class DefaultList implements ListInterface, \JsonSerializable
     /**
      * @var string
      */
+    protected $_itemsId;
+
+    /**
+     * @var string
+     */
     protected $_dataAttributes;
 
     /**
@@ -179,6 +184,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
 
         $this->setWrapperId('huh-list-'.$this->getModule()['id']);
+        $this->setItemsId($this->getWrapperId().'-items');
 
         $this->addDataAttributes();
         $this->addMasonry();
@@ -1206,5 +1212,15 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function setModal(string $modal): void
     {
         $this->_modal = $modal;
+    }
+
+    public function getItemsId(): string
+    {
+        return $this->_itemsId;
+    }
+
+    public function setItemsId(string $itemsId): void
+    {
+        $this->_itemsId = $itemsId;
     }
 }

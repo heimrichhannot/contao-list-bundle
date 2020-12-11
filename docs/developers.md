@@ -146,6 +146,6 @@ You can customize the bahavior with data attributes on the `pagination_list_ajax
 
 Data attribute | Example | Description
 -------------- | ------- | -----------
-data-enable-screen-reader-message | data-enable-screen-reader-message="true" | Add an screen reader message within the list. Default: `"false"`
-data-screen-reader-message | data-screen-reader-message="<span class=\"sr-only\">Es wurden neue Einträge zur Auflistung hinzugefügt.</span>" | A custom screen reader message. Default: `<span class="sr-only">Es wurden neue Einträge zur Liste hinzugefügt.</span>`
-data-disable-live-region | data-disable-live-region="true" | Disables the live region functionality completely. Use this option if you implement a custom system. You can use the huh.list.ajax-pagination-loading and huh.list.ajax-pagination-loaded events. 
+`data-enable-screen-reader-message` | data-enable-screen-reader-message="true" | Add an screen reader message within the list. Default: `"false"`
+`data-screen-reader-message` | data-screen-reader-message="<span class=\"sr-only\">Es wurden neue Einträge zur Auflistung hinzugefügt.</span>" | A custom screen reader message. Default: `<span class="sr-only">Es wurden neue Einträge zur Liste hinzugefügt.</span>`
+`data-disable-live-region` | data-disable-live-region="true" | Disables the live region functionality completely. Use this option if you implement a custom system. You can use the huh.list.ajax-pagination-loading and huh.list.ajax-pagination-loaded events. 

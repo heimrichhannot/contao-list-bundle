@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.30.1] - 2020-12-11
+- fix tl_list_config_element.templateVariable not mandatory for instances of ConfigElementTypeInterface (#4)
+
 ## [1.30.0] - 2020-12-11
 - Add live region for asynchronous list pagination  (#5)
 

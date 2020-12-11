@@ -85,6 +85,7 @@ class ListConfigElementContainer
 
     public function onLoadCallback($dc)
     {
+        /** @var ListConfigElementModel $listConfigElement */
         if (null === ($listConfigElement = $this->container->get('huh.utils.model')->findModelInstanceByPk('tl_list_config_element', $dc->id))) {
             return;
         }
@@ -105,6 +106,11 @@ class ListConfigElementContainer
             }
 
             $GLOBALS['TL_DCA'][ListConfigElementModel::getTable()]['palettes'][$listConfigElementType::getType()] = $palette;
+        }
+
+        if (($listConfigElementType = $this->configElementRegistry->getListConfigElementType($listConfigElement->type))
+            && $listConfigElementType instanceof ConfigElementTypeInterface) {
+            $GLOBALS['TL_DCA'][ListConfigElementModel::getTable()]['fields']['templateVariable']['eval']['mandatory'] = true;
         }
 
         // related

@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.30.0] - 2020-12-11
+- Add live region for asynchronous list pagination  (#5)
+
 ## [1.29.0] - 2020-12-10
 - added more context to pagination template
 

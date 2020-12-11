@@ -128,25 +128,46 @@ class ListBundle {
                     wrapper = list.querySelector('.wrapper'),
                     id = '#' + wrapper.getAttribute('id'),
                     pagination = list.querySelector('.ajax-pagination'),
-                    displaySrOnlyAppendedMessage = false,
-                    srOnlyAppendedMessage = "<span class=\"sr-only\">Es wurden neue Einträge zur Liste hinzugefügt.</span>";
+                    enableSreenReaderMessage = false,
+                    screenReaderMessage = "<span class=\"sr-only\">Es wurden neue Einträge zur Liste hinzugefügt.</span>",
+                    disableLiveRegion = false;
 
-                if (pagination.hasAttribute('data-display-src-only-appended-message') && (
-                    pagination.getAttribute('data-display-src-only-appended-message') === true ||
-                    pagination.getAttribute('data-display-src-only-appended-message') === "1" ||
-                    pagination.getAttribute('data-display-src-only-appended-message') === "true"
+                if (pagination.hasAttribute('data-disable-live-region') && (
+                    pagination.getAttribute('data-disable-live-region') === true ||
+                    pagination.getAttribute('data-disable-live-region') === "1" ||
+                    pagination.getAttribute('data-disable-live-region') === "true"
                 )) {
-                    displaySrOnlyAppendedMessage = true;
+                    disableLiveRegion = true;
                 }
 
-                if (pagination.hasAttribute('data-sr-only-appended-message')) {
-                    srOnlyAppendedMessage = pagination.getAttribute('data-sr-only-appended-message');
+                if (!disableLiveRegion) {
+                    if (pagination.hasAttribute('data-enable-screen-reader-message') && (
+                        pagination.getAttribute('data-enable-screen-reader-message') === true ||
+                        pagination.getAttribute('data-enable-screen-reader-message') === "1" ||
+                        pagination.getAttribute('data-enable-screen-reader-message') === "true"
+                    )) {
+                        enableSreenReaderMessage = true;
+                    }
+
+                    if (pagination.hasAttribute('data-screen-reader-message')) {
+                        screenReaderMessage = pagination.getAttribute('data-screen-reader-message');
+                    }
                 }
 
                 jQuery(wrapper).jscroll({
                     loadingHtml: '<div class="loading"><span class="text">Lade...</span></div>',
                     loadingFunction: function() {
-                        $items.attr('aria-busy','true');
+                        if (!disableLiveRegion) {
+                            $items.attr('aria-busy','true');
+                        }
+                        list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loading', {
+                            bubbles: true,
+                            detail: {
+                                wrapper: wrapper,
+                                pagination: pagination,
+                                items: $items
+                            }
+                        }))
                     },
                     nextSelector: '.ajax-pagination a.next',
                     autoTrigger: $items.data('add-infinite-scroll') == 1,
@@ -161,8 +182,8 @@ class ListBundle {
 
                         import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(({default: imagesLoaded}) => {
                             imagesLoaded($newItems, function(instance) {
-                                if (true === displaySrOnlyAppendedMessage) {
-                                    $items.append(srOnlyAppendedMessage);
+                                if (true === enableSreenReaderMessage) {
+                                    $items.append(screenReaderMessage);
                                 }
                                 $items.append($newItems.fadeIn(300));
 
@@ -207,10 +228,12 @@ class ListBundle {
                                     }
                                 });
 
-                                $items.attr('aria-busy','false');
-                                $items.attr('aria-live','polite');
-                                $items.attr('aria-relevant','additions text');
-                                $items.attr('aria-atomic','false');
+                                if(!disableLiveRegion) {
+                                    $items.attr('aria-busy','false');
+                                    $items.attr('aria-live','polite');
+                                    $items.attr('aria-relevant','additions text');
+                                    $items.attr('aria-atomic','false');
+                                }
 
                                 if ($jscrollAdded.find('.pagination').length > 0) {
                                     $jscrollAdded.closest('.jscroll-inner').find('> .pagination').remove();
@@ -220,6 +243,15 @@ class ListBundle {
                                 }
 
                                 $jscrollAdded.remove();
+
+                                list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loaded', {
+                                    bubbles: true,
+                                    detail: {
+                                        wrapper: wrapper,
+                                        pagination: pagination,
+                                        items: $items
+                                    }
+                                }))
                             });
                         });
                     }

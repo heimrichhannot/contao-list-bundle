@@ -20,6 +20,8 @@ huh.list.event.list_modify_query_builder_for_count | ListModifyQueryBuilderForCo
 Event | Description
 ----- | -----------
 huh.list.list_update_complete | Is dispatched after the list was asynchronous updated through filter bundle. 
+huh.list.ajax-pagination-loading | Is dispatched when ajax page loading is triggerd.
+huh.list.ajax-pagination-loaded | Is dispatched when ajax page loading finished.
 
 ## Create custom list config element types
   
@@ -132,4 +134,18 @@ Output example (Twig):
 {% endfor %}
 ```
 
-> The stamp item must use the css class `stamp-item` to be interpreted as stamp. 
+> The stamp item must use the css class `stamp-item` to be interpreted as stamp.
+
+## Accessibility
+
+### Ajax pagination
+
+By default, a list that gets items appended through ajax pagination, is marked as live region. Following attributes are added to the items wrapper element: `aria-busy="false" aria-live="polite" aria-relevant="additions text" aria-atomic="false"`. While loading, the `aria-busy` attribute is set to true. 
+
+You can customize the bahavior with data attributes on the `pagination_list_ajax` list template:
+
+Data attribute | Example | Description
+-------------- | ------- | -----------
+data-enable-screen-reader-message | data-enable-screen-reader-message="true" | Add an screen reader message within the list. Default: `"false"`
+data-screen-reader-message | data-screen-reader-message="<span class=\"sr-only\">Es wurden neue Einträge zur Auflistung hinzugefügt.</span>" | A custom screen reader message. Default: `<span class="sr-only">Es wurden neue Einträge zur Liste hinzugefügt.</span>`
+data-disable-live-region | data-disable-live-region="true" | Disables the live region functionality completely. Use this option if you implement a custom system. You can use the huh.list.ajax-pagination-loading and huh.list.ajax-pagination-loaded events. 

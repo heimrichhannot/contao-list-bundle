@@ -303,13 +303,13 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $totalCount = 0;
 
-        $this->_dispatcher->dispatch(ListModifyQueryBuilderForCountEvent::NAME, new ListModifyQueryBuilderForCountEvent($queryBuilder, $this, $listConfig, $fields));
+        $event = $this->_dispatcher->dispatch(ListModifyQueryBuilderForCountEvent::NAME, new ListModifyQueryBuilderForCountEvent($queryBuilder, $this, $listConfig, $fields));
 
         // initial results
         $this->setShowInitialResults($listConfig->showInitialResults);
 
         if ($isSubmitted || $listConfig->showInitialResults) {
-            $totalCount = $queryBuilder->select($fields)->execute()->rowCount();
+            $totalCount = $queryBuilder->select($event->getFields())->execute()->rowCount();
         }
 
         // item count text

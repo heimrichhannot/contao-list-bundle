@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.30.2] - 2020-12-11
+- changed: get fields for select definition of queryBuilder in `DefaultList` from event
+
 ## [1.30.1] - 2020-12-11
 - fix tl_list_config_element.templateVariable not mandatory for instances of ConfigElementTypeInterface (#4)
 

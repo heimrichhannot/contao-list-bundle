@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.30.3] - 2020-12-15
+- fixed ctable definition in tl_list_config was not an array
+
 ## [1.30.2] - 2020-12-11
 - changed: get fields for select definition of queryBuilder in `DefaultList` from event
 

@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.30.4] - 2020-12-15
+- fixed redirect issue in `TagsConfigElementType`
+
 ## [1.30.3] - 2020-12-15
 - fixed ctable definition in tl_list_config was not an array
 

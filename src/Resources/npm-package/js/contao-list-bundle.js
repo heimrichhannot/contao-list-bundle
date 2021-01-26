@@ -48,7 +48,7 @@ class ListBundle {
 
         // modal event listeners for history changing
         document.querySelectorAll('.huh-list .items[data-open-list-items-in-modal="1"]').forEach((list) => {
-            const modalId = 'modal-' + list.parentNode.getAttribute('id');
+            const modalId = 'modal-' + list.closest('.wrapper').getAttribute('id');
 
             window.jQuery('#' + modalId).on('hidden.bs.modal', (e) => {
                 history.pushState({
@@ -73,7 +73,7 @@ class ListBundle {
                         readerType = itemsWrapper.getAttribute('data-list-modal-reader-type'),
                         readerCssSelector = itemsWrapper.getAttribute('data-list-modal-reader-css-selector'),
                         readerModule = itemsWrapper.getAttribute('data-list-modal-reader-module'),
-                        modalId = 'modal-' + itemsWrapper.parentNode.getAttribute('id');
+                        modalId = 'modal-' + itemsWrapper.closest('.wrapper').getAttribute('id');
 
                     let reader = null;
 

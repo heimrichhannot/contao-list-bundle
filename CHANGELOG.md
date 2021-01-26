@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.30.5] - 2021-01-25
+- fixed issue concerning modal handling and ajax pagination
+
 ## [1.30.4] - 2020-12-15
 - fixed redirect issue in `TagsConfigElementType`
 

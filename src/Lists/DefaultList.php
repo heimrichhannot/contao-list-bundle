@@ -165,6 +165,11 @@ class DefaultList implements ListInterface, \JsonSerializable
     protected $_modal;
 
     /**
+     * @var bool
+     */
+    protected $_addDetails;
+
+    /**
      * Constructor.
      */
     public function __construct(ListManagerInterface $_manager)
@@ -189,6 +194,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->addDataAttributes();
         $this->addMasonry();
         $this->addModal();
+        $this->setAddDetails($listConfig->addDetails);
 
         if ($listConfig->addOverview) {
             $this->addJumpToOverview($listConfig);
@@ -1222,5 +1228,15 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function setItemsId(string $itemsId): void
     {
         $this->_itemsId = $itemsId;
+    }
+
+    public function isAddDetails(): bool
+    {
+        return $this->_addDetails;
+    }
+
+    public function setAddDetails(bool $addDetails): void
+    {
+        $this->_addDetails = $addDetails;
     }
 }

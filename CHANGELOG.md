@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.30.7] - 2021-02-02
+- fixed missing `addDetails` in `list_table_default.html.twig`
+
 ## [1.30.6] - 2021-02-02
 - fixed autocompletion issues in make command
 - fixed sorting issue in table template

@@ -147,29 +147,31 @@ class MakeCommand extends AbstractLockedCommand
 
     protected function createPublishedFilterConfigElement(string $table, Model $filterConfig)
     {
+        $dca = $GLOBALS['TL_DCA'][$table];
+
         $publishedField = $publishedStartField = $publishedStopField = null;
         $invertPublished = false;
         $addStartStop = false;
 
         if ($this->io->confirm('Would you like to hide unpublished entities?')) {
-            switch ($table) {
-                case 'tl_news':
-                case 'tl_calendar_events':
-                    $publishedField = 'published';
-                    $publishedStartField = 'start';
-                    $publishedStopField = 'stop';
-                    $addStartStop = true;
+            if (isset($dca['fields']['published'])) {
+                $publishedField = 'published';
+            } elseif (isset($dca['fields']['disable'])) {
+                $publishedField = 'disable';
+                $invertPublished = true;
+            } elseif (isset($dca['fields']['invisible'])) {
+                $publishedField = 'invisible';
+                $invertPublished = true;
+            }
 
-                    break;
+            if (isset($dca['fields']['start'])) {
+                $publishedStartField = 'start';
+                $addStartStop = true;
+            }
 
-                case 'tl_member':
-                    $publishedField = 'disable';
-                    $publishedStartField = 'start';
-                    $publishedStopField = 'stop';
-                    $invertPublished = true;
-                    $addStartStop = true;
-
-                    break;
+            if (isset($dca['fields']['stop'])) {
+                $publishedStopField = 'stop';
+                $addStartStop = true;
             }
 
             $publishedField = $this->io->ask('Please type in the published field\'s name', $publishedField);
@@ -267,6 +269,8 @@ class MakeCommand extends AbstractLockedCommand
 
     protected function createListConfig(string $table, string $filterTitle, Model $filterConfig)
     {
+        $dca = $GLOBALS['TL_DCA'][$table];
+
         $listTitle = $this->io->ask('Please type in the title of the list configuration', $filterTitle);
         $parentListConfig = $this->io->ask('Do you want to create a child list config inheriting from a parent? If so, please type in the parent ID here', 0);
 
@@ -293,26 +297,10 @@ class MakeCommand extends AbstractLockedCommand
         $sortingField = $this->io->ask('Please specify the sorting field', $sortingField);
         $sortingDirection = $this->io->ask('Please specify the sorting direction (asc or desc)', 'asc');
 
-        $useAlias = false;
-
-        switch ($table) {
-            case 'tl_news':
-            case 'tl_calendar_events':
-                $useAlias = true;
-
-                break;
-        }
+        $useAlias = isset($dca['fields']['alias']);
 
         if ($useAlias = $this->io->confirm('Would you like to use the entity\'s alias field for url generation?', $useAlias)) {
-            switch ($table) {
-                case 'tl_news':
-                case 'tl_calendar_events':
-                    $aliasField = 'alias';
-
-                    break;
-            }
-
-            $aliasField = $this->io->ask('Please type in the alias field\'s name', $aliasField);
+            $aliasField = $this->io->ask('Please type in the alias field\'s name', isset($dca['fields']['alias']) ? 'alias' : null);
         }
 
         $listConfig = new ListConfigModel();

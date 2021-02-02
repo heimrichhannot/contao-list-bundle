@@ -12,7 +12,7 @@
                             {% for i, fieldData in header %}
                                 <th class="{{ fieldData.class }}">
                                     {% if sortingHeader %}
-                                        <a class="{{ fieldData.sortingClass }}" href="{{ fieldData.link }}">
+                                        <a class="{{ fieldData.sortingClass|default }}" href="{{ fieldData.link }}">
                                             {{ fieldData.label }}
                                         </a>
                                     {% else %}

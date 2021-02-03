@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.31.0] - 2021-02-03
+- added a new visual presentation for nested list configurations which should be way easier to read
+
 ## [1.30.7] - 2021-02-02
 - fixed missing `addDetails` in `list_table_default.html.twig`
 

@@ -120,7 +120,7 @@ class ListConfigRegistry
         }
 
         $parentListConfigs = System::getContainer()->get('huh.utils.model')->findParentsRecursively(
-            'parentListConfig',
+            'pid',
             'tl_list_config',
             $listConfig
         );
@@ -148,20 +148,20 @@ class ListConfigRegistry
 
         $listConfig->rootId = $listConfig->id;
 
-        if (!$listConfig->parentListConfig) {
+        if (!$listConfig->pid) {
             return $listConfig;
         }
 
         $computedListConfig = new ListConfigModel();
 
         $parentListConfigs = System::getContainer()->get('huh.utils.model')->findParentsRecursively(
-            'parentListConfig',
+            'pid',
             'tl_list_config',
             $listConfig
         );
 
         $rootListConfig = System::getContainer()->get('huh.utils.model')->findRootParentRecursively(
-            'parentListConfig',
+            'pid',
             'tl_list_config',
             $listConfig
         );

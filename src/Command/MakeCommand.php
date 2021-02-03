@@ -324,7 +324,7 @@ class MakeCommand extends AbstractLockedCommand
         ]);
 
         if ($parentListConfig) {
-            $listConfig->parentListConfig = $parentListConfig;
+            $listConfig->pid = $parentListConfig;
         }
 
         if ($useAlias) {

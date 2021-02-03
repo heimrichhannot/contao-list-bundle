@@ -22,7 +22,7 @@ class ListConfigHelper
         }
 
         $listConfig = System::getContainer()->get('huh.utils.model')->findRootParentRecursively(
-            'parentListConfig', 'tl_list_config', $listConfig
+            'pid', 'tl_list_config', $listConfig
         );
 
         if (null === $listConfig || null === ($filter = $listConfigRegistry->getFilterByPk($listConfig->id))) {
@@ -45,7 +45,7 @@ class ListConfigHelper
         }
 
         $listConfig = System::getContainer()->get('huh.utils.model')->findRootParentRecursively(
-            'parentListConfig', 'tl_list_config', $listConfig
+            'pid', 'tl_list_config', $listConfig
         );
 
         if (null === $listConfig || null === ($filter = $listConfigRegistry->getFilterByPk($listConfig->id))) {
@@ -69,7 +69,7 @@ class ListConfigHelper
         }
 
         $listConfig = System::getContainer()->get('huh.utils.model')->findRootParentRecursively(
-            'parentListConfig', 'tl_list_config', $listConfig
+            'pid', 'tl_list_config', $listConfig
         );
 
         if (null === $listConfig || null === ($filter = $listConfigRegistry->getFilterByPk($listConfig->id))) {

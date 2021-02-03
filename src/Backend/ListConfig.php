@@ -84,7 +84,7 @@ class ListConfig extends Backend
     public static function flattenPaletteForSubEntities(DataContainer $dc)
     {
         if (null !== ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->findByPk($dc->id))) {
-            if ($listConfig->parentListConfig) {
+            if ($listConfig->pid) {
                 $dca = &$GLOBALS['TL_DCA']['tl_list_config'];
 
                 $overridableFields = [];
@@ -112,8 +112,8 @@ class ListConfig extends Backend
      */
     public function generateLabel($row, $label, $dca, $attributes)
     {
-        if ($row['parentListConfig']) {
-            if (null !== ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->findByPk($row['parentListConfig']))) {
+        if ($row['pid']) {
+            if (null !== ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->findByPk($row['pid']))) {
                 $label .= '<span style="padding-left:3px;color:#b3b3b3;">['.$GLOBALS['TL_LANG']['MSC']['listBundle']['parentConfig'].': '.$listConfig->title.']</span>';
             }
         }
@@ -140,7 +140,7 @@ class ListConfig extends Backend
 
     public function edit($row, $href, $label, $title, $icon, $attributes)
     {
-        if ($row['parentListConfig']) {
+        if ($row['pid']) {
             return '';
         }
 

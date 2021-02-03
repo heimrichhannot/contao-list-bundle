@@ -8,10 +8,8 @@ $lang = &$GLOBALS['TL_LANG']['tl_list_config'];
 $lang['tstamp'][0] = 'Änderungsdatum';
 
 // general
-$lang['title'][0]            = 'Titel';
-$lang['title'][1]            = 'Geben Sie hier bitte den Titel ein.';
-$lang['parentListConfig'][0] = 'Eltern-Listenkonfiguration';
-$lang['parentListConfig'][1] = 'Wählen Sie hier eine Listenkonfiguration aus, von der geerbt werden soll. Sie können dann punktuell einzelne Eigenschaften überschreiben.';
+$lang['title'][0] = 'Titel';
+$lang['title'][1] = 'Geben Sie hier bitte den Titel ein.';
 
 // filter
 $lang['filter'][0] = 'Filter';
@@ -146,6 +144,11 @@ $lang['itemChoiceTemplate'][0] = 'Auswahloption-Template';
 $lang['itemChoiceTemplate'][1] = 'Wählen Sie hier das Template aus, mit dem die einzelnen Instanzen in einer Auswahllisete gerendert werden sollen.';
 
 /**
+ * Select
+ */
+$lang['generateSorting'] = 'Alphabetisch sortieren';
+
+/**
  * Legends
  */
 $lang['general_legend']        = 'Allgemeine Einstellungen';
@@ -171,17 +174,19 @@ $lang['reference'] = [
     \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_DIRECTION_ASC  => 'Aufsteigend',
     \HeimrichHannot\ListBundle\Backend\ListConfig::SORTING_DIRECTION_DESC => 'Absteigend',
     'css_selector'                                                        => 'CSS-Selektor',
-    'huh_reader'                                                          => 'Leser-Modul (heimrichhannot/contao-reader-bundle)'
+    'huh_reader'                                                          => 'Leser-Modul (heimrichhannot/contao-reader-bundle)',
+    'sortAlphabeticallyConfirm'                                           => 'Möchten Sie wirklich fortfahren? Diese Aktion kann nur schwer rückgängig gemacht werden.'
 ];
 
 /**
  * Buttons
  */
-$lang['new']        = ['Neue Listenkonfiguration', 'Listenkonfiguration erstellen'];
-$lang['edit']       = ['Listenkonfiguration bearbeiten', 'Listenkonfiguration ID %s bearbeiten'];
-$lang['editheader'] = ['Listenkonfiguration-Einstellungen bearbeiten', 'Listenkonfiguration-Einstellungen ID %s bearbeiten'];
-$lang['copy']       = ['Listenkonfiguration duplizieren', 'Listenkonfiguration ID %s duplizieren'];
-$lang['delete']     = ['Listenkonfiguration löschen', 'Listenkonfiguration ID %s löschen'];
-$lang['toggle']     = ['Listenkonfiguration veröffentlichen', 'Listenkonfiguration ID %s veröffentlichen/verstecken'];
-$lang['show']       = ['Listenkonfiguration Details', 'Listenkonfiguration-Details ID %s anzeigen'];
-$lang['editFilter'] = ['Filter bearbeiten', 'Den Filter ID %s bearbeiten'];
+$lang['new']                = ['Neue Listenkonfiguration', 'Listenkonfiguration erstellen'];
+$lang['edit']               = ['Listenkonfiguration bearbeiten', 'Listenkonfiguration ID %s bearbeiten'];
+$lang['editheader']         = ['Listenkonfiguration-Einstellungen bearbeiten', 'Listenkonfiguration-Einstellungen ID %s bearbeiten'];
+$lang['copy']               = ['Listenkonfiguration duplizieren', 'Listenkonfiguration ID %s duplizieren'];
+$lang['delete']             = ['Listenkonfiguration löschen', 'Listenkonfiguration ID %s löschen'];
+$lang['toggle']             = ['Listenkonfiguration veröffentlichen', 'Listenkonfiguration ID %s veröffentlichen/verstecken'];
+$lang['show']               = ['Listenkonfiguration Details', 'Listenkonfiguration-Details ID %s anzeigen'];
+$lang['editFilter']         = ['Filter bearbeiten', 'Den Filter ID %s bearbeiten'];
+$lang['sortAlphabetically'] = ['Alphabetisch sortieren', 'Listenkonfigurationen alphabetisch sortieren'];

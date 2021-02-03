@@ -366,7 +366,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
         // add list config element data
         /** @var ListConfigElementModel[] $listConfigElements */
-        if (null !== ($listConfigElements = $this->_manager->getListConfigElementRegistry()->findBy(['pid=?'], [$listConfig->rootId]))) {
+        if (null !== ($listConfigElements = $this->_manager->getListConfigElementRegistry()->findBy(['tl_list_config_element.pid=?'], [$listConfig->rootId]))) {
             foreach ($listConfigElements as $listConfigElement) {
                 // save the moduleData in order to restore it after the processing of the config element since it might
                 // have rendered a list itself and hence changed the list config (singleton issue...)

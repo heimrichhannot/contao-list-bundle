@@ -33,15 +33,15 @@ class ListConfigContainer
     /**
      * @var ModelUtil
      */
-    protected ModelUtil $modelUtil;
+    protected $modelUtil;
     /**
      * @var UrlUtil
      */
-    protected UrlUtil $urlUtil;
+    protected $urlUtil;
     /**
      * @var Request
      */
-    protected Request $request;
+    protected $request;
 
     /**
      * ListConfigContainer constructor.

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.31.1] - 2021-02-03
+- fixed types in attributes (incompatible in some php versions)
+- fixed sql issue (ambiguous pid)
+
 ## [1.31.0] - 2021-02-03
 - added a new visual presentation for nested list configurations which should be way easier to read
 

@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.31.2] - 2021-02-04
+- fixed tl_list_config not found when migrating
+
 ## [1.31.1] - 2021-02-03
 - fixed types in attributes (incompatible in some php versions)
 - fixed sql issue (ambiguous pid)

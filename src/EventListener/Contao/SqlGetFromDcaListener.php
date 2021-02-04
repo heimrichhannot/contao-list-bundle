@@ -24,6 +24,10 @@ class SqlGetFromDcaListener
         $db = Database::getInstance();
 
         // migration already took place
+        if (!$db->tableExists('tl_list_config', null, true)) {
+            return;
+        }
+
         if ($db->fieldExists('pid', 'tl_list_config', true)) {
             return;
         }

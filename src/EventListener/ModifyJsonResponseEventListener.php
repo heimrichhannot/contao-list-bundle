@@ -18,7 +18,10 @@ class ModifyJsonResponseEventListener
     {
         $response = $event->getResponse();
         $filter = $event->getFilter();
-        $twig = System::getContainer()->get('twig');
+
+        if (!$filter->getFilter()['ajaxList']) {
+            return;
+        }
 
         $module = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk('tl_module',
             $filter->getFilter()['ajaxList']);

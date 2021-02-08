@@ -28,6 +28,6 @@ $dca['fields']['ajaxList'] = [
     'exclude' => true,
     'inputType' => 'select',
     'options_callback' => [\HeimrichHannot\ListBundle\DataContainer\ModuleContainer::class, 'getAllListModules'],
-    'eval' => ['tl_class' => 'w50 clr', 'includeBlankOption' => true, 'mandatory' => true, 'chosen' => true],
+    'eval' => ['tl_class' => 'w50 clr', 'includeBlankOption' => true, 'chosen' => true],
     'sql' => "char(64) NOT NULL default ''",
 ];

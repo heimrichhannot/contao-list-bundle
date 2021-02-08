@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.31.3] - 2021-02-08
+- made ajax list optional for async filter (a filter can also be used without a list)
+
 ## [1.31.2] - 2021-02-04
 - fixed tl_list_config not found when migrating
 

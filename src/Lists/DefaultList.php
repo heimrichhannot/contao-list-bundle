@@ -300,6 +300,41 @@ class DefaultList implements ListInterface, \JsonSerializable
             }, $dbFields));
         }
 
+        // support for heimrichhannot/contao-multilingual-fields-bundle
+        if ($this->isMultilingualFieldsActive($listConfig, $filter->dataContainer)) {
+            $fallbackLanguage = System::getContainer()->getParameter('huh_multilingual_fields')['fallback_language'];
+
+            if ($GLOBALS['TL_LANGUAGE'] !== $fallbackLanguage) {
+                // compute fields
+                $fieldNames = [];
+
+                foreach ($dca['fields'] as $field => $data) {
+                    if (!isset($data['sql']) || isset($data['eval']['translatedField'])) {
+                        continue;
+                    }
+
+                    if (isset($data['eval']['isTranslatedField'])) {
+                        $selectorField = $data['eval']['translationConfig'][$GLOBALS['TL_LANGUAGE']]['selector'];
+                        $translationField = $data['eval']['translationConfig'][$GLOBALS['TL_LANGUAGE']]['field'];
+
+                        $fieldNames[] = "IF($filter->dataContainer.$selectorField=1, $filter->dataContainer.$translationField, $filter->dataContainer.$field) AS '$field'";
+                    } else {
+                        $fieldNames[] = $filter->dataContainer.'.'.$field;
+                    }
+                }
+
+                $fields = implode(', ', $fieldNames);
+            } else {
+                $fields = implode(', ', array_map(function ($field) use ($filter) {
+                    return $filter->dataContainer.'.'.$field;
+                }, $dbFields));
+            }
+        } else {
+            $fields = implode(', ', array_map(function ($field) use ($filter) {
+                return $filter->dataContainer.'.'.$field;
+            }, $dbFields));
+        }
+
         // filter related items
         if (isset($GLOBALS['HUH_LIST_RELATED'])) {
             $this->addRelatedFilters($filter->dataContainer, $queryBuilder);
@@ -386,6 +421,17 @@ class DefaultList implements ListInterface, \JsonSerializable
             // if no items with the given tags are found, no related news should be displayed
             $queryBuilder->andWhere($queryBuilder->expr()->in($table.'.id', empty($itemIds) ? [0] : $itemIds));
         }
+    }
+
+    public function isMultilingualFieldsActive(ListConfigModel $listConfig, string $table)
+    {
+        if (!$listConfig->addMultilingualFieldsSupport) {
+            return false;
+        }
+
+        $config = System::getContainer()->getParameter('huh_multilingual_fields');
+
+        return isset($config['data_containers'][$table]);
     }
 
     public function isDcMultilingualActive(ListConfigModel $listConfig, array $dca, string $table)

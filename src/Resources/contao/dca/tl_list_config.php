@@ -117,7 +117,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addOverview',
             'customJumpToOverviewLabel',
         ],
-        'default'      => '{general_legend},title;' . '{filter_legend},filter;' . '{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;' . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare,addOverview;' . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry,addDcMultilingualSupport,hideForListPreselect;' . '{search_legend},noSearch,doNotIndexItems;' . '{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
+        'default'      => '{general_legend},title;' . '{filter_legend},filter;' . '{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;' . '{sorting_legend},sortingMode;' . '{jumpto_legend},useAlias,addDetails,addShare,addOverview;' . '{action_legend},addHashToAction,removeAutoItemFromAction;' . '{misc_legend},addAjaxPagination,addMasonry,addDcMultilingualSupport,addMultilingualFieldsSupport,hideForListPreselect;' . '{search_legend},noSearch,doNotIndexItems;' . '{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
     ],
     'subpalettes' => [
         'showItemCount'                                                                     => 'itemCountText',
@@ -752,7 +752,7 @@ if (System::getContainer()->get('huh.utils.container')->isBundleActive('modal'))
 }
 
 if (System::getContainer()->get('huh.utils.container')->isBundleActive('Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle')) {
-    $dca['fields'] += [
+    $dca['fields'] = array_merge(is_array($dca['fields']) ? $dca['fields'] : [], [
         'addDcMultilingualSupport' => [
             'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addDcMultilingualSupport'],
             'exclude'   => true,
@@ -760,7 +760,19 @@ if (System::getContainer()->get('huh.utils.container')->isBundleActive('Terminal
             'eval'      => ['tl_class' => 'w50'],
             'sql'       => "char(1) NOT NULL default ''",
         ],
-    ];
+    ]);
+}
+
+if (class_exists('HeimrichHannot\MultilingualFieldsBundle\HeimrichHannotMultilingualFieldsBundle')) {
+    $dca['fields'] = array_merge(is_array($dca['fields']) ? $dca['fields'] : [], [
+        'addMultilingualFieldsSupport' => [
+            'label'     => &$GLOBALS['TL_LANG']['tl_list_config']['addMultilingualFieldsSupport'],
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['tl_class' => 'w50'],
+            'sql'       => "char(1) NOT NULL default ''",
+        ],
+    ]);
 }
 
 \HeimrichHannot\ListBundle\Backend\ListConfig::addOverridableFields();

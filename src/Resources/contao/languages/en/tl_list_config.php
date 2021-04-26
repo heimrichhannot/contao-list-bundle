@@ -1,19 +1,27 @@
 <?php
 
+/*
+ * Copyright (c) 2021 Heimrich & Hannot GmbH
+ *
+ * @license LGPL-3.0-or-later
+ */
+
 $lang = &$GLOBALS['TL_LANG']['tl_list_config'];
 
-/**
+/*
  * Fields
  */
 $lang['title'] = ['Title', 'Please enter a title.'];
 $lang['tstamp'] = ['Revision date', ''];
+$lang['listContextVariables'][0] = 'Custom variables';
+$lang['listContextVariables'][1] = 'Enter custom variables that can be used in templates and events.';
 
-/**
+/*
  * Legends
  */
 $lang['general_legend'] = 'General settings';
 
-/**
+/*
  * Buttons
  */
 $lang['new'] = ['New Listenkonfiguration', 'Listenkonfiguration create'];

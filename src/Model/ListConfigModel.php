@@ -56,6 +56,7 @@ use Contao\Model;
  * @property string $item
  * @property bool   $noSearch
  * @property bool   $doNotIndexItems
+ * @property string $listContextVariables
  */
 class ListConfigModel extends Model
 {

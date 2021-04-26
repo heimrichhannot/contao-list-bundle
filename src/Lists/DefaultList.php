@@ -755,7 +755,7 @@ class DefaultList implements ListInterface, \JsonSerializable
                     $shareUrl = System::getContainer()->get('huh.utils.url')->addQueryString('share='.$entity->shareToken, $url);
                 }
 
-                die($shareUrl);
+                exit($shareUrl);
             }
         }
     }
@@ -1284,5 +1284,10 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function setAddDetails(bool $addDetails): void
     {
         $this->_addDetails = $addDetails;
+    }
+
+    public function getListContextVariables(): array
+    {
+        return array_column(StringUtil::deserialize($this->_manager->getListConfig()->listContextVariables, true), 'value', 'key');
     }
 }

@@ -9,6 +9,12 @@ services:
     public: true
     autowire: true
 
+  HeimrichHannot\ListBundle\EventSubscriber\:
+    resource: '../../EventSubscriber/*'
+    autowire: true
+    autoconfigure: true
+    public: false
+
   huh.list.choice.parent-list-config:
     class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice
     public: true

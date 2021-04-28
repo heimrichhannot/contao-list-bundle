@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.33.0] - 2021-04-28
+
+- Add listContextVariables field ([#6])
+- Fix inserttags on async reload ([#7])
+
 ## [1.32.0] - 2021-04-19
 
 - added optional support for [heimrichhannot/contao-multilingual-fields-bundle](https://github.com/heimrichhannot/contao-multilingual-fields-bundle)
@@ -50,11 +55,11 @@ All notable changes to this project will be documented in this file.
 
 ## [1.30.1] - 2020-12-11
 
-- fix tl_list_config_element.templateVariable not mandatory for instances of ConfigElementTypeInterface (#4)
+- fix tl_list_config_element.templateVariable not mandatory for instances of ConfigElementTypeInterface ([#4])
 
 ## [1.30.0] - 2020-12-11
 
-- Add live region for asynchronous list pagination  (#5)
+- Add live region for asynchronous list pagination  ([#5])
 
 ## [1.29.0] - 2020-12-10
 
@@ -443,3 +448,8 @@ existing method from the inherit method and register the class as service.
 #### Changed
 
 * updated list config search and filter settings for backend
+
+[#7]: https://github.com/heimrichhannot/contao-list-bundle/pull/7
+[#6]: https://github.com/heimrichhannot/contao-list-bundle/pull/6
+[#5]: https://github.com/heimrichhannot/contao-list-bundle/pull/5
+[#4]: https://github.com/heimrichhannot/contao-list-bundle/issues/4

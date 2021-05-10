@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.33.1] - 2021-05-10
+- allow twig-support-bundle ^1.0
+
 ## [1.33.0] - 2021-04-28
 
 - Add listContextVariables field ([#6])

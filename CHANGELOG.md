@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.33.2] - 2021-05-19
+- replace all service aliased with classed in tl_list_config_element
+- extend submission config element with template choice and dynamic field mapping
+
 ## [1.33.1] - 2021-05-10
 - allow twig-support-bundle ^1.0
 

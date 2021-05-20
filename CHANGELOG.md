@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.33.3] - 2021-05-20
+- fixed close button in `submission_form_modal_bootstrap5.html.twig`
+
 ## [1.33.2] - 2021-05-19
 - replace all service aliased with classed in tl_list_config_element
 - extend submission config element with template choice and dynamic field mapping

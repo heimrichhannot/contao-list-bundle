@@ -2,14 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.33.4] - 2021-06-08
+
+- fixed type hint
+
 ## [1.33.3] - 2021-05-20
+
 - fixed close button in `submission_form_modal_bootstrap5.html.twig`
 
 ## [1.33.2] - 2021-05-19
+
 - replace all service aliased with classed in tl_list_config_element
 - extend submission config element with template choice and dynamic field mapping
 
 ## [1.33.1] - 2021-05-10
+
 - allow twig-support-bundle ^1.0
 
 ## [1.33.0] - 2021-04-28
@@ -19,7 +26,8 @@ All notable changes to this project will be documented in this file.
 
 ## [1.32.0] - 2021-04-19
 
-- added optional support for [heimrichhannot/contao-multilingual-fields-bundle](https://github.com/heimrichhannot/contao-multilingual-fields-bundle)
+- added optional support
+  for [heimrichhannot/contao-multilingual-fields-bundle](https://github.com/heimrichhannot/contao-multilingual-fields-bundle)
 
 ## [1.31.3] - 2021-02-08
 
@@ -460,6 +468,9 @@ existing method from the inherit method and register the class as service.
 * updated list config search and filter settings for backend
 
 [#7]: https://github.com/heimrichhannot/contao-list-bundle/pull/7
+
 [#6]: https://github.com/heimrichhannot/contao-list-bundle/pull/6
+
 [#5]: https://github.com/heimrichhannot/contao-list-bundle/pull/5
+
 [#4]: https://github.com/heimrichhannot/contao-list-bundle/issues/4

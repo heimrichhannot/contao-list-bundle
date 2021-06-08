@@ -16,7 +16,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class FilterBundleEventSubscriber implements EventSubscriberInterface
 {
-    protected ModelUtil $modelUtil;
+    /**
+     * @var ModelUtil
+     */
+    protected $modelUtil;
 
     public function __construct(ModelUtil $modelUtil)
     {

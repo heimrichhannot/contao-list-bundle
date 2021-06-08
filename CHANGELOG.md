@@ -2,9 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.33.5] - 2021-06-08
+
+- fixed typed properties
+
 ## [1.33.4] - 2021-06-08
 
-- fixed type hint
+- fixed typed properties
 
 ## [1.33.3] - 2021-05-20
 

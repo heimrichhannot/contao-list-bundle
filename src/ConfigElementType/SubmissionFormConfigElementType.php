@@ -22,7 +22,10 @@ class SubmissionFormConfigElementType implements ConfigElementTypeInterface
 
     public static $recipientEmail;
 
-    protected TwigTemplateRenderer $twigTemplateRenderer;
+    /**
+     * @var TwigTemplateRenderer
+     */
+    protected $twigTemplateRenderer;
     /**
      * @var ModelUtil
      */

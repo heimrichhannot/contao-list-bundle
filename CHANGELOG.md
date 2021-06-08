@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.33.6] - 2021-06-08
+
+- fixes for contao 4.9
+
 ## [1.33.5] - 2021-06-08
 
 - fixed typed properties

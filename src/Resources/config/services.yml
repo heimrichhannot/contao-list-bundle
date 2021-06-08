@@ -21,10 +21,11 @@ services:
     arguments:
     - "@contao.framework"
 
-  huh.list.manager.list:
-    class: HeimrichHannot\ListBundle\Manager\ListManager
+  HeimrichHannot\ListBundle\Manager\ListManager:
     public: true
     autowire: true
+
+  huh.list.manager.list: '@HeimrichHannot\ListBundle\Manager\ListManager'
 
   huh.list.list-config-registry:
     class: HeimrichHannot\ListBundle\Registry\ListConfigRegistry

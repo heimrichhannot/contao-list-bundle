@@ -294,14 +294,9 @@ class DefaultList implements ListInterface, \JsonSerializable
                     return $filter->dataContainer.'.'.$field;
                 }, $dbFields));
             }
-        } else {
-            $fields = implode(', ', array_map(function ($field) use ($filter) {
-                return $filter->dataContainer.'.'.$field;
-            }, $dbFields));
         }
-
         // support for heimrichhannot/contao-multilingual-fields-bundle
-        if ($this->isMultilingualFieldsActive($listConfig, $filter->dataContainer)) {
+        elseif ($this->isMultilingualFieldsActive($listConfig, $filter->dataContainer)) {
             $fallbackLanguage = System::getContainer()->getParameter('huh_multilingual_fields')['fallback_language'];
 
             if ($GLOBALS['TL_LANGUAGE'] !== $fallbackLanguage) {

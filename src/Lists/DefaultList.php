@@ -30,6 +30,7 @@ use HeimrichHannot\ListBundle\Item\ItemInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
+use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class DefaultList implements ListInterface, \JsonSerializable
@@ -1053,25 +1054,31 @@ class DefaultList implements ListInterface, \JsonSerializable
         $table = $filter->dataContainer;
 
         $multilingualJumpTos = [];
-        $multilingualLanguages = [];
+
         $dcMultilingualActive = System::getContainer()->get('huh.utils.dca')->isDcMultilingual($table);
 
-        if ($dcMultilingualActive) {
-            $jumpToDetailsMultilingual = StringUtil::deserialize($listConfig->jumpToDetailsMultilingual, true);
+        // multilingual jumpTos
+        $jumpToDetailsMultilingual = StringUtil::deserialize($listConfig->jumpToDetailsMultilingual, true);
 
-            foreach ($jumpToDetailsMultilingual as $data) {
-                if (!$data['language'] || !$data['jumpTo'] || $intRoot > 0 && !\in_array($data['jumpTo'], $arrRoot)) {
-                    continue;
-                }
-
-                $multilingualJumpTos[] = $data['jumpTo'];
-                $multilingualLanguages[] = $data['language'];
+        foreach ($jumpToDetailsMultilingual as $data) {
+            if (!$data['language'] || !$data['jumpTo'] || $intRoot > 0 && !\in_array($data['jumpTo'], $arrRoot)) {
+                continue;
             }
+
+            $multilingualJumpTos[] = $data['jumpTo'];
         }
 
         if ($intRoot > 0 && !empty($arrRoot) && empty(array_intersect(array_merge([$this->getJumpTo()], $multilingualJumpTos), $arrRoot))) {
             return $arrPages;
         }
+
+        if (null === ($rootPage = System::getContainer()->get(ModelUtil::class)->findModelInstanceByPk('tl_page', $intRoot))) {
+            return $arrPages;
+        }
+
+        // switch language for multilingual (language-dependent) initial filter field values
+        $tmpLang = $GLOBALS['TL_LANGUAGE'];
+        $GLOBALS['TL_LANGUAGE'] = $rootPage->language;
 
         /** @var FilterQueryBuilder $queryBuilder */
         $queryBuilder = $this->_manager->getFilterManager()->getQueryBuilder($filter->id);
@@ -1085,6 +1092,8 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields));
 
         $items = $queryBuilder->execute()->fetchAll();
+
+        $GLOBALS['TL_LANGUAGE'] = $tmpLang;
 
         if (null !== ($itemClass = $this->getItemClassByName($listConfig->item ?: 'default'))) {
             $reflection = new \ReflectionClass($itemClass);
@@ -1116,7 +1125,7 @@ class DefaultList implements ListInterface, \JsonSerializable
                 }
             }
 
-            if ($dcMultilingualActive) {
+            if (!empty($jumpToDetailsMultilingual)) {
                 $tmpLang = $GLOBALS['TL_LANGUAGE'];
 
                 foreach ($jumpToDetailsMultilingual as $data) {
@@ -1126,24 +1135,27 @@ class DefaultList implements ListInterface, \JsonSerializable
 
                     $GLOBALS['TL_LANGUAGE'] = $data['language'];
 
-                    $query = "SELECT $table.$listConfig->aliasField FROM $table WHERE $table.langPid=? AND $table.language=?";
+                    // switch the alias
+                    if ($dcMultilingualActive) {
+                        $query = "SELECT $table.$listConfig->aliasField FROM $table WHERE $table.langPid=? AND $table.language=?";
 
-                    if ($this->isDcMultilingualUtilsActive($listConfig, [], $table)) {
-                        $time = Date::floorToMinute();
+                        if ($this->isDcMultilingualUtilsActive($listConfig, [], $table)) {
+                            $time = Date::floorToMinute();
 
-                        $query .= " AND $table.langPublished=1 AND ($table.langStart = '' OR $table.langStart <= $time) AND ($table.langStop = '' OR $table.langStop > ".($time + 60).')';
-                    }
+                            $query .= " AND $table.langPublished=1 AND ($table.langStart = '' OR $table.langStart <= $time) AND ($table.langStop = '' OR $table.langStop > ".($time + 60).')';
+                        }
 
-                    $translatedResult = Database::getInstance()->prepare($query)->limit(1)->execute($result->getRawValue('id'), $data['language']);
+                        $translatedResult = Database::getInstance()->prepare($query)->limit(1)->execute($result->getRawValue('id'), $data['language']);
 
-                    if ($translatedResult->numRows < 1) {
-                        continue;
-                    }
+                        if ($translatedResult->numRows < 1) {
+                            continue;
+                        }
 
-                    $result->{$listConfig->aliasField} = $translatedResult->{$listConfig->aliasField};
+                        $result->{$listConfig->aliasField} = $translatedResult->{$listConfig->aliasField};
 
-                    if (null === ($idOrAlias = $result->generateIdOrAlias($result, $listConfig))) {
-                        continue;
+                        if (null === ($idOrAlias = $result->generateIdOrAlias($result, $listConfig))) {
+                            continue;
+                        }
                     }
 
                     $result->addDetailsUrl($idOrAlias, $result, $listConfig, true);

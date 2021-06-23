@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.34.0] - 2021-06-23
+
+- added support for multilingual initial filter field values
+- fixed multilingual jump to pages (not entirely dependent on dc multilingual)
+
 ## [1.33.8] - 2021-06-18
 
 - fixed optional support

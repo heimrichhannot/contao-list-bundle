@@ -19,6 +19,7 @@ use HeimrichHannot\FilterBundle\Model\FilterPreselectModel;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderForCountEvent;
 use HeimrichHannot\ListBundle\Exception\InterfaceNotImplementedException;
+use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
@@ -223,8 +224,12 @@ class ContentListPreselect extends ContentElement
     {
         $wildcard = [];
 
-        if (null === ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $this->getModel()->listConfig))) {
-            return $wildcard;
+        try {
+            if (null === ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $this->getModel()->listConfig))) {
+                return $wildcard;
+            }
+        } catch (InvalidListConfigException $e) {
+            return [];
         }
 
         if (null === ($manager = System::getContainer()->get('huh.list.util.manager')->getListManagerByName($listConfig->manager ?: 'default'))) {

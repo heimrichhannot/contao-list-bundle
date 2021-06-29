@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.35.1] - 2021-06-29
+
+- added null check in preselect
+
 ## [1.35.0] - 2021-06-29
 
 - added Polish translations

@@ -120,143 +120,152 @@ class ListBundle {
         });
     }
 
+    static isAtBottom(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.bottom <= (window.innerHeight || document.getElementById('main').clientHeight)
+        );
+    }
+
     static initPagination() {
         document.querySelectorAll('.huh-list .ajax-pagination').forEach(function(ajaxPagination) {
-            import(/* webpackChunkName: "jscroll" */ 'jscroll').then(() => {
-                let list = ajaxPagination.closest('.huh-list'),
-                    $items = jQuery(list.querySelectorAll('.items')),
-                    wrapper = list.querySelector('.wrapper'),
-                    id = '#' + wrapper.getAttribute('id'),
-                    pagination = list.querySelector('.ajax-pagination'),
-                    enableSreenReaderMessage = false,
-                    screenReaderMessage = "<span class=\"sr-only\">Es wurden neue Einträge zur Liste hinzugefügt.</span>",
-                    disableLiveRegion = false;
+            const list = ajaxPagination.closest('.huh-list'),
+                items = list.querySelector('.items[data-add-infinite-scroll="1"]');
 
-                if (pagination.hasAttribute('data-disable-live-region') && (
-                    pagination.getAttribute('data-disable-live-region') === true ||
-                    pagination.getAttribute('data-disable-live-region') === "1" ||
-                    pagination.getAttribute('data-disable-live-region') === "true"
+            let ajaxLoad = {
+                loadingHtml: '<div class="loading"><span class="text">Lade...</span></div>',
+                enableScreenReaderMessage: true,
+                screenReaderMessage: "Es wurden neue Einträge zur Liste hinzugefügt.",
+                disableLiveRegion: false
+            }
+
+            if (ajaxPagination.hasAttribute('data-disable-live-region') && (
+                ajaxPagination.getAttribute('data-disable-live-region') === true ||
+                ajaxPagination.getAttribute('data-disable-live-region') === "1" ||
+                ajaxPagination.getAttribute('data-disable-live-region') === "true"
+            )) {
+                ajaxLoad.disableLiveRegion = true;
+            }
+
+
+            if (!ajaxLoad.disableLiveRegion) {
+                items.setAttribute('aria-busy', 'false');
+                items.setAttribute('aria-live', 'polite');
+                items.setAttribute('aria-relevant', 'additions text');
+                items.setAttribute('aria-atomic', 'false');
+
+                if (ajaxPagination.hasAttribute('data-enable-screen-reader-message') && (
+                    ajaxPagination.getAttribute('data-enable-screen-reader-message') === true ||
+                    ajaxPagination.getAttribute('data-enable-screen-reader-message') === "1" ||
+                    ajaxPagination.getAttribute('data-enable-screen-reader-message') === "true"
                 )) {
-                    disableLiveRegion = true;
+                    ajaxLoad.enableScreenReaderMessage = true;
                 }
 
-                if (!disableLiveRegion) {
-                    if (pagination.hasAttribute('data-enable-screen-reader-message') && (
-                        pagination.getAttribute('data-enable-screen-reader-message') === true ||
-                        pagination.getAttribute('data-enable-screen-reader-message') === "1" ||
-                        pagination.getAttribute('data-enable-screen-reader-message') === "true"
-                    )) {
-                        enableSreenReaderMessage = true;
-                    }
-
-                    if (pagination.hasAttribute('data-screen-reader-message')) {
-                        screenReaderMessage = pagination.getAttribute('data-screen-reader-message');
-                    }
+                if (ajaxPagination.hasAttribute('data-screen-reader-message')) {
+                    ajaxLoad.screenReaderMessage = ajaxPagination.getAttribute('data-screen-reader-message');
                 }
+            }
 
-                jQuery(wrapper).jscroll({
-                    loadingHtml: '<div class="loading"><span class="text">Lade...</span></div>',
-                    loadingFunction: function() {
-                        if (!disableLiveRegion) {
-                            $items.attr('aria-busy','true');
-                        }
-                        list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loading', {
-                            bubbles: true,
-                            detail: {
-                                wrapper: wrapper,
-                                pagination: pagination,
-                                items: $items
-                            }
-                        }))
-                    },
-                    nextSelector: '.ajax-pagination a.next',
-                    autoTrigger: $items.data('add-infinite-scroll') == 1,
-                    contentSelector: id,
-                    padding: 50,
-                    callback: function() {
+            document.addEventListener('scroll', e => {
+                if (items && ListBundle.isAtBottom(list)) {
+                    const request = new XMLHttpRequest();
 
-                        let $jscrollAdded = jQuery(this),
-                            $newItems = $jscrollAdded.find('.item');
-
-                        $newItems.hide();
-
-                        import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(({default: imagesLoaded}) => {
-                            imagesLoaded($newItems, function(instance) {
-                                if (true === enableSreenReaderMessage) {
-                                    $items.append(screenReaderMessage);
+                    if (!items.classList.contains('loading') && ajaxPagination.querySelector('.huh-list .ajax-pagination a.next')) {
+                        request.onreadystatechange = () => {
+                            if (request.readyState === 1) {
+                                ajaxPagination.innerHTML = ajaxLoad.loadingHtml;
+                                if (!ajaxLoad.disableLiveRegion) {
+                                    items.setAttribute('aria-busy', 'true');
+                                    let screenReaderElement = items.querySelector('span.sr-only');
+                                    if (screenReaderElement) {
+                                        items.removeChild(screenReaderElement);
+                                    }
                                 }
-                                $items.append($newItems.fadeIn(300));
+                                items.classList.add('loading');
+                            }
 
-                                if ($items.attr('data-add-masonry') === "1") {
-                                    import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function() {
-                                        ListBundle.initMasonry();
+                            if (request.readyState === 4 && request.status === 200) {
+                                const response = request.responseText;
+                                const parser = new DOMParser();
+                                const loadedDoc = parser.parseFromString(response, 'text/html');
+                                const loadedItems = loadedDoc.querySelectorAll('.huh-list .items[data-add-infinite-scroll="1"] .item');
+                                import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(({default: imagesLoaded}) => {
+                                    imagesLoaded(loadedItems, function(instance) {
+                                        if (true === ajaxLoad.enableScreenReaderMessage) {
+                                            let span = document.createElement('span');
+                                            span.classList.add('sr-only');
+                                            span.textContent = ajaxLoad.screenReaderMessage;
+                                            items.appendChild(span);
+                                        }
+                                        loadedItems.forEach(item => {
+                                            items.appendChild(item);
+                                        })
+                                    })
+                                    ajaxPagination.innerHTML = '';
+                                    if (loadedDoc.querySelector('.huh-list .ajax-pagination a.next')) {
+                                        ajaxPagination.appendChild(loadedDoc.querySelector('.huh-list .ajax-pagination a.next'));
+                                    }
+                                    if (items.dataset.addMasonry === "1") {
+                                        import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function() {
+                                            ListBundle.initMasonry();
+                                        });
+
+                                        return;
+                                    }
+
+                                    // remove item counters...
+                                    items.querySelectorAll('.item').forEach(item => {
+                                        item.classList.forEach(cssClass => {
+                                            if (cssClass.match(/item_\d+/g)) {
+                                                item.classList.remove(cssClass);
+                                            }
+                                        })
                                     });
 
-                                    return;
-                                }
+                                    items.querySelectorAll('.item').forEach((item, index,nodes) => {
+                                        let itemIndex = index+1;
+                                        item.classList.remove('odd', 'even', 'first', 'last');
+                                        item.classList.add('item_'+itemIndex);
 
-                                // remove item counters...
-                                $items.find('.item').removeClass((index, cssClass) => {
-                                    let matches = cssClass.match(/item_\d+/g);
+                                        // odd/even
+                                        if (itemIndex % 2 === 0) {
+                                            item.classList.add('even')
+                                        } else {
+                                            item.classList.add('odd');
+                                        }
 
-                                    if (matches instanceof Array && matches.length > 0) {
-                                        return matches[0];
+                                        // add first and last
+                                        if (itemIndex === 1) {
+                                            item.classList.add('first');
+                                        }
+
+                                        if (itemIndex === nodes.length) {
+                                            item.classList.add('last');
+                                        }
+                                    });
+
+                                    list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loaded', {
+                                        bubbles: true,
+                                        detail: {
+                                            wrapper: list.querySelector('.wrapper'),
+                                            pagination: ajaxPagination,
+                                            items: items
+                                        }
+                                    }))
+
+                                    if (!ajaxLoad.disableLiveRegion) {
+                                        items.setAttribute('aria-busy', 'false');
                                     }
+                                    items.classList.remove('loading');
                                 });
-
-                                //... and readd them again
-                                $items.find('.item').each(index => {
-                                    let $item = $(this),
-                                        itemIndex = index + 1;
-
-                                    $(this).addClass('item_' + itemIndex).removeClass('odd even first last');
-
-                                    // odd/even
-                                    if (itemIndex % 2 == 0) {
-                                        $item.addClass('even');
-                                    } else {
-                                        $item.addClass('odd');
-                                    }
-
-                                    // add first and last
-                                    if (itemIndex == 1) {
-                                        $item.addClass('first');
-                                    }
-
-                                    if (itemIndex == $items.find('.item').length) {
-                                        $item.addClass('last');
-                                    }
-                                });
-
-                                if(!disableLiveRegion) {
-                                    $items.attr('aria-busy','false');
-                                    $items.attr('aria-live','polite');
-                                    $items.attr('aria-relevant','additions text');
-                                    $items.attr('aria-atomic','false');
-                                }
-
-                                if ($jscrollAdded.find('.pagination').length > 0) {
-                                    $jscrollAdded.closest('.jscroll-inner').find('> .pagination').remove();
-                                    $jscrollAdded.find('.pagination').appendTo($jscrollAdded.closest('.jscroll-inner'));
-                                } else {
-                                    $jscrollAdded.find('.ajax-pagination').appendTo($jscrollAdded.closest('.jscroll-inner'));
-                                }
-
-                                $jscrollAdded.remove();
-
-                                list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loaded', {
-                                    bubbles: true,
-                                    detail: {
-                                        wrapper: wrapper,
-                                        pagination: pagination,
-                                        items: $items
-                                    }
-                                }))
-                            });
-                        });
+                            }
+                        };
+                        request.open("GET", ajaxPagination.querySelector('.huh-list .ajax-pagination a.next').href, true);
+                        request.send();
                     }
-                });
-            });
+                }
+            })
         });
     }
 

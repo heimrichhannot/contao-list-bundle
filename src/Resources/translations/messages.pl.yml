@@ -1,0 +1,12 @@
+# labels
+huh.list.labels.ajaxPaginationNext: Wczytaj więcej
+huh.list.labels.overview.default: Do okna startowego
+# misc
+huh.list.misc.detailsTitle: Szczegóły
+huh.list.misc.detailsLinkTitle: Odwiedź stronę
+huh.list.misc.shareTitle: Udostępnij
+huh.list.misc.contact: Kontakt
+# count items text
+huh.list.count.text.default: '{0} Nic nie znaleziono.|{1}Znaleziono %count% wynik.|]1,Inf[ Znaleziono %count% wyniki/ów.'
+# empty list text
+huh.list.empty.text.default: Nie znaleziono żadnych wyników dla tego zapytania.

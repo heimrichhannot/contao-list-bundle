@@ -2,7 +2,9 @@
   "name": "contao-list-bundle",
   "version": "1.0.0",
   "dependencies": {
-    "@hundh/contao-list-bundle": "^1.0"
+    "@hundh/contao-utils-bundle": "^1.18",
+    "imagesloaded": "^4.1",
+    "masonry-layout": "^4.1"
   },
   "devDependencies": {
     "@symfony/webpack-encore": "^0.28"

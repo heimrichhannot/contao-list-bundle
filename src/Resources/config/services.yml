@@ -112,3 +112,14 @@ services:
   HeimrichHannot\ListBundle\ConfigElementType\VideoConfigElementType:
     autowire: true
     tags: ['huh.list.config_element_type']
+
+  HeimrichHannot\ListBundle\Asset\FrontendAsset:
+    autowire: true
+    public: true
+    calls:
+      - [ setEncoreFrontendAsset, [ '@?HeimrichHannot\EncoreBundle\Asset\FrontendAsset' ] ]
+
+  HeimrichHannot\ListBundle\EventListener\Contao\InitializeSystemListener:
+    autowire: true
+    autoconfigure: true
+    public: true

@@ -2,7 +2,7 @@
   "entrypoints": {
     "contao-list-bundle": {
       "js": [
-        "/public/js/contao-list-bundle.js"
+        "/bundles/heimrichhannotlistbundle/contao-list-bundle.js"
       ]
     }
   }

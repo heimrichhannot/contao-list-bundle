@@ -1,5 +1,5 @@
 {
-  "public/js/contao-list-bundle.js": "/public/js/contao-list-bundle.js",
-  "public/js/imagesloaded.js": "/public/js/imagesloaded.js",
-  "public/js/vendors~masonry-layout.js": "/public/js/vendors~masonry-layout.js"
+  "bundles/heimrichhannotlistbundle/contao-list-bundle.js": "/bundles/heimrichhannotlistbundle/contao-list-bundle.js",
+  "bundles/heimrichhannotlistbundle/imagesloaded.js": "/bundles/heimrichhannotlistbundle/imagesloaded.js",
+  "bundles/heimrichhannotlistbundle/masonry-layout.js": "/bundles/heimrichhannotlistbundle/masonry-layout.js"
 }

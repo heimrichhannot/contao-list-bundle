@@ -84,7 +84,7 @@ class ListBundle {
                             reader = response.querySelector('#huh-reader-' + readerModule);
 
                             if (null === reader) {
-                                console.log('Reader not found with selector: #huh-reader-' + readerModule);
+                                console.warn('Reader not found with selector: #huh-reader-' + readerModule);
                                 return;
                             }
 
@@ -93,7 +93,7 @@ class ListBundle {
                             reader = response.querySelector(readerCssSelector);
 
                             if (null === reader) {
-                                console.log('Reader not found with selector: ' + readerCssSelector);
+                                console.warn('Reader not found with selector: ' + readerCssSelector);
                                 return;
                             }
 
@@ -129,8 +129,14 @@ class ListBundle {
 
     static initPagination() {
         document.querySelectorAll('.huh-list .ajax-pagination').forEach(function(ajaxPagination) {
+
             const list = ajaxPagination.closest('.huh-list'),
-                items = list.querySelector('.items[data-add-infinite-scroll="1"]');
+                items = list.querySelector('.items');
+
+            if (!list || !items) {
+                console.warn('Ajax pagination do not contain list or items containers.');
+                return;
+            }
 
             let ajaxLoad = {
                 loadingHtml: '<div class="loading"><span class="text">Lade...</span></div>',
@@ -168,104 +174,132 @@ class ListBundle {
             }
 
             document.addEventListener('scroll', e => {
-                if (items && ListBundle.isAtBottom(list)) {
-                    const request = new XMLHttpRequest();
-
-                    if (!items.classList.contains('loading') && ajaxPagination.querySelector('.huh-list .ajax-pagination a.next')) {
-                        request.onreadystatechange = () => {
-                            if (request.readyState === 1) {
-                                ajaxPagination.innerHTML = ajaxLoad.loadingHtml;
-                                if (!ajaxLoad.disableLiveRegion) {
-                                    items.setAttribute('aria-busy', 'true');
-                                    let screenReaderElement = items.querySelector('span.sr-only');
-                                    if (screenReaderElement) {
-                                        items.removeChild(screenReaderElement);
-                                    }
-                                }
-                                items.classList.add('loading');
-                            }
-
-                            if (request.readyState === 4 && request.status === 200) {
-                                const response = request.responseText;
-                                const parser = new DOMParser();
-                                const loadedDoc = parser.parseFromString(response, 'text/html');
-                                const loadedItems = loadedDoc.querySelectorAll('.huh-list .items[data-add-infinite-scroll="1"] .item');
-                                import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(({default: imagesLoaded}) => {
-                                    imagesLoaded(loadedItems, function(instance) {
-                                        if (true === ajaxLoad.enableScreenReaderMessage) {
-                                            let span = document.createElement('span');
-                                            span.classList.add('sr-only');
-                                            span.textContent = ajaxLoad.screenReaderMessage;
-                                            items.appendChild(span);
-                                        }
-                                        loadedItems.forEach(item => {
-                                            items.appendChild(item);
-                                        })
-                                    })
-                                    ajaxPagination.innerHTML = '';
-                                    if (loadedDoc.querySelector('.huh-list .ajax-pagination a.next')) {
-                                        ajaxPagination.appendChild(loadedDoc.querySelector('.huh-list .ajax-pagination a.next'));
-                                    }
-                                    if (items.dataset.addMasonry === "1") {
-                                        import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function() {
-                                            ListBundle.initMasonry();
-                                        });
-
-                                        return;
-                                    }
-
-                                    // remove item counters...
-                                    items.querySelectorAll('.item').forEach(item => {
-                                        item.classList.forEach(cssClass => {
-                                            if (cssClass.match(/item_\d+/g)) {
-                                                item.classList.remove(cssClass);
-                                            }
-                                        })
-                                    });
-
-                                    items.querySelectorAll('.item').forEach((item, index,nodes) => {
-                                        let itemIndex = index+1;
-                                        item.classList.remove('odd', 'even', 'first', 'last');
-                                        item.classList.add('item_'+itemIndex);
-
-                                        // odd/even
-                                        if (itemIndex % 2 === 0) {
-                                            item.classList.add('even')
-                                        } else {
-                                            item.classList.add('odd');
-                                        }
-
-                                        // add first and last
-                                        if (itemIndex === 1) {
-                                            item.classList.add('first');
-                                        }
-
-                                        if (itemIndex === nodes.length) {
-                                            item.classList.add('last');
-                                        }
-                                    });
-
-                                    list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loaded', {
-                                        bubbles: true,
-                                        detail: {
-                                            wrapper: list.querySelector('.wrapper'),
-                                            pagination: ajaxPagination,
-                                            items: items
-                                        }
-                                    }))
-
-                                    if (!ajaxLoad.disableLiveRegion) {
-                                        items.setAttribute('aria-busy', 'false');
-                                    }
-                                    items.classList.remove('loading');
-                                });
-                            }
-                        };
-                        request.open("GET", ajaxPagination.querySelector('.huh-list .ajax-pagination a.next').href, true);
-                        request.send();
-                    }
+                if (items.hasAttribute('data-add-infinite-scroll') && items.dataset.addInfiniteScroll === "1" && ListBundle.isAtBottom(list)) {
+                    loadMoreItems(e);
                 }
-            })
+            }, {passive: true});
+
+            ajaxPagination.querySelector('a.next').addEventListener('click', e => {
+                e.stopPropagation();
+                e.preventDefault();
+                loadMoreItems(e);
+            });
+
+            let loadMoreItems = (event) => {
+                const request = new XMLHttpRequest();
+
+                if (!items.classList.contains('loading') && ajaxPagination.querySelector('.huh-list .ajax-pagination a.next')) {
+                    request.onreadystatechange = () => {
+                        if (request.readyState === 1) {
+                            list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loading', {
+                                bubbles: true,
+                                detail: {
+                                    wrapper: list.querySelector('.wrapper'),
+                                    pagination: ajaxPagination,
+                                    items: items
+                                }
+                            }))
+
+                            ajaxPagination.innerHTML = ajaxLoad.loadingHtml;
+                            if (!ajaxLoad.disableLiveRegion) {
+                                items.setAttribute('aria-busy', 'true');
+                                let screenReaderElement = items.querySelector('span.sr-only');
+                                if (screenReaderElement) {
+                                    items.removeChild(screenReaderElement);
+                                }
+                            }
+                            items.classList.add('loading');
+                        }
+
+                        if (request.readyState === 4 && request.status === 200) {
+                            const response = request.responseText;
+                            const parser = new DOMParser();
+                            const loadedDoc = parser.parseFromString(response, 'text/html');
+                            const loadedItems = loadedDoc.querySelectorAll('.huh-list .items .item');
+                            import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(({default: imagesLoaded}) => {
+                                imagesLoaded(loadedItems, function(instance) {
+                                    if (true === ajaxLoad.enableScreenReaderMessage) {
+                                        let span = document.createElement('span');
+                                        span.classList.add('sr-only');
+                                        span.textContent = ajaxLoad.screenReaderMessage;
+                                        items.appendChild(span);
+                                    }
+                                    loadedItems.forEach(item => {
+                                        items.appendChild(item);
+                                    })
+                                })
+                                ajaxPagination.innerHTML = '';
+                                if (loadedDoc.querySelector('.huh-list .ajax-pagination a.next')) {
+                                    let nextButton = loadedDoc.querySelector('.huh-list .ajax-pagination a.next');
+                                    nextButton.addEventListener('click', e => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        loadMoreItems(e);
+                                    })
+                                    ajaxPagination.appendChild(nextButton);
+                                }
+                                if (items.dataset.addMasonry === "1") {
+                                    import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function() {
+                                        ListBundle.initMasonry();
+                                    });
+
+                                    return;
+                                }
+
+                                // remove item counters...
+                                items.querySelectorAll('.item').forEach(item => {
+                                    item.classList.forEach(cssClass => {
+                                        if (cssClass.match(/item_\d+/g)) {
+                                            item.classList.remove(cssClass);
+                                        }
+                                    })
+                                });
+
+                                items.querySelectorAll('.item').forEach((item, index,nodes) => {
+                                    let itemIndex = index+1;
+                                    item.classList.remove('odd', 'even', 'first', 'last');
+                                    item.classList.add('item_'+itemIndex);
+
+                                    // odd/even
+                                    if (itemIndex % 2 === 0) {
+                                        item.classList.add('even')
+                                    } else {
+                                        item.classList.add('odd');
+                                    }
+
+                                    // add first and last
+                                    if (itemIndex === 1) {
+                                        item.classList.add('first');
+                                    }
+
+                                    if (itemIndex === nodes.length) {
+                                        item.classList.add('last');
+                                    }
+                                });
+
+                                list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loaded', {
+                                    bubbles: true,
+                                    detail: {
+                                        wrapper: list.querySelector('.wrapper'),
+                                        pagination: ajaxPagination,
+                                        items: items
+                                    }
+                                }))
+
+                                if (!ajaxLoad.disableLiveRegion) {
+                                    items.setAttribute('aria-busy', 'false');
+                                }
+                                items.classList.remove('loading');
+                            });
+                        }
+                    };
+                    request.open("GET", ajaxPagination.querySelector('.huh-list .ajax-pagination a.next').href, true);
+                    request.send();
+                }
+            };
+
+
+
         });
     }
 

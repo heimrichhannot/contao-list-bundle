@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.36.0] - 2021-07-01
+
+- removed jscroll library(#9)
+
 ## [1.35.1] - 2021-06-29
 
 - added null check in preselect

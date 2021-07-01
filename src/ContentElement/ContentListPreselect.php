@@ -17,6 +17,7 @@ use Contao\System;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Model\FilterPreselectModel;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
+use HeimrichHannot\ListBundle\Asset\FrontendAsset;
 use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderForCountEvent;
 use HeimrichHannot\ListBundle\Exception\InterfaceNotImplementedException;
 use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
@@ -49,6 +50,11 @@ class ContentListPreselect extends ContentElement
      * @var FilterConfig
      */
     protected $filterConfig;
+
+    /**
+     * @var FrontendAsset
+     */
+    protected $frontendAsset;
 
     /**
      * @var ListConfigRegistry
@@ -88,6 +94,8 @@ class ContentListPreselect extends ContentElement
         $this->manager->setListConfig($this->listConfig);
         $this->manager->setModuleData($this->arrData);
 
+        $this->frontendAsset = System::getContainer()->get(FrontendAsset::class);
+
         $this->filterConfig = $this->manager->getFilterConfig();
         $this->filter = (object) $this->filterConfig->getFilter();
     }
@@ -108,6 +116,8 @@ class ContentListPreselect extends ContentElement
         if (!$this->doGenerate()) {
             return '';
         }
+
+        $this->frontendAsset->addFrontendAssets();
 
         return parent::generate();
     }

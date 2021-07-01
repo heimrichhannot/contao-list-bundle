@@ -38,7 +38,6 @@ $GLOBALS['TL_MODELS']['tl_list_config_element'] = 'HeimrichHannot\ListBundle\Mod
  */
 $GLOBALS['TL_HOOKS']['getSearchablePages'][] = ['huh.list.listener.search', 'getSearchablePages'];
 $GLOBALS['TL_HOOKS']['sqlGetFromDca']['huh_list'] = [\HeimrichHannot\ListBundle\EventListener\Contao\SqlGetFromDcaListener::class, '__invoke'];
-$GLOBALS['TL_HOOKS']['initializeSystem']['huh_list'] = [\HeimrichHannot\ListBundle\EventListener\Contao\InitializeSystemListener::class, '__invoke'];
 
 /*
  * Content elements

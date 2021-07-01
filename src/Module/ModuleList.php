@@ -19,6 +19,7 @@ use Contao\Template;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Manager\FilterManager;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
+use HeimrichHannot\ListBundle\Asset\FrontendAsset;
 use HeimrichHannot\ListBundle\Event\ListCompileEvent;
 use HeimrichHannot\ListBundle\Exception\InterfaceNotImplementedException;
 use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
@@ -71,6 +72,11 @@ class ModuleList extends Module
     protected $filter;
 
     /**
+     * @var FrontendAsset
+     */
+    protected $frontendAsset;
+
+    /**
      * ModuleList constructor.
      *
      * @param string $strColumn
@@ -105,13 +111,15 @@ class ModuleList extends Module
 
         $filterConfig = $manager->getFilterConfig();
 
-        $this->initModule($objModule, $framework, $listConfigRegistry, $filterManager, $manager, $listConfig, $filterConfig);
+        $frontendAsset = System::getContainer()->get(FrontendAsset::class);
+
+        $this->initModule($objModule, $framework, $listConfigRegistry, $filterManager, $manager, $listConfig, $filterConfig, $frontendAsset);
     }
 
     /**
      * Testable init method.
      */
-    public function initModule(ModuleModel $model, ContaoFrameworkInterface $framework, ListConfigRegistry $listConfigRegistry, FilterManager $filterManager, ListManagerInterface $listManager, ListConfigModel $listConfigModel, FilterConfig $filterConfig)
+    public function initModule(ModuleModel $model, ContaoFrameworkInterface $framework, ListConfigRegistry $listConfigRegistry, FilterManager $filterManager, ListManagerInterface $listManager, ListConfigModel $listConfigModel, FilterConfig $filterConfig, FrontendAsset $frontendAsset)
     {
         if (!$this->objModel) {
             $this->objModel = $model;
@@ -123,6 +131,7 @@ class ModuleList extends Module
         $this->listConfig = $listConfigModel;
         $this->filterConfig = $filterConfig;
         $this->filter = (object) $filterConfig->getFilter();
+        $this->frontendAsset = $frontendAsset;
     }
 
     /**
@@ -152,6 +161,8 @@ class ModuleList extends Module
         if (!$this->doGenerate()) {
             return '';
         }
+
+        $this->frontendAsset->addFrontendAssets();
 
         return parent::generate();
     }

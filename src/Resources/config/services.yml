@@ -118,8 +118,3 @@ services:
     public: true
     calls:
       - [ setEncoreFrontendAsset, [ '@?HeimrichHannot\EncoreBundle\Asset\FrontendAsset' ] ]
-
-  HeimrichHannot\ListBundle\EventListener\Contao\InitializeSystemListener:
-    autowire: true
-    autoconfigure: true
-    public: true

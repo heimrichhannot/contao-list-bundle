@@ -14,7 +14,7 @@ use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 /**
  * Class ListConfigElementData.
  *
- * @deprecated Use Use \HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface with ConfigElementData instead
+ * @deprecated Use \HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface with ConfigElementData instead
  */
 class ListConfigElementData
 {

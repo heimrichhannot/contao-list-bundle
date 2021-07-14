@@ -119,6 +119,22 @@ class ContentContainer
         }
 
         $manager->setListConfig($listConfig);
+
+        // multilingual filter?
+        $tmpLang = $GLOBALS['TL_LANGUAGE'];
+
+        if ('tl_article' === $content->ptable) {
+            if (null !== ($article = $this->modelUtil->findModelInstanceByPk('tl_article', $content->pid))) {
+                if (null !== ($page = $this->modelUtil->findModelInstanceByPk('tl_page', $article->pid))) {
+                    $page->loadDetails();
+
+                    if (null !== ($page = $this->modelUtil->findModelInstanceByPk('tl_page', $page->rootId))) {
+                        $GLOBALS['TL_LANGUAGE'] = $page->language;
+                    }
+                }
+            }
+        }
+
         $manager->getFilterConfig()->initQueryBuilder();
 
         $filterConfig = $manager->getFilterConfig();
@@ -157,6 +173,11 @@ class ContentContainer
             $data['raw'] = $item;
             $data['total'] = $total;
             $choices[$item[$pk]] = $this->twig->render($manager->getItemChoiceTemplateByName($listConfig->itemChoiceTemplate ?: 'default'), $data);
+        }
+
+        // multilingual filter?
+        if ('tl_article' === $content->ptable) {
+            $GLOBALS['TL_LANGUAGE'] = $tmpLang;
         }
 
         return $choices;

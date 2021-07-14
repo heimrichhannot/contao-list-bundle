@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.37.0] - 2021-07-14
+
+- added support for multilingual initial filter field values for list preselect
+
 ## [1.36.0] - 2021-07-01
 
 - removed jscroll library(#9)

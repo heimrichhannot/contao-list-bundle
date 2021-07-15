@@ -13,6 +13,7 @@ use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\Model;
+use Contao\System;
 use HeimrichHannot\FilterBundle\Model\FilterPreselectModel;
 use HeimrichHannot\FilterBundle\Util\FilterPreselectUtil;
 use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
@@ -128,7 +129,8 @@ class ContentContainer
                 if (null !== ($page = $this->modelUtil->findModelInstanceByPk('tl_page', $article->pid))) {
                     $page->loadDetails();
 
-                    if (null !== ($page = $this->modelUtil->findModelInstanceByPk('tl_page', $page->rootId))) {
+                    if (null !== ($page = $this->modelUtil->findModelInstanceByPk('tl_page', $page->rootId)) &&
+                        $page->language !== $GLOBALS['TL_LANGUAGE']) {
                         $GLOBALS['TL_LANGUAGE'] = $page->language;
                     }
                 }
@@ -136,6 +138,15 @@ class ContentContainer
         }
 
         $manager->getFilterConfig()->initQueryBuilder();
+
+        // multilingual filter?
+        if ('tl_article' === $content->ptable && $tmpLang !== $GLOBALS['TL_LANGUAGE']) {
+            $GLOBALS['TL_LANGUAGE'] = $tmpLang;
+
+            // reload the language files because else the following content elements would've been in the other language
+            System::loadLanguageFile('default', $tmpLang, true);
+            System::loadLanguageFile('tl_content', $tmpLang, true);
+        }
 
         $filterConfig = $manager->getFilterConfig();
         $filter = (object) $filterConfig->getFilter();
@@ -173,11 +184,6 @@ class ContentContainer
             $data['raw'] = $item;
             $data['total'] = $total;
             $choices[$item[$pk]] = $this->twig->render($manager->getItemChoiceTemplateByName($listConfig->itemChoiceTemplate ?: 'default'), $data);
-        }
-
-        // multilingual filter?
-        if ('tl_article' === $content->ptable) {
-            $GLOBALS['TL_LANGUAGE'] = $tmpLang;
         }
 
         return $choices;

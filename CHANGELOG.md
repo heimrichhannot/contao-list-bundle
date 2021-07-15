@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.37.1] - 2021-07-15
+
+- fixed support for multilingual initial filter field values for list preselect
+
 ## [1.37.0] - 2021-07-14
 
 - added support for multilingual initial filter field values for list preselect

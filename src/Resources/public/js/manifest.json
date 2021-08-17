@@ -1,4 +1,6 @@
 {
+  "bundles/heimrichhannotlistbundle/bootstrap.js": "/bundles/heimrichhannotlistbundle/bootstrap.js",
+  "bundles/heimrichhannotlistbundle/bootstrap.esm.js": "/bundles/heimrichhannotlistbundle/bootstrap.esm.js",
   "bundles/heimrichhannotlistbundle/contao-list-bundle.js": "/bundles/heimrichhannotlistbundle/contao-list-bundle.js",
   "bundles/heimrichhannotlistbundle/imagesloaded.js": "/bundles/heimrichhannotlistbundle/imagesloaded.js",
   "bundles/heimrichhannotlistbundle/masonry-layout.js": "/bundles/heimrichhannotlistbundle/masonry-layout.js"

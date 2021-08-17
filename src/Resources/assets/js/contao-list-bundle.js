@@ -34,11 +34,6 @@ class ListBundle {
     }
 
     static initModal() {
-        // only bootstrap is supported at the moment
-        if ('undefined' === typeof window.jQuery) {
-            return;
-        }
-
         const currentUrl = location.href,
             lists = document.querySelectorAll('.huh-list .items[data-open-list-items-in-modal="1"]');
 
@@ -50,16 +45,34 @@ class ListBundle {
         document.querySelectorAll('.huh-list .items[data-open-list-items-in-modal="1"]').forEach((list) => {
             const modalId = 'modal-' + list.closest('.wrapper').getAttribute('id');
 
-            window.jQuery('#' + modalId).on('hidden.bs.modal', (e) => {
-                history.pushState({
-                    modalId: modalId
-                }, '', currentUrl);
-            });
+            // bootstrap 4 and below
+            if ('undefined' !== typeof window.jQuery) {
+                window.jQuery('#' + modalId).on('hidden.bs.modal', (e) => {
+                    history.pushState({
+                        modalId: modalId
+                    }, '', currentUrl);
+                });
+            } else {
+                // bootstrap 5 and up
+                document.getElementById(modalId).addEventListener('hidden.bs.modal', function (event) {
+                    history.pushState({
+                        modalId: modalId
+                    }, '', currentUrl);
+                });
+            }
         });
 
         // catch browser back button
         addEventListener('popstate', (e) => {
-            window.jQuery('#' + e.state.modalId).modal('hide');
+            // bootstrap 4 and below
+            if ('undefined' !== typeof window.jQuery) {
+                window.jQuery('#' + e.state.modalId).modal('hide');
+            } else {
+                // bootstrap 5 and up
+                import(/* webpackChunkName: "bootstrap" */ 'bootstrap').then((bootstrap) => {
+                    bootstrap.Modal.getInstance(document.getElementById(e.state.modalId)).hide();
+                });
+            }
         });
 
         // modal links
@@ -106,7 +119,15 @@ class ListBundle {
 
                     document.getElementById(modalId).querySelector('.modal-content .modal-body').innerHTML = reader.outerHTML;
 
-                    window.jQuery('#' + modalId).modal('show');
+                    // bootstrap 4 and below
+                    if ('undefined' !== typeof window.jQuery) {
+                        window.jQuery('#' + modalId).modal('show');
+                    } else {
+                        // bootstrap 5 and up
+                        import(/* webpackChunkName: "bootstrap" */ 'bootstrap').then((bootstrap) => {
+                            bootstrap.Modal.getInstance(document.getElementById(modalId)).show();
+                        });
+                    }
 
                     history.pushState({
                         modalId: modalId
@@ -121,9 +142,8 @@ class ListBundle {
     }
 
     static isAtBottom(element) {
-        const rect = element.getBoundingClientRect();
         return (
-            rect.bottom <= (window.innerHeight || document.getElementById('main').clientHeight)
+            element.getBoundingClientRect().bottom <= (window.innerHeight || document.getElementById('main').clientHeight)
         );
     }
 
@@ -134,21 +154,21 @@ class ListBundle {
                 items = list.querySelector('.items');
 
             if (!list || !items) {
-                console.warn('Ajax pagination do not contain list or items containers.');
+                console.warn('Ajax pagination does not contain list or item containers.');
                 return;
             }
 
             let ajaxLoad = {
                 loadingHtml: '<div class="loading"><span class="text">Lade...</span></div>',
                 enableScreenReaderMessage: true,
-                screenReaderMessage: "Es wurden neue Einträge zur Liste hinzugefügt.",
+                screenReaderMessage: 'Es wurden neue Einträge zur Liste hinzugefügt.',
                 disableLiveRegion: false
             }
 
             if (ajaxPagination.hasAttribute('data-disable-live-region') && (
                 ajaxPagination.getAttribute('data-disable-live-region') === true ||
-                ajaxPagination.getAttribute('data-disable-live-region') === "1" ||
-                ajaxPagination.getAttribute('data-disable-live-region') === "true"
+                ajaxPagination.getAttribute('data-disable-live-region') === '1' ||
+                ajaxPagination.getAttribute('data-disable-live-region') === 'true'
             )) {
                 ajaxLoad.disableLiveRegion = true;
             }
@@ -201,6 +221,7 @@ class ListBundle {
                             }))
 
                             ajaxPagination.innerHTML = ajaxLoad.loadingHtml;
+
                             if (!ajaxLoad.disableLiveRegion) {
                                 items.setAttribute('aria-busy', 'true');
                                 let screenReaderElement = items.querySelector('span.sr-only');
@@ -208,14 +229,16 @@ class ListBundle {
                                     items.removeChild(screenReaderElement);
                                 }
                             }
+
                             items.classList.add('loading');
                         }
 
                         if (request.readyState === 4 && request.status === 200) {
-                            const response = request.responseText;
-                            const parser = new DOMParser();
-                            const loadedDoc = parser.parseFromString(response, 'text/html');
-                            const loadedItems = loadedDoc.querySelectorAll('.huh-list .items .item');
+                            const response = request.responseText,
+                                parser = new DOMParser(),
+                                loadedDoc = parser.parseFromString(response, 'text/html'),
+                                loadedItems = loadedDoc.querySelectorAll('.huh-list .items .item');
+
                             import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(({default: imagesLoaded}) => {
                                 imagesLoaded(loadedItems, function(instance) {
                                     if (true === ajaxLoad.enableScreenReaderMessage) {
@@ -224,20 +247,26 @@ class ListBundle {
                                         span.textContent = ajaxLoad.screenReaderMessage;
                                         items.appendChild(span);
                                     }
+
                                     loadedItems.forEach(item => {
                                         items.appendChild(item);
                                     })
-                                })
+                                });
+
                                 ajaxPagination.innerHTML = '';
+
                                 if (loadedDoc.querySelector('.huh-list .ajax-pagination a.next')) {
                                     let nextButton = loadedDoc.querySelector('.huh-list .ajax-pagination a.next');
+
                                     nextButton.addEventListener('click', e => {
                                         e.preventDefault();
                                         e.stopPropagation();
                                         loadMoreItems(e);
-                                    })
+                                    });
+
                                     ajaxPagination.appendChild(nextButton);
                                 }
+
                                 if (items.dataset.addMasonry === "1") {
                                     import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function() {
                                         ListBundle.initMasonry();
@@ -289,10 +318,12 @@ class ListBundle {
                                 if (!ajaxLoad.disableLiveRegion) {
                                     items.setAttribute('aria-busy', 'false');
                                 }
+
                                 items.classList.remove('loading');
                             });
                         }
                     };
+
                     request.open("GET", ajaxPagination.querySelector('.huh-list .ajax-pagination a.next').href, true);
                     request.send();
                 }

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.39.0] - 2021-08-17
+
+- Added: BS5 modal support for javascript
+
 ## [1.38.0] - 2021-08-17
 
 - Added: BS5 modal templates

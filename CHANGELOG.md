@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.38.0] - 2021-08-17
+
+- Added: BS5 modal templates
+
 ## [1.37.1] - 2021-07-15
 
 - fixed support for multilingual initial filter field values for list preselect

@@ -11,3 +11,5 @@ composer.json~
 composer.phar
 yarn.lock
 yarn-error.log
+.history
+*.code-workspace

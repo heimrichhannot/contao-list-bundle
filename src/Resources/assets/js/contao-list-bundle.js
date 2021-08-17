@@ -53,6 +53,11 @@ class ListBundle {
                     }, '', currentUrl);
                 });
             } else {
+                // initialize bootstrap modals
+                import(/* webpackChunkName: “bootstrap” */ 'bootstrap').then((bootstrap) => {
+                    new bootstrap.Modal(document.getElementById(modalId));
+                });
+
                 // bootstrap 5 and up
                 document.getElementById(modalId).addEventListener('hidden.bs.modal', function (event) {
                     history.pushState({

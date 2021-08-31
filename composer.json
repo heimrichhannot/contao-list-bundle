@@ -20,7 +20,7 @@
     "issues": "https://github.com/heimrichhannot/contao-list-bundle/issues"
   },
   "require": {
-    "php": "^7.1",
+    "php": "^7.1|^8.0",
     "contao/core-bundle": "^4.4",
     "heimrichhannot/contao-be_explanation-bundle": "^2.2",
     "heimrichhannot/contao-config-element-type-bundle": "^0.2",

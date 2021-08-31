@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.40.0] - 2021-08-30
+
+- Added: php8 support
+
 ## [1.39.1] - 2021-08-17
 
 - Fixed: BS5 modal support for javascript

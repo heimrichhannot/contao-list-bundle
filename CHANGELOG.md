@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.40.1] - 2021-09-01
+
+- Fixed: php8 support
+- Fixed: quotes in js
+
 ## [1.40.0] - 2021-08-30
 
 - Added: php8 support

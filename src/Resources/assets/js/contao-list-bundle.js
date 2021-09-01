@@ -54,7 +54,7 @@ class ListBundle {
                 });
             } else {
                 // initialize bootstrap modals
-                import(/* webpackChunkName: “bootstrap” */ 'bootstrap').then((bootstrap) => {
+                import(/* webpackChunkName: "bootstrap" */ 'bootstrap').then((bootstrap) => {
                     new bootstrap.Modal(document.getElementById(modalId));
                 });
 

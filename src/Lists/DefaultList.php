@@ -12,6 +12,7 @@ use Contao\Config;
 use Contao\Database;
 use Contao\Date;
 use Contao\FrontendTemplate;
+use Contao\Model;
 use Contao\StringUtil;
 use Contao\System;
 use HeimrichHannot\Blocks\BlockModuleModel;
@@ -1048,14 +1049,9 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $this->_manager->getFilterConfig()->resetData();
 
-        $filter = (object) $this->_manager->getFilterConfig()->getFilter();
         $listConfig = $this->_manager->getListConfig();
 
-        $table = $filter->dataContainer;
-
         $multilingualJumpTos = [];
-
-        $dcMultilingualActive = System::getContainer()->get('huh.utils.dca')->isDcMultilingual($table);
 
         // multilingual jumpTos
         $jumpToDetailsMultilingual = StringUtil::deserialize($listConfig->jumpToDetailsMultilingual, true);
@@ -1072,105 +1068,27 @@ class DefaultList implements ListInterface, \JsonSerializable
             return $arrPages;
         }
 
-        if (null === ($rootPage = System::getContainer()->get(ModelUtil::class)->findModelInstanceByPk('tl_page', $intRoot))) {
-            return $arrPages;
-        }
+        // support for multilingual initial filter values
+        if (0 === $intRoot) {
+            $time = time();
+            $query = "SELECT id, language, sitemapName FROM tl_page WHERE type='root' AND published='1' AND (start='' OR start<='$time') AND (stop='' OR stop>'$time')";
 
-        // switch language for multilingual (language-dependent) initial filter field values
-        $tmpLang = $GLOBALS['TL_LANGUAGE'];
-        $GLOBALS['TL_LANGUAGE'] = $rootPage->language;
+            if ($blnIsSitemap) {
+                $query .= " AND createSitemap='1' AND sitemapName!=''";
+            }
 
-        /** @var FilterQueryBuilder $queryBuilder */
-        $queryBuilder = $this->_manager->getFilterManager()->getQueryBuilder($filter->id);
+            $rootPages = Database::getInstance()->execute($query);
 
-        $fields = $table.'.* ';
-
-        if (($totalCount = $queryBuilder->select($fields)->execute()->rowCount()) < 1) {
-            return $arrPages;
-        }
-
-        $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields));
-
-        $items = $queryBuilder->execute()->fetchAll();
-
-        $GLOBALS['TL_LANGUAGE'] = $tmpLang;
-
-        if (null !== ($itemClass = $this->getItemClassByName($listConfig->item ?: 'default'))) {
-            $reflection = new \ReflectionClass($itemClass);
-
-            if (!$reflection->implementsInterface(ItemInterface::class)) {
+            // Return if there are no pages
+            if ($rootPages->numRows < 1) {
                 return $arrPages;
             }
-        }
 
-        foreach ($items as $item) {
-            /** @var ItemInterface $result */
-            $result = new $itemClass($this->_manager, $item, false);
-
-            // id or alias
-            if (null === ($idOrAlias = $result->generateIdOrAlias($result, $listConfig))) {
-                continue;
+            while ($rootPages->next()) {
+                $arrPages = $this->computeSearchablePages($listConfig, $arrRoot, $arrPages, $rootPages->id, $blnIsSitemap);
             }
-
-            $urls = [];
-
-            if (!$intRoot || $intRoot > 0 && \in_array($this->getJumpTo(), $arrRoot)) {
-                $result->setIdOrAlias($idOrAlias);
-                $result->addDetailsUrl($idOrAlias, $result, $listConfig, true);
-
-                $url = $result->getDetailsUrl($blnIsSitemap);
-
-                if (null !== $url && !empty($url)) {
-                    $urls[] = $url;
-                }
-            }
-
-            if (!empty($jumpToDetailsMultilingual)) {
-                $tmpLang = $GLOBALS['TL_LANGUAGE'];
-
-                foreach ($jumpToDetailsMultilingual as $data) {
-                    if (!$data['language'] || !$data['jumpTo'] || $intRoot > 0 && !\in_array($data['jumpTo'], $arrRoot)) {
-                        continue;
-                    }
-
-                    $GLOBALS['TL_LANGUAGE'] = $data['language'];
-
-                    // switch the alias
-                    if ($dcMultilingualActive) {
-                        $query = "SELECT $table.$listConfig->aliasField FROM $table WHERE $table.langPid=? AND $table.language=?";
-
-                        if ($this->isDcMultilingualUtilsActive($listConfig, [], $table)) {
-                            $time = Date::floorToMinute();
-
-                            $query .= " AND $table.langPublished=1 AND ($table.langStart = '' OR $table.langStart <= $time) AND ($table.langStop = '' OR $table.langStop > ".($time + 60).')';
-                        }
-
-                        $translatedResult = Database::getInstance()->prepare($query)->limit(1)->execute($result->getRawValue('id'), $data['language']);
-
-                        if ($translatedResult->numRows < 1) {
-                            continue;
-                        }
-
-                        $result->{$listConfig->aliasField} = $translatedResult->{$listConfig->aliasField};
-
-                        if (null === ($idOrAlias = $result->generateIdOrAlias($result, $listConfig))) {
-                            continue;
-                        }
-                    }
-
-                    $result->addDetailsUrl($idOrAlias, $result, $listConfig, true);
-
-                    $url = $result->getDetailsUrl($blnIsSitemap);
-
-                    if (null !== $url && !empty($url)) {
-                        $urls[] = $url;
-                    }
-                }
-
-                $GLOBALS['TL_LANGUAGE'] = $tmpLang;
-            }
-
-            $arrPages = array_unique(array_merge($arrPages, $urls));
+        } else {
+            $arrPages = $this->computeSearchablePages($listConfig, $arrRoot, $arrPages, $intRoot, $blnIsSitemap);
         }
 
         return $arrPages;
@@ -1296,5 +1214,115 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function getListContextVariables(): array
     {
         return array_column(StringUtil::deserialize($this->_manager->getListConfig()->listContextVariables, true), 'value', 'key');
+    }
+
+    protected function computeSearchablePages(Model $listConfig, array $arrRoot, array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false)
+    {
+        $filter = (object) $this->_manager->getFilterConfig()->getFilter();
+        $table = $filter->dataContainer;
+        $dcMultilingualActive = System::getContainer()->get('huh.utils.dca')->isDcMultilingual($table);
+
+        if (null === ($rootPage = System::getContainer()->get(ModelUtil::class)->findModelInstanceByPk('tl_page', $intRoot))) {
+            return $arrPages;
+        }
+
+        // switch language for multilingual (language-dependent) initial filter field values
+        $tmpLang = $GLOBALS['TL_LANGUAGE'];
+        $GLOBALS['TL_LANGUAGE'] = $rootPage->language;
+
+        /** @var FilterQueryBuilder $queryBuilder */
+        $queryBuilder = $this->_manager->getFilterManager()->getQueryBuilder($filter->id);
+
+        $fields = $table.'.* ';
+
+        if (($totalCount = $queryBuilder->select($fields)->execute()->rowCount()) < 1) {
+            return $arrPages;
+        }
+
+        $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields));
+
+        $items = $queryBuilder->execute()->fetchAll();
+
+        $GLOBALS['TL_LANGUAGE'] = $tmpLang;
+
+        if (null !== ($itemClass = $this->getItemClassByName($listConfig->item ?: 'default'))) {
+            $reflection = new \ReflectionClass($itemClass);
+
+            if (!$reflection->implementsInterface(ItemInterface::class)) {
+                return $arrPages;
+            }
+        }
+
+        foreach ($items as $item) {
+            /** @var ItemInterface $result */
+            $result = new $itemClass($this->_manager, $item, false);
+
+            // id or alias
+            if (null === ($idOrAlias = $result->generateIdOrAlias($result, $listConfig))) {
+                continue;
+            }
+
+            $urls = [];
+
+            if (!$intRoot || $intRoot > 0 && \in_array($this->getJumpTo(), $arrRoot)) {
+                $result->setIdOrAlias($idOrAlias);
+                $result->addDetailsUrl($idOrAlias, $result, $listConfig, true);
+
+                $url = $result->getDetailsUrl($blnIsSitemap);
+
+                if (null !== $url && !empty($url)) {
+                    $urls[] = $url;
+                }
+            }
+
+            if (!empty($jumpToDetailsMultilingual)) {
+                $tmpLang = $GLOBALS['TL_LANGUAGE'];
+
+                foreach ($jumpToDetailsMultilingual as $data) {
+                    if (!$data['language'] || !$data['jumpTo'] || $intRoot > 0 && !\in_array($data['jumpTo'], $arrRoot)) {
+                        continue;
+                    }
+
+                    $GLOBALS['TL_LANGUAGE'] = $data['language'];
+
+                    // switch the alias
+                    if ($dcMultilingualActive) {
+                        $query = "SELECT $table.$listConfig->aliasField FROM $table WHERE $table.langPid=? AND $table.language=?";
+
+                        if ($this->isDcMultilingualUtilsActive($listConfig, [], $table)) {
+                            $time = Date::floorToMinute();
+
+                            $query .= " AND $table.langPublished=1 AND ($table.langStart = '' OR $table.langStart <= $time) AND ($table.langStop = '' OR $table.langStop > ".($time + 60).')';
+                        }
+
+                        $translatedResult = Database::getInstance()->prepare($query)->limit(1)->execute($result->getRawValue('id'), $data['language']);
+
+                        if ($translatedResult->numRows < 1) {
+                            continue;
+                        }
+
+                        $result->{$listConfig->aliasField} = $translatedResult->{$listConfig->aliasField};
+
+                        if (null === ($idOrAlias = $result->generateIdOrAlias($result, $listConfig))) {
+                            continue;
+                        }
+                    }
+
+                    $result->addDetailsUrl($idOrAlias, $result, $listConfig, true);
+
+                    $url = $result->getDetailsUrl($blnIsSitemap);
+
+                    if (null !== $url && !empty($url)) {
+                        $urls[] = $url;
+                    }
+                }
+
+                $GLOBALS['TL_LANGUAGE'] = $tmpLang;
+            }
+
+            $arrPages = array_unique(array_merge($arrPages, $urls));
+        }
+
+        return $arrPages;
     }
 }

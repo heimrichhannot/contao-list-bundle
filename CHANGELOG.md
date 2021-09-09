@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.40.3] - 2021-09-03
+
+- Fixed: wrong scope in ajax pagination (case: multiple lists on one page)
+
 ## [1.40.2] - 2021-09-03
 
 - Fixed: searchable pages generation for empty `$intRoot` parameter

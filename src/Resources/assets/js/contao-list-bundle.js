@@ -242,7 +242,7 @@ class ListBundle {
                             const response = request.responseText,
                                 parser = new DOMParser(),
                                 loadedDoc = parser.parseFromString(response, 'text/html'),
-                                loadedItems = loadedDoc.querySelectorAll('.huh-list .items .item');
+                                loadedItems = loadedDoc.querySelectorAll('.huh-list #' + list.querySelector('.wrapper').getAttribute('id') + ' .items .item');
 
                             import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(({default: imagesLoaded}) => {
                                 imagesLoaded(loadedItems, function(instance) {

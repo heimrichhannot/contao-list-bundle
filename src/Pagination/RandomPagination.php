@@ -64,4 +64,9 @@ class RandomPagination extends Pagination
 
         return $url;
     }
+
+    public function getTemplate(): Template
+    {
+        return $this->objTemplate;
+    }
 }

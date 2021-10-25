@@ -103,6 +103,11 @@ class DefaultList implements ListInterface, \JsonSerializable
     protected $_pagination;
 
     /**
+     * @var array
+     */
+    private $_paginationData;
+
+    /**
      * @var bool
      */
     protected $_showNoItemsText;
@@ -612,6 +617,7 @@ class DefaultList implements ListInterface, \JsonSerializable
             }
 
             $this->setPagination($pagination->generate("\n  "));
+            $this->setPaginationData($pagination->getTemplate()->getData());
         }
 
         return [$offset, $limit];
@@ -948,6 +954,7 @@ class DefaultList implements ListInterface, \JsonSerializable
     {
         $this->_pagination = $pagination;
     }
+
 
     /**
      * @return bool
@@ -1324,5 +1331,21 @@ class DefaultList implements ListInterface, \JsonSerializable
         }
 
         return $arrPages;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getPaginationData(): ?array
+    {
+        return $this->_paginationData;
+    }
+
+    /**
+     * @param array $paginationData
+     */
+    public function setPaginationData(array $paginationData): void
+    {
+        $this->_paginationData = $paginationData;
     }
 }

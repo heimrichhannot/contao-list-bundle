@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.41.0] - 2021-11-25
+- Added: paginationData to DefaultList
+- Added: RandomPagination::getTemplate()
+
 ## [1.40.3] - 2021-09-03
 
 - Fixed: wrong scope in ajax pagination (case: multiple lists on one page)

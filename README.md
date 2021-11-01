@@ -30,7 +30,7 @@ Recommendations:
 
 ### Usage
 
-**HINT: You can do the following steps for a basic list setup also in an interactive command. Simply run `vendor/bin/contao-console huh-list:make` in your contao root.**
+> HINT: You can do the following steps for a basic list setup also in an interactive command. Simply run `vendor/bin/contao-console huh-list:make` in your contao root.
 
 1. Setup a filter (see [Filter Bundle](https://github.com/heimrichhannot/contao-filter-bundle) setup)
 1. Create a list config (System -> List config)

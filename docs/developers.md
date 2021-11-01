@@ -14,6 +14,7 @@ huh.list.event.item_before_render                  | ListBeforeRenderItemEvent
 huh.list.event.list_compile                        | ListCompileEvent
 huh.list.event.list_modify_query_builder           | ListModifyQueryBuilderEvent
 huh.list.event.list_modify_query_builder_for_count | ListModifyQueryBuilderForCountEvent
+FQCN of event class | ListBeforeApplyConfigElementsEvent | ALlow to customize list configs elements before applying to an item (add, remove or modify). 
 
 ## JavaScript Events
 

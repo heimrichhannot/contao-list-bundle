@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.41.0] - 2021-11-25
+## [1.42.0] - 2021-11-01
+- Added: ListBeforeApplyConfigElementsEvent
+- Fixed: formatted return values of config element types not correctly handled
+
+## [1.41.0] - 2021-10-25
 - Added: paginationData to DefaultList
 - Added: RandomPagination::getTemplate()
 

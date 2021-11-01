@@ -392,7 +392,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
                         switch ($result->getType()) {
                             case ConfigElementResult::TYPE_FORMATTED_VALUE:
-                                $this->setFormattedValue($listConfigElement->templateVariable, $result->getValue());
+                                $this->setFormattedValue($listConfigElement->templateVariable, $result->getValue(), true);
 
                                 break;
 

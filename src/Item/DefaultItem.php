@@ -19,6 +19,7 @@ use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementResult
 use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\ConfigElementType\ConfigElementType;
 use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementData;
+use HeimrichHannot\ListBundle\Event\ListBeforeApplyConfigElementsEvent;
 use HeimrichHannot\ListBundle\Event\ListBeforeRenderItemEvent;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
@@ -245,35 +246,40 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
     /**
      * {@inheritdoc}
+     *
+     * @param bool $formatted Set to true if the value is already formatted and need not further processing.
      */
-    public function setFormattedValue(string $name, $value): void
+
+    public function setFormattedValue(string $name, $value, bool $formatted = false): void
     {
         // do not format values in back end for performance reasons (sitemap…)
         if (System::getContainer()->get('huh.utils.container')->isBackend()) {
             return;
         }
 
-        $dca = &$GLOBALS['TL_DCA'][$this->getDataContainer()];
+        if (!$formatted) {
+            $dca = &$GLOBALS['TL_DCA'][$this->getDataContainer()];
 
-        if (!$this->dc) {
-            $this->dc = DC_Table_Utils::createFromModelData($this->getRaw(), $this->getDataContainer());
-        }
+            if (!$this->dc) {
+                $this->dc = DC_Table_Utils::createFromModelData($this->getRaw(), $this->getDataContainer());
+            }
 
-        $fields = $this->getManager()->getListConfig()->limitFormattedFields ? StringUtil::deserialize($this->getManager()->getListConfig()->formattedFields, true) : (isset($dca['fields']) && \is_array($dca['fields']) ? array_keys($dca['fields']) : []);
+            $fields = $this->getManager()->getListConfig()->limitFormattedFields ? StringUtil::deserialize($this->getManager()->getListConfig()->formattedFields, true) : (isset($dca['fields']) && \is_array($dca['fields']) ? array_keys($dca['fields']) : []);
 
-        if (\in_array($name, $fields)) {
-            $this->dc->field = $name;
+            if (\in_array($name, $fields)) {
+                $this->dc->field = $name;
 
-            $value = $this->_manager->getFormUtil()->prepareSpecialValueForOutput($name, $value, $this->dc);
+                $value = $this->_manager->getFormUtil()->prepareSpecialValueForOutput($name, $value, $this->dc);
 
-            $value = Controller::replaceInsertTags($value);
+                $value = Controller::replaceInsertTags($value);
 
-            // anti-xss: escape everything besides some tags
-            $value = $this->_manager->getFormUtil()->escapeAllHtmlEntities($this->getDataContainer(), $name, $value);
+                // anti-xss: escape everything besides some tags
+                $value = $this->_manager->getFormUtil()->escapeAllHtmlEntities($this->getDataContainer(), $name, $value);
 
-            // overwrite existing property with formatted value
-            if (property_exists($this, $name)) {
-                $this->{$name} = $value;
+                // overwrite existing property with formatted value
+                if (property_exists($this, $name)) {
+                    $this->{$name} = $value;
+                }
             }
         }
 
@@ -366,8 +372,16 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
         // add list config element data
         /** @var ListConfigElementModel[] $listConfigElements */
-        if (null !== ($listConfigElements = $this->_manager->getListConfigElementRegistry()->findBy(['tl_list_config_element.pid=?'], [$listConfig->rootId]))) {
-            foreach ($listConfigElements as $listConfigElement) {
+        $listConfigElements = $this->_manager->getListConfigElementRegistry()->findBy(['tl_list_config_element.pid=?'], [$listConfig->rootId]);
+
+        /** @noinspection PhpParamsInspection */
+        $event = $this->_dispatcher->dispatch(
+            ListBeforeApplyConfigElementsEvent::class,
+            new ListBeforeApplyConfigElementsEvent($listConfigElements, $listConfig, $this)
+        );
+
+        if (null !== $event->getListConfigElements()) {
+            foreach ($event->getListConfigElements() as $listConfigElement) {
                 // save the moduleData in order to restore it after the processing of the config element since it might
                 // have rendered a list itself and hence changed the list config (singleton issue...)
                 $moduleData = $this->getManager()->getModuleData();

@@ -370,6 +370,11 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         $listConfig = $this->_manager->getListConfig();
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
 
+        if (System::getContainer()->getParameter('kernel.debug')) {
+            $stopwatch = System::getContainer()->get('debug.stopwatch');
+            $stopwatch->start('huh.list.item.parse (ID '.$listConfig->id.')');
+        }
+
         // add list config element data
         /** @var ListConfigElementModel[] $listConfigElements */
         $listConfigElements = $this->_manager->getListConfigElementRegistry()->findBy(['tl_list_config_element.pid=?'], [$listConfig->rootId]);
@@ -447,6 +452,10 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
         if (Config::get('debugMode')) {
             $buffer = "\n<!-- LIST TEMPLATE START: $templateName -->\n$buffer\n<!-- LIST TEMPLATE END: $templateName -->\n";
+        }
+
+        if (isset($stopwatch)) {
+            $stopwatch->stop('huh.list.item.parse (ID '.$listConfig->id.')');
         }
 
         return $buffer;

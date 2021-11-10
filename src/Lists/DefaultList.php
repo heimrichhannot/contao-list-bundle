@@ -187,8 +187,14 @@ class DefaultList implements ListInterface, \JsonSerializable
 
     public function parse(string $listTemplate = null, string $itemTemplate = null, array $data = []): ?string
     {
-        $isSubmitted = $this->_manager->getFilterConfig()->hasData();
         $listConfig = $this->_manager->getListConfig();
+
+        if (System::getContainer()->getParameter('kernel.debug')) {
+            $stopwatch = System::getContainer()->get('debug.stopwatch');
+            $stopwatch->start('huh.list.parse (ID '.$listConfig->id.')');
+        }
+
+        $isSubmitted = $this->_manager->getFilterConfig()->hasData();
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
         $this->_filterConfig = $this->_manager->getFilterConfig();
 
@@ -370,6 +376,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields));
 
         if ($isSubmitted || $listConfig->showInitialResults) {
+
             $items = $queryBuilder->execute()->fetchAll();
 
             // add fields without sql key in DCA (could have a value by load_callback)
@@ -401,6 +408,10 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         if (Config::get('debugMode')) {
             $buffer = "\n<!-- LIST TEMPLATE START: $listTemplate -->\n$buffer\n<!-- LIST TEMPLATE END: $listTemplate -->\n";
+        }
+
+        if (isset($stopwatch)) {
+            $stopwatch->stop('huh.list.parse (ID '.$listConfig->id.')');
         }
 
         return $buffer;
@@ -480,13 +491,16 @@ class DefaultList implements ListInterface, \JsonSerializable
             $cssClass = 'item item_'.$count.$first.$last.$oddEven;
 
             if (null !== ($itemClass = $this->getItemClassByName($listConfig->item ?: 'default'))) {
-                $reflection = new \ReflectionClass($itemClass);
 
-                if (!$reflection->implementsInterface(ItemInterface::class)) {
+                $interfaces = class_implements($itemClass);
+                if (false === $interfaces) {
+                    throw new \Exception("Class ".$itemClass." does not exist!");
+                }
+                if (!isset($interfaces[ItemInterface::class])) {
                     throw new \Exception(sprintf('Item class %s must implement %s', $itemClass, ItemInterface::class));
                 }
 
-                if (!$reflection->implementsInterface(\JsonSerializable::class)) {
+                if (!isset($interfaces[\JsonSerializable::class])) {
                     throw new \Exception(sprintf('Item class %s must implement %s', $itemClass, \JsonSerializable::class));
                 }
 

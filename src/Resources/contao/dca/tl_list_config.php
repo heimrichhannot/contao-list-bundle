@@ -6,6 +6,8 @@
  * @license LGPL-3.0-or-later
  */
 
+use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
+
 $GLOBALS['TL_DCA']['tl_list_config'] = [
     'config' => [
         'dataContainer' => 'Table',
@@ -488,9 +490,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'exclude' => true,
             'inputType' => 'select',
             'options_callback' => function (Contao\DataContainer $dc) {
-                return System::getContainer()->get('huh.utils.choice.twig_template')->getCachedChoices([
-                    'list_modal_',
-                ]);
+                return System::getContainer()->get(TwigTemplateLocator::class)->getTemplateGroup('list_modal_');
             },
             'eval' => ['tl_class' => 'long clr', 'includeBlankOption' => true, 'chosen' => true],
             'sql' => "varchar(128) NOT NULL default ''",

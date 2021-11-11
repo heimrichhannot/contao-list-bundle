@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased] - 2021-11-10
 - Added: stopwatches for symfony debug bar (huh.list.*)
 - Changed: small performance enhancement
+- Fixed: replaced a template util leftover with twig support bundle
 
 ## [1.42.0] - 2021-11-01
 - Added: ListBeforeApplyConfigElementsEvent

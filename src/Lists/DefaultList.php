@@ -103,11 +103,6 @@ class DefaultList implements ListInterface, \JsonSerializable
     protected $_pagination;
 
     /**
-     * @var array
-     */
-    private $_paginationData;
-
-    /**
      * @var bool
      */
     protected $_showNoItemsText;
@@ -175,6 +170,11 @@ class DefaultList implements ListInterface, \JsonSerializable
      * @var bool
      */
     protected $_addDetails;
+
+    /**
+     * @var array
+     */
+    private $_paginationData;
 
     /**
      * Constructor.
@@ -358,7 +358,8 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->setShowInitialResults($listConfig->showInitialResults);
 
         if ($isSubmitted || $listConfig->showInitialResults) {
-            $totalCount = $queryBuilder->select($event->getFields())->execute()->rowCount();
+            $totalCount = $queryBuilder->select($filter->dataContainer.'.id')->execute()->rowCount();
+            $queryBuilder->select($event->getFields());
         }
 
         // item count text
@@ -376,7 +377,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields));
 
         if ($isSubmitted || $listConfig->showInitialResults) {
-
             $items = $queryBuilder->execute()->fetchAll();
 
             // add fields without sql key in DCA (could have a value by load_callback)
@@ -491,11 +491,12 @@ class DefaultList implements ListInterface, \JsonSerializable
             $cssClass = 'item item_'.$count.$first.$last.$oddEven;
 
             if (null !== ($itemClass = $this->getItemClassByName($listConfig->item ?: 'default'))) {
-
                 $interfaces = class_implements($itemClass);
+
                 if (false === $interfaces) {
-                    throw new \Exception("Class ".$itemClass." does not exist!");
+                    throw new \Exception('Class '.$itemClass.' does not exist!');
                 }
+
                 if (!isset($interfaces[ItemInterface::class])) {
                     throw new \Exception(sprintf('Item class %s must implement %s', $itemClass, ItemInterface::class));
                 }
@@ -969,7 +970,6 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->_pagination = $pagination;
     }
 
-
     /**
      * @return bool
      */
@@ -1237,6 +1237,16 @@ class DefaultList implements ListInterface, \JsonSerializable
         return array_column(StringUtil::deserialize($this->_manager->getListConfig()->listContextVariables, true), 'value', 'key');
     }
 
+    public function getPaginationData(): ?array
+    {
+        return $this->_paginationData;
+    }
+
+    public function setPaginationData(array $paginationData): void
+    {
+        $this->_paginationData = $paginationData;
+    }
+
     protected function computeSearchablePages(Model $listConfig, array $arrRoot, array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false)
     {
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
@@ -1345,21 +1355,5 @@ class DefaultList implements ListInterface, \JsonSerializable
         }
 
         return $arrPages;
-    }
-
-    /**
-     * @return array|null
-     */
-    public function getPaginationData(): ?array
-    {
-        return $this->_paginationData;
-    }
-
-    /**
-     * @param array $paginationData
-     */
-    public function setPaginationData(array $paginationData): void
-    {
-        $this->_paginationData = $paginationData;
     }
 }

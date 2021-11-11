@@ -25,15 +25,21 @@ class ListConfigurationFactory
         $this->dcaUtil = $dcaUtil;
     }
 
-    public function createConfiguration($idOrAlias): ListConfiguration
+    public function createConfiguration($idOrAlias, ListConfigurationFactoryOptions $options = null): ListConfiguration
     {
         if (is_int($idOrAlias)) {
-            return $this->createConfigurationFromModel($idOrAlias);
+            $configuration = $this->createConfigurationFromModel($idOrAlias);
         } elseif (is_string($idOrAlias)) {
-            return $this->createConfigurationFromConfig($idOrAlias);
+            $configuration = $this->createConfigurationFromConfig($idOrAlias);
         } else {
             throw new InvalidArgumentException('Parameter $idOrAlias must be of type int or string.');
         }
+
+        if ($options->getParentTable() && $options->getParentId()) {
+            $configuration->setParent($this->modelUtil->findModelInstanceByPk($options->getParentTable(), $options->getParentId()));
+        }
+
+        return $configuration;
     }
 
     private function createConfigurationFromModel(int $id): ListConfiguration
@@ -44,6 +50,7 @@ class ListConfigurationFactory
         }
 
         $configuration = new ListConfiguration();
+        $configuration->setSource($listConfigModel);
         $configuration->setFilter((int)$listConfigModel->filter);
         $configuration->setShowInitialResults((bool)$listConfigModel->showInitialResults);
 
@@ -52,7 +59,8 @@ class ListConfigurationFactory
 
     private function createConfigurationFromConfig(string $alias): ListConfiguration
     {
-        return new ListConfiguration();
+        $configuration = new ListConfiguration();
+        return $configuration;
     }
 
     public function getListConfigModel(int $listConfigId): ?ListConfigModel

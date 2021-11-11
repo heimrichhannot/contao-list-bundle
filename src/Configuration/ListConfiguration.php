@@ -2,6 +2,9 @@
 
 namespace HeimrichHannot\ListBundle\Configuration;
 
+use Contao\Model;
+use HeimrichHannot\ListBundle\Model\ListConfigModel;
+
 class ListConfiguration
 {
     /** @var int */
@@ -9,6 +12,12 @@ class ListConfiguration
 
     /** @var bool */
     private $showInitialResults;
+
+    /** @var ListConfigModel|array */
+    private $source;
+
+    /** @var Model|null */
+    private $parent;
 
     /**
      * @return int
@@ -46,5 +55,42 @@ class ListConfiguration
         return $this;
     }
 
+    /**
+     * Return the list config source. This may be the ListConfigModel or
+     * the configuration array.
+     *
+     * @return array|ListConfigModel
+     */
+    public function getSource()
+    {
+        return $this->source;
+    }
 
+    /**
+     * @param array|ListConfigModel $source
+     * @return ListConfiguration
+     */
+    public function setSource($source)
+    {
+        $this->source = $source;
+        return $this;
+    }
+
+    /**
+     * @return Model|null
+     */
+    public function getParent(): ?Model
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param Model|null $parent
+     * @return ListConfiguration
+     */
+    public function setParent(?Model $parent): ListConfiguration
+    {
+        $this->parent = $parent;
+        return $this;
+    }
 }

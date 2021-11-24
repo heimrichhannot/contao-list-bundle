@@ -122,7 +122,8 @@ class ListBundle {
                         return;
                     }
 
-                    document.getElementById(modalId).querySelector('.modal-content .modal-body').innerHTML = reader.outerHTML;
+                    let modalElement = document.getElementById(modalId);
+                    modalElement.querySelector('.modal-content .modal-body').innerHTML = reader.outerHTML;
 
                     // bootstrap 4 and below
                     if ('undefined' !== typeof window.jQuery) {
@@ -130,9 +131,16 @@ class ListBundle {
                     } else {
                         // bootstrap 5 and up
                         import(/* webpackChunkName: "bootstrap" */ 'bootstrap').then((bootstrap) => {
-                            bootstrap.Modal.getInstance(document.getElementById(modalId)).show();
+                            bootstrap.Modal.getInstance(modalElement).show();
                         });
                     }
+
+                    // console.log(item);
+
+                    item.dispatchEvent(new CustomEvent('huh.list.modal_show', {bubbles: true, detail: {
+                        modalElement: modalElement,
+                        modalId: modalId
+                    }}));
 
                     history.pushState({
                         modalId: modalId

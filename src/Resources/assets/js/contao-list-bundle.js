@@ -135,8 +135,6 @@ class ListBundle {
                         });
                     }
 
-                    // console.log(item);
-
                     item.dispatchEvent(new CustomEvent('huh.list.modal_show', {bubbles: true, detail: {
                         modalElement: modalElement,
                         modalId: modalId

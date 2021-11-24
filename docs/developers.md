@@ -14,7 +14,7 @@ huh.list.event.item_before_render                  | ListBeforeRenderItemEvent
 huh.list.event.list_compile                        | ListCompileEvent
 huh.list.event.list_modify_query_builder           | ListModifyQueryBuilderEvent
 huh.list.event.list_modify_query_builder_for_count | ListModifyQueryBuilderForCountEvent
-FQCN of event class | ListBeforeApplyConfigElementsEvent | ALlow to customize list configs elements before applying to an item (add, remove or modify). 
+FQCN of event class | ListBeforeApplyConfigElementsEvent | Allow to customize list configs elements before applying to an item (add, remove or modify). 
 
 ## JavaScript Events
 
@@ -23,6 +23,7 @@ Event | Description
 huh.list.list_update_complete | Is dispatched after the list was asynchronous updated through filter bundle. 
 huh.list.ajax-pagination-loading | Is dispatched when ajax page loading is triggerd.
 huh.list.ajax-pagination-loaded | Is dispatched when ajax page loading finished.
+huh.list.modal_show | Is dispatched before a modal is opened and contains the modal element and the modal css id.
 
 ## Create custom list config element types
   

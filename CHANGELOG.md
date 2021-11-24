@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.44.0] - 2021-11-24
+- Added: modal show javascript event
+
 ## [1.43.0] - 2021-11-11
 
 - Added: stopwatches for symfony debug bar (huh.list.*)

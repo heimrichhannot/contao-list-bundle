@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.44.1] - 2021-11-25
+- Fixed: response javascript not evaluated on modal open
+
 ## [1.44.0] - 2021-11-24
 - Added: modal show javascript event
 

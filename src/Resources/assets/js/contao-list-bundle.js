@@ -125,6 +125,10 @@ class ListBundle {
                     let modalElement = document.getElementById(modalId);
                     modalElement.querySelector('.modal-content .modal-body').innerHTML = reader.outerHTML;
 
+                    modalElement.querySelectorAll('.modal-content .modal-body script').forEach(function(element){
+                        window.eval(element.innerHTML || element.innerText);
+                    });
+
                     // bootstrap 4 and below
                     if ('undefined' !== typeof window.jQuery) {
                         window.jQuery('#' + modalId).modal('show');

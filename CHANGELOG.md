@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.45.0] - 2021-11-25
+- Added: modal link clicked js event
+
 ## [1.44.2] - 2021-11-25
 - Changed: enhanced modal javascript evaluation code
 

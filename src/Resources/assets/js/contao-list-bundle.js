@@ -125,8 +125,12 @@ class ListBundle {
                     let modalElement = document.getElementById(modalId);
                     modalElement.querySelector('.modal-content .modal-body').innerHTML = reader.outerHTML;
 
-                    modalElement.querySelectorAll('.modal-content .modal-body script').forEach(function(element){
-                        window.eval(element.innerHTML || element.innerText);
+                    let head = document.getElementsByTagName("head")[0] || document.documentElement;
+                    modalElement.querySelectorAll('.modal-content .modal-body script').forEach(function(element) {
+                        let script = document.createElement("script");
+                        Array.from(element.attributes).forEach( attr => script.setAttribute(attr.name, attr.value));
+                        script.appendChild(document.createTextNode(element.innerHTML || element.innerText));
+                        head.insertBefore(script, head.firstChild);
                     });
 
                     // bootstrap 4 and below

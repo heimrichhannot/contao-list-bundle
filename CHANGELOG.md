@@ -2,9 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2021-11-10
+## [1.46.0] - 2021-11-30
+- Added: modal load error js event
+
+## [1.45.0] - 2021-11-25
+- Added: modal link clicked js event
+
+## [1.44.2] - 2021-11-25
+- Changed: enhanced modal javascript evaluation code
+
+## [1.44.1] - 2021-11-25
+- Fixed: response javascript not evaluated on modal open
+
+## [1.44.0] - 2021-11-24
+- Added: modal show javascript event
+
+## [1.43.0] - 2021-11-11
+
 - Added: stopwatches for symfony debug bar (huh.list.*)
 - Changed: small performance enhancement
+- Fixed: replaced a template util leftover with twig support bundle
+- Fixed: performance optimization for counting items
 
 ## [1.42.0] - 2021-11-01
 - Added: ListBeforeApplyConfigElementsEvent

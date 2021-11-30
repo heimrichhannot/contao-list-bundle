@@ -14,7 +14,7 @@ huh.list.event.item_before_render                  | ListBeforeRenderItemEvent
 huh.list.event.list_compile                        | ListCompileEvent
 huh.list.event.list_modify_query_builder           | ListModifyQueryBuilderEvent
 huh.list.event.list_modify_query_builder_for_count | ListModifyQueryBuilderForCountEvent
-FQCN of event class | ListBeforeApplyConfigElementsEvent | ALlow to customize list configs elements before applying to an item (add, remove or modify). 
+FQCN of event class | ListBeforeApplyConfigElementsEvent | Allow to customize list configs elements before applying to an item (add, remove or modify). 
 
 ## JavaScript Events
 
@@ -23,6 +23,9 @@ Event | Description
 huh.list.list_update_complete | Is dispatched after the list was asynchronous updated through filter bundle. 
 huh.list.ajax-pagination-loading | Is dispatched when ajax page loading is triggerd.
 huh.list.ajax-pagination-loaded | Is dispatched when ajax page loading finished.
+huh.list.modal_show | Is dispatched before a modal is opened and contains the modal element (`event.detail.modalElement`) and the modal css id (`event.detail.modalId`).
+huh.list.modal_link_clicked | Is dispatched when the modal link is clicked. Passes the link element (`event.detail.linkElement`). Allows to stop opening the modal (set `event.detail.openModal` to false) or delay the opening of the modal (set `event.detail.timeout` in milliseconds).
+huh.list.modal_load_error | Is dispatched when the modal ajax request fails. Passes status code (`event.detail.statusCode`), status text (`event.detail.statusText`), response (`event.detail.response`), respnse text (`event.detail.responseText`) and response url (`event.detail.url`).
 
 ## Create custom list config element types
   

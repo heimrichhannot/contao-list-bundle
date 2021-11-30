@@ -35,6 +35,7 @@ Recommendations:
 1. Setup a filter (see [Filter Bundle](https://github.com/heimrichhannot/contao-filter-bundle) setup)
 1. Create a list config (System -> List config)
     * To add list elements like images, videos, slider etc, add list config elements (see Concepts -> List config elements for explanation)
+    * Recommendation: for better performance, check "Limit formatted fields" in your list configuration and select only the fields you really need to have formatted
 1. Create a list frontend module and output it, where you like it
 
 ## Concepts

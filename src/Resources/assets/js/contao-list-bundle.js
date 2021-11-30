@@ -82,67 +82,118 @@ class ListBundle {
 
         // modal links
         utilsBundle.event.addDynamicEventListener('click', '.huh-list .items[data-open-list-items-in-modal="1"] .item .details.modal-link', function(item, event) {
+
+            let modalLinkClicked = new CustomEvent('huh.list.modal_link_clicked', {
+                bubbles: true,
+                detail: {
+                    linkElement: item,
+                    timeout: 0,
+                    openModal: true,
+                },
+            });
+
+            item.dispatchEvent(modalLinkClicked);
+
+            if (false === modalLinkClicked.detail.openModal) {
+                return;
+            }
+
             event.preventDefault();
 
-            utilsBundle.ajax.get(item.getAttribute('href'), {}, {
-                onSuccess: (request) => {
-                    const response = document.createElement('div'),
-                        itemsWrapper = item.closest('.items'),
-                        readerType = itemsWrapper.getAttribute('data-list-modal-reader-type'),
-                        readerCssSelector = itemsWrapper.getAttribute('data-list-modal-reader-css-selector'),
-                        readerModule = itemsWrapper.getAttribute('data-list-modal-reader-module'),
-                        modalId = 'modal-' + itemsWrapper.closest('.wrapper').getAttribute('id');
+            if (!Number.isInteger(modalLinkClicked.detail.timeout)) {
+                modalLinkClicked.detail.timeout = 0;
+            }
 
-                    let reader = null;
+            setTimeout(() => {
+                utilsBundle.ajax.get(item.getAttribute('href'), {}, {
+                    onSuccess: (request) => {
+                        const response = document.createElement('div'),
+                            itemsWrapper = item.closest('.items'),
+                            readerType = itemsWrapper.getAttribute('data-list-modal-reader-type'),
+                            readerCssSelector = itemsWrapper.getAttribute('data-list-modal-reader-css-selector'),
+                            readerModule = itemsWrapper.getAttribute('data-list-modal-reader-module'),
+                            modalId = 'modal-' + itemsWrapper.closest('.wrapper').getAttribute('id');
 
-                    response.innerHTML = request.response.trim();
+                        let reader = null;
 
-                    switch (readerType) {
-                        case 'huh_reader':
-                            reader = response.querySelector('#huh-reader-' + readerModule);
+                        response.innerHTML = request.response.trim();
 
-                            if (null === reader) {
-                                console.warn('Reader not found with selector: #huh-reader-' + readerModule);
-                                return;
-                            }
+                        switch (readerType) {
+                            case 'huh_reader':
+                                reader = response.querySelector('#huh-reader-' + readerModule);
 
-                            break;
-                        case 'css_selector':
-                            reader = response.querySelector(readerCssSelector);
+                                if (null === reader) {
+                                    console.warn('Reader not found with selector: #huh-reader-' + readerModule);
+                                    return;
+                                }
 
-                            if (null === reader) {
-                                console.warn('Reader not found with selector: ' + readerCssSelector);
-                                return;
-                            }
+                                break;
+                            case 'css_selector':
+                                reader = response.querySelector(readerCssSelector);
 
-                            break;
-                    }
+                                if (null === reader) {
+                                    console.warn('Reader not found with selector: ' + readerCssSelector);
+                                    return;
+                                }
 
-                    if (null === reader) {
-                        return;
-                    }
+                                break;
+                        }
 
-                    document.getElementById(modalId).querySelector('.modal-content .modal-body').innerHTML = reader.outerHTML;
+                        if (null === reader) {
+                            return;
+                        }
 
-                    // bootstrap 4 and below
-                    if ('undefined' !== typeof window.jQuery) {
-                        window.jQuery('#' + modalId).modal('show');
-                    } else {
-                        // bootstrap 5 and up
-                        import(/* webpackChunkName: "bootstrap" */ 'bootstrap').then((bootstrap) => {
-                            bootstrap.Modal.getInstance(document.getElementById(modalId)).show();
+                        let modalElement = document.getElementById(modalId);
+                        modalElement.querySelector('.modal-content .modal-body').innerHTML = reader.outerHTML;
+
+                        let head = document.getElementsByTagName("head")[0] || document.documentElement;
+                        modalElement.querySelectorAll('.modal-content .modal-body script').forEach(function(element) {
+                            let script = document.createElement("script");
+                            Array.from(element.attributes).forEach( attr => script.setAttribute(attr.name, attr.value));
+                            script.appendChild(document.createTextNode(element.innerHTML || element.innerText));
+                            head.insertBefore(script, head.firstChild);
                         });
+
+                        // bootstrap 4 and below
+                        if ('undefined' !== typeof window.jQuery) {
+                            window.jQuery('#' + modalId).modal('show');
+                        } else {
+                            // bootstrap 5 and up
+                            import(/* webpackChunkName: "bootstrap" */ 'bootstrap').then((bootstrap) => {
+                                bootstrap.Modal.getInstance(modalElement).show();
+                            });
+                        }
+
+                        item.dispatchEvent(new CustomEvent('huh.list.modal_show', {
+                            bubbles: true,
+                            detail: {
+                                modalElement: modalElement,
+                                modalId: modalId
+                            }
+                        }));
+
+                        history.pushState({
+                            modalId: modalId
+                        }, '', item.getAttribute('href'));
+
+                        history.pushState({
+                            modalId: modalId
+                        }, '', item.getAttribute('href'));
+                    },
+                    onError: (request) => {
+                        item.dispatchEvent(new CustomEvent('huh.list.modal_load_error', {
+                            bubbles: true,
+                            detail: {
+                                statusCode: request.status,
+                                statusText: request.statusText,
+                                response: request.response,
+                                responseText: request.responseText,
+                                url: request.responseURL
+                            }
+                        }));
                     }
-
-                    history.pushState({
-                        modalId: modalId
-                    }, '', item.getAttribute('href'));
-
-                    history.pushState({
-                        modalId: modalId
-                    }, '', item.getAttribute('href'));
-                }
-            });
+                });
+            }, modalLinkClicked.detail.timeout);
         });
     }
 

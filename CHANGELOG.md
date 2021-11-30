@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.46.0] - 2021-11-30
+- Added: modal load error js event
+
 ## [1.45.0] - 2021-11-25
 - Added: modal link clicked js event
 

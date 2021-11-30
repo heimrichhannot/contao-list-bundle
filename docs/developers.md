@@ -25,6 +25,7 @@ huh.list.ajax-pagination-loading | Is dispatched when ajax page loading is trigg
 huh.list.ajax-pagination-loaded | Is dispatched when ajax page loading finished.
 huh.list.modal_show | Is dispatched before a modal is opened and contains the modal element (`event.detail.modalElement`) and the modal css id (`event.detail.modalId`).
 huh.list.modal_link_clicked | Is dispatched when the modal link is clicked. Passes the link element (`event.detail.linkElement`). Allows to stop opening the modal (set `event.detail.openModal` to false) or delay the opening of the modal (set `event.detail.timeout` in milliseconds).
+huh.list.modal_load_error | Is dispatched when the modal ajax request fails. Passes status code (`event.detail.statusCode`), status text (`event.detail.statusText`), response (`event.detail.response`), respnse text (`event.detail.responseText`) and response url (`event.detail.url`).
 
 ## Create custom list config element types
   

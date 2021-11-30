@@ -179,6 +179,18 @@ class ListBundle {
                         history.pushState({
                             modalId: modalId
                         }, '', item.getAttribute('href'));
+                    },
+                    onError: (request) => {
+                        item.dispatchEvent(new CustomEvent('huh.list.modal_load_error', {
+                            bubbles: true,
+                            detail: {
+                                statusCode: request.status,
+                                statusText: request.statusText,
+                                response: request.response,
+                                responseText: request.responseText,
+                                url: request.responseURL
+                            }
+                        }));
                     }
                 });
             }, modalLinkClicked.detail.timeout);

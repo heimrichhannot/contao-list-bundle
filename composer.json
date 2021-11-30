@@ -26,7 +26,7 @@
     "heimrichhannot/contao-config-element-type-bundle": "^0.2",
     "heimrichhannot/contao-filter-bundle": "^1.0-beta",
     "heimrichhannot/contao-twig-support-bundle": "^0.2|^1.0",
-    "heimrichhannot/contao-utils-bundle": "^2.128",
+    "heimrichhannot/contao-utils-bundle": "^2.206",
     "heimrichhannot-contao-components/masonry": ">=4.2, <=4.3",
     "heimrichhannot-contao-components/imagesloaded": "4.1.*",
     "heimrichhannot-contao-components/jscroll": "2.3.*",

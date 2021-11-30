@@ -4,6 +4,12 @@ services:
     bind:
       $bundleConfig: "%huh_list%"
 
+  HeimrichHannot\ListBundle\:
+    resource: '../../{Configuration,Controller}/*'
+    autoconfigure: true
+    autowire: true
+    public: true
+
   HeimrichHannot\ListBundle\DataContainer\:
     resource: '../../DataContainer/*'
     public: true

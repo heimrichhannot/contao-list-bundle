@@ -19,6 +19,8 @@ use HeimrichHannot\Blocks\BlockModuleModel;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Backend\ListConfig;
+use HeimrichHannot\ListBundle\Configuration\ListConfigurationFactory;
+use HeimrichHannot\ListBundle\Controller\ListController;
 use HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer;
 use HeimrichHannot\ListBundle\Event\ListAfterParseItemsEvent;
 use HeimrichHannot\ListBundle\Event\ListAfterRenderEvent;
@@ -187,6 +189,10 @@ class DefaultList implements ListInterface, \JsonSerializable
 
     public function parse(string $listTemplate = null, string $itemTemplate = null, array $data = []): ?string
     {
+        $configuration = System::getContainer()->get(ListConfigurationFactory::class)->createConfiguration((int)$this->_manager->getListConfig()->id);
+        $result = System::getContainer()->get(ListController::class)->renderList($configuration);
+
+
         $listConfig = $this->_manager->getListConfig();
 
         if (System::getContainer()->getParameter('kernel.debug')) {

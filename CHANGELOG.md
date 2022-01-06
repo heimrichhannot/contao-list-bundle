@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.47.0] - 2022-01-06
+- Added: new option to list frontend module for showing reader module instead of list module. Needs reader bundle installed and reader config item retrival mode is set to auto_item
+
 ## [1.46.0] - 2021-11-30
 - Added: modal load error js event
 

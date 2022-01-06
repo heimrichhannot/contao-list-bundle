@@ -9,6 +9,7 @@
 namespace HeimrichHannot\ListBundle\Module;
 
 use Contao\BackendTemplate;
+use Contao\Config;
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
@@ -152,6 +153,12 @@ class ModuleList extends Module
             $objTemplate->href = 'contao?do=themes&amp;table=tl_module&amp;act=edit&amp;id='.$this->id;
 
             return $objTemplate->parse();
+        }
+
+        // Hide list and show reader on detail pages if configured
+        if ($this->list_renderReaderOnAutoItem === '1' && $this->list_readerModule && (Config::get('useAutoItem') && isset($_GET['auto_item'])))
+        {
+            return $this->getFrontendModule($this->list_readerModule, $this->strColumn);
         }
 
         if (null === $this->listManager) {

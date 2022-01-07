@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.47.1] - 2022-01-07
+- Fixed: service registration for symfony 4+
+
 ## [1.47.0] - 2022-01-06
 - Added: new option to list frontend module for showing reader module instead of list module. Needs reader bundle installed and reader config item retrival mode is set to auto_item
 

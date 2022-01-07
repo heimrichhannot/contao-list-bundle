@@ -4,16 +4,10 @@ services:
     bind:
       $bundleConfig: "%huh_list%"
 
-  HeimrichHannot\ListBundle\DataContainer\:
-    resource: '../../DataContainer/*'
-    public: true
-    autowire: true
-
-  HeimrichHannot\ListBundle\EventSubscriber\:
-    resource: '../../EventSubscriber/*'
-    autowire: true
+  HeimrichHannot\ListBundle\:
+    resource: '../../{DataContainer,EventSubscriber}/*'
     autoconfigure: true
-    public: false
+    autowire: true
 
   huh.list.choice.parent-list-config:
     class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice

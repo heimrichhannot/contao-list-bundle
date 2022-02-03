@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -97,10 +97,12 @@ class RelatedConfigElementType implements ListConfigElementTypeInterface
         if (\in_array(ListConfigElementContainer::RELATED_CRITERIUM_TAGS, $criteria)) {
             System::getContainer()->get('huh.utils.dca')->loadDc($table);
 
-            $source = $GLOBALS['TL_DCA'][$table]['fields'][$configElement->tagsField]['eval']['tagsManager'];
+            $dca = $GLOBALS['TL_DCA'][$table]['fields'][$configElement->tagsField];
+
+            $source = $dca['eval']['tagsManager'];
 
             $nonTlTable = System::getContainer()->get('huh.utils.string')->removeLeadingString('tl_', $table);
-            $cfgTable = 'tl_cfg_tag_'.$nonTlTable;
+            $cfgTable = $dca['relation']['relationTable'] ?? 'tl_cfg_tag_'.$nonTlTable;
 
             $tagRecords = Database::getInstance()->prepare("SELECT t.id FROM tl_cfg_tag t INNER JOIN $cfgTable t2 ON t.id = t2.cfg_tag_id".
                 " WHERE t2.{$nonTlTable}_id=? AND t.source=?")->execute(

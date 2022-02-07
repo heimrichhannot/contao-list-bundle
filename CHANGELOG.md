@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.47.3] - 2022-02-07
+
+- Fixed: ajax pagination with masonry
+
 ## [1.47.2] - 2022-02-03
 
 - Added: support for custom relationTable for tag-based `RelateConfigElementType`

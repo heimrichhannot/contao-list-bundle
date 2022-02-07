@@ -295,90 +295,80 @@ class ListBundle {
                                 loadedDoc = parser.parseFromString(response, 'text/html'),
                                 loadedItems = loadedDoc.querySelectorAll('.huh-list #' + list.querySelector('.wrapper').getAttribute('id') + ' .items .item');
 
-                            import(/* webpackChunkName: "imagesloaded" */ 'imagesloaded').then(({default: imagesLoaded}) => {
-                                imagesLoaded(loadedItems, function(instance) {
-                                    if (true === ajaxLoad.enableScreenReaderMessage) {
-                                        let span = document.createElement('span');
-                                        span.classList.add('sr-only');
-                                        span.textContent = ajaxLoad.screenReaderMessage;
-                                        items.appendChild(span);
-                                    }
+                            if (true === ajaxLoad.enableScreenReaderMessage) {
+                                let span = document.createElement('span');
+                                span.classList.add('sr-only');
+                                span.textContent = ajaxLoad.screenReaderMessage;
+                                items.appendChild(span);
+                            }
 
-                                    loadedItems.forEach(item => {
-                                        items.appendChild(item);
-                                    })
-                                });
-
-                                ajaxPagination.innerHTML = '';
-
-                                if (loadedDoc.querySelector('.huh-list .ajax-pagination a.next')) {
-                                    let nextButton = loadedDoc.querySelector('.huh-list .ajax-pagination a.next');
-
-                                    nextButton.addEventListener('click', e => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        loadMoreItems(e);
-                                    });
-
-                                    ajaxPagination.appendChild(nextButton);
-                                }
-
-                                if (items.dataset.addMasonry === "1") {
-                                    import(/* webpackChunkName: "masonry-layout" */ 'masonry-layout').then(function() {
-                                        ListBundle.initMasonry();
-                                    });
-
-                                    return;
-                                }
-
-                                // remove item counters...
-                                items.querySelectorAll('.item').forEach(item => {
-                                    item.classList.forEach(cssClass => {
-                                        if (cssClass.match(/item_\d+/g)) {
-                                            item.classList.remove(cssClass);
-                                        }
-                                    })
-                                });
-
-                                items.querySelectorAll('.item').forEach((item, index,nodes) => {
-                                    let itemIndex = index+1;
-                                    item.classList.remove('odd', 'even', 'first', 'last');
-                                    item.classList.add('item_'+itemIndex);
-
-                                    // odd/even
-                                    if (itemIndex % 2 === 0) {
-                                        item.classList.add('even')
-                                    } else {
-                                        item.classList.add('odd');
-                                    }
-
-                                    // add first and last
-                                    if (itemIndex === 1) {
-                                        item.classList.add('first');
-                                    }
-
-                                    if (itemIndex === nodes.length) {
-                                        item.classList.add('last');
-                                    }
-                                });
-
-                                list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loaded', {
-                                    bubbles: true,
-                                    detail: {
-                                        wrapper: list.querySelector('.wrapper'),
-                                        pagination: ajaxPagination,
-                                        items: items
-                                    }
-                                }))
-
-                                if (!ajaxLoad.disableLiveRegion) {
-                                    items.setAttribute('aria-busy', 'false');
-                                }
-
-                                items.classList.remove('loading');
+                            loadedItems.forEach(item => {
+                                items.appendChild(item);
                             });
+
+                            ajaxPagination.innerHTML = '';
+
+                            if (loadedDoc.querySelector('.huh-list .ajax-pagination a.next')) {
+                                let nextButton = loadedDoc.querySelector('.huh-list .ajax-pagination a.next');
+
+                                nextButton.addEventListener('click', e => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    loadMoreItems(e);
+                                });
+
+                                ajaxPagination.appendChild(nextButton);
+                            }
+
+                            // remove item counters...
+                            items.querySelectorAll('.item').forEach(item => {
+                                item.classList.forEach(cssClass => {
+                                    if (cssClass.match(/item_\d+/g)) {
+                                        item.classList.remove(cssClass);
+                                    }
+                                })
+                            });
+
+                            items.querySelectorAll('.item').forEach((item, index,nodes) => {
+                                let itemIndex = index+1;
+                                item.classList.remove('odd', 'even', 'first', 'last');
+                                item.classList.add('item_'+itemIndex);
+
+                                // odd/even
+                                if (itemIndex % 2 === 0) {
+                                    item.classList.add('even')
+                                } else {
+                                    item.classList.add('odd');
+                                }
+
+                                // add first and last
+                                if (itemIndex === 1) {
+                                    item.classList.add('first');
+                                }
+
+                                if (itemIndex === nodes.length) {
+                                    item.classList.add('last');
+                                }
+                            });
+
+                            list.dispatchEvent(new CustomEvent('huh.list.ajax-pagination-loaded', {
+                                bubbles: true,
+                                detail: {
+                                    wrapper: list.querySelector('.wrapper'),
+                                    pagination: ajaxPagination,
+                                    items: items
+                                }
+                            }))
+
+                            if (!ajaxLoad.disableLiveRegion) {
+                                items.setAttribute('aria-busy', 'false');
+                            }
+
+                            items.classList.remove('loading');
+
+                            ListBundle.initMasonry();
                         }
-                    };
+                    }
 
                     request.open("GET", ajaxPagination.querySelector('.huh-list .ajax-pagination a.next').href, true);
                     request.send();

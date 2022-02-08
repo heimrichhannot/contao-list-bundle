@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -156,8 +156,7 @@ class ModuleList extends Module
         }
 
         // Hide list and show reader on detail pages if configured
-        if ($this->list_renderReaderOnAutoItem === '1' && $this->list_readerModule && (Config::get('useAutoItem') && isset($_GET['auto_item'])))
-        {
+        if ('1' === $this->list_renderReaderOnAutoItem && $this->list_readerModule && (Config::get('useAutoItem') && isset($_GET['auto_item']))) {
             return $this->getFrontendModule($this->list_readerModule, $this->strColumn);
         }
 
@@ -265,8 +264,8 @@ class ModuleList extends Module
         $css = $this->doCompile($this->Template, $this->cssID);
         $this->cssID = $css;
         System::getContainer()->get('event_dispatcher')->dispatch(
-            ListCompileEvent::NAME,
-            new ListCompileEvent($this->Template, $this, $this->listManager->getListConfig())
+            new ListCompileEvent($this->Template, $this, $this->listManager->getListConfig()),
+            ListCompileEvent::NAME
         );
     }
 }

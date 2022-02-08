@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.48.0] - 2022-02-08
+
+- Added: support for contao 4.13
+- Changed: minimum contao version is now 4.9
+- Changed: supported symfony versions to `^4.4||^5.4`
+- Changed: replaced `twig/extensions` by `twig/extra-bundle`
+
 ## [1.47.3] - 2022-02-07
 
 - Fixed: ajax pagination with masonry

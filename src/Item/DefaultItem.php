@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -247,9 +247,8 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     /**
      * {@inheritdoc}
      *
-     * @param bool $formatted Set to true if the value is already formatted and need not further processing.
+     * @param bool $formatted set to true if the value is already formatted and need not further processing
      */
-
     public function setFormattedValue(string $name, $value, bool $formatted = false): void
     {
         // do not format values in back end for performance reasons (sitemap…)
@@ -381,8 +380,8 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
         /** @noinspection PhpParamsInspection */
         $event = $this->_dispatcher->dispatch(
-            ListBeforeApplyConfigElementsEvent::class,
-            new ListBeforeApplyConfigElementsEvent($listConfigElements, $listConfig, $this)
+            new ListBeforeApplyConfigElementsEvent($listConfigElements, $listConfig, $this),
+            ListBeforeApplyConfigElementsEvent::class
         );
 
         if (null !== $event->getListConfigElements()) {
@@ -445,7 +444,10 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         $twig = $this->_manager->getTwig();
 
         /** @var ListBeforeRenderItemEvent $event */
-        $event = $this->_dispatcher->dispatch(ListBeforeRenderItemEvent::NAME, new ListBeforeRenderItemEvent($listConfig->itemTemplate, $this->jsonSerialize(), $this));
+        $event = $this->_dispatcher->dispatch(
+            new ListBeforeRenderItemEvent($listConfig->itemTemplate, $this->jsonSerialize(), $this),
+            ListBeforeRenderItemEvent::NAME
+        );
         $templateName = $this->_manager->getItemTemplateByName($event->getTemplateName() ?: 'default');
 
         $buffer = $twig->render($templateName, $event->getTemplateData());

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -352,7 +352,10 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $totalCount = 0;
 
-        $event = $this->_dispatcher->dispatch(ListModifyQueryBuilderForCountEvent::NAME, new ListModifyQueryBuilderForCountEvent($queryBuilder, $this, $listConfig, $fields));
+        $event = $this->_dispatcher->dispatch(
+            new ListModifyQueryBuilderForCountEvent($queryBuilder, $this, $listConfig, $fields),
+            ListModifyQueryBuilderForCountEvent::NAME
+        );
 
         // initial results
         $this->setShowInitialResults($listConfig->showInitialResults);
@@ -374,7 +377,10 @@ class DefaultList implements ListInterface, \JsonSerializable
         // query builder
         $this->applyListConfigToQueryBuilder($totalCount, $queryBuilder);
 
-        $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields));
+        $this->_dispatcher->dispatch(
+            new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields),
+            ListModifyQueryBuilderEvent::NAME
+        );
 
         if ($isSubmitted || $listConfig->showInitialResults) {
             $items = $queryBuilder->execute()->fetchAll();
@@ -398,11 +404,17 @@ class DefaultList implements ListInterface, \JsonSerializable
         $listTemplate = $this->_manager->getListTemplateByName(($listTemplate ?: $listConfig->listTemplate) ?: 'default');
         $templateData = $this->jsonSerialize();
 
-        $event = $this->_dispatcher->dispatch(ListBeforeRenderEvent::NAME, new ListBeforeRenderEvent($templateData, $this, $listConfig));
+        $event = $this->_dispatcher->dispatch(
+            new ListBeforeRenderEvent($templateData, $this, $listConfig),
+            ListBeforeRenderEvent::NAME
+        );
 
         $rendered = System::getContainer()->get('twig')->render($listTemplate, $event->getTemplateData());
 
-        $event = $this->_dispatcher->dispatch(ListAfterRenderEvent::NAME, new ListAfterRenderEvent($rendered, $event->getTemplateData(), $this, $listConfig));
+        $event = $this->_dispatcher->dispatch(
+            new ListAfterRenderEvent($rendered, $event->getTemplateData(), $this, $listConfig),
+            ListAfterRenderEvent::NAME
+        );
 
         $buffer = $event->getRendered();
 
@@ -475,7 +487,10 @@ class DefaultList implements ListInterface, \JsonSerializable
         $results = [];
 
         /** @var ListBeforeParseItemsEvent $event */
-        $event = $this->_dispatcher->dispatch(ListBeforeParseItemsEvent::NAME, new ListBeforeParseItemsEvent($items, $this, $listConfig));
+        $event = $this->_dispatcher->dispatch(
+            new ListBeforeParseItemsEvent($items, $this, $listConfig),
+            ListBeforeParseItemsEvent::NAME
+        );
 
         $items = $event->getItems() ?: [];
 
@@ -523,7 +538,10 @@ class DefaultList implements ListInterface, \JsonSerializable
         }
 
         /** @var ListAfterParseItemsEvent $event */
-        $event = $this->_dispatcher->dispatch(ListAfterParseItemsEvent::NAME, new ListAfterParseItemsEvent($items, $results, $this, $listConfig));
+        $event = $this->_dispatcher->dispatch(
+            new ListAfterParseItemsEvent($items, $results, $this, $listConfig),
+            ListAfterParseItemsEvent::NAME
+        );
 
         $this->setRawItems($event->getItems());
 
@@ -1270,7 +1288,10 @@ class DefaultList implements ListInterface, \JsonSerializable
             return $arrPages;
         }
 
-        $this->_dispatcher->dispatch(ListModifyQueryBuilderEvent::NAME, new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields));
+        $this->_dispatcher->dispatch(
+            new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields),
+            ListModifyQueryBuilderEvent::NAME
+        );
 
         $items = $queryBuilder->execute()->fetchAll();
 

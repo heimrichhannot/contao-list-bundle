@@ -46,28 +46,6 @@ services:
     arguments:
     - "@contao.framework"
 
-  twig.extension.text:
-    class: Twig_Extensions_Extension_Text
-    tags:
-    - { name: twig.extension }
-
-  twig.extension.intl:
-    class: Twig_Extensions_Extension_Intl
-    tags:
-    - { name: twig.extension }
-
-  twig.extension.array:
-    class: Twig_Extensions_Extension_Array
-    tags:
-    - { name: twig.extension }
-
-  twig.extension.date:
-    class: Twig_Extensions_Extension_Date
-    tags:
-    - { name: twig.extension }
-    arguments:
-    - "@translator"
-
   huh.list.util.manager:
     class: HeimrichHannot\ListBundle\Util\ListManagerUtil
     public: true

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.48.1] - 2022-02-09
+
+- Fixed: config for symfony 5+
+- Removed: twig extension service definitions
+
 ## [1.48.0] - 2022-02-08
 
 - Added: support for contao 4.13

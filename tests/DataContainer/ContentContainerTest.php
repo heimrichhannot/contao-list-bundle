@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -25,6 +25,7 @@ use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
 use HeimrichHannot\ListBundle\Util\ListManagerUtil;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
+use Twig\Environment;
 
 class ContentContainerTest extends ContaoTestCase
 {
@@ -195,7 +196,7 @@ class ContentContainerTest extends ContaoTestCase
         });
         $filterPreseletUtil = $this->getMockBuilder(FilterPreselectUtil::class)->disableOriginalConstructor()->setMethods(['getPreselectQueryBuilder'])->getMock();
         $filterPreseletUtil->method('getPreselectQueryBuilder')->willReturn($queryBuilderMock);
-        $twig = $this->createMock(\Twig_Environment::class);
+        $twig = $this->createMock(Environment::class);
         $twig->method('render')->willReturn(true);
 
         return new ContentContainer($framework, $modelUtil, $listConfigRegistryMock, $listManagerUtil, $filterPreseletUtil, $twig);

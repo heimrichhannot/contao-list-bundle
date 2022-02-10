@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.48.2] - 2022-02-10
+
+- Fixed: Twig type hint for symfony 5+
+- Fixed: querybuilder parameter colons for symfony 5+
+- Fixed: transChoice() call for symfony 5+
+- Removed: call to Utf8 functions
+
 ## [1.48.1] - 2022-02-09
 
 - Fixed: config for symfony 5+

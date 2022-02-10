@@ -275,19 +275,19 @@ class DefaultList implements ListInterface, \JsonSerializable
 
                             $orStart = $queryBuilder->expr()->orX(
                                 $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStart'], '""'),
-                                $queryBuilder->expr()->lte($suffixedTable.'.'.$dca['config']['langStart'], ':'.$dca['config']['langStart'].'_time')
+                                $queryBuilder->expr()->lte($suffixedTable.'.'.$dca['config']['langStart'], $dca['config']['langStart'].'_time')
                             );
 
                             $and->add($orStart);
-                            $queryBuilder->setParameter(':'.$dca['config']['langStart'].'_time', $time);
+                            $queryBuilder->setParameter($dca['config']['langStart'].'_time', $time);
 
                             $orStop = $queryBuilder->expr()->orX(
                                 $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStop'], '""'),
-                                $queryBuilder->expr()->gt($suffixedTable.'.'.$dca['config']['langStop'], ':'.$dca['config']['langStop'].'_time')
+                                $queryBuilder->expr()->gt($suffixedTable.'.'.$dca['config']['langStop'], $dca['config']['langStop'].'_time')
                             );
 
                             $and->add($orStop);
-                            $queryBuilder->setParameter(':'.$dca['config']['langStop'].'_time', $time + 60);
+                            $queryBuilder->setParameter($dca['config']['langStop'].'_time', $time + 60);
                         }
 
                         $and->add($queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langPublished'], 1));
@@ -368,7 +368,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         // item count text
         $this->setShowItemCount($listConfig->showItemCount);
 
-        $this->setItemsFoundText(System::getContainer()->get('translator')->transChoice($listConfig->itemCountText ?: 'huh.list.count.text.default', $totalCount, ['%count%' => $totalCount]));
+        $this->setItemsFoundText(System::getContainer()->get('translator')->trans($listConfig->itemCountText ?: 'huh.list.count.text.default', ['%count%' => $totalCount]));
 
         // no items text
         $this->setShowNoItemsText($listConfig->showNoItemsText);

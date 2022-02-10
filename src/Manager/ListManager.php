@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -29,6 +29,7 @@ use HeimrichHannot\UtilsBundle\Form\FormUtil;
 use HeimrichHannot\UtilsBundle\Image\ImageUtil;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 use HeimrichHannot\UtilsBundle\Url\UrlUtil;
+use Twig\Environment;
 
 class ListManager implements ListManagerInterface
 {
@@ -83,7 +84,7 @@ class ListManager implements ListManagerInterface
     protected $containerUtil;
 
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     protected $twig;
 
@@ -127,7 +128,7 @@ class ListManager implements ListManagerInterface
         ContainerUtil $containerUtil,
         ImageUtil $imageUtil,
         FormUtil $formUtil,
-        \Twig_Environment $twig,
+        Environment $twig,
         TwigTemplateLocator $templateLocator
     ) {
         $this->framework = $framework;
@@ -425,7 +426,7 @@ class ListManager implements ListManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getTwig(): \Twig_Environment
+    public function getTwig(): Environment
     {
         return $this->twig;
     }

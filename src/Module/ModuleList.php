@@ -29,7 +29,6 @@ use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
-use Patchwork\Utf8;
 
 class ModuleList extends Module
 {
@@ -146,7 +145,7 @@ class ModuleList extends Module
     {
         if (System::getContainer()->get('huh.utils.container')->isBackend()) {
             $objTemplate = new BackendTemplate('be_wildcard');
-            $objTemplate->wildcard = '### '.Utf8::strtoupper($GLOBALS['TL_LANG']['FMD'][$this->type][0]).' ###';
+            $objTemplate->wildcard = '### '.$GLOBALS['TL_LANG']['FMD'][$this->type][0].' ###';
             $objTemplate->title = $this->headline;
             $objTemplate->id = $this->id;
             $objTemplate->link = $this->name;

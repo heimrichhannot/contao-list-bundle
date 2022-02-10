@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -21,6 +21,7 @@ use HeimrichHannot\ListBundle\Exception\InvalidListManagerException;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
 use HeimrichHannot\ListBundle\Util\ListManagerUtil;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
+use Twig\Environment;
 
 class ContentContainer
 {
@@ -45,11 +46,11 @@ class ContentContainer
      */
     private $filterPreselectUtil;
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     private $twig;
 
-    public function __construct(ContaoFrameworkInterface $framework, ModelUtil $modelUtil, ListConfigRegistry $listConfigRegistry, ListManagerUtil $listManagerUtil, FilterPreselectUtil $filterPreselectUtil, \Twig_Environment $twig)
+    public function __construct(ContaoFrameworkInterface $framework, ModelUtil $modelUtil, ListConfigRegistry $listConfigRegistry, ListManagerUtil $listManagerUtil, FilterPreselectUtil $filterPreselectUtil, Environment $twig)
     {
         $this->framework = $framework;
         $this->modelUtil = $modelUtil;

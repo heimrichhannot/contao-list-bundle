@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -16,6 +16,7 @@ use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
 use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
 use HeimrichHannot\UtilsBundle\Form\FormUtil;
+use Twig\Environment;
 
 interface ListManagerInterface
 {
@@ -103,7 +104,7 @@ interface ListManagerInterface
     /**
      * Get current twig environment.
      */
-    public function getTwig(): \Twig_Environment;
+    public function getTwig(): Environment;
 
     /**
      * Get the contao framework.

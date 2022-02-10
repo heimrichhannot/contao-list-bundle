@@ -30,14 +30,12 @@
     "heimrichhannot-contao-components/masonry": ">=4.2, <=4.3",
     "heimrichhannot-contao-components/imagesloaded": "4.1.*",
     "heimrichhannot-contao-components/jscroll": "2.3.*",
-    "heimrichhannot/truncate-html": "^2.0",
     "symfony/config": "^4.4||^5.4",
     "symfony/console": "^4.4||^5.4",
     "symfony/dependency-injection": "^4.4||^5.4",
     "symfony/event-dispatcher": "^4.4||^5.4",
     "symfony/event-dispatcher-contracts": "^1||^2||^3",
-    "symfony/http-kernel": "^4.4||^5.4",
-    "twig/extra-bundle": "^3.0"
+    "symfony/http-kernel": "^4.4||^5.4"
   },
   "require-dev": {
     "contao/test-case": "1.1.*",

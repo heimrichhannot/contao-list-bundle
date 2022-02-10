@@ -52,15 +52,6 @@ services:
     arguments:
     - "@contao.framework"
 
-  twig.truncate.service:
-    class: Urodoz\Truncate\TruncateService
-
-  twig.extension.truncate.html:
-    class: Urodoz\Truncate\Bridge\Twig\TruncateExtension
-    arguments:
-    - "@twig.truncate.service"
-    tags:
-    - { name: twig.extension }
   # Symfony 4 autowire convention fix (ambiguous namespace alias)
   HeimrichHannot\ListBundle\Registry\ListConfigRegistry: '@huh.list.list-config-registry'
   HeimrichHannot\ListBundle\Util\ListManagerUtil: '@huh.list.util.manager'

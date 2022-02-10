@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.48.3] - 2022-02-10
+
+- Removed: truncate-html and twig extra bundles
+
 ## [1.48.2] - 2022-02-10
 
 - Fixed: Twig type hint for symfony 5+

@@ -698,7 +698,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $listConfig = $this->_manager->getListConfig();
 
         foreach ($GLOBALS['TL_DCA']['tl_list_config']['fields'] as $field => $data) {
-            if ($data['eval']['addAsDataAttribute'] && $listConfig->{$field}) {
+            if (($data['eval']['addAsDataAttribute'] ?? false) && $listConfig->{$field}) {
                 $dataAttributes[] = 'data-'.$stringUtil->camelCaseToDashed($field).'="'.$listConfig->{$field}.'"';
             }
         }

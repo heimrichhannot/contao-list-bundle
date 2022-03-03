@@ -35,7 +35,8 @@
     "symfony/dependency-injection": "^4.4||^5.4",
     "symfony/event-dispatcher": "^4.4||^5.4",
     "symfony/event-dispatcher-contracts": "^1||^2||^3",
-    "symfony/http-kernel": "^4.4||^5.4"
+    "symfony/http-kernel": "^4.4||^5.4",
+    "symfony/polyfill-php80": "^v1.24.0"
   },
   "require-dev": {
     "contao/test-case": "1.1.*",

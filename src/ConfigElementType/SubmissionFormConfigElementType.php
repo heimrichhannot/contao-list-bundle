@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -15,6 +15,7 @@ use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementResult
 use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface;
 use HeimrichHannot\TwigSupportBundle\Renderer\TwigTemplateRenderer;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SubmissionFormConfigElementType implements ConfigElementTypeInterface
 {
@@ -26,6 +27,7 @@ class SubmissionFormConfigElementType implements ConfigElementTypeInterface
      * @var TwigTemplateRenderer
      */
     protected $twigTemplateRenderer;
+    protected $requestStack;
     /**
      * @var ModelUtil
      */
@@ -33,10 +35,11 @@ class SubmissionFormConfigElementType implements ConfigElementTypeInterface
 
     private static $count = 0;
 
-    public function __construct(ModelUtil $modelUtil, TwigTemplateRenderer $twigTemplateRenderer)
+    public function __construct(ModelUtil $modelUtil, TwigTemplateRenderer $twigTemplateRenderer, RequestStack $requestStack)
     {
         $this->modelUtil = $modelUtil;
         $this->twigTemplateRenderer = $twigTemplateRenderer;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -64,7 +67,7 @@ class SubmissionFormConfigElementType implements ConfigElementTypeInterface
         $configuration = $configElementData->getConfiguration();
 
         // add email value to notification center tokens
-        static::$recipientEmail = $configuration->emailField;
+        static::$recipientEmail = $itemData[$configuration->emailField];
         $GLOBALS['TL_HOOKS']['formhybridBeforeCreateNotifications']['contao-list-bundle.addEmailToTokens'] = [static::class, 'addEmailToTokens'];
 
         // generate form
@@ -94,6 +97,7 @@ class SubmissionFormConfigElementType implements ConfigElementTypeInterface
         }
 
         $class = Module::findClass($moduleModel->type);
+        $request = $this->requestStack->getCurrentRequest();
 
         if (!class_exists($class)) {
             return '';
@@ -116,9 +120,15 @@ class SubmissionFormConfigElementType implements ConfigElementTypeInterface
             $moduleModel->formHybridDefaultValues = array_merge($existingDefaultValues, $newValues);
         }
 
-        /** @var Module $module */
-        $module = new $class($moduleModel);
+        $shouldRender = 'POST' !== $request->getMethod() || 'POST' === $request->getMethod() && str_starts_with($request->get('FORM_SUBMIT'), 'tl_submission_'.$moduleModel->id) && str_ends_with($request->get('FORM_SUBMIT'), '_'.$moduleModel->formHybridCustomFormIdSuffix);
 
-        return $module->generate();
+        if ($shouldRender) {
+            /** @var Module $module */
+            $module = new $class($moduleModel);
+
+            return $module->generate();
+        }
+
+        return '';
     }
 }

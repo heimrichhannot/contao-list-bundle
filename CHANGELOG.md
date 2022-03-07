@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.48.6] - 2022-03-07
+
+- Fixed: masonry with ajax filter
+
 ## [1.48.5] - 2022-03-03
 
 - Added: symfony/polyfill-80 dep

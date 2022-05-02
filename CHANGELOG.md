@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.48.7] - 2022-05-02
+
+- Fixed: type hint being too strict
+- Fixed: array isset check
+
 ## [1.48.6] - 2022-03-07
 
 - Fixed: masonry with ajax filter

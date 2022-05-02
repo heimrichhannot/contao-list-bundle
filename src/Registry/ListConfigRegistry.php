@@ -169,7 +169,7 @@ class ListConfigRegistry
         Controller::loadDataContainer('tl_list_config');
 
         foreach ($GLOBALS['TL_DCA']['tl_list_config']['fields'] as $field => $data) {
-            if ($data['eval']['notOverridable']) {
+            if ($data['eval']['notOverridable'] ?? false) {
                 $computedListConfig->{$field} = $rootListConfig->{$field};
             } else {
                 $computedListConfig->{$field} = System::getContainer()->get('huh.utils.dca')->getOverridableProperty(

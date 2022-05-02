@@ -43,7 +43,7 @@ class SearchListener
      *
      * @throws \ReflectionException
      */
-    public function getSearchablePages(array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false): array
+    public function getSearchablePages(array $arrPages, $intRoot = 0, bool $blnIsSitemap = false): array
     {
         if (null === ($listConfigs = $this->listConfigRegistry->findAll())) {
             return $arrPages;

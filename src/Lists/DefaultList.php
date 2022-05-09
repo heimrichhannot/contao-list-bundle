@@ -275,7 +275,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
                             $orStart = $queryBuilder->expr()->orX(
                                 $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStart'], '""'),
-                                $queryBuilder->expr()->lte($suffixedTable.'.'.$dca['config']['langStart'], $dca['config']['langStart'].'_time')
+                                $queryBuilder->expr()->lte($suffixedTable.'.'.$dca['config']['langStart'], ':'.$dca['config']['langStart'].'_time')
                             );
 
                             $and->add($orStart);
@@ -283,7 +283,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
                             $orStop = $queryBuilder->expr()->orX(
                                 $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStop'], '""'),
-                                $queryBuilder->expr()->gt($suffixedTable.'.'.$dca['config']['langStop'], $dca['config']['langStop'].'_time')
+                                $queryBuilder->expr()->gt($suffixedTable.'.'.$dca['config']['langStop'], ':'.$dca['config']['langStop'].'_time')
                             );
 
                             $and->add($orStop);

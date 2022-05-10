@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.48.8] - 2022-05-10
+- Fixed: query builder for dc_multilingual
+
 ## [1.48.7] - 2022-05-02
 
 - Fixed: type hint being too strict

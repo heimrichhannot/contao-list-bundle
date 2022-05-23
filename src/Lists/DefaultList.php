@@ -494,7 +494,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $items = $event->getItems() ?: [];
 
-        foreach ($items as $item) {
+        foreach ($items as $key => $item) {
             // reset the list config since it might have been reset while parsing the items
             $this->_manager->setListConfig($listConfig);
 
@@ -534,7 +534,7 @@ class DefaultList implements ListInterface, \JsonSerializable
                 continue;
             }
 
-            $results[] = $parsedResult;
+            $results[$key] = $parsedResult;
         }
 
         /** @var ListAfterParseItemsEvent $event */

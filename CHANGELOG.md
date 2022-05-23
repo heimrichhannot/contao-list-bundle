@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.48.9] - 2022-05-23
+- Fixed: parsed Items keys not always same as raw items
+
 ## [1.48.8] - 2022-05-10
 - Fixed: query builder for dc_multilingual
 

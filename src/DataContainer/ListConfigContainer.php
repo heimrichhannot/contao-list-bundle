@@ -14,6 +14,7 @@ use Contao\Database;
 use Contao\DataContainer;
 use Contao\Image;
 use Contao\RequestToken;
+use Contao\StringUtil;
 use Contao\Versions;
 use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
 use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
@@ -127,16 +128,17 @@ class ListConfigContainer
         $return = '';
 
         // Return the buttons
-        $imagePasteAfter = Image::getHtml('pasteafter.svg', sprintf($GLOBALS['TL_LANG'][$table]['pasteafter'][1], $row['id']));
-        $imagePasteInto = Image::getHtml('pasteinto.svg', sprintf($GLOBALS['TL_LANG'][$table]['pasteinto'][1], $row['id']));
+        $pasteafter = sprintf($GLOBALS['TL_LANG']['DCA']['pasteafter'][1], $row['id']);
+        $pasteinto = sprintf($GLOBALS['TL_LANG']['DCA']['pasteinto'][1], $row['id']);
+        
+        $imagePasteAfter = Image::getHtml('pasteafter.svg', $pasteafter);
+        $imagePasteInto = Image::getHtml('pasteinto.svg', $pasteinto);
 
         if ($row['id'] > 0) {
-            $return = $disablePA ? Image::getHtml('pasteafter_.svg').' ' : '<a href="'.Controller::addToUrl('act='.$arrClipboard['mode'].'&mode=1&rt='.RequestToken::get().'&pid='.$row['id'].(!\is_array($arrClipboard['id']) ? '&id='.$arrClipboard['id'] : '')).'" title="'.specialchars(sprintf($GLOBALS['TL_LANG'][$table]['pasteafter'][1],
-                    $row['id'])).'" onclick="Backend.getScrollOffset()">'.$imagePasteAfter.'</a> ';
+            $return = $disablePA ? Image::getHtml('pasteafter_.svg').' ' : '<a href="'.Controller::addToUrl('act='.$arrClipboard['mode'].'&mode=1&rt='.RequestToken::get().'&pid='.$row['id'].(!\is_array($arrClipboard['id']) ? '&id='.$arrClipboard['id'] : '')).'" title="'.StringUtil::specialchars($pasteafter).'" onclick="Backend.getScrollOffset()">'.$imagePasteAfter.'</a> ';
         }
 
-        return $return.($disablePI ? Image::getHtml('pasteinto_.svg').' ' : '<a href="'.Controller::addToUrl('act='.$arrClipboard['mode'].'&mode=2&rt='.RequestToken::get().'&pid='.$row['id'].(!\is_array($arrClipboard['id']) ? '&id='.$arrClipboard['id'] : '')).'" title="'.specialchars(sprintf($GLOBALS['TL_LANG'][$table]['pasteinto'][1],
-                    $row['id'])).'" onclick="Backend.getScrollOffset()">'.$imagePasteInto.'</a> ');
+        return $return.($disablePI ? Image::getHtml('pasteinto_.svg').' ' : '<a href="'.Controller::addToUrl('act='.$arrClipboard['mode'].'&mode=2&rt='.RequestToken::get().'&pid='.$row['id'].(!\is_array($arrClipboard['id']) ? '&id='.$arrClipboard['id'] : '')).'" title="'.StringUtil::specialchars($pasteinto).'" onclick="Backend.getScrollOffset()">'.$imagePasteInto.'</a> ');
     }
 
     protected function getTemplateChoices(string $prefixesKey, string $templatesKey): array

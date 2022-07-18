@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.48.10] - 2022-07-18
+- Fixed: php8 warnings
+
 ## [1.48.9] - 2022-05-23
 - Fixed: parsed Items keys not always same as raw items
 

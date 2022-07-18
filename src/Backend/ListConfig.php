@@ -17,8 +17,8 @@ use Contao\System;
 
 class ListConfig extends Backend
 {
-    const SORTING_MODE_FIELD = 'field';
-    const SORTING_MODE_TEXT = 'text';
+    const SORTING_MODE_FIELD  = 'field';
+    const SORTING_MODE_TEXT   = 'text';
     const SORTING_MODE_RANDOM = 'random';
     const SORTING_MODE_MANUAL = 'manual';
 
@@ -29,7 +29,7 @@ class ListConfig extends Backend
         self::SORTING_MODE_MANUAL,
     ];
 
-    const SORTING_DIRECTION_ASC = 'asc';
+    const SORTING_DIRECTION_ASC  = 'asc';
     const SORTING_DIRECTION_DESC = 'desc';
 
     const SORTING_DIRECTIONS = [
@@ -44,12 +44,17 @@ class ListConfig extends Backend
      */
     public function editFilter(DataContainer $dc)
     {
-        return ($dc->value < 1) ? '' : ' <a href="contao/main.php?do=filter&amp;table=tl_filter_config_element&amp;id='.$dc->value.'&amp;popup=1&amp;nb=1&amp;rt='.REQUEST_TOKEN.'" title="'.sprintf(StringUtil::specialchars($GLOBALS['TL_LANG']['tl_list_config']['editFilter'][1]), $dc->value).'" onclick="Backend.openModalIframe({\'title\':\''.StringUtil::specialchars(str_replace("'", "\\'", sprintf($GLOBALS['TL_LANG']['tl_filter_config']['editFilter'][1], $dc->value))).'\',\'url\':this.href});return false">'.Image::getHtml('alias.svg', $GLOBALS['TL_LANG']['tl_filter_config']['editFilter'][0]).'</a>';
+        $editFilterTitle =  $GLOBALS['TL_LANG']['tl_list_config']['editFilter'][0] ?? '';
+        $editFilterDesc  = $GLOBALS['TL_LANG']['tl_list_config']['editFilter'][1] ?? '';
+        return ($dc->value < 1) ? '' : ' <a href="contao/main.php?do=filter&amp;table=tl_filter_config_element&amp;id=' . $dc->value . '&amp;popup=1&amp;nb=1&amp;rt=' . REQUEST_TOKEN . '" title="' . sprintf(StringUtil::specialchars($editFilterDesc), $dc->value) . '" onclick="Backend.openModalIframe({\'title\':\'' . StringUtil::specialchars(str_replace("'", "\\'",
+                sprintf($editFilterDesc, $dc->value))) . '\',\'url\':this.href});return false">' . Image::getHtml('alias.svg', $editFilterTitle) . '</a>';
     }
 
     public function editList(DataContainer $dc)
     {
-        return ($dc->value < 1) ? '' : ' <a href="contao/main.php?do=list_configs&amp;act=edit&amp;id='.$dc->value.'&amp;rt='.REQUEST_TOKEN.'" title="'.sprintf(StringUtil::specialchars($GLOBALS['TL_LANG']['tl_list_config']['edit'][1]), $dc->value).'">'.Image::getHtml('alias.svg', $GLOBALS['TL_LANG']['tl_filter_config']['edit'][0]).'</a>';
+        $editListTitle =  $GLOBALS['TL_LANG']['tl_filter_config']['edit'][0] ?? '';
+        $editListDesc  = $GLOBALS['TL_LANG']['tl_list_config']['edit'][1] ?? '';
+        return ($dc->value < 1) ? '' : ' <a href="contao/main.php?do=list_configs&amp;act=edit&amp;id=' . $dc->value . '&amp;rt=' . REQUEST_TOKEN . '" title="' . sprintf(StringUtil::specialchars($editListDesc), $dc->value) . '">' . Image::getHtml('alias.svg', $editListTitle) . '</a>';
     }
 
     public static function addOverridableFields()
@@ -59,7 +64,7 @@ class ListConfig extends Backend
         $overridableFields = [];
 
         foreach ($dca['fields'] as $field => $data) {
-            $overrideFieldname = 'override'.ucfirst($field);
+            $overrideFieldname = 'override' . ucfirst($field);
 
             if (isset($data['eval']['notOverridable']) || isset($dca['fields'][$overrideFieldname]) ||
                 isset($data['eval']['isOverrideSelector'])) {
@@ -114,7 +119,7 @@ class ListConfig extends Backend
     {
         if ($row['pid']) {
             if (null !== ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->findByPk($row['pid']))) {
-                $label .= '<span style="padding-left:3px;color:#b3b3b3;">['.$GLOBALS['TL_LANG']['MSC']['listBundle']['parentConfig'].': '.$listConfig->title.']</span>';
+                $label .= '<span style="padding-left:3px;color:#b3b3b3;">[' . $GLOBALS['TL_LANG']['MSC']['listBundle']['parentConfig'] . ': ' . $listConfig->title . ']</span>';
             }
         }
 
@@ -124,7 +129,7 @@ class ListConfig extends Backend
     /**
      * Return the edit header button.
      *
-     * @param array  $row
+     * @param array $row
      * @param string $href
      * @param string $label
      * @param string $title
@@ -135,7 +140,7 @@ class ListConfig extends Backend
      */
     public function editHeader($row, $href, $label, $title, $icon, $attributes)
     {
-        return BackendUser::getInstance()->canEditFieldsOf('tl_list_config') ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+        return BackendUser::getInstance()->canEditFieldsOf('tl_list_config') ? '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label) . '</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
     }
 
     public function edit($row, $href, $label, $title, $icon, $attributes)
@@ -144,6 +149,6 @@ class ListConfig extends Backend
             return '';
         }
 
-        return sprintf('<a href="%s" title="%s" class="edit">%s</a>', $this->addToUrl($href.'&amp;id='.$row['id']), $title, Image::getHtml($icon, $label));
+        return sprintf('<a href="%s" title="%s" class="edit">%s</a>', $this->addToUrl($href . '&amp;id=' . $row['id']), $title, Image::getHtml($icon, $label));
     }
 }

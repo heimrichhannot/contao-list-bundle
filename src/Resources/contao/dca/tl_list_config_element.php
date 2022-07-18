@@ -439,7 +439,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'filter' => true,
             'inputType' => 'select',
             'options_callback' => function (Contao\DataContainer $dc) {
-                if (!$dc->activeRecord->tagsFilter) {
+                if (!$dc->activeRecord || !$dc->activeRecord->tagsFilter) {
                     return [];
                 }
 

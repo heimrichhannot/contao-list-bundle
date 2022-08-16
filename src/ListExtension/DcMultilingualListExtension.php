@@ -96,14 +96,22 @@ class DcMultilingualListExtension implements ListExtensionInterface
             }
 
             // only show translated records
-            if ('join' === $key && !$fallbackLanguage) {
-                $part[$listConfiguration->getDataContainer()][0]['joinType'] = 'right outer';
-            }
+            if ('join' === $key) {
+                if (!$fallbackLanguage) {
+                    $part[$listConfiguration->getDataContainer()][0]['joinType'] = 'right outer';
+                }
+                $queryBuilder->add($key, [
+                    $listConfiguration->getDataContainer() => $part[$listConfiguration->getDataContainer()][0],
+                ], true);
 
+                continue;
+            }
             $queryBuilder->add($key, $part, $append);
         }
 
-        if (!$fallbackLanguage
+        $queryBuilder->resetQueryPart('groupBy');
+
+        if (false && !$fallbackLanguage
             && class_exists(ContaoDcMultilingualUtilsBundle::class)
             && !$this->utils->container()->isPreviewMode()
             && isset($dca['config']['langPublished'])

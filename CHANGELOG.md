@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.49.1] - 2022-08-16
+- Fixed: exception with dc_multilingual and categories
+
 ## [1.49.0] - 2022-08-16
 - Added: ListExtension infrastructure (currently only experimental) ([#12])
 - Changed: refactored DC_Multilingual integration ([#12])

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.49.0] - 2022-08-16
+- Added: ListExtension infrastructure (currently only experimental) ([#12])
+- Changed: refactored DC_Multilingual integration ([#12])
+- Fixed: possible issues with DC_Multilingual and mysql ANY_VALUES ([#12])
+
 ## [1.48.10] - 2022-07-18
 - Fixed: php8 warnings
 
@@ -633,10 +638,10 @@ existing method from the inherit method and register the class as service.
 
 * updated list config search and filter settings for backend
 
+
+
+[#12]: https://github.com/heimrichhannot/contao-list-bundle/pull/12
 [#7]: https://github.com/heimrichhannot/contao-list-bundle/pull/7
-
 [#6]: https://github.com/heimrichhannot/contao-list-bundle/pull/6
-
 [#5]: https://github.com/heimrichhannot/contao-list-bundle/pull/5
-
 [#4]: https://github.com/heimrichhannot/contao-list-bundle/issues/4

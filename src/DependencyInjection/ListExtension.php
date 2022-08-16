@@ -1,13 +1,14 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\ListBundle\DependencyInjection;
 
+use HeimrichHannot\ListBundle\ListExtension\ListExtensionInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -35,5 +36,8 @@ class ListExtension extends Extension
 
         $loader->load('services.yml');
         $loader->load('listener.yml');
+
+        $container->registerForAutoconfiguration(ListExtensionInterface::class)
+            ->addTag('huh.list.list_extension');
     }
 }

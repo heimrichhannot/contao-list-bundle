@@ -11,12 +11,10 @@ namespace HeimrichHannot\ListBundle\Lists;
 use Contao\Config;
 use Contao\Database;
 use Contao\Date;
-use Contao\DcaExtractor;
 use Contao\FrontendTemplate;
 use Contao\Model;
 use Contao\StringUtil;
 use Contao\System;
-use Doctrine\DBAL\Query\QueryBuilder;
 use HeimrichHannot\Blocks\BlockModuleModel;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
@@ -30,12 +28,14 @@ use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderEvent;
 use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderForCountEvent;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\ListBundle\Item\ItemInterface;
+use HeimrichHannot\ListBundle\ListConfiguration\ListConfiguration;
+use HeimrichHannot\ListBundle\ListExtension\DcMultilingualListExtension;
+use HeimrichHannot\ListBundle\ListExtension\ListExtensionCollection;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Terminal42\DcMultilingualBundle\QueryBuilder\MultilingualQueryBuilder;
 
 class DefaultList implements ListInterface, \JsonSerializable
 {
@@ -201,6 +201,8 @@ class DefaultList implements ListInterface, \JsonSerializable
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
         $this->_filterConfig = $this->_manager->getFilterConfig();
 
+        $listConfiguration = new ListConfiguration($filter->dataContainer, $listConfig);
+
         System::getContainer()->get('huh.utils.dca')->loadDc($filter->dataContainer);
         $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
 
@@ -236,125 +238,9 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         // support for terminal42/contao-DC_Multilingual
         if ($this->isDcMultilingualActive($listConfig, $dca, $filter->dataContainer)) {
-            $regularFields = array_intersect(
-                $dbFields,
-                array_keys(DcaExtractor::getInstance($filter->dataContainer)->getFields())
-            );
-
-            $translatableFields = [];
-
-            foreach ($GLOBALS['TL_DCA'][$filter->dataContainer]['fields'] as $field => $data) {
-                if (!isset($data['eval']['translatableFor']) || !\in_array($field, $dbFields, true)) {
-                    continue;
-                }
-                $translatableFields[] = $field;
-            }
-
-            $dcQueryBuilder = new MultilingualQueryBuilder(
-                new QueryBuilder($queryBuilder->getConnection()),
-                $filter->dataContainer,
-                $dca['config']['langPid'],
-                $dca['config']['langColumnName'],
-                $regularFields,
-                $translatableFields
-            );
-            $dcQueryBuilder->buildQueryBuilderForFind($GLOBALS['TL_LANGUAGE']);
-            $dcQueryBuilder = $dcQueryBuilder->getQueryBuilder();
-            $fields = implode(', ', $dcQueryBuilder->getQueryPart('select'));
-
-            foreach ($dcQueryBuilder->getQueryParts() as $key => $part) {
-                $append = false;
-
-                if (!\in_array($key, ['select', 'from', 'where', 'join'])) {
-                    continue;
-                }
-
-                if ('where' === $key) {
-                    if ('AND' === $part->getType()) {
-                        $queryBuilder->andWhere($part);
-
-                        continue;
-                    }
-                    $append = true;
-                }
-
-                $queryBuilder->add($key, $part, $append);
-            }
-
-//            if ($GLOBALS['TL_LANGUAGE'] !== $dca['config']['fallbackLang']) {
-//                $suffixedTable = $filter->dataContainer.ListInterface::DC_MULTILINGUAL_SUFFIX;
-//
-//                $queryBuilder->innerJoin(
-//                    $filter->dataContainer,
-//                    $filter->dataContainer,
-//                    $suffixedTable,
-//                    $filter->dataContainer.'.id = '.$suffixedTable.'.'.$dca['config']['langPid'].' AND '.$suffixedTable.'.language = "'.$GLOBALS['TL_LANGUAGE'].'"'
-//                );
-//
-//                // compute fields
-//                $fieldNames = [];
-//
-//                foreach ($dca['fields'] as $field => $data) {
-//                    if (!isset($data['sql'])) {
-//                        continue;
-//                    }
-//
-//                    if ('*' === $data['eval']['translatableFor'] || $data['eval']['translatableFor'] === $GLOBALS['TL_LANGUAGE']) {
-//                        $fieldNames[] = $suffixedTable.'.'.$field;
-//                    } else {
-//                        $fieldNames[] = $filter->dataContainer.'.'.$field;
-//                    }
-//                }
-//
-//                $fields = implode(', ', array_map(function ($val) use ($filter, $suffixedTable) {
-//                    return 'ANY_VALUE('.$val.') AS "'.str_replace([$filter->dataContainer.'.', $suffixedTable.'.'], '', $val).'"';
-//                }, $fieldNames));
-//
-//                // add support for dc multilingual utils
-//                if ($this->isDcMultilingualUtilsActive($listConfig, $dca, $filter->dataContainer)) {
-//                    if (!System::getContainer()->get('huh.utils.container')->isPreviewMode() &&
-//                        isset($dca['config']['langPublished']) && isset($dca['fields'][$dca['config']['langPublished']]) &&
-//                        \is_array($dca['fields'][$dca['config']['langPublished']])) {
-//                        $and = $queryBuilder->expr()->andX();
-//
-//                        if (isset($dca['config']['langStart']) && isset($dca['fields'][$dca['config']['langStart']]) && \is_array($dca['fields'][$dca['config']['langStart']]) &&
-//                            isset($dca['config']['langStop']) && isset($dca['fields'][$dca['config']['langStop']]) && \is_array($dca['fields'][$dca['config']['langStop']])) {
-//                            $time = Date::floorToMinute();
-//
-//                            $orStart = $queryBuilder->expr()->orX(
-//                                $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStart'], '""'),
-//                                $queryBuilder->expr()->lte($suffixedTable.'.'.$dca['config']['langStart'], ':'.$dca['config']['langStart'].'_time')
-//                            );
-//
-//                            $and->add($orStart);
-//                            $queryBuilder->setParameter($dca['config']['langStart'].'_time', $time);
-//
-//                            $orStop = $queryBuilder->expr()->orX(
-//                                $queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langStop'], '""'),
-//                                $queryBuilder->expr()->gt($suffixedTable.'.'.$dca['config']['langStop'], ':'.$dca['config']['langStop'].'_time')
-//                            );
-//
-//                            $and->add($orStop);
-//                            $queryBuilder->setParameter($dca['config']['langStop'].'_time', $time + 60);
-//                        }
-//
-//                        $and->add($queryBuilder->expr()->eq($suffixedTable.'.'.$dca['config']['langPublished'], 1));
-//
-//                        $queryBuilder->andWhere($and);
-//                    }
-//                }
-//            } else {
-//                // exclude translated records
-//                $andNoLangPid = $queryBuilder->expr()->andX(
-//                    $queryBuilder->expr()->eq($filter->dataContainer.'.'.$dca['config']['langPid'], '0')
-//                );
-//
-//                $queryBuilder->andWhere($andNoLangPid);
-//
-//                $fields = implode(', ', array_map(function ($field) use ($filter) {
-//                    return $filter->dataContainer.'.'.$field;
-//                }, $dbFields));
-//            }
+            $extension = System::getContainer()->get(ListExtensionCollection::class)->getExtension(DcMultilingualListExtension::getAlias());
+            $extension->prepareQueryBuilder($queryBuilder, $listConfiguration);
+            $fields = implode(', ', $queryBuilder->getQueryPart('select'));
         }
         // support for heimrichhannot/contao-multilingual-fields-bundle
         elseif ($this->isMultilingualFieldsActive($listConfig, $filter->dataContainer)) {

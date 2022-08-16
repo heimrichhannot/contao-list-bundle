@@ -1,13 +1,14 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\ListBundle\DependencyInjection\Compiler;
 
+use HeimrichHannot\ListBundle\ListExtension\ListExtensionCollection;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -20,19 +21,22 @@ class ListCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        // always first check if the primary service is defined
-        if (!$container->has(ListConfigElementRegistry::class)) {
-            return;
+        if ($container->has(ListConfigElementRegistry::class)) {
+            $definition = $container->findDefinition(ListConfigElementRegistry::class);
+            $taggedServices = $container->findTaggedServiceIds('huh.list.config_element_type');
+
+            foreach ($taggedServices as $id => $tags) {
+                $definition->addMethodCall('addListConfigElementType', [new Reference($id)]);
+            }
         }
 
-        $definition = $container->findDefinition(ListConfigElementRegistry::class);
+        if ($container->has(ListExtensionCollection::class)) {
+            $definition = $container->findDefinition(ListExtensionCollection::class);
+            $taggedServices = $container->findTaggedServiceIds('huh.list.list_extension');
 
-        // find all service IDs with the app.mail_transport tag
-        $taggedServices = $container->findTaggedServiceIds('huh.list.config_element_type');
-
-        foreach ($taggedServices as $id => $tags) {
-            // add the transport service to the TransportChain service
-            $definition->addMethodCall('addListConfigElementType', [new Reference($id)]);
+            foreach ($taggedServices as $id => $tags) {
+                $definition->addMethodCall('addExtension', [new Reference($id)]);
+            }
         }
     }
 }

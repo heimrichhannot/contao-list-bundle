@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.49.2] - 2022-08-26
+- Fixed: js query ajax next button
+
 ## [1.49.1] - 2022-08-16
 - Fixed: exception with dc_multilingual and categories
 

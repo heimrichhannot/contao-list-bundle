@@ -310,7 +310,7 @@ class ListBundle {
                             ajaxPagination.innerHTML = '';
 
                             if (loadedDoc.querySelector('.huh-list .ajax-pagination a.next')) {
-                                let nextButton = loadedDoc.querySelector('.huh-list .ajax-pagination a.next');
+                                let nextButton = loadedDoc.querySelector('.huh-list #' + list.querySelector('.wrapper').getAttribute('id') + ' .ajax-pagination a.next');
 
                                 nextButton.addEventListener('click', e => {
                                     e.preventDefault();

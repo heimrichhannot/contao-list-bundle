@@ -31,6 +31,7 @@ use HeimrichHannot\ListBundle\Item\ItemInterface;
 use HeimrichHannot\ListBundle\ListConfiguration\ListConfiguration;
 use HeimrichHannot\ListBundle\ListExtension\DcMultilingualListExtension;
 use HeimrichHannot\ListBundle\ListExtension\ListExtensionCollection;
+use HeimrichHannot\ListBundle\ListExtension\ListExtensionInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
@@ -202,6 +203,13 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->_filterConfig = $this->_manager->getFilterConfig();
 
         $listConfiguration = new ListConfiguration($filter->dataContainer, $listConfig);
+        $listConfiguration->setMaxItems((int) $listConfig->numberOfItems);
+        $listConfiguration->setMaxItemsPerPage((int) $listConfig->perPage);
+
+        /** @var ListExtensionInterface $extension */
+        foreach (System::getContainer()->get(ListExtensionCollection::class)->getExtensions() as $extension) {
+            $extension->adjustListConfiguration($listConfiguration);
+        }
 
         System::getContainer()->get('huh.utils.dca')->loadDc($filter->dataContainer);
         $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
@@ -309,7 +317,12 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->setNoItemsText(System::getContainer()->get('translator')->trans($listConfig->noItemsText ?: 'huh.list.empty.text.default'));
 
         // query builder
-        $this->applyListConfigToQueryBuilder($totalCount, $queryBuilder);
+        $this->applyListConfigToQueryBuilder($totalCount, $queryBuilder, $listConfiguration);
+
+        /** @var ListExtensionInterface $extension */
+        foreach (System::getContainer()->get(ListExtensionCollection::class)->getExtensions() as $extension) {
+            $extension->prepareQueryBuilderBeforeItemRetrival($queryBuilder, $listConfiguration, $totalCount);
+        }
 
         $this->_dispatcher->dispatch(
             new ListModifyQueryBuilderEvent($queryBuilder, $this, $listConfig, $fields),
@@ -482,7 +495,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $event->getParsedItems();
     }
 
-    public function applyListConfigToQueryBuilder(int $totalCount, FilterQueryBuilder $queryBuilder): void
+    public function applyListConfigToQueryBuilder(int $totalCount, FilterQueryBuilder $queryBuilder, ListConfiguration $listConfiguration = null): void
     {
         $listConfig = $this->_manager->getListConfig();
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();

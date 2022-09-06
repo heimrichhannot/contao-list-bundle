@@ -287,7 +287,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $totalCount = 0;
 
         $event = $this->_dispatcher->dispatch(
-            new ListModifyQueryBuilderForCountEvent($queryBuilder, $this, $listConfig, $fields),
+            new ListModifyQueryBuilderForCountEvent($queryBuilder, $this, $listConfig, $fields, $listConfiguration),
             ListModifyQueryBuilderForCountEvent::NAME
         );
 

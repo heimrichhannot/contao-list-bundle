@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.50.0] - 2022-09-06
+- Changed: pass ListConfiguration to ListModifyQueryBuilderForCountEvent
+- Changed: deprecated ListModifyQueryBuilderForCountEvent::getListConfig
+
 ## [1.49.2] - 2022-08-26
 - Fixed: js query ajax next button
 

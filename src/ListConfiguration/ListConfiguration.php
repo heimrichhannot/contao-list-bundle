@@ -10,9 +10,6 @@ namespace HeimrichHannot\ListBundle\ListConfiguration;
 
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 
-/**
- * @internal Spezification not final, no bc promise!
- */
 class ListConfiguration
 {
     /** @var string */

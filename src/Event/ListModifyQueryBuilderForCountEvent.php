@@ -9,6 +9,7 @@
 namespace HeimrichHannot\ListBundle\Event;
 
 use Doctrine\DBAL\Query\QueryBuilder;
+use HeimrichHannot\ListBundle\ListConfiguration\ListConfiguration;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use Symfony\Contracts\EventDispatcher\Event;
@@ -35,13 +36,16 @@ class ListModifyQueryBuilderForCountEvent extends Event
      * @var string
      */
     private $fields;
+    /** @var ListConfiguration */
+    private $listConfiguration;
 
-    public function __construct(QueryBuilder $queryBuilder, ListInterface $list, ListConfigModel $listConfig, string $fields)
+    public function __construct(QueryBuilder $queryBuilder, ListInterface $list, ListConfigModel $listConfig, string $fields, ListConfiguration $listConfiguration)
     {
         $this->queryBuilder = $queryBuilder;
         $this->list = $list;
         $this->listConfig = $listConfig;
         $this->fields = $fields;
+        $this->listConfiguration = $listConfiguration;
     }
 
     public function getQueryBuilder(): QueryBuilder
@@ -64,11 +68,17 @@ class ListModifyQueryBuilderForCountEvent extends Event
         $this->list = $list;
     }
 
+    /**
+     * @deprecated Use ListConfiguration
+     */
     public function getListConfig(): ListConfigModel
     {
         return $this->listConfig;
     }
 
+    /**
+     * @deprecated Use ListConfiguration
+     */
     public function setListConfig(ListConfigModel $listConfig): void
     {
         $this->listConfig = $listConfig;
@@ -82,5 +92,15 @@ class ListModifyQueryBuilderForCountEvent extends Event
     public function setFields(string $fields): void
     {
         $this->fields = $fields;
+    }
+
+    public function getListConfiguration(): ListConfiguration
+    {
+        return $this->listConfiguration;
+    }
+
+    public function setListConfiguration(ListConfiguration $listConfiguration): void
+    {
+        $this->listConfiguration = $listConfiguration;
     }
 }

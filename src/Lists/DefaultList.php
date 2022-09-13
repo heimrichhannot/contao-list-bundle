@@ -35,6 +35,7 @@ use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
+use HeimrichHannot\UtilsBundle\Util\Utils;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class DefaultList implements ListInterface, \JsonSerializable
@@ -547,14 +548,15 @@ class DefaultList implements ListInterface, \JsonSerializable
 
             // Get the current page
             $id = 'page_s'.$this->getModule()['id'];
-            $page = $this->_manager->getRequest()->getGet($id) ?: 1;
+            $page = (int) $this->_manager->getRequest()->getGet($id) ?: 1;
             $this->setPage($page);
+
+            $pageModel = System::getContainer()->get(Utils::class)->request()->getCurrentPageModel();
 
             // Do not index or cache the page if the page number is outside the range
             if ($page < 1 || $page > max(ceil($offsettedTotal / $listConfig->perPage), 1)) {
-                global $objPage;
-                $objPage->noSearch = 1;
-                $objPage->cache = 0;
+                $pageModel->noSearch = 1;
+                $pageModel->cache = 0;
 
                 // Send a 404 header
                 header('HTTP/1.1 404 Not Found');
@@ -585,6 +587,10 @@ class DefaultList implements ListInterface, \JsonSerializable
 
             $this->setPagination($pagination->generate("\n  "));
             $this->setPaginationData($pagination->getTemplate()->getData());
+
+            if ($page > 1) {
+                $pageModel->robots = 'noindex,follow';
+            }
         }
 
         return [$offset, $limit];

@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.50.2] - 2022-09-26
+- Changed: added rel attribute to pagination template
+
 ## [1.50.1] - 2022-09-13
 - Changed: set robots meta tag to noindex,follow for paginated list on pages > 1
 

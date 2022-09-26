@@ -4,7 +4,7 @@
 <?php endforeach; ?>>
 	<?php if ($this->hasNext): ?>
         <?php $this->block('next'); ?>
-        <a href="<?= $this->next['href'] ?>" class="next" title="<?= $this->next['title'] ?>"><?= $this->next['link'] ?></a>
+        <a href="<?= $this->next['href'] ?>" class="next" title="<?= $this->next['title'] ?>" rel="next"><?= $this->next['link'] ?></a>
         <?php $this->endblock(); ?>
 	<?php endif; ?>
 </div>

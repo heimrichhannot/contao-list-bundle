@@ -19,7 +19,6 @@ use Contao\System;
 use Contao\Template;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Manager\FilterManager;
-use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Asset\FrontendAsset;
 use HeimrichHannot\ListBundle\Event\ListCompileEvent;
 use HeimrichHannot\ListBundle\Exception\InterfaceNotImplementedException;
@@ -169,7 +168,14 @@ class ModuleList extends Module
 
         $this->frontendAsset->addFrontendAssets();
 
-        return parent::generate();
+        $result = parent::generate();
+
+        if ((bool) $this->listManager->getListConfig()->doNotRenderEmpty
+            && empty($this->listManager->getList()->getItems())) {
+            return '';
+        }
+
+        return $result;
     }
 
     /**
@@ -198,17 +204,6 @@ class ModuleList extends Module
             }
 
             $this->listManager->setList(new $listClass($this->listManager));
-        }
-
-        if (true === (bool) $this->listManager->getListConfig()->doNotRenderEmpty
-            && empty($this->listManager->getList()->getItems())) {
-            /** @var FilterQueryBuilder $queryBuilder */
-            $queryBuilder = $this->listManager->getFilterManager()->getQueryBuilder($this->filter->id);
-            $fields = $this->filter->dataContainer.'.* ';
-
-            if ($totalCount = $queryBuilder->select($fields)->execute()->rowCount() < 1) {
-                return false;
-            }
         }
 
         return true;

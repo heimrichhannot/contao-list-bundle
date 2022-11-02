@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.50.3] - 2022-11-02
+- Fixed: do not render empty option not working
+
 ## [1.50.2] - 2022-09-26
 - Changed: added rel attribute to pagination template
 

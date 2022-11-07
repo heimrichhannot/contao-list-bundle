@@ -17,7 +17,7 @@ class FrontendAsset implements ServiceSubscriberInterface
 
     public function addFrontendAssets()
     {
-        $this->addPageEntryPoint('contao-multifileupload-bundle', [
+        $this->addPageEntryPoint('contao-list-bundle', [
             'TL_JAVASCRIPT' => [
                 'contao-list-bundle' => 'bundles/heimrichhannotlistbundle/assets/contao-list-bundle.js|static',
             ],

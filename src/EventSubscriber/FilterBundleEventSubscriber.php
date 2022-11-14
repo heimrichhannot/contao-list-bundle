@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -9,8 +9,8 @@
 namespace HeimrichHannot\ListBundle\EventSubscriber;
 
 use Contao\Controller;
+use Contao\ModuleModel;
 use HeimrichHannot\FilterBundle\Event\ModifyJsonResponseEvent;
-use HeimrichHannot\ListBundle\Module\ModuleList;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -42,12 +42,15 @@ class FilterBundleEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $module = $this->modelUtil->findModelInstanceByPk('tl_module', $filter->getFilter()['ajaxList']);
-        $list = new ModuleList($module);
+        $module = ModuleModel::findByPk($filter->getFilter()['ajaxList']);
+
+        if (!$module) {
+            return;
+        }
 
         $data = json_decode($response->getContent(), true);
 
-        $data['list'] = Controller::replaceInsertTags($list->generate());
+        $data['list'] = Controller::replaceInsertTags(Controller::getFrontendModule($module->id));
 
         $response->setData($data);
     }

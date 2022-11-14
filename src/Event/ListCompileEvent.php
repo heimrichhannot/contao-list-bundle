@@ -20,7 +20,7 @@ class ListCompileEvent extends Event
     const NAME = 'huh.list.event.list_compile';
 
     /**
-     * @var FrontendTemplate
+     * @var FrontendTemplate|Template
      */
     protected $template;
 

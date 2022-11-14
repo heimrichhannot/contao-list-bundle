@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -14,7 +14,7 @@ use Contao\DataContainer;
 use Contao\Image;
 use Contao\ModuleModel;
 use Contao\StringUtil;
-use HeimrichHannot\ListBundle\Module\ModuleList;
+use HeimrichHannot\ListBundle\Controller\FrontendModule\ListFrontendModuleController;
 
 class ModuleContainer
 {
@@ -39,7 +39,7 @@ class ModuleContainer
     {
         $listModules = [];
         /** @var ModuleModel $adapter */
-        $modules = $this->framework->getAdapter(ModuleModel::class)->findBy('type', ModuleList::TYPE);
+        $modules = $this->framework->getAdapter(ModuleModel::class)->findBy('type', ListFrontendModuleController::TYPE);
 
         if (!$modules) {
             return $listModules;

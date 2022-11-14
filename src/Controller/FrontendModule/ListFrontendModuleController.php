@@ -99,11 +99,13 @@ class ListFrontendModuleController extends AbstractFrontendModuleController
             ListCompileEvent::NAME
         );
 
+        $response = $template->getResponse();
+
         if ((bool) $listManager->getListConfig()->doNotRenderEmpty
             && empty($listManager->getList()->getItems())) {
             return new Response();
         }
 
-        return $template->getResponse();
+        return $response;
     }
 }

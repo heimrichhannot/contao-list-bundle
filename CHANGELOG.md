@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.51.1] - 2022-11-14
+- Fixed: non-empty list evaluated as empty when doNotRender option checked
+
 ## [1.51.0] - 2022-11-14
 - Changed: migrate module to frontend module controller ([#15])
 - Changed: (possible BC break!) ListCompileEvent signature changed due module migration

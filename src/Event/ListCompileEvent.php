@@ -10,6 +10,8 @@ namespace HeimrichHannot\ListBundle\Event;
 
 use Contao\FrontendTemplate;
 use Contao\Module;
+use Contao\ModuleModel;
+use Contao\Template;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -18,12 +20,12 @@ class ListCompileEvent extends Event
     const NAME = 'huh.list.event.list_compile';
 
     /**
-     * @var FrontendTemplate
+     * @var FrontendTemplate|Template
      */
     protected $template;
 
     /**
-     * @var Module
+     * @var Module|ModuleModel
      */
     protected $module;
 
@@ -32,7 +34,7 @@ class ListCompileEvent extends Event
      */
     protected $listConfig;
 
-    public function __construct(FrontendTemplate $template, Module $module, ListConfigModel $listConfig)
+    public function __construct(Template $template, $module, ListConfigModel $listConfig)
     {
         $this->template = $template;
         $this->module = $module;
@@ -49,13 +51,23 @@ class ListCompileEvent extends Event
         $this->template = $template;
     }
 
-    public function getModule(): Module
+    /**
+     * @return Module|ModuleModel
+     */
+    public function getModule()
     {
         return $this->module;
     }
 
-    public function setModule(Module $module): void
+    /**
+     * @deprecated Unnecessary/ useless method
+     */
+    public function setModule($module): void
     {
+        if ($module instanceof Module) {
+            trigger_error('Usage of Module instances is deprecated!', \E_USER_WARNING);
+        }
+
         $this->module = $module;
     }
 

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -15,8 +15,8 @@ use Contao\Model;
 use Contao\ModuleModel;
 use HeimrichHannot\FilterBundle\Model\FilterConfigElementModel;
 use HeimrichHannot\FilterBundle\Model\FilterConfigModel;
+use HeimrichHannot\ListBundle\Controller\FrontendModule\ListFrontendModuleController;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
-use HeimrichHannot\ListBundle\Module\ModuleList;
 use HeimrichHannot\UtilsBundle\Dca\DcaUtil;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 use Symfony\Component\Console\Input\InputInterface;
@@ -359,7 +359,7 @@ class MakeCommand extends AbstractLockedCommand
         $module->mergeRow([
             'name' => $moduleName,
             'pid' => $modulePid,
-            'type' => ModuleList::TYPE,
+            'type' => ListFrontendModuleController::TYPE,
             'listConfig' => $listConfig->id,
         ]);
 

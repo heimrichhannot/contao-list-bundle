@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @FrontendModule(ListFrontendModuleController::TYPE, category="includes", template="mod_list")
+ * @FrontendModule(ListFrontendModuleController::TYPE, category="application", template="mod_list")
  */
 class ListFrontendModuleController extends AbstractFrontendModuleController
 {

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.51.0] - 2022-11-14
+- Changed: migrate module to frontend module controller ([#15])
+- Changed: (possible BC break!) ListCompileEvent signature changed due module migration
+- Changed: raised min php version to 7.4
+- Changed: list module now located with applications category in backend select
+
 ## [1.50.3] - 2022-11-02
 - Fixed: do not render empty option not working
 

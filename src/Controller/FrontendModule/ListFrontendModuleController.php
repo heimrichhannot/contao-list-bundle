@@ -17,6 +17,7 @@ use Contao\Template;
 use HeimrichHannot\ListBundle\Asset\FrontendAsset;
 use HeimrichHannot\ListBundle\Event\ListCompileEvent;
 use HeimrichHannot\ListBundle\Exception\InterfaceNotImplementedException;
+use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
 use HeimrichHannot\ListBundle\Util\ListManagerUtil;
@@ -79,30 +80,40 @@ class ListFrontendModuleController extends AbstractFrontendModuleController
                 throw new InterfaceNotImplementedException(\JsonSerializable::class, $listClass);
             }
 
-            $listManager->setList(new $listClass($listManager));
+            $list = new $listClass($listManager);
+            $listManager->setList($list);
+        } else {
+            if ($this->container->has('parameter_bag')
+                && $this->container->get('parameter_bag')->has('kernel.environment')
+                && 'dev' === $this->container->get('parameter_bag')->get('kernel.environment')
+            ) {
+                throw new InvalidListConfigException('Could not create list class due invalid list type!');
+            }
+
+            return new Response();
         }
 
         $this->frontendAsset->addFrontendAssets();
 
-        $listManager->getList()->handleShare();
+        $list->handleShare();
 
         // add class to every list template
-        $template->class = trim($template->class.' huh-list '.$listManager->getList()->getDataContainer());
-        $template->noSearch = (bool) $listManager->getListConfig()->noSearch;
+        $template->class = trim($template->class.' huh-list '.$list->getDataContainer());
+        $template->noSearch = (bool) $listConfig->noSearch;
 
-        $template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) use ($listManager) {
-            return $listManager->getList()->parse($listTemplate, $itemTemplate, $data);
+        $template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) use ($list) {
+            return $list->parse($listTemplate, $itemTemplate, $data);
         };
 
         $this->eventDispatcher->dispatch(
-            new ListCompileEvent($template, $this, $listManager->getListConfig()),
+            new ListCompileEvent($template, $this, $listConfig),
             ListCompileEvent::NAME
         );
 
         $response = $template->getResponse();
 
-        if ((bool) $listManager->getListConfig()->doNotRenderEmpty
-            && empty($listManager->getList()->getItems())) {
+        if ((bool) $listConfig->doNotRenderEmpty
+            && empty($list->getItems())) {
             return new Response();
         }
 

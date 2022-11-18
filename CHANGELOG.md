@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.51.2] - 2022-11-17
+- Fixed: issues in frontend module leading to mixing of data when multiple list rendered together
+
 ## [1.51.1] - 2022-11-14
 - Fixed: non-empty list evaluated as empty when doNotRender option checked
 

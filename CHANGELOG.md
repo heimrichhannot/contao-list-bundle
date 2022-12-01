@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.51.3] - 2022-12-01
+- Fixed: list preselect allows selecting parent list element
+- Fixed: endless recursion if preselect element has parent list element selected
+
 ## [1.51.2] - 2022-11-17
 - Fixed: issues in frontend module leading to mixing of data when multiple list rendered together
 

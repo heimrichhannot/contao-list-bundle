@@ -10,7 +10,7 @@ namespace HeimrichHannot\ListBundle\ListExtension;
 
 class ListExtensionCollection
 {
-    /** @var array */
+    /** @var array|ListExtensionInterface[] */
     private $collection = [];
 
     public function addExtension(ListExtensionInterface $extension): void
@@ -29,6 +29,26 @@ class ListExtensionCollection
     public function getExtensions(): array
     {
         return $this->collection;
+    }
+
+    /**
+     * @param array $context Typical $model->row()
+     *
+     * @return ListExtensionInterface[]|array
+     */
+    public function getEnabledExtensionsForContext(array $context): array
+    {
+        $extensions = [];
+
+        foreach ($this->collection as $extension) {
+            $fieldName = 'use'.ucfirst($extension::getAlias());
+
+            if (isset($context[$fieldName]) && (bool) $context[$fieldName]) {
+                $extensions[] = $extension;
+            }
+        }
+
+        return $extensions;
     }
 
     /**

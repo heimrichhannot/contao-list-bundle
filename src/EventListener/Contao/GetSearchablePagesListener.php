@@ -1,52 +1,33 @@
 <?php
 
-/*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
- *
- * @license LGPL-3.0-or-later
- */
+namespace HeimrichHannot\ListBundle\EventListener\Contao;
 
-namespace HeimrichHannot\ListBundle\EventListener;
-
-use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
-use Contao\System;
+use Contao\CoreBundle\ServiceAnnotation\Hook;
+use HeimrichHannot\FilterBundle\Manager\FilterManager;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
-use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
+use HeimrichHannot\ListBundle\Manager\ListManager;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
 
-class SearchListener
+/**
+ * @Hook("getSearchablePages")
+ */
+class GetSearchablePagesListener
 {
-    /**
-     * @var ContaoFrameworkInterface
-     */
-    private $framework;
+    private ListConfigRegistry   $listConfigRegistry;
+    private ListManager $manager;
+    private FilterManager        $filterManager;
 
-    /**
-     * @var ListConfigRegistry
-     */
-    private $listConfigRegistry;
-
-    /**
-     * @var ListManagerInterface
-     */
-    private $manager;
-
-    public function __construct(ContaoFrameworkInterface $framework, ListConfigRegistry $listConfigRegistry, ListManagerInterface $manager)
+    public function __construct(ListConfigRegistry $listConfigRegistry, ListManager $manager, FilterManager $filterManager)
     {
-        $this->framework = $framework;
         $this->listConfigRegistry = $listConfigRegistry;
         $this->manager = $manager;
+        $this->filterManager = $filterManager;
     }
 
-    /**
-     * Add list items as searchable pages.
-     *
-     * @throws \ReflectionException
-     */
-    public function getSearchablePages(array $arrPages, $intRoot = 0, bool $blnIsSitemap = false): array
+    public function __invoke(array $pages, int $rootId = null, bool $isSitemap = false, string $language = null): array
     {
         if (null === ($listConfigs = $this->listConfigRegistry->findAll())) {
-            return $arrPages;
+            return $pages;
         }
 
         foreach ($listConfigs as $listConfig) {
@@ -64,7 +45,7 @@ class SearchListener
                 }
 
                 $this->manager->setListConfig($listConfig);
-                $filter = System::getContainer()->get('huh.filter.manager')->findById($listConfig->filter);
+                $filter = $this->filterManager->findById($listConfig->filter);
 
                 if (null === $filter) {
                     continue;
@@ -81,10 +62,10 @@ class SearchListener
                 }
 
                 $this->manager->setList(new $listClass($this->manager));
-                $arrPages = $this->manager->getList()->getSearchablePages($arrPages, $intRoot, $blnIsSitemap);
+                $pages = $this->manager->getList()->getSearchablePages($pages, $rootId, $isSitemap);
             }
         }
 
-        return $arrPages;
+        return $pages;
     }
 }

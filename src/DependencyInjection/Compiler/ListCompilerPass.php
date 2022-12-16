@@ -9,6 +9,7 @@
 namespace HeimrichHannot\ListBundle\DependencyInjection\Compiler;
 
 use HeimrichHannot\ListBundle\ListExtension\ListExtensionCollection;
+use HeimrichHannot\ListBundle\ListExtension\ListExtensionInterface;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -35,6 +36,16 @@ class ListCompilerPass implements CompilerPassInterface
             $taggedServices = $container->findTaggedServiceIds('huh.list.list_extension');
 
             foreach ($taggedServices as $id => $tags) {
+                if (!class_implements($id, ListExtensionInterface::class)) {
+                    continue;
+                }
+
+                if (!$id::isEnabled()) {
+                    $container->removeDefinition($id);
+
+                    continue;
+                }
+
                 $definition->addMethodCall('addExtension', [new Reference($id)]);
             }
         }

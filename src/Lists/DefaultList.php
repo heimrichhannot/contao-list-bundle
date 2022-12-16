@@ -203,6 +203,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->_filterConfig = $this->_manager->getFilterConfig();
 
         $listConfiguration = new ListConfiguration($filter->dataContainer, $listConfig);
+        $listExtensions = System::getContainer()->get(ListExtensionCollection::class)->getExtensions($listConfig->row());
 
         System::getContainer()->get('huh.utils.dca')->loadDc($filter->dataContainer);
         $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];

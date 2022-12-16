@@ -1,10 +1,12 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
+
+use HeimrichHannot\ListBundle\ListExtension\DcMultilingualListExtension;
 
 $lang = &$GLOBALS['TL_LANG']['tl_list_config'];
 
@@ -58,6 +60,14 @@ $lang['sortingHeader'][0] = 'Sortierende Kopfzeile';
 $lang['sortingHeader'][1] = 'Wählen Sie diese Option, wenn die Tabelle eine Kopfzeile haben soll, die Links zum Sortieren enthält.';
 $lang['tableFields'][0] = 'Tabellenfelder';
 $lang['tableFields'][1] = 'Wählen Sie die Felder aus, die in der Tabelle ausgegeben werden sollen.';
+
+// Extensions
+$lang['use'.DcMultilingualListExtension::getAlias()] = [
+    'Support für "DC_Multilingual" hinzufügen',
+    'Wählen Sie diese Option, wenn die verknüpfte Entität durch das Bundle "terminal42/contao-DC_Multilingual" übersetzbar ist.',
+];
+$lang['dcMultilingualUseFallbackLang'][0] = 'Fallback-Sprache';
+$lang['dcMultilingualUseFallbackLang'][1] = 'Wählen Sie diese Option, um Einträge in der Fallback-Sprache anzuzeigen, falls sie in der Zielsprache nicht verfügbar sind. Ansonsten werden nur übersetze Einträge angezeigt.';
 
 // sorting
 $lang['sortingMode'][0] = 'Sortiermodus';
@@ -130,8 +140,6 @@ $lang['masonryStampContentElements'][0] = 'Fixierte Blöcke festlegen';
 $lang['masonryStampContentElements'][1] = 'Hier können Sie Blöcke festlegen, die immer gerendert werden sollen. Die Position muss anschließend per CSS festgelegt werden (-> Responsive).';
 $lang['stampBlock'][0] = 'Block';
 $lang['stampBlock'][1] = 'Wählen Sie hier einen Block aus.';
-$lang['addDcMultilingualSupport'][0] = 'Support für "DC_Multilingual" hinzufügen';
-$lang['addDcMultilingualSupport'][1] = 'Wählen Sie diese Option, die verknüpfte Entität durch das Bundle "terminal42/contao-DC_Multilingual" übersetzbar ist.';
 $lang['addMultilingualFieldsSupport'][0] = 'Support für "Multilingual Fields Bundle" hinzufügen';
 $lang['addMultilingualFieldsSupport'][1] = 'Wählen Sie diese Option, die verknüpfte Entität durch das Bundle "heimrichhannot/contao-multilingual-fields-bundle" übersetzbar ist.';
 $lang['hideForListPreselect'][0] = 'Für Listenvorauswahl ausblenden';
@@ -164,6 +172,7 @@ $lang['generateSorting'] = 'Alphabetisch sortieren';
 $lang['general_legend'] = 'Allgemeine Einstellungen';
 $lang['entity_legend'] = 'Entität';
 $lang['config_legend'] = 'Konfiguration';
+$lang['extension_legend'] = 'Listen-Erweiterungen';
 $lang['filter_legend'] = 'Filter';
 $lang['overrideFilter_legend'] = 'Filter';
 $lang['sorting_legend'] = 'Sortierung';

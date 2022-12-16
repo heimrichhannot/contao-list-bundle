@@ -16,6 +16,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use HeimrichHannot\DcMultilingualUtilsBundle\ContaoDcMultilingualUtilsBundle;
 use HeimrichHannot\ListBundle\ListConfiguration\ListConfiguration;
 use HeimrichHannot\UtilsBundle\Util\Utils;
+use Terminal42\DcMultilingualBundle\Model\Multilingual;
 use Terminal42\DcMultilingualBundle\QueryBuilder\MultilingualQueryBuilder;
 use Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle;
 
@@ -36,12 +37,21 @@ class DcMultilingualListExtension implements ListExtensionInterface
 
     public static function getAlias(): string
     {
-        return 'dc_multilingual';
+        return 'dcMultilingual';
+    }
+
+    public static function isEnabled(): bool
+    {
+        if (!class_exists(Multilingual::class)) {
+            return false;
+        }
+
+        return true;
     }
 
     public static function getFields(): array
     {
-        return [];
+        return ['dcMultilingualUseFallbackLang'];
     }
 
     public function prepareQueryBuilder(QueryBuilder $queryBuilder, ListConfiguration $listConfiguration): void
@@ -95,17 +105,20 @@ class DcMultilingualListExtension implements ListExtensionInterface
                 $append = true;
             }
 
-            // only show translated records
-            if ('join' === $key) {
-                if (!$fallbackLanguage) {
-                    $part[$listConfiguration->getDataContainer()][0]['joinType'] = 'right outer';
-                }
-                $queryBuilder->add($key, [
-                    $listConfiguration->getDataContainer() => $part[$listConfiguration->getDataContainer()][0],
-                ], true);
+            if (!$listConfiguration->getListConfigModel()->dcMultilingualUseFallbackLang) {
+                // only show translated records
+                if ('join' === $key) {
+                    if (!$fallbackLanguage) {
+                        $part[$listConfiguration->getDataContainer()][0]['joinType'] = 'right outer';
+                    }
+                    $queryBuilder->add($key, [
+                        $listConfiguration->getDataContainer() => $part[$listConfiguration->getDataContainer()][0],
+                    ], true);
 
-                continue;
+                    continue;
+                }
             }
+
             $queryBuilder->add($key, $part, $append);
         }
 

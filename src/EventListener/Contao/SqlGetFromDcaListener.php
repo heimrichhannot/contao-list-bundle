@@ -1,22 +1,26 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
 
 namespace HeimrichHannot\ListBundle\EventListener\Contao;
 
+use Contao\CoreBundle\ServiceAnnotation\Hook;
 use Contao\Database;
 
+/**
+ * @Hook("sqlGetFromDca")
+ */
 class SqlGetFromDcaListener
 {
-    public function __invoke($sqlDcaData)
+    public function __invoke(array $sql): array
     {
-        $this->migrateParentListConfigToPid($sqlDcaData);
+        $this->migrateParentListConfigToPid($sql);
 
-        return $sqlDcaData;
+        return $sql;
     }
 
     protected function migrateParentListConfigToPid(array &$sqlDcaData)

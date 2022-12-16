@@ -22,6 +22,13 @@ interface ListExtensionInterface
     public static function getAlias(): string;
 
     /**
+     * Check for preconditions to use this extension.
+     * This method is executed at compile time, so no service container is available.
+     * If there are no conditions, just return true.
+     */
+    public static function isEnabled(): bool;
+
+    /**
      * Return fields that should be shown if the list extension is activated.
      * Return a empty array if the list extension has no additional configuration.
      */

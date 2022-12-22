@@ -19,6 +19,7 @@ use HeimrichHannot\ListBundle\Event\ListCompileEvent;
 use HeimrichHannot\ListBundle\Exception\InterfaceNotImplementedException;
 use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
+use HeimrichHannot\ListBundle\Manager\ListManager;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
 use HeimrichHannot\ListBundle\Util\ListManagerUtil;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,6 +56,7 @@ class ListFrontendModuleController extends AbstractFrontendModuleController
         // retrieve list config
         $listConfig = $this->listConfigRegistry->getComputedListConfig((int) $model->listConfig);
 
+        /** @var ListManager $listManager */
         $listManager = $this->listManagerUtil->getListManagerByName($listConfig->manager ?: 'default');
 
         if (!$listManager) {

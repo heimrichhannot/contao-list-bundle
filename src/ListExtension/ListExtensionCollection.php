@@ -8,6 +8,8 @@
 
 namespace HeimrichHannot\ListBundle\ListExtension;
 
+use HeimrichHannot\ListBundle\ListConfiguration\ListConfiguration;
+
 class ListExtensionCollection
 {
     /** @var array|ListExtensionInterface[] */
@@ -36,14 +38,12 @@ class ListExtensionCollection
      *
      * @return ListExtensionInterface[]|array
      */
-    public function getEnabledExtensionsForContext(array $context): array
+    public function getEnabledExtensionsForContext(ListConfiguration $listConfiguration): array
     {
         $extensions = [];
 
         foreach ($this->collection as $extension) {
-            $fieldName = 'use'.ucfirst($extension::getAlias());
-
-            if (isset($context[$fieldName]) && (bool) $context[$fieldName]) {
+            if ($extension->isEnabledInCurrentContext($listConfiguration)) {
                 $extensions[] = $extension;
             }
         }

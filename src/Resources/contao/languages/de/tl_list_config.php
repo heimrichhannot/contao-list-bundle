@@ -6,6 +6,8 @@
  * @license LGPL-3.0-or-later
  */
 
+use HeimrichHannot\ListBundle\ListExtension\Concrete\DcMultilingualListExtension;
+
 $lang = &$GLOBALS['TL_LANG']['tl_list_config'];
 
 /*
@@ -60,8 +62,8 @@ $lang['tableFields'][0] = 'Tabellenfelder';
 $lang['tableFields'][1] = 'Wählen Sie die Felder aus, die in der Tabelle ausgegeben werden sollen.';
 
 // Extensions
-$lang['useDcMultilingual'][0] = 'Support für "DC_Multilingual" hinzufügen';
-$lang['useDcMultilingual'][1] = 'Wählen Sie diese Option, wenn die verknüpfte Entität durch das Bundle "terminal42/contao-DC_Multilingual" übersetzbar ist.';
+$lang[DcMultilingualListExtension::getActivationFieldName()][0] = 'Support für "DC_Multilingual" hinzufügen';
+$lang[DcMultilingualListExtension::getActivationFieldName()][1] = 'Wählen Sie diese Option, wenn die verknüpfte Entität durch das Bundle "terminal42/contao-DC_Multilingual" übersetzbar ist.';
 $lang['dcMultilingualUseFallbackLang'][0] = 'Fallback-Sprache';
 $lang['dcMultilingualUseFallbackLang'][1] = 'Wählen Sie diese Option, um Einträge in der Fallback-Sprache anzuzeigen, falls sie in der Zielsprache nicht verfügbar sind. Ansonsten werden nur übersetze Einträge angezeigt.';
 

@@ -6,7 +6,7 @@
  * @license LGPL-3.0-or-later
  */
 
-namespace HeimrichHannot\ListBundle\ListExtension;
+namespace HeimrichHannot\ListBundle\ListExtension\Concrete;
 
 use Contao\Controller;
 use Contao\Database;
@@ -14,8 +14,12 @@ use Contao\Date;
 use Contao\DcaExtractor;
 use Doctrine\DBAL\Query\QueryBuilder;
 use HeimrichHannot\DcMultilingualUtilsBundle\ContaoDcMultilingualUtilsBundle;
+use HeimrichHannot\ListBundle\Event\ListModifyQueryBuilderForCountEvent;
 use HeimrichHannot\ListBundle\ListConfiguration\ListConfiguration;
+use HeimrichHannot\ListBundle\ListExtension\AbstractListExtension;
 use HeimrichHannot\UtilsBundle\Util\Utils;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Terminal42\DcMultilingualBundle\Model\Multilingual;
 use Terminal42\DcMultilingualBundle\QueryBuilder\MultilingualQueryBuilder;
 use Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle;
@@ -23,21 +27,24 @@ use Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle;
 /**
  * @internal Spezification not final, no bc promise!
  */
-class DcMultilingualListExtension implements ListExtensionInterface
+class DcMultilingualListExtension extends AbstractListExtension
 {
-    /**
-     * @var Utils
-     */
-    private $utils;
+    private Utils $utils;
 
     public function __construct(Utils $utils)
     {
         $this->utils = $utils;
     }
 
+
     public static function getAlias(): string
     {
         return 'dcMultilingual';
+    }
+
+    public static function getActivationFieldName(): string
+    {
+        return 'addDcMultilingualSupport';
     }
 
     public static function isEnabled(): bool
@@ -54,8 +61,20 @@ class DcMultilingualListExtension implements ListExtensionInterface
         return ['dcMultilingualUseFallbackLang'];
     }
 
-    public function prepareQueryBuilder(QueryBuilder $queryBuilder, ListConfiguration $listConfiguration): void
+    private function isDcMultilingualActive(ListConfiguration $listConfiguration)
     {
+        if (!class_exists(Terminal42DcMultilingualBundle::class)) {
+            return false;
+        }
+
+        return 'Multilingual' === ($GLOBALS['TL_DCA'][$listConfiguration->getDataContainer()]['config']['dataContainer'] ?? '');
+    }
+
+    public function onListModifyQueryBuilderForCountEvent(ListModifyQueryBuilderForCountEvent $event): void
+    {
+        $listConfiguration = $event->getListConfiguration();
+        $queryBuilder = $event->getQueryBuilder();
+
         if (!isset($GLOBALS['TL_DCA'][$listConfiguration->getDataContainer()])) {
             Controller::loadDataContainer($listConfiguration->getDataContainer());
         }
@@ -158,22 +177,7 @@ class DcMultilingualListExtension implements ListExtensionInterface
 
             $queryBuilder->andWhere($and);
         }
-    }
 
-    public function prepareListTemplate(array &$templateData, ListConfiguration $listConfiguration): void
-    {
-    }
-
-    public function prepareListItemTemplate(array &$templateData, ListConfiguration $listConfiguration): void
-    {
-    }
-
-    private function isDcMultilingualActive(ListConfiguration $listConfiguration)
-    {
-        if (!class_exists(Terminal42DcMultilingualBundle::class)) {
-            return false;
-        }
-
-        return 'Multilingual' === ($GLOBALS['TL_DCA'][$listConfiguration->getDataContainer()]['config']['dataContainer'] ?? '');
+        $event->setFields(implode(', ', $queryBuilder->getQueryPart('select')));
     }
 }

@@ -22,14 +22,28 @@ interface ListExtensionInterface
     public static function getAlias(): string;
 
     /**
+     * Check for preconditions to use this extension.
+     * This method is executed at compile time, so no service container is available.
+     * If there are no conditions, just return true.
+     */
+    public static function isEnabled(): bool;
+
+    public function isEnabledInCurrentContext(ListConfiguration $listConfiguration): bool;
+
+    /**
+     * The field name of the checkbox that activate this extension.
+     */
+    public static function getActivationFieldName(): string;
+
+    /**
      * Return fields that should be shown if the list extension is activated.
      * Return a empty array if the list extension has no additional configuration.
      */
     public static function getFields(): array;
 
-    public function prepareQueryBuilder(QueryBuilder $queryBuilder, ListConfiguration $listConfiguration): void;
-
-    public function prepareListTemplate(array &$templateData, ListConfiguration $listConfiguration): void;
-
-    public function prepareListItemTemplate(array &$templateData, ListConfiguration $listConfiguration): void;
+//    public function prepareQueryBuilder(QueryBuilder $queryBuilder, ListConfiguration $listConfiguration): void;
+//
+//    public function prepareListTemplate(array &$templateData, ListConfiguration $listConfiguration): void;
+//
+//    public function prepareListItemTemplate(array &$templateData, ListConfiguration $listConfiguration): void;
 }

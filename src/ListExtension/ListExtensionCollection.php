@@ -8,9 +8,11 @@
 
 namespace HeimrichHannot\ListBundle\ListExtension;
 
+use HeimrichHannot\ListBundle\ListConfiguration\ListConfiguration;
+
 class ListExtensionCollection
 {
-    /** @var array */
+    /** @var array|ListExtensionInterface[] */
     private $collection = [];
 
     public function addExtension(ListExtensionInterface $extension): void
@@ -29,6 +31,24 @@ class ListExtensionCollection
     public function getExtensions(): array
     {
         return $this->collection;
+    }
+
+    /**
+     * @param array $context Typical $model->row()
+     *
+     * @return ListExtensionInterface[]|array
+     */
+    public function getEnabledExtensionsForContext(ListConfiguration $listConfiguration): array
+    {
+        $extensions = [];
+
+        foreach ($this->collection as $extension) {
+            if ($extension->isEnabledInCurrentContext($listConfiguration)) {
+                $extensions[] = $extension;
+            }
+        }
+
+        return $extensions;
     }
 
     /**

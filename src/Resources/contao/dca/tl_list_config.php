@@ -119,7 +119,9 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addOverview',
             'customJumpToOverviewLabel',
         ],
-        'default' => '{general_legend},title;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare,addOverview;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry,addDcMultilingualSupport,addMultilingualFieldsSupport,hideForListPreselect,listContextVariables;'.'{search_legend},noSearch,doNotIndexItems;'.'{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
+        'default' => '{general_legend},title;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'
+            .'{extension_legend};'
+            .'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare,addOverview;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry,addMultilingualFieldsSupport,hideForListPreselect,listContextVariables;'.'{search_legend},noSearch,doNotIndexItems;'.'{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
     ],
     'subpalettes' => [
         'showItemCount' => 'itemCountText',
@@ -728,6 +730,12 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'eval' => ['tl_class' => 'clr'],
             'sql' => 'text NULL',
         ],
+        'dcMultilingualUseFallbackLang' => [
+            'exclude' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
     ],
 ];
 
@@ -756,18 +764,6 @@ if (System::getContainer()->get('huh.utils.container')->isBundleActive('modal'))
     ];
 
     $dca['subpalettes']['addDetails'] = 'useModalExplanation,useModal,'.$dca['subpalettes']['addDetails'];
-}
-
-if (System::getContainer()->get('huh.utils.container')->isBundleActive('Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle')) {
-    $dca['fields'] = array_merge(is_array($dca['fields']) ? $dca['fields'] : [], [
-        'addDcMultilingualSupport' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_list_config']['addDcMultilingualSupport'],
-            'exclude' => true,
-            'inputType' => 'checkbox',
-            'eval' => ['tl_class' => 'w50'],
-            'sql' => "char(1) NOT NULL default ''",
-        ],
-    ]);
 }
 
 if (class_exists('HeimrichHannot\MultilingualFieldsBundle\HeimrichHannotMultilingualFieldsBundle')) {

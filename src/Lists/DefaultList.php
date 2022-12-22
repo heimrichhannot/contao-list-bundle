@@ -204,6 +204,12 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $listConfiguration = new ListConfiguration($filter->dataContainer, $listConfig);
 
+        $listExtensions = System::getContainer()->get(ListExtensionCollection::class)->getEnabledExtensionsForContext($listConfiguration);
+
+        foreach ($listExtensions as $extension) {
+            $this->_dispatcher->addListener(ListModifyQueryBuilderForCountEvent::NAME, [$extension, 'onListModifyQueryBuilderForCountEvent']);
+        }
+
         System::getContainer()->get('huh.utils.dca')->loadDc($filter->dataContainer);
         $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
 
@@ -237,14 +243,14 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $dbFields = $db->getFieldNames($filter->dataContainer);
 
-        // support for terminal42/contao-DC_Multilingual
-        if ($this->isDcMultilingualActive($listConfig, $dca, $filter->dataContainer)) {
-            $extension = System::getContainer()->get(ListExtensionCollection::class)->getExtension(DcMultilingualListExtension::getAlias());
-            $extension->prepareQueryBuilder($queryBuilder, $listConfiguration);
-            $fields = implode(', ', $queryBuilder->getQueryPart('select'));
-        }
+//        // support for terminal42/contao-DC_Multilingual
+//        if ($this->isDcMultilingualActive($listConfig, $dca, $filter->dataContainer)) {
+//            $extension = System::getContainer()->get(ListExtensionCollection::class)->getExtension(DcMultilingualListExtension::getAlias());
+//            $extension->prepareQueryBuilder($queryBuilder, $listConfiguration);
+//            $fields = implode(', ', $queryBuilder->getQueryPart('select'));
+//        }
         // support for heimrichhannot/contao-multilingual-fields-bundle
-        elseif ($this->isMultilingualFieldsActive($listConfig, $filter->dataContainer)) {
+        if ($this->isMultilingualFieldsActive($listConfig, $filter->dataContainer)) {
             $fallbackLanguage = System::getContainer()->getParameter('huh_multilingual_fields')['fallback_language'];
 
             if ($GLOBALS['TL_LANGUAGE'] !== $fallbackLanguage) {
@@ -355,6 +361,10 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         if (Config::get('debugMode')) {
             $buffer = "\n<!-- LIST TEMPLATE START: $listTemplate -->\n$buffer\n<!-- LIST TEMPLATE END: $listTemplate -->\n";
+        }
+
+        foreach ($listExtensions as $extension) {
+            $this->_dispatcher->removeListener(ListModifyQueryBuilderForCountEvent::NAME, [$extension, 'onListModifyQueryBuilderForCountEvent']);
         }
 
         if (isset($stopwatch)) {

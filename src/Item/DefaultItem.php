@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2022 Heimrich & Hannot GmbH
+ * Copyright (c) 2023 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -26,6 +26,7 @@ use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
+use HeimrichHannot\UtilsBundle\Util\Utils;
 
 class DefaultItem implements ItemInterface, \JsonSerializable
 {
@@ -444,13 +445,21 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         $twig = $this->_manager->getTwig();
 
         /** @var ListBeforeRenderItemEvent $event */
+        $templateData = $this->jsonSerialize();
+
+        $templateData['linkDataAttributes'] = [];
+
         $event = $this->_dispatcher->dispatch(
-            new ListBeforeRenderItemEvent($listConfig->itemTemplate, $this->jsonSerialize(), $this),
+            new ListBeforeRenderItemEvent($listConfig->itemTemplate, $templateData, $this),
             ListBeforeRenderItemEvent::NAME
         );
         $templateName = $this->_manager->getItemTemplateByName($event->getTemplateName() ?: 'default');
 
-        $buffer = $twig->render($templateName, $event->getTemplateData());
+        $context = $event->getTemplateData();
+        $context['raw']['linkDataAttributes'] = $context['linkDataAttributes'];
+        $context['linkDataAttributes'] = System::getContainer()->get(Utils::class)->html()->generateDataAttributesString($context['linkDataAttributes']);
+
+        $buffer = $twig->render($templateName, $context);
 
         if (Config::get('debugMode')) {
             $buffer = "\n<!-- LIST TEMPLATE START: $templateName -->\n$buffer\n<!-- LIST TEMPLATE END: $templateName -->\n";

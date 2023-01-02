@@ -5,7 +5,7 @@ services:
       $bundleConfig: "%huh_list%"
 
   HeimrichHannot\ListBundle\:
-    resource: '../../{Controller,DataContainer,EventSubscriber,ListExtension}/*'
+    resource: '../../{Controller,DataContainer,EventListener,EventSubscriber,ListExtension}/*'
     autoconfigure: true
     autowire: true
 

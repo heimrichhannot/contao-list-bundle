@@ -8,15 +8,15 @@
 
 namespace HeimrichHannot\ListBundle\EventListener;
 
-use Contao\CoreBundle\Routing\UrlGenerator;
 use HeimrichHannot\ListBundle\Event\ListBeforeRenderItemEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ListModalListener implements EventSubscriberInterface
 {
-    private UrlGenerator $urlGenerator;
+    private UrlGeneratorInterface $urlGenerator;
 
-    public function __construct(UrlGenerator $urlGenerator)
+    public function __construct(UrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
     }
@@ -36,7 +36,7 @@ class ListModalListener implements EventSubscriberInterface
             return;
         }
 
-        if ('listModalReaderType_huh_reader' !== $listConfigModel->listModalReaderType) {
+        if ('huh_reader' !== $listConfigModel->listModalReaderType) {
             return;
         }
 

@@ -1,4 +1,5 @@
-import UtilsBundle from "@hundh/contao-utils-bundle"
+import UtilsBundle from "@hundh/contao-utils-bundle";
+import ListModal from "./list-modal";
 
 class ListBundle {
 
@@ -106,94 +107,99 @@ class ListBundle {
             }
 
             setTimeout(() => {
-                utilsBundle.ajax.get(item.getAttribute('href'), {}, {
-                    onSuccess: (request) => {
-                        const response = document.createElement('div'),
-                            itemsWrapper = item.closest('.items'),
-                            readerType = itemsWrapper.getAttribute('data-list-modal-reader-type'),
-                            readerCssSelector = itemsWrapper.getAttribute('data-list-modal-reader-css-selector'),
-                            readerModule = itemsWrapper.getAttribute('data-list-modal-reader-module'),
-                            modalId = 'modal-' + itemsWrapper.closest('.wrapper').getAttribute('id');
+                let listModel = new ListModal();
+                listModel.openModal(item.getAttribute('href'), item.closest('.items'));
 
-                        let reader = null;
 
-                        response.innerHTML = request.response.trim();
 
-                        switch (readerType) {
-                            case 'huh_reader':
-                                reader = response.querySelector('#huh-reader-' + readerModule);
-
-                                if (null === reader) {
-                                    console.warn('Reader not found with selector: #huh-reader-' + readerModule);
-                                    return;
-                                }
-
-                                break;
-                            case 'css_selector':
-                                reader = response.querySelector(readerCssSelector);
-
-                                if (null === reader) {
-                                    console.warn('Reader not found with selector: ' + readerCssSelector);
-                                    return;
-                                }
-
-                                break;
-                        }
-
-                        if (null === reader) {
-                            return;
-                        }
-
-                        let modalElement = document.getElementById(modalId);
-                        modalElement.querySelector('.modal-content .modal-body').innerHTML = reader.outerHTML;
-
-                        let head = document.getElementsByTagName("head")[0] || document.documentElement;
-                        modalElement.querySelectorAll('.modal-content .modal-body script').forEach(function(element) {
-                            let script = document.createElement("script");
-                            Array.from(element.attributes).forEach( attr => script.setAttribute(attr.name, attr.value));
-                            script.appendChild(document.createTextNode(element.innerHTML || element.innerText));
-                            head.insertBefore(script, head.firstChild);
-                        });
-
-                        // bootstrap 4 and below
-                        if ('undefined' !== typeof window.jQuery) {
-                            window.jQuery('#' + modalId).modal('show');
-                        } else {
-                            // bootstrap 5 and up
-                            import(/* webpackChunkName: "bootstrap" */ 'bootstrap').then((bootstrap) => {
-                                bootstrap.Modal.getInstance(modalElement).show();
-                            });
-                        }
-
-                        item.dispatchEvent(new CustomEvent('huh.list.modal_show', {
-                            bubbles: true,
-                            detail: {
-                                modalElement: modalElement,
-                                modalId: modalId
-                            }
-                        }));
-
-                        history.pushState({
-                            modalId: modalId
-                        }, '', item.getAttribute('href'));
-
-                        history.pushState({
-                            modalId: modalId
-                        }, '', item.getAttribute('href'));
-                    },
-                    onError: (request) => {
-                        item.dispatchEvent(new CustomEvent('huh.list.modal_load_error', {
-                            bubbles: true,
-                            detail: {
-                                statusCode: request.status,
-                                statusText: request.statusText,
-                                response: request.response,
-                                responseText: request.responseText,
-                                url: request.responseURL
-                            }
-                        }));
-                    }
-                });
+                // utilsBundle.ajax.get(item.getAttribute('href'), {}, {
+                //     onSuccess: (request) => {
+                //         const response = document.createElement('div'),
+                //             itemsWrapper = item.closest('.items'),
+                //             readerType = itemsWrapper.getAttribute('data-list-modal-reader-type'),
+                //             readerCssSelector = itemsWrapper.getAttribute('data-list-modal-reader-css-selector'),
+                //             readerModule = itemsWrapper.getAttribute('data-list-modal-reader-module'),
+                //             modalId = 'modal-' + itemsWrapper.closest('.wrapper').getAttribute('id');
+                //
+                //         let reader = null;
+                //
+                //         response.innerHTML = request.response.trim();
+                //
+                //         switch (readerType) {
+                //             case 'huh_reader':
+                //                 reader = response.querySelector('#huh-reader-' + readerModule);
+                //
+                //                 if (null === reader) {
+                //                     console.warn('Reader not found with selector: #huh-reader-' + readerModule);
+                //                     return;
+                //                 }
+                //
+                //                 break;
+                //             case 'css_selector':
+                //                 reader = response.querySelector(readerCssSelector);
+                //
+                //                 if (null === reader) {
+                //                     console.warn('Reader not found with selector: ' + readerCssSelector);
+                //                     return;
+                //                 }
+                //
+                //                 break;
+                //         }
+                //
+                //         if (null === reader) {
+                //             return;
+                //         }
+                //
+                //         let modalElement = document.getElementById(modalId);
+                //         modalElement.querySelector('.modal-content .modal-body').innerHTML = reader.outerHTML;
+                //
+                //         let head = document.getElementsByTagName("head")[0] || document.documentElement;
+                //         modalElement.querySelectorAll('.modal-content .modal-body script').forEach(function(element) {
+                //             let script = document.createElement("script");
+                //             Array.from(element.attributes).forEach( attr => script.setAttribute(attr.name, attr.value));
+                //             script.appendChild(document.createTextNode(element.innerHTML || element.innerText));
+                //             head.insertBefore(script, head.firstChild);
+                //         });
+                //
+                //         // bootstrap 4 and below
+                //         if ('undefined' !== typeof window.jQuery) {
+                //             window.jQuery('#' + modalId).modal('show');
+                //         } else {
+                //             // bootstrap 5 and up
+                //             import(/* webpackChunkName: "bootstrap" */ 'bootstrap').then((bootstrap) => {
+                //                 bootstrap.Modal.getInstance(modalElement).show();
+                //             });
+                //         }
+                //
+                //         item.dispatchEvent(new CustomEvent('huh.list.modal_show', {
+                //             bubbles: true,
+                //             detail: {
+                //                 modalElement: modalElement,
+                //                 modalId: modalId
+                //             }
+                //         }));
+                //
+                //         history.pushState({
+                //             modalId: modalId
+                //         }, '', item.getAttribute('href'));
+                //
+                //         history.pushState({
+                //             modalId: modalId
+                //         }, '', item.getAttribute('href'));
+                //     },
+                //     onError: (request) => {
+                //         item.dispatchEvent(new CustomEvent('huh.list.modal_load_error', {
+                //             bubbles: true,
+                //             detail: {
+                //                 statusCode: request.status,
+                //                 statusText: request.statusText,
+                //                 response: request.response,
+                //                 responseText: request.responseText,
+                //                 url: request.responseURL
+                //             }
+                //         }));
+                //     }
+                // });
             }, modalLinkClicked.detail.timeout);
         });
     }

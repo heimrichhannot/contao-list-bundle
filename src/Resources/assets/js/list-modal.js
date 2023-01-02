@@ -1,6 +1,11 @@
 class ListModal {
     openModal(href, itemsWrapper) {
-        fetch(href)
+        fetch(href, {
+            headers: new Headers({
+                "X-Requested-With": "XMLHttpRequest",
+                "Huh-List-Request": "Modal-Content"
+            })
+        })
             .then((response) => {
                 return response.text();
             })

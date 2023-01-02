@@ -42,12 +42,16 @@ class ListModalListener implements EventSubscriberInterface
 
         $templateData = $event->getTemplateData();
 
+        if (!isset($templateData['module']['id'])) {
+            return;
+        }
+
         if (!isset($templateData['linkDataAttributes'])) {
             $templateData['linkDataAttributes'] = [];
         }
 
         $templateData['linkDataAttributes']['modalUrl'] = $this->urlGenerator->generate('huh_list_modal_reader', [
-            'id' => $listConfigModel->id,
+            'id' => (int) $templateData['module']['id'],
             'item' => $event->getItem()->getIdOrAlias(),
         ]);
 

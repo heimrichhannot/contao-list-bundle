@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2022 Heimrich & Hannot GmbH
+ * Copyright (c) 2023 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -48,13 +48,21 @@ class ListFrontendModuleController extends AbstractFrontendModuleController
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
+        // retrieve list config
+        $listConfig = $this->listConfigRegistry->getComputedListConfig((int) $model->listConfig);
+
+        if ($request->isXmlHttpRequest()
+            && 'Modal-Content' === $request->headers->get('Huh-List-Request')
+            && $listConfig->openListItemsInModal
+            && (Config::get('useAutoItem') && isset($_GET['auto_item']))) {
+            $model->list_renderReaderOnAutoItem = '1';
+            $model->list_readerModule = $listConfig->listModalReaderModule;
+        }
+
         // Hide list and show reader on detail pages if configured
         if ('1' === $model->list_renderReaderOnAutoItem && $model->list_readerModule && (Config::get('useAutoItem') && isset($_GET['auto_item']))) {
             return new Response(Controller::getFrontendModule($model->list_readerModule, $template->inColumn));
         }
-
-        // retrieve list config
-        $listConfig = $this->listConfigRegistry->getComputedListConfig((int) $model->listConfig);
 
         /** @var ListManager $listManager */
         $listManager = $this->listManagerUtil->getListManagerByName($listConfig->manager ?: 'default');

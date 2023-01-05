@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.52.0] - 2023-01-05
+- Added: mixed content for ajax pagination return values
+
 ## [1.51.3] - 2022-12-01
 - Fixed: list preselect allows selecting parent list element
 - Fixed: endless recursion if preselect element has parent list element selected

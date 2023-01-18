@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.52.1] - 2023-01-18
+- Fixed: missing ptable setting in tl_list_config dca
+
 ## [1.52.0] - 2023-01-05
 - Added: mixed content for ajax pagination return values
 

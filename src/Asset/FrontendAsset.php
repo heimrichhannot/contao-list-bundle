@@ -44,6 +44,6 @@ class FrontendAsset
             $this->encoreFrontendAsset->addActiveEntrypoint('contao-list-bundle');
         }
 
-        $GLOBALS['TL_JAVASCRIPT']['contao-list-bundle'] = 'bundles/heimrichhannotlistbundle/assets/contao-list-bundle.js|static';
+        $GLOBALS['TL_JAVASCRIPT']['contao-list-bundle'] = 'bundles/heimrichhannotcontaolist/js/contao-list-bundle.js|static';
     }
 }

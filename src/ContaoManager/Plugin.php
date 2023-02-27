@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2023 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -37,25 +37,13 @@ class Plugin implements BundlePluginInterface, ExtensionPluginInterface, ConfigP
         $loader->load('@HeimrichHannotContaoListBundle/Resources/config/commands.yml');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExtensionConfig($extensionName, array $extensionConfigs, ContainerBuilder $container)
     {
-        $extensionConfigs = ContainerUtil::mergeConfigFile(
+        return ContainerUtil::mergeConfigFile(
             'huh_list',
             $extensionName,
             $extensionConfigs,
             __DIR__.'/../Resources/config/config.yml'
         );
-
-        $extensionConfigs = ContainerUtil::mergeConfigFile(
-            'huh_encore',
-            $extensionName,
-            $extensionConfigs,
-            __DIR__.'/../Resources/config/config_encore.yml'
-        );
-
-        return $extensionConfigs;
     }
 }

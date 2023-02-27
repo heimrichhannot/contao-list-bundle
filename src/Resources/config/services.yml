@@ -5,7 +5,7 @@ services:
       $bundleConfig: "%huh_list%"
 
   HeimrichHannot\ListBundle\:
-    resource: '../../{Controller,DataContainer,EventSubscriber,ListExtension}/*'
+    resource: '../../{Asset,Controller,DataContainer,EventSubscriber,ListExtension}/*'
     autoconfigure: true
     autowire: true
 
@@ -80,5 +80,4 @@ services:
   HeimrichHannot\ListBundle\Asset\FrontendAsset:
     autowire: true
     public: true
-    calls:
-      - [ setEncoreFrontendAsset, [ '@?HeimrichHannot\EncoreBundle\Asset\FrontendAsset' ] ]
+    autoconfigure: true

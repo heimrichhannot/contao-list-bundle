@@ -153,3 +153,30 @@ Data attribute | Example | Description
 `data-enable-screen-reader-message` | data-enable-screen-reader-message="true" | Add an screen reader message within the list. Default: `"false"`
 `data-screen-reader-message` | data-screen-reader-message="<span class=\"sr-only\">Es wurden neue Einträge zur Auflistung hinzugefügt.</span>" | A custom screen reader message. Default: `<span class="sr-only">Es wurden neue Einträge zur Liste hinzugefügt.</span>`
 `data-disable-live-region` | data-disable-live-region="true" | Disables the live region functionality completely. Use this option if you implement a custom system. You can use the huh.list.ajax-pagination-loading and huh.list.ajax-pagination-loaded events. 
+
+
+## Customizations
+
+### Customize output of ajax pagination 
+
+By default, when using ajax pagination, the pages are renderes by the server and the client just pick the item elements out
+of the return value. If you need the complete content of the .items wrapper, add the mixedContent data attribute to the wrapper element.
+
+```php
+function onListBeforeRenderEvent(ListBeforeRenderEvent $event, Request $request): void
+ {
+    // Check conditions, add custom conditions for your project
+    $request = $this->requestStack->getCurrentRequest();
+    if (!$event->getListConfig()->addAjaxPagination
+        || !$request->isXmlHttpRequest()
+        || !$request->headers->has('Huh-List-Request')
+        || 'Ajax-Pagination' != $request->headers->get('Huh-List-Request')
+    ) {
+        return;
+    }
+
+    $templateData = $event->getTemplateData();
+    $templateData['dataAttributes'] = ' '.trim(($templateData['dataAttributes'] ?? '').' data-mixed-content="1"');
+    $event->setTemplateData($templateData);
+ }
+```

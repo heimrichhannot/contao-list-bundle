@@ -9,6 +9,7 @@ Encore
     .disableSingleRuntimeChunk()
     .addExternals({
             '@hundh/contao-utils-bundle': 'utilsBundle',
+            'bootstrap': 'bootstrap',
         }
     )
     .splitEntryChunks()

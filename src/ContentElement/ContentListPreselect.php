@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2021 Heimrich & Hannot GmbH
+ * Copyright (c) 2022 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -29,6 +29,8 @@ use HeimrichHannot\UtilsBundle\Database\DatabaseUtil;
 
 class ContentListPreselect extends ContentElement
 {
+    public const TYPE = 'list_preselect';
+
     /**
      * Template.
      *
@@ -191,6 +193,11 @@ class ContentListPreselect extends ContentElement
 
         $queryBuilder = $event->getQueryBuilder();
 
+        if ($this->objModel->ptable === $filter->dataContainer && $this->objModel->pid) {
+            $queryBuilder->andWhere($this->objModel->ptable.'.id != :preselect_parent_id');
+            $queryBuilder->setParameter('preselect_parent_id', $this->objModel->pid);
+        }
+
         $values = array_filter(StringUtil::deserialize($this->objModel->listPreselect, true));
 
         if (!empty($values)) {
@@ -313,6 +320,7 @@ class ContentListPreselect extends ContentElement
 
         if (null === ($preselections = $preselectModel->findPublishedByPidAndTableAndField($this->id, 'tl_content', 'filterPreselect'))) {
             $filterConfig->resetData(); // reset previous filters
+
             return;
         }
 

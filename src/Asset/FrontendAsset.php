@@ -19,7 +19,7 @@ class FrontendAsset implements ServiceSubscriberInterface
     {
         $this->addPageEntryPoint('contao-list-bundle', [
             'TL_JAVASCRIPT' => [
-                'contao-list-bundle' => 'bundles/heimrichhannotlistbundle/assets/contao-list-bundle.js|static',
+                'contao-list-bundle' => 'bundles/heimrichhannotcontaolist/js/contao-list-bundle.js|static',
             ],
         ]);
     }

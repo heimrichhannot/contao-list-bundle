@@ -10,17 +10,20 @@ namespace HeimrichHannot\ListBundle\DataContainer;
 
 use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\Model;
 use Contao\System;
 use HeimrichHannot\FilterBundle\Model\FilterPreselectModel;
 use HeimrichHannot\FilterBundle\Util\FilterPreselectUtil;
+use HeimrichHannot\ListBundle\ContentElement\ContentListPreselect;
 use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
 use HeimrichHannot\ListBundle\Exception\InvalidListManagerException;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
 use HeimrichHannot\ListBundle\Util\ListManagerUtil;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
 
 class ContentContainer
@@ -49,8 +52,9 @@ class ContentContainer
      * @var Environment
      */
     private $twig;
+    private RequestStack $requestStack;
 
-    public function __construct(ContaoFrameworkInterface $framework, ModelUtil $modelUtil, ListConfigRegistry $listConfigRegistry, ListManagerUtil $listManagerUtil, FilterPreselectUtil $filterPreselectUtil, Environment $twig)
+    public function __construct(ContaoFrameworkInterface $framework, ModelUtil $modelUtil, ListConfigRegistry $listConfigRegistry, ListManagerUtil $listManagerUtil, FilterPreselectUtil $filterPreselectUtil, Environment $twig, RequestStack $requestStack)
     {
         $this->framework = $framework;
         $this->modelUtil = $modelUtil;
@@ -58,18 +62,25 @@ class ContentContainer
         $this->listManagerUtil = $listManagerUtil;
         $this->filterPreselectUtil = $filterPreselectUtil;
         $this->twig = $twig;
+        $this->requestStack = $requestStack;
     }
 
     /**
-     * Invoke onload_callback.
+     * @Callback(table="tl_content", target="config.onload")
      */
-    public function onLoad(DataContainer $dc)
+    public function onLoad(DataContainer $dc = null): void
     {
-        if (null === ($content = $this->modelUtil->findModelInstanceByPk($dc->table, $dc->id))) {
+        if (null === $dc || !$dc->id || 'edit' !== $this->requestStack->getCurrentRequest()->query->get('act')) {
             return;
         }
 
-        $this->toggleFilterPreselect($content, $dc);
+        $element = ContentModel::findById($dc->id);
+
+        if (null === $element || ContentListPreselect::TYPE !== $element->type) {
+            return;
+        }
+
+        $this->toggleFilterPreselect($element, $dc);
     }
 
     public function getListPreselectListConfigs(DataContainer $dc): array
@@ -88,28 +99,28 @@ class ContentContainer
     }
 
     /**
-     * Get list of preselect choices.
-     *
-     * @throws \Twig_Error_Loader          When the template cannot be found
-     * @throws \Twig_Error_Syntax          When an error occurred during compilation
-     * @throws \Twig_Error_Runtime         When an error occurred during rendering
-     * @throws InvalidListManagerException
+     * @Callback(table="tl_content", target="fields.listPreselect.options")
      */
-    public function getListPreselectChoices(DataContainer $dc): array
+    public function getListPreselectChoices(DataContainer $dc = null): array
     {
         $choices = [];
 
-        /* @var ContentModel */
-        if (!$content = $this->modelUtil->findModelInstanceByPk($dc->table, $dc->id)) {
+        if (null === $dc || !$dc->id) {
             return $choices;
         }
 
-        if (!$content->listConfig || $content->listConfig < 1) {
+        $contentModel = ContentModel::findById($dc->id);
+
+        if (null === $contentModel) {
+            return $choices;
+        }
+
+        if (!$contentModel->listConfig || $contentModel->listConfig < 1) {
             return $choices;
         }
 
         try {
-            $listConfig = $this->listConfigRegistry->getComputedListConfig((int) $content->listConfig);
+            $listConfig = $this->listConfigRegistry->getComputedListConfig((int) $contentModel->listConfig);
         } catch (InvalidListConfigException $e) {
             return $choices;
         }
@@ -125,8 +136,8 @@ class ContentContainer
         // multilingual filter?
         $tmpLang = $GLOBALS['TL_LANGUAGE'];
 
-        if ('tl_article' === $content->ptable) {
-            if (null !== ($article = $this->modelUtil->findModelInstanceByPk('tl_article', $content->pid))) {
+        if ('tl_article' === $contentModel->ptable) {
+            if (null !== ($article = $this->modelUtil->findModelInstanceByPk('tl_article', $contentModel->pid))) {
                 if (null !== ($page = $this->modelUtil->findModelInstanceByPk('tl_page', $article->pid))) {
                     $page->loadDetails();
 
@@ -141,7 +152,7 @@ class ContentContainer
         $manager->getFilterConfig()->initQueryBuilder();
 
         // multilingual filter?
-        if ('tl_article' === $content->ptable && $tmpLang !== $GLOBALS['TL_LANGUAGE']) {
+        if ('tl_article' === $contentModel->ptable && $tmpLang !== $GLOBALS['TL_LANGUAGE']) {
             $GLOBALS['TL_LANGUAGE'] = $tmpLang;
 
             // reload the language files because else the following content elements would've been in the other language
@@ -167,11 +178,16 @@ class ContentContainer
 
         $queryBuilder = $manager->getFilterConfig()->getQueryBuilder();
 
-        if ($preselections = $preselections->findPublishedByPidAndTableAndField($content->id, 'tl_content', 'filterPreselect')) {
+        if ($preselections = $preselections->findPublishedByPidAndTableAndField($contentModel->id, 'tl_content', 'filterPreselect')) {
             $queryBuilder = $this->filterPreselectUtil->getPreselectQueryBuilder($filterConfig->getId(), $queryBuilder, $preselections->getModels());
         }
 
         $manager->applyListConfigSortingToQueryBuilder($queryBuilder);
+
+        if ($contentModel->ptable === $filter->dataContainer && $contentModel->pid) {
+            $queryBuilder->andWhere($contentModel->ptable.'.id != :preselect_parent_id');
+            $queryBuilder->setParameter('preselect_parent_id', $contentModel->pid);
+        }
 
         $items = $queryBuilder->select($fields)->execute()->fetchAll();
 
@@ -193,7 +209,7 @@ class ContentContainer
     /**
      * Toggle filterPreselect field on demand.
      */
-    protected function toggleFilterPreselect(Model $content, DataContainer $dc)
+    protected function toggleFilterPreselect(Model $content)
     {
         if (!$content->listConfig || $content->listConfig < 1) {
             return;
@@ -208,7 +224,7 @@ class ContentContainer
             $content->filterConfig = $listConfig->filter;
 
             // handle $blnPreventSaving from Multilingual Model (do not use $content->save())
-            $this->framework->createInstance(Database::class)->prepare('UPDATE '.$content::getTable().' %s WHERE '.\Database::quoteIdentifier($content::getPk()).'=?')
+            $this->framework->createInstance(Database::class)->prepare('UPDATE '.$content::getTable().' %s WHERE '.Database::quoteIdentifier($content::getPk()).'=?')
                 ->set(['filterConfig' => $listConfig->filter])
                 ->execute($content->{$content::getPk()});
         }

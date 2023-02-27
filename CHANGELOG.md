@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - 2023-02-27
+- Fixed: pagination not initialized in some cases
+
+## [1.52.2] - 2023-01-19
+
+- Fixed: js path in `FrontendAsset`
+
+## [1.52.1] - 2023-01-18
+- Fixed: missing ptable setting in tl_list_config dca
+
+## [1.52.0] - 2023-01-05
+- Added: mixed content for ajax pagination return values
+
+## [1.51.3] - 2022-12-01
+- Fixed: list preselect allows selecting parent list element
+- Fixed: endless recursion if preselect element has parent list element selected
+
+## [1.51.2] - 2022-11-17
+- Fixed: issues in frontend module leading to mixing of data when multiple list rendered together
+
+## [1.51.1] - 2022-11-14
+- Fixed: non-empty list evaluated as empty when doNotRender option checked
+
+## [1.51.0] - 2022-11-14
+- Changed: migrate module to frontend module controller ([#15])
+- Changed: (possible BC break!) ListCompileEvent signature changed due module migration
+- Changed: raised min php version to 7.4
+- Changed: list module now located with applications category in backend select
+
+## [1.50.3] - 2022-11-02
+- Fixed: do not render empty option not working
+
 ## [1.50.2] - 2022-09-26
 - Changed: added rel attribute to pagination template
 

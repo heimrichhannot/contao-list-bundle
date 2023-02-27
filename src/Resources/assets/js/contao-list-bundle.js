@@ -30,6 +30,7 @@ class ListBundle {
     static initEvents() {
         document.addEventListener('filterAjaxComplete', function(e) {
             ListBundle.updateList(e.detail);
+            ListBundle.initPagination();
             ListBundle.initMasonry();
         });
     }
@@ -282,8 +283,11 @@ class ListBundle {
                             if (!ajaxLoad.disableLiveRegion) {
                                 items.setAttribute('aria-busy', 'true');
                                 let screenReaderElement = items.querySelector('span.sr-only');
-                                if (screenReaderElement) {
-                                    items.removeChild(screenReaderElement);
+
+                                if (null !== screenReaderElement) {
+                                    try {
+                                        items.removeChild(screenReaderElement);
+                                    } catch (e) {}
                                 }
                             }
 
@@ -293,8 +297,9 @@ class ListBundle {
                         if (request.readyState === 4 && request.status === 200) {
                             const response = request.responseText,
                                 parser = new DOMParser(),
-                                loadedDoc = parser.parseFromString(response, 'text/html'),
-                                loadedItems = loadedDoc.querySelectorAll('.huh-list #' + list.querySelector('.wrapper').getAttribute('id') + ' .items .item');
+                                loadedDoc = parser.parseFromString(response, 'text/html');
+
+                            let itemsWrapper = loadedDoc.querySelector('.huh-list #' + list.querySelector('.wrapper').getAttribute('id') + ' .items');
 
                             if (true === ajaxLoad.enableScreenReaderMessage) {
                                 let span = document.createElement('span');
@@ -303,9 +308,14 @@ class ListBundle {
                                 items.appendChild(span);
                             }
 
-                            loadedItems.forEach(item => {
-                                items.appendChild(item);
-                            });
+                            if ('mixedContent' in itemsWrapper.dataset) {
+                                items.innerHTML += itemsWrapper.innerHTML;
+                            } else {
+                                let loadedItems = itemsWrapper.querySelectorAll('.item');
+                                loadedItems.forEach(item => {
+                                    items.appendChild(item);
+                                });
+                            }
 
                             ajaxPagination.innerHTML = '';
 
@@ -372,6 +382,8 @@ class ListBundle {
                     }
 
                     request.open("GET", ajaxPagination.querySelector('.huh-list .ajax-pagination a.next').href, true);
+                    request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+                    request.setRequestHeader('Huh-List-Request', 'Ajax-Pagination')
                     request.send();
                 }
             };

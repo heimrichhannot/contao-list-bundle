@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2022 Heimrich & Hannot GmbH
+ * Copyright (c) 2023 Heimrich & Hannot GmbH
  *
  * @license LGPL-3.0-or-later
  */
@@ -11,6 +11,7 @@ use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
 $GLOBALS['TL_DCA']['tl_list_config'] = [
     'config' => [
         'dataContainer' => 'Table',
+        'ptable' => 'tl_list_config',
         'ctable' => ['tl_list_config_element'],
         'enableVersioning' => true,
         'onload_callback' => [

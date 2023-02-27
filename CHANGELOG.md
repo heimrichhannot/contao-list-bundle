@@ -2,7 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2023-02-27
+## [1.53.0] - 2023-02-27
+- Added: support encore contracts ([#14])
+- Added: missing license file
 - Fixed: pagination not initialized in some cases
 
 ## [1.52.2] - 2023-01-19
@@ -687,7 +689,7 @@ existing method from the inherit method and register the class as service.
 * updated list config search and filter settings for backend
 
 
-
+[#14]: https://github.com/heimrichhannot/contao-list-bundle/pull/14
 [#12]: https://github.com/heimrichhannot/contao-list-bundle/pull/12
 [#7]: https://github.com/heimrichhannot/contao-list-bundle/pull/7
 [#6]: https://github.com/heimrichhannot/contao-list-bundle/pull/6

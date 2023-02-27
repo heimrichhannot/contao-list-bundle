@@ -24,13 +24,13 @@
     "contao/core-bundle": "^4.9",
     "heimrichhannot/contao-be_explanation-bundle": "^2.2",
     "heimrichhannot/contao-config-element-type-bundle": "^0.2",
+    "heimrichhannot/contao-encore-contracts": "^1.0",
     "heimrichhannot/contao-filter-bundle": "^1.19",
     "heimrichhannot/contao-twig-support-bundle": "^0.2|^1.0",
     "heimrichhannot/contao-utils-bundle": "^2.128",
     "heimrichhannot-contao-components/masonry": ">=4.2, <=4.3",
     "heimrichhannot-contao-components/imagesloaded": "4.1.*",
     "heimrichhannot-contao-components/jscroll": "2.3.*",
-    "heimrichhannot/contao-encore-contracts": "^1.0",
     "symfony/config": "^4.4||^5.4",
     "symfony/console": "^4.4||^5.4",
     "symfony/dependency-injection": "^4.4||^5.4",
@@ -71,12 +71,8 @@
       "HeimrichHannot\\ListBundle\\Test\\": "tests/"
     }
   },
-  "config": {
-    "preferred-install": "dist"
-  },
   "extra": {
-    "contao-manager-plugin": "HeimrichHannot\\ListBundle\\ContaoManager\\Plugin",
-    "foxy": true
+    "contao-manager-plugin": "HeimrichHannot\\ListBundle\\ContaoManager\\Plugin"
   },
   "suggest": {
     "heimrichhannot/contao-reader-bundle": "This bundle offers a generic reader module to use with arbitrary contao entities containing standard reader specific functionality like field output, images and auto_item handling."

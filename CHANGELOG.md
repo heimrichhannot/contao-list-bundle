@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - 2023-02-27
+- Fixed: pagination not initialized in some cases
+
 ## [1.52.2] - 2023-01-19
 
 - Fixed: js path in `FrontendAsset`

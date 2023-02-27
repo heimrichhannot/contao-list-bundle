@@ -30,6 +30,7 @@ class ListBundle {
     static initEvents() {
         document.addEventListener('filterAjaxComplete', function(e) {
             ListBundle.updateList(e.detail);
+            ListBundle.initPagination();
             ListBundle.initMasonry();
         });
     }

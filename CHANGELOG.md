@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.53.1] - 2023-09-15
+- Fixed: add select to query instead of overwriting
+
 ## [1.53.0] - 2023-02-27
 - Added: support encore contracts ([#14])
 - Added: missing license file

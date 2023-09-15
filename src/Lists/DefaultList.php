@@ -296,7 +296,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->setShowInitialResults($listConfig->showInitialResults);
 
         if ($isSubmitted || $listConfig->showInitialResults) {
-            $totalCount = $queryBuilder->select($filter->dataContainer.'.id')->execute()->rowCount();
+            $totalCount = $queryBuilder->addSelect($filter->dataContainer.'.id')->execute()->rowCount();
             $queryBuilder->select($event->getFields());
         }
 

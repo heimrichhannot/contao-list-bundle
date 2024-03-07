@@ -26,6 +26,7 @@ use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
+use HeimrichHannot\UtilsBundle\Util\Utils;
 
 class DefaultItem implements ItemInterface, \JsonSerializable
 {
@@ -252,7 +253,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     public function setFormattedValue(string $name, $value, bool $formatted = false): void
     {
         // do not format values in back end for performance reasons (sitemap…)
-        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
+        if (System::getContainer()->get(Utils::class)->container()->isBackend()) {
             return;
         }
 

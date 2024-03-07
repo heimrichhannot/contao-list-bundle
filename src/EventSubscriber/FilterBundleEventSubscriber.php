@@ -9,24 +9,26 @@
 namespace HeimrichHannot\ListBundle\EventSubscriber;
 
 use Contao\Controller;
+use Contao\CoreBundle\InsertTag\InsertTagParser;
 use Contao\ModuleModel;
 use HeimrichHannot\FilterBundle\Event\ModifyJsonResponseEvent;
-use HeimrichHannot\UtilsBundle\Model\ModelUtil;
+use HeimrichHannot\UtilsBundle\Util\Utils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class FilterBundleEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var ModelUtil
-     */
-    protected $modelUtil;
+    protected Utils $utils;
+    protected InsertTagParser $insertTagParser;
 
-    public function __construct(ModelUtil $modelUtil)
-    {
-        $this->modelUtil = $modelUtil;
+    public function __construct(
+        Utils $utils,
+        InsertTagParser $insertTagParser,
+    ) {
+        $this->utils = $utils;
+        $this->insertTagParser = $insertTagParser;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ModifyJsonResponseEvent::NAME => 'onModifyJsonResponseEvent',
@@ -50,7 +52,7 @@ class FilterBundleEventSubscriber implements EventSubscriberInterface
 
         $data = json_decode($response->getContent(), true);
 
-        $data['list'] = Controller::replaceInsertTags(Controller::getFrontendModule($module->id));
+        $data['list'] = $this->insertTagParser->replace(Controller::getFrontendModule($module->id));
 
         $response->setData($data);
     }

@@ -16,21 +16,22 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class ListExtension extends Extension
 {
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'huh_list';
     }
 
     /**
      * {@inheritdoc}
+     * @throws \Exception
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration(true);
         $processedConfig = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('huh.list', $processedConfig);
-        $container->setParameter('huh_list', isset($processedConfig['list']) ? $processedConfig['list'] : []);
+        $container->setParameter('huh_list', $processedConfig['list'] ?? []);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 

@@ -9,40 +9,28 @@
 namespace HeimrichHannot\ListBundle\DataContainer;
 
 use Contao\Controller;
+use Contao\CoreBundle\Csrf\ContaoCsrfTokenManager;
 use Contao\CoreBundle\Exception\RedirectResponseException;
+use Contao\CoreBundle\Framework\Adapter;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\DataContainer;
 use Contao\Image;
-use Contao\RequestToken;
+use Contao\Input;
+use Contao\Model;
 use Contao\StringUtil;
 use Contao\Versions;
-use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
-use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
-use HeimrichHannot\UtilsBundle\Model\ModelUtil;
-use HeimrichHannot\UtilsBundle\Url\UrlUtil;
+use HeimrichHannot\FilterBundle\Util\TwigSupportPolyfill\TwigTemplateLocator;
+use HeimrichHannot\ListBundle\Util\Polyfill;
+use HeimrichHannot\UtilsBundle\Util\Utils;
 
 class ListConfigContainer
 {
-    /**
-     * @var array
-     */
-    protected $bundleConfig;
-    /**
-     * @var TwigTemplateLocator
-     */
-    protected $templateLocator;
-    /**
-     * @var ModelUtil
-     */
-    protected $modelUtil;
-    /**
-     * @var UrlUtil
-     */
-    protected $urlUtil;
-    /**
-     * @var Request
-     */
-    protected $request;
+    protected array $bundleConfig;
+    protected TwigTemplateLocator $templateLocator;
+    protected Utils $utils;
+    protected ContaoFramework $framework;
+    protected ContaoCsrfTokenManager $csrfTokenManager;
 
     /**
      * ListConfigContainer constructor.
@@ -50,71 +38,83 @@ class ListConfigContainer
     public function __construct(
         array $bundleConfig,
         TwigTemplateLocator $templateLocator,
-        ModelUtil $modelUtil,
-        UrlUtil $urlUtil,
-        Request $request
+        Utils $utils,
+        ContaoFramework $framework,
+        ContaoCsrfTokenManager $csrfTokenManager
     ) {
         $this->bundleConfig = $bundleConfig;
         $this->templateLocator = $templateLocator;
-        $this->modelUtil = $modelUtil;
-        $this->urlUtil = $urlUtil;
-        $this->request = $request;
+        $this->utils = $utils;
+        $this->framework = $framework;
+        $this->csrfTokenManager = $csrfTokenManager;
     }
 
-    public function onItemTemplateOptionsCallback()
+    public function onItemTemplateOptionsCallback(): array
     {
         return $this->getTemplateChoices('item_prefixes', 'item');
     }
 
-    public function onListTemplateOptionsCallback()
+    public function onListTemplateOptionsCallback(): array
     {
         return $this->getTemplateChoices('list_prefixes', 'list');
     }
 
-    public function onItemChoiceTemplateOptionsCallback()
+    public function onItemChoiceTemplateOptionsCallback(): array
     {
         return $this->getTemplateChoices('item_choice_prefixes', 'item_choice');
     }
 
-    public function sortAlphabetically()
+    public function sortAlphabetically(): string
     {
-        // sort alphabetically
-        if ('sortAlphabetically' === $this->request->getGet('key')) {
-            if (null !== ($listConfigs = $this->modelUtil->findAllModelInstances('tl_list_config', [
-                    'order' => 'title ASC',
-                ]))) {
-                $sorting = 64;
+        $anchor = sprintf('<a href="%s" class="header_new" style="background-image: url(%s)" title="%s" accesskey="n" onclick="Backend.getScrollOffset();return !!confirm(\'%s\');">%s</a>',
+            $this->utils->url()->addQueryStringParameterToUrl('key=sortAlphabetically'),
+            'system/themes/flexible/icons/rows.svg',
+            $GLOBALS['TL_LANG']['tl_list_config']['sortAlphabetically'][1],
+            $GLOBALS['TL_LANG']['tl_list_config']['reference']['sortAlphabeticallyConfirm'],
+            $GLOBALS['TL_LANG']['tl_list_config']['sortAlphabetically'][0]
+        );
 
-                while ($listConfigs->next()) {
-                    $sorting += 64;
-
-                    $listConfig = $listConfigs->current();
-
-                    // The sorting has not changed
-                    if ($sorting == $listConfig->sorting) {
-                        continue;
-                    }
-
-                    // Initialize the version manager
-                    $versions = new Versions('tl_list_config', $listConfig->id);
-                    $versions->initialize();
-
-                    // Store the new alias
-                    Database::getInstance()->prepare('UPDATE tl_list_config SET sorting=? WHERE id=?')
-                        ->execute($sorting, $listConfig->id);
-
-                    // Create a new version
-                    $versions->create();
-                }
-            }
-
-            throw new RedirectResponseException($this->urlUtil->removeQueryString(['key']));
+        if ('sortAlphabetically' !== Input::get('key')) {
+            return $anchor;
         }
 
-        return '<a href="'.$this->urlUtil->addQueryString('key=sortAlphabetically').'" class="header_new" style="background-image: url(system/themes/flexible/icons/rows.svg)" title="'.$GLOBALS['TL_LANG']['tl_list_config']['sortAlphabetically'][1].'" accesskey="n" onclick="if(!confirm(\''.$GLOBALS['TL_LANG']['tl_list_config']['reference']['sortAlphabeticallyConfirm'].'\'))return false;Backend.getScrollOffset()">'.$GLOBALS['TL_LANG']['tl_list_config']['sortAlphabetically'][0].'</a>';
+        $listConfigClass = $this->framework->getAdapter(Model::class)
+            ?->getClassFromTable('tl_list_config');
+        /** @var Adapter<Model> $adapter */
+        $adapter = $listConfigClass ? $this->framework->getAdapter($listConfigClass) : null;
+        $listConfigs = $adapter?->findAll(['order' => 'title ASC']);
+
+        if ($listConfigs !== null)
+        {
+            $sorting = 64;
+
+            while ($listConfigs->next()) {
+                $sorting += 64;
+
+                $listConfig = $listConfigs->current();
+
+                // The sorting has not changed
+                if ($sorting == $listConfig->sorting) {
+                    continue;
+                }
+
+                // Initialize the version manager
+                $versions = new Versions('tl_list_config', $listConfig->id);
+                $versions->initialize();
+
+                // Store the new alias
+                Database::getInstance()->prepare('UPDATE tl_list_config SET sorting=? WHERE id=?')
+                    ->execute($sorting, $listConfig->id);
+
+                // Create a new version
+                $versions->create();
+            }
+        }
+
+        throw new RedirectResponseException($this->utils->url()->removeQueryStringParameterFromUrl('key'));
     }
 
-    public function pasteListConfig(DataContainer $dc, $row, $table, $cr, $arrClipboard = null)
+    public function pasteListConfig(DataContainer $dc, $row, $table, $cr, $arrClipboard = null): string
     {
         $disablePA = false;
         $disablePI = false;
@@ -134,11 +134,42 @@ class ListConfigContainer
         $imagePasteAfter = Image::getHtml('pasteafter.svg', $pasteafter);
         $imagePasteInto = Image::getHtml('pasteinto.svg', $pasteinto);
 
-        if ($row['id'] > 0) {
-            $return = $disablePA ? Image::getHtml('pasteafter_.svg').' ' : '<a href="'.Controller::addToUrl('act='.$arrClipboard['mode'].'&mode=1&rt='.RequestToken::get().'&pid='.$row['id'].(!\is_array($arrClipboard['id']) ? '&id='.$arrClipboard['id'] : '')).'" title="'.StringUtil::specialchars($pasteafter).'" onclick="Backend.getScrollOffset()">'.$imagePasteAfter.'</a> ';
+        $anchorTemplate = '<a href="%s" title="%s" onclick="Backend.getScrollOffset()">%s</a>';
+
+        $requestToken = $this->csrfTokenManager->getDefaultTokenValue();
+
+        if ($row['id'] > 0)
+        {
+            $return = $disablePA
+                ? Image::getHtml('pasteafter_.svg')
+                : sprintf(
+                    $anchorTemplate,
+                    Controller::addToUrl(
+                        'act=' . $arrClipboard['mode']
+                        . '&mode=1&rt=' . $requestToken
+                        . '&pid=' . $row['id']
+                        . (!is_array($arrClipboard['id']) ? '&id=' . $arrClipboard['id'] : '')
+                    ),
+                    StringUtil::specialchars($pasteafter),
+                    $imagePasteAfter
+                );
         }
 
-        return $return.($disablePI ? Image::getHtml('pasteinto_.svg').' ' : '<a href="'.Controller::addToUrl('act='.$arrClipboard['mode'].'&mode=2&rt='.RequestToken::get().'&pid='.$row['id'].(!\is_array($arrClipboard['id']) ? '&id='.$arrClipboard['id'] : '')).'" title="'.StringUtil::specialchars($pasteinto).'" onclick="Backend.getScrollOffset()">'.$imagePasteInto.'</a> ');
+        $return .= $disablePI
+            ? Image::getHtml('pasteinto_.svg') . ' '
+            : sprintf(
+                $anchorTemplate,
+                Controller::addToUrl(
+                    'act=' . $arrClipboard['mode']
+                    . '&mode=2&rt=' . $requestToken
+                    . '&pid=' . $row['id']
+                    . (!is_array($arrClipboard['id']) ? '&id=' . $arrClipboard['id'] : '')
+                ),
+                StringUtil::specialchars($pasteinto),
+                $imagePasteInto
+            );
+
+        return $return;
     }
 
     protected function getTemplateChoices(string $prefixesKey, string $templatesKey): array

@@ -9,14 +9,14 @@
 namespace HeimrichHannot\ListBundle\Choice;
 
 use Contao\System;
-use HeimrichHannot\UtilsBundle\Choice\AbstractChoice;
+use HeimrichHannot\FilterBundle\Util\AbstractChoice;
 
 class ManagerChoice extends AbstractChoice
 {
     /**
      * @return array
      */
-    protected function collect()
+    protected function collect(): array
     {
         $choices = [];
 

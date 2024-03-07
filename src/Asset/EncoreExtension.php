@@ -9,9 +9,10 @@
 namespace HeimrichHannot\ListBundle\Asset;
 
 use HeimrichHannot\EncoreContracts\EncoreEntry;
+use HeimrichHannot\EncoreContracts\EncoreExtensionInterface;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 
-class EncoreExtension implements \HeimrichHannot\EncoreContracts\EncoreExtensionInterface
+class EncoreExtension implements EncoreExtensionInterface
 {
     /**
      * {@inheritDoc}

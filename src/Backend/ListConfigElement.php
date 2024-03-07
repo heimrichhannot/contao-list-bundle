@@ -12,7 +12,10 @@ use Contao\Backend;
 use Contao\BackendUser;
 use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\Database;
+use Contao\DataContainer;
+use Contao\Input;
 use Contao\System;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class ListConfigElement extends Backend
 {
@@ -35,43 +38,42 @@ class ListConfigElement extends Backend
         self::PLACEHOLDER_IMAGE_MODE_FIELD,
     ];
 
-    public function checkPermission()
+    public function checkPermission(DataContainer $dc): void
     {
         $user = BackendUser::getInstance();
         $database = Database::getInstance();
-
-        $request = System::getContainer()->get('huh.request');
 
         if ($user->isAdmin) {
             return;
         }
 
         // Set the root IDs
-        if (!\is_array($user->listbundles) || empty($user->listbundles)) {
+        if (!is_array($user->listbundles) || empty($user->listbundles)) {
             $root = [0];
         } else {
             $root = $user->listbundles;
         }
 
-        $id = \strlen($request->getGet('id')) ? $request->getGet('id') : CURRENT_ID;
+        $id = strlen(Input::get('id')) ? Input::get('id') : $dc->currentPid;
 
         // Check current action
-        switch ($request->getGet('act')) {
+        switch ($act = Input::get('act')) {
             case 'paste':
                 // Allow
                 break;
 
             case 'create':
-                if (!\strlen($request->getGet('pid')) || !\in_array($request->getGet('pid'), $root)) {
-                    throw new AccessDeniedException('Not enough permissions to create list_config_element items in list_config_element archive ID '.$request->getGet('pid').'.');
+                $pid = Input::get('pid') ?? null;
+                if (!$pid || !in_array($pid, $root)) {
+                    throw new AccessDeniedException('Not enough permissions to create list_config_element items in list_config_element archive ID '.$pid.'.');
                 }
-
                 break;
 
             case 'cut':
             case 'copy':
-                if (!\in_array($request->getGet('pid'), $root)) {
-                    throw new AccessDeniedException('Not enough permissions to '.$request->getGet('act').' list_config_element item ID '.$id.' to list_config_element archive ID '.$request->getGet('pid').'.');
+                $pid = Input::get('pid') ?? null;
+                if (!in_array($pid, $root)) {
+                    throw new AccessDeniedException('Not enough permissions to '.$act.' list_config_element item ID '.$id.' to list_config_element archive ID '.$pid.'.');
                 }
             // no break STATEMENT HERE
 
@@ -86,8 +88,8 @@ class ListConfigElement extends Backend
                     throw new AccessDeniedException('Invalid list_config_element item ID '.$id.'.');
                 }
 
-                if (!\in_array($objArchive->pid, $root)) {
-                    throw new AccessDeniedException('Not enough permissions to '.$request->getGet('act').' list_config_element item ID '.$id.' of list_config_element archive ID '.$objArchive->pid.'.');
+                if (!in_array($objArchive->pid, $root)) {
+                    throw new AccessDeniedException('Not enough permissions to '.$act.' list_config_element item ID '.$id.' of list_config_element archive ID '.$objArchive->pid.'.');
                 }
 
                 break;
@@ -98,7 +100,7 @@ class ListConfigElement extends Backend
             case 'overrideAll':
             case 'cutAll':
             case 'copyAll':
-                if (!\in_array($id, $root)) {
+                if (!in_array($id, $root)) {
                     throw new AccessDeniedException('Not enough permissions to access list_config_element archive ID '.$id.'.');
                 }
 
@@ -108,19 +110,18 @@ class ListConfigElement extends Backend
                     throw new AccessDeniedException('Invalid list_config_element archive ID '.$id.'.');
                 }
 
-                /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
-                $session = System::getContainer()->get('session');
+                $session = System::getContainer()->get('request_stack')->getSession();
 
-                $session = $session->all();
-                $session['CURRENT']['IDS'] = array_intersect($session['CURRENT']['IDS'], $objArchive->fetchEach('id'));
+                $sessionData = $session->all();
+                $sessionData['CURRENT']['IDS'] = array_intersect($sessionData['CURRENT']['IDS'], $objArchive->fetchEach('id'));
                 $session->replace($session);
 
                 break;
 
             default:
-                if (\strlen($request->getGet('act'))) {
-                    throw new AccessDeniedException('Invalid command "'.$request->getGet('act').'".');
-                } elseif (!\in_array($id, $root)) {
+                if (strlen($act)) {
+                    throw new AccessDeniedException('Invalid command "'.$act.'".');
+                } elseif (!in_array($id, $root)) {
                     throw new AccessDeniedException('Not enough permissions to access list_config_element archive ID '.$id.'.');
                 }
 

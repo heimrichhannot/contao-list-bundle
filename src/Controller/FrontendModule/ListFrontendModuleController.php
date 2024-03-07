@@ -14,6 +14,7 @@ use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
 use Contao\CoreBundle\ServiceAnnotation\FrontendModule;
 use Contao\ModuleModel;
 use Contao\Template;
+use Exception;
 use HeimrichHannot\ListBundle\Asset\FrontendAsset;
 use HeimrichHannot\ListBundle\Event\ListCompileEvent;
 use HeimrichHannot\ListBundle\Exception\InterfaceNotImplementedException;
@@ -22,6 +23,9 @@ use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManager;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
 use HeimrichHannot\ListBundle\Util\ListManagerUtil;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use ReflectionException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -38,15 +42,26 @@ class ListFrontendModuleController extends AbstractFrontendModuleController
     private FrontendAsset      $frontendAsset;
     private EventDispatcherInterface    $eventDispatcher;
 
-    public function __construct(ListConfigRegistry $listConfigRegistry, ListManagerUtil $listManagerUtil, FrontendAsset $frontendAsset, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        ListConfigRegistry       $listConfigRegistry,
+        ListManagerUtil          $listManagerUtil,
+        FrontendAsset            $frontendAsset,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->listConfigRegistry = $listConfigRegistry;
         $this->listManagerUtil = $listManagerUtil;
         $this->frontendAsset = $frontendAsset;
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    /**
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws InterfaceNotImplementedException
+     * @throws ReflectionException
+     * @throws Exception
+     */
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         // Hide list and show reader on detail pages if configured
         if ('1' === $model->list_renderReaderOnAutoItem && $model->list_readerModule && (Config::get('useAutoItem') && isset($_GET['auto_item']))) {
@@ -71,7 +86,8 @@ class ListFrontendModuleController extends AbstractFrontendModuleController
         Controller::loadDataContainer($filterConfig->getFilter()['dataContainer']);
         Controller::loadLanguageFile($filterConfig->getFilter()['dataContainer']);
 
-        if (null !== ($listClass = $listManager->getListByName($listConfig->list ?: 'default'))) {
+        $listClass = $listManager->getListByName($listConfig->list ?: 'default');
+        if (null !== $listClass) {
             $reflection = new \ReflectionClass($listClass);
 
             if (!$reflection->implementsInterface(ListInterface::class)) {
@@ -100,7 +116,7 @@ class ListFrontendModuleController extends AbstractFrontendModuleController
         $list->handleShare();
 
         // add class to every list template
-        $template->class = trim($template->class.' huh-list '.$list->getDataContainer());
+        $template->class = trim($template->class . ' huh-list ' . $list->getDataContainer());
         $template->noSearch = (bool) $listConfig->noSearch;
 
         $template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) use ($list) {
@@ -114,8 +130,7 @@ class ListFrontendModuleController extends AbstractFrontendModuleController
 
         $response = $template->getResponse();
 
-        if ((bool) $listConfig->doNotRenderEmpty
-            && empty($list->getItems())) {
+        if ((bool) $listConfig->doNotRenderEmpty && empty($list->getItems())) {
             return new Response();
         }
 

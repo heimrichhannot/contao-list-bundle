@@ -14,9 +14,11 @@ use Contao\ModuleModel;
 use HeimrichHannot\ListBundle\Controller\FrontendModule\ListFrontendModuleController;
 use HeimrichHannot\ReaderBundle\Module\ModuleReader;
 
+// todo: replace module reader with any replacement that does it
+
 class ReaderBundleEventSubscriber
 {
-    public function onLoadDataContainer(string $table)
+    public function onLoadDataContainer(string $table): void
     {
         if (class_exists('HeimrichHannot\ReaderBundle\HeimrichHannotContaoReaderBundle') && $table === ModuleModel::getTable()) {
             // Add option to hide list module and render reader module on detail pages

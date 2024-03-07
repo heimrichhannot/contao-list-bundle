@@ -17,6 +17,7 @@ use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\ConfigElementType\RelatedConfigElementType;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
+use HeimrichHannot\UtilsBundle\Util\Utils;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ListConfigElementContainer
@@ -24,8 +25,12 @@ class ListConfigElementContainer
     const PREPEND_PALETTE = '{title_type_legend},title,type,templateVariable;';
     const APPEND_PALETTE = '';
 
-    const RELATED_CRITERIUM_TAGS = 'tags';
-    const RELATED_CRITERIUM_CATEGORIES = 'categories';
+    const RELATED_CRITERION_TAGS = 'tags';
+    const RELATED_CRITERION_CATEGORIES = 'categories';
+    /** @deprecated Use {@see ListConfigElementContainer::RELATED_CRITERION_TAGS} instead */
+    const RELATED_CRITERIUM_TAGS = self::RELATED_CRITERION_TAGS;
+    /** @deprecated Use {@see ListConfigElementContainer::RELATED_CRITERION_CATEGORIES} instead */
+    const RELATED_CRITERIUM_CATEGORIES = self::RELATED_CRITERION_CATEGORIES;
 
     /**
      * @var ListConfigElementRegistry
@@ -35,13 +40,18 @@ class ListConfigElementContainer
      * @var ContainerInterface
      */
     private $container;
+    protected Utils $utils;
 
     /**
      * ListConfigElementContainer constructor.
      */
-    public function __construct(ListConfigElementRegistry $configElementRegistry, ContainerInterface $container)
-    {
+    public function __construct(
+        ListConfigElementRegistry $configElementRegistry,
+        Utils $utils,
+        ContainerInterface $container
+    ) {
         $this->configElementRegistry = $configElementRegistry;
+        $this->utils = $utils;
         $this->container = $container;
     }
 
@@ -50,7 +60,7 @@ class ListConfigElementContainer
      *
      * @return array
      */
-    public function getConfigElementTypes(DC_Table $dc)
+    public function getConfigElementTypes(DC_Table $dc): array
     {
         $types = array_keys($this->configElementRegistry->getConfigElementTypes());
 
@@ -59,7 +69,7 @@ class ListConfigElementContainer
         $configElementTypes = $listConfig['list']['config_element_types'];
 
         foreach ($configElementTypes as $configElementType) {
-            if (\in_array($configElementType['name'], $types)) {
+            if (in_array($configElementType['name'], $types)) {
                 continue;
             }
             $types[] = $configElementType['name'];
@@ -68,30 +78,30 @@ class ListConfigElementContainer
         return $types;
     }
 
-    public function getRelatedCriteriaAsOptions()
+    public function getRelatedCriteriaAsOptions(): array
     {
         $options = [];
 
         if (class_exists('\Codefog\TagsBundle\CodefogTagsBundle')) {
-            $options[] = static::RELATED_CRITERIUM_TAGS;
+            $options[] = static::RELATED_CRITERION_TAGS;
         }
 
         if (class_exists('\HeimrichHannot\CategoriesBundle\CategoriesBundle')) {
-            $options[] = static::RELATED_CRITERIUM_CATEGORIES;
+            $options[] = static::RELATED_CRITERION_CATEGORIES;
         }
 
         return $options;
     }
 
-    public function onLoadCallback($dc)
+    public function onLoadCallback($dc): void
     {
         /** @var ListConfigElementModel $listConfigElement */
-        if (null === ($listConfigElement = $this->container->get('huh.utils.model')->findModelInstanceByPk('tl_list_config_element', $dc->id))) {
+        $listConfigElement = $this->utils->model()->findModelInstanceByPk('tl_list_config_element', $dc->id);
+        if ($listConfigElement === null) {
             return;
         }
 
         $configElementTypes = $this->configElementRegistry->getConfigElementTypes();
-
         if (empty($configElementTypes)) {
             return;
         }
@@ -108,8 +118,8 @@ class ListConfigElementContainer
             $GLOBALS['TL_DCA'][ListConfigElementModel::getTable()]['palettes'][$listConfigElementType::getType()] = $palette;
         }
 
-        if (($listConfigElementType = $this->configElementRegistry->getListConfigElementType($listConfigElement->type))
-            && $listConfigElementType instanceof ConfigElementTypeInterface) {
+        $listConfigElementType = $this->configElementRegistry->getListConfigElementType($listConfigElement->type);
+        if ($listConfigElementType instanceof ConfigElementTypeInterface) {
             $GLOBALS['TL_DCA'][ListConfigElementModel::getTable()]['fields']['templateVariable']['eval']['mandatory'] = true;
         }
 
@@ -119,11 +129,11 @@ class ListConfigElementContainer
 
             $fields = [];
 
-            if (\in_array(static::RELATED_CRITERIUM_TAGS, $criteria)) {
+            if (in_array(static::RELATED_CRITERION_TAGS, $criteria)) {
                 $fields[] = 'tagsField';
             }
 
-            if (\in_array(static::RELATED_CRITERIUM_CATEGORIES, $criteria)) {
+            if (in_array(static::RELATED_CRITERION_CATEGORIES, $criteria)) {
                 $fields[] = 'categoriesField';
             }
 
@@ -134,12 +144,12 @@ class ListConfigElementContainer
         }
     }
 
-    public function listChildren($rows)
+    public function listChildren($rows): string
     {
         $reference = $GLOBALS['TL_DCA']['tl_list_config_element']['fields']['type']['reference'];
 
-        return '<div class="tl_content_left">'.($rows['title'] ?: $rows['id']).' <span style="color:#b3b3b3; padding-left:3px">['
-            .$reference[$rows['type']].'] ('
-            .Date::parse(Config::get('datimFormat'), trim($rows['dateAdded'])).')</span></div>';
+        return '<div class="tl_content_left">' . ($rows['title'] ?: $rows['id']) . ' <span style="color:#b3b3b3; padding-left:3px">['
+            . $reference[$rows['type']] . '] ('
+            . Date::parse(Config::get('datimFormat'), trim($rows['dateAdded'])) . ')</span></div>';
     }
 }

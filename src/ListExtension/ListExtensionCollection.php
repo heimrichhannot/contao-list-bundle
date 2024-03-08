@@ -10,8 +10,7 @@ namespace HeimrichHannot\ListBundle\ListExtension;
 
 class ListExtensionCollection
 {
-    /** @var array */
-    private $collection = [];
+    private array $collection = [];
 
     public function addExtension(ListExtensionInterface $extension): void
     {

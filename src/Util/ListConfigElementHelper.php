@@ -10,6 +10,7 @@ namespace HeimrichHannot\ListBundle\Util;
 
 use Contao\DataContainer;
 use Contao\System;
+use HeimrichHannot\FilterBundle\Choice\FieldChoice;
 
 class ListConfigElementHelper
 {
@@ -19,7 +20,7 @@ class ListConfigElementHelper
             return [];
         }
 
-        return System::getContainer()->get('huh.utils.choice.field')->getCachedChoices([
+        return System::getContainer()->get(FieldChoice::class)->getCachedChoices([
             'dataContainer' => $filter['dataContainer'],
         ]);
     }
@@ -30,7 +31,7 @@ class ListConfigElementHelper
             return [];
         }
 
-        return System::getContainer()->get('huh.utils.choice.field')->getCachedChoices([
+        return System::getContainer()->get(FieldChoice::class)->getCachedChoices([
             'dataContainer' => $filter['dataContainer'],
             'inputTypes' => ['checkbox'],
         ]);

@@ -4,21 +4,27 @@ namespace HeimrichHannot\ListBundle\Util;
 
 use Contao\Config;
 use Contao\Controller;
+use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\File;
 use Contao\FilesModel;
 use Contao\Frontend;
-use Contao\Image;
+use Contao\Model;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Validator;
+use Error;
 use Exception;
+use HeimrichHannot\UtilsBundle\Util\ModelUtil;
 use HeimrichHannot\UtilsBundle\Util\Utils;
 use InvalidArgumentException;
+use JsonSerializable;
 use Monolog\Logger;
 use Psr\Log\LogLevel;
-use Throwable;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 
 class Polyfill
 {
@@ -466,5 +472,289 @@ class Polyfill
                 $templateData = System::importStatic($callback[0])->{$callback[1]}($templateData, $imageField, $imageSelectorField, $item, $maxWidth, $lightboxId, $lightboxName, $model);
             }
         }
+    }
+
+    /**
+     * This function transforms an entity's palette (that can also contain sub palettes and concatenated type selectors) to a flatten
+     * palette where every field can be overridden.
+     *
+     * CAUTION: This function assumes that you have used addOverridableFields() for adding the fields that are overridable. The latter ones
+     * are $overridableFields
+     *
+     * This function is useful if you want to adjust a palette for sub entities that can override properties of their ancestor(s).
+     * Use $this->getOverridableProperty() for computing the correct value respecting the entity hierarchy.
+     *
+     * @internal {@see https://github.com/heimrichhannot/contao-utils-bundle/blob/ee122d2e267a60aa3200ce0f40d92c22028988e8/src/Dca/DcaUtil.php#L614}
+     */
+    public static function flattenPaletteForSubEntities(string $table, array $overridableFields): void
+    {
+        $container = System::getContainer();
+        $utils = $container->get(Utils::class);
+        $framework = $container->get('contao.framework');
+
+        $framework->getAdapter(Controller::class)->loadDataContainer($table);
+
+        $pm = PaletteManipulator::create();
+
+        $dca = &$GLOBALS['TL_DCA'][$table];
+        $arrayUtil = $utils->array();
+
+        // Contao 4.4 fix
+        $replaceFields = [];
+
+        // palette
+        foreach ($overridableFields as $field) {
+            if (true === ($dca['fields'][$field]['eval']['submitOnChange'] ?? false)) {
+                unset($dca['fields'][$field]['eval']['submitOnChange']);
+
+                if (\in_array($field, $dca['palettes']['__selector__'])) {
+                    // flatten concatenated type selectors
+                    foreach ($dca['subpalettes'] as $selector => $subPaletteFields) {
+                        if (false !== strpos($selector, $field.'_')) {
+                            if ($dca['subpalettes'][$selector]) {
+                                $subPaletteFields = explode(',', $dca['subpalettes'][$selector]);
+
+                                foreach (array_reverse($subPaletteFields) as $subPaletteField) {
+                                    $pm->addField($subPaletteField, $field);
+                                }
+                            }
+
+                            // remove nested field in order to avoid its normal "selector" behavior
+                            $arrayUtil->removeValue($field, $dca['palettes']['__selector__']);
+                            unset($dca['subpalettes'][$selector]);
+                        }
+                    }
+
+                    // flatten sub palettes
+                    if (isset($dca['subpalettes'][$field]) && $dca['subpalettes'][$field]) {
+                        $subPaletteFields = explode(',', $dca['subpalettes'][$field]);
+
+                        foreach (array_reverse($subPaletteFields) as $subPaletteField) {
+                            $pm->addField($subPaletteField, $field);
+                        }
+
+                        // remove nested field in order to avoid its normal "selector" behavior
+                        $arrayUtil->removeValue($field, $dca['palettes']['__selector__']);
+                        unset($dca['subpalettes'][$field]);
+                    }
+                }
+            }
+
+            $replaceFields[] = $field;
+
+            //            $pm->addField('override'.ucfirst($field), $field)->removeField($field);
+        }
+
+        $pm->applyToPalette('default', $table);
+
+        foreach ($replaceFields as $replaceField) {
+            $dca['palettes']['default'] = str_replace($replaceField, 'override'.ucfirst($replaceField), $dca['palettes']['default']);
+        }
+    }
+
+    /**
+     * Recursively finds the root parent.
+     *
+     * @internal {@see https://github.com/heimrichhannot/contao-utils-bundle/blob/ee122d2e267a60aa3200ce0f40d92c22028988e8/src/Model/ModelUtil.php#L365}
+     */
+    public static function findRootParentRecursively(
+        ModelUtil $modelUtil,
+        string    $parentProperty,
+        string    $table,
+        ?Model    $instance,
+        bool      $returnInstanceIfNoParent = true
+    ): ?Model {
+        if ($instance === null
+            || !$instance->{$parentProperty}
+            || null === $parentInstance = $modelUtil->findModelInstanceByPk($table, $instance->{$parentProperty}))
+        {
+            return $returnInstanceIfNoParent ? $instance : null;
+        }
+
+        return self::findRootParentRecursively($modelUtil, $parentProperty, $table, $parentInstance);
+    }
+
+    /**
+     * Retrieves an array from a dca config (in most cases eval) in the following priorities:.
+     *
+     * 1. The value associated to $array[$property]
+     * 2. The value retrieved by $array[$property . '_callback'] which is a callback array like ['Class', 'method'] or ['service.id', 'method']
+     * 3. The value retrieved by $array[$property . '_callback'] which is a function closure array like ['Class', 'method']
+     *
+     * @return mixed|null The value retrieved in the way mentioned above or null
+     *
+     * @internal {@see https://github.com/heimrichhannot/contao-utils-bundle/blob/ee122d2e267a60aa3200ce0f40d92c22028988e8/src/Dca/DcaUtil.php#L375}
+     */
+    public static function getConfigByArrayOrCallbackOrFunction(array $array, $property, array $arguments = [])
+    {
+        if (isset($array[$property])) {
+            return $array[$property];
+        }
+
+        if (!isset($array[$property.'_callback'])) {
+            return null;
+        }
+
+        if (is_array($array[$property.'_callback'])) {
+            $callback = $array[$property.'_callback'];
+
+            if (!isset($callback[0]) || !isset($callback[1])) {
+                return null;
+            }
+
+            try {
+                $instance = Controller::importStatic($callback[0]);
+            } catch (Exception $e) {
+                return null;
+            }
+
+            if (!method_exists($instance, $callback[1])) {
+                return null;
+            }
+
+            try {
+                return call_user_func_array([$instance, $callback[1]], $arguments);
+            } catch (Error $e) {
+                return null;
+            }
+        } elseif (is_callable($array[$property.'_callback'])) {
+            try {
+                return call_user_func_array($array[$property.'_callback'], $arguments);
+            } catch (Error $e) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Serialize a class object to JSON by iterating over all public getters (get(), is(), ...).
+     *
+     * @throws ReflectionException if the class or method does not exist
+     *
+     * @internal {@see https://github.com/heimrichhannot/contao-utils-bundle/blob/ee122d2e267a60aa3200ce0f40d92c22028988e8/src/Classes/ClassUtil.php#L172}
+     */
+    public static function jsonSerialize(object $object, array $data = [], array $options = []): array
+    {
+        $class = get_class($object);
+
+        $rc = new ReflectionClass($object);
+
+        // get values of properties
+        if (isset($options['includeProperties']) && $options['includeProperties']) {
+            foreach ($rc->getProperties() as $reflectionProperty) {
+                $propertyName = $reflectionProperty->getName();
+
+                $property = $rc->getProperty($propertyName);
+
+                if (isset($options['ignorePropertyVisibility']) && $options['ignorePropertyVisibility']) {
+                    $property->setAccessible(true);
+                }
+
+                $data[$propertyName] = $property->getValue($object);
+
+                if (\is_object($data[$propertyName])) {
+                    if (!($data[$propertyName] instanceof JsonSerializable)) {
+                        unset($data[$propertyName]);
+
+                        continue;
+                    }
+
+                    $data[$propertyName] = static::jsonSerialize($data[$propertyName]);
+                }
+            }
+        }
+
+        if (isset($options['ignoreMethods']) && $options['ignoreMethods']) {
+            return $data;
+        }
+
+        // get values of methods
+        if (isset($options['ignoreMethodVisibility']) && $options['ignoreMethodVisibility']) {
+            $methods = $rc->getMethods();
+        } else {
+            $methods = $rc->getMethods(ReflectionMethod::IS_PUBLIC);
+        }
+
+        // add all public getter Methods
+        foreach ($methods as $method) {
+
+            $start = self::getMethodNameStartIndex($method, $rc);
+            if ($start === null) continue;
+
+            // skip methods with parameters
+            $rm = new ReflectionMethod($class, $method->name);
+
+            if ($rm->getNumberOfRequiredParameters() > 0) {
+                continue;
+            }
+
+            if (isset($options['skippedMethods']) && \is_array($options['skippedMethods']) && \in_array($method->name, $options['skippedMethods'])) {
+                continue;
+            }
+
+            $property = lcfirst(substr($method->name, $start));
+
+            if (!$method->isPublic()) {
+                $method->setAccessible(true);
+                $data[$property] = $method->invoke($object);
+            } else {
+                $data[$property] = $object->{$method->name}();
+            }
+
+            if (\is_object($data[$property])) {
+                if (!($data[$property] instanceof JsonSerializable)) {
+                    unset($data[$property]);
+
+                    continue;
+                }
+                $data[$property] = static::jsonSerialize($data[$property]);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param ReflectionMethod $method
+     * @param ReflectionClass $rc
+     * @return int|null
+     *
+     * @internal {@see https://github.com/heimrichhannot/contao-utils-bundle/blob/ee122d2e267a60aa3200ce0f40d92c22028988e8/src/Classes/ClassUtil.php#L128}
+     */
+    private static function getMethodNameStartIndex(ReflectionMethod $method, ReflectionClass $rc): ?int
+    {
+        $len = 3;
+        $prefix = substr($method->name, 0, $len);
+
+        /** vvv Prefixes with length 3. vvv */
+
+        // get{MethodName}()
+        if ('get' === $prefix)
+            return $len;
+
+        // has{MethodName}()
+        if ('has' === $prefix) {
+            $name = ucfirst(substr($method->name, 3, strlen($method->name)));
+            if ($rc->hasMethod("is$name") || $rc->hasMethod("get$name"))
+                return 0;
+            return $len;
+        }
+
+        /** vvv Prefixes with length 2. vvv */
+
+        $len = 2;
+        $prefix = substr($method->name, 0, $len);
+
+        // is{MethodName}()
+        if ('is' === $prefix) {
+            $name = ucfirst(substr($method->name, 2, strlen($method->name)));
+            if ($rc->hasMethod("has$name") || $rc->hasMethod("get$name"))
+                return 0;
+            return  $len;
+        }
+
+        return null;
     }
 }

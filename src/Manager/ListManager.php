@@ -8,139 +8,71 @@
 
 namespace HeimrichHannot\ListBundle\Manager;
 
-use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\DataContainer;
+use Contao\Input;
 use Contao\StringUtil;
 use Contao\System;
+use Exception;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Manager\FilterManager;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
+use HeimrichHannot\FilterBundle\Util\TwigSupportPolyfill\TwigTemplateLocator;
 use HeimrichHannot\ListBundle\Backend\ListConfig;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
-use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
-use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
-use HeimrichHannot\UtilsBundle\Container\ContainerUtil;
-use HeimrichHannot\UtilsBundle\Form\FormUtil;
-use HeimrichHannot\UtilsBundle\Image\ImageUtil;
-use HeimrichHannot\UtilsBundle\Model\ModelUtil;
-use HeimrichHannot\UtilsBundle\Url\UrlUtil;
-use Twig\Environment;
+use HeimrichHannot\UtilsBundle\Util\Utils;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Twig\Environment as TwigEnvironment;
 
 class ListManager implements ListManagerInterface
 {
-    /**
-     * @var ContaoFrameworkInterface
-     */
-    protected $framework;
+    protected ContaoFramework $framework;
+    protected ListConfigModel $listConfig;
+    protected ListConfigRegistry $listConfigRegistry;
+    protected ListConfigElementRegistry $listConfigElementRegistry;
+    protected FilterManager $filterManager;
+    protected RequestStack $requestStack;
+    protected Utils $utils;
+    protected TwigEnvironment $twig;
+    protected TwigTemplateLocator $templateLocator;
 
-    /**
-     * @var ListConfigModel
-     */
-    protected $listConfig;
-
-    /**
-     * @var ListConfigRegistry
-     */
-    protected $listConfigRegistry;
-
-    /**
-     * @var ListConfigElementRegistry
-     */
-    protected $listConfigElementRegistry;
-
-    /**
-     * @var FilterManager
-     */
-    protected $filterManager;
-
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @var ModelUtil
-     */
-    protected $modelUtil;
-
-    /**
-     * @var UrlUtil
-     */
-    protected $urlUtil;
-
-    /**
-     * @var FormUtil
-     */
-    protected $formUtil;
-
-    /**
-     * @var ContainerUtil
-     */
-    protected $containerUtil;
-
-    /**
-     * @var Environment
-     */
-    protected $twig;
+    protected Database $database;
 
     /**
      * @var ListInterface
      */
     protected $list;
-
     /**
      * @var DataContainer
      */
     protected $dc;
-
     /**
      * @var array
      */
     protected $moduleData;
-
-    /**
-     * @var Database
-     */
-    protected $database;
-
-    /**
-     * @var array
-     */
-    protected static $listConfigCache = [];
-    /**
-     * @var TwigTemplateLocator
-     */
-    protected $templateLocator;
+    protected static array $listConfigCache = [];
 
     public function __construct(
-        ContaoFrameworkInterface $framework,
-        ListConfigRegistry $listConfigRegistry,
+        ContaoFramework           $framework,
+        ListConfigRegistry        $listConfigRegistry,
         ListConfigElementRegistry $listConfigElementRegistry,
-        FilterManager $filterManager,
-        Request $request,
-        ModelUtil $modelUtil,
-        UrlUtil $urlUtil,
-        ContainerUtil $containerUtil,
-        ImageUtil $imageUtil,
-        FormUtil $formUtil,
-        Environment $twig,
-        TwigTemplateLocator $templateLocator
+        FilterManager             $filterManager,
+        RequestStack              $requestStack,
+        Utils                     $utils,
+        TwigEnvironment           $twig,
+        TwigTemplateLocator       $templateLocator
     ) {
         $this->framework = $framework;
         $this->listConfigRegistry = $listConfigRegistry;
         $this->listConfigElementRegistry = $listConfigElementRegistry;
         $this->filterManager = $filterManager;
-        $this->request = $request;
-        $this->modelUtil = $modelUtil;
-        $this->urlUtil = $urlUtil;
-        $this->formUtil = $formUtil;
-        $this->containerUtil = $containerUtil;
-        $this->imageUtil = $imageUtil;
+        $this->requestStack = $requestStack;
+        $this->utils = $utils;
         $this->twig = $twig;
         $this->database = $framework->createInstance(Database::class);
         $this->templateLocator = $templateLocator;
@@ -161,11 +93,11 @@ class ListManager implements ListManagerInterface
         }
 
         if (!$listConfigId || null === ($listConfig = $this->listConfigRegistry->findByPk($listConfigId))) {
-            if (System::getContainer()->get('huh.utils.container')->isBackend()) {
+            if ($this->utils->container()->isBackend()) {
                 return null;
             }
 
-            throw new \Exception(sprintf('The module %s has no valid list config. Please set one.', $this->moduleData['id']));
+            throw new Exception(sprintf('The module %s has no valid list config. Please set one.', $this->moduleData['id']));
         }
 
         // compute list config respecting the inheritance hierarchy
@@ -222,7 +154,7 @@ class ListManager implements ListManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getItemClassByName(string $name)
+    public function getItemClassByName(string $name): ?string
     {
         $config = System::getContainer()->getParameter('huh.list');
 
@@ -288,7 +220,7 @@ class ListManager implements ListManagerInterface
     /**
      * Get the list.
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return ListInterface|null
      */
@@ -337,11 +269,13 @@ class ListManager implements ListManagerInterface
     {
         $listConfig = $this->getListConfig();
         $filter = (object) $this->getFilterConfig()->getFilter();
-        $request = $this->getRequest();
+        $request = $this->getRequestStack()->getCurrentRequest();
         $sortingAllowed = $listConfig->isTableList && $listConfig->hasHeader && $listConfig->sortingHeader;
 
+        $currentSorting = [];
+
         // GET parameter
-        if ($sortingAllowed && ($orderField = $request->getGet('order')) && ($sort = $request->getGet('sort'))) {
+        if ($sortingAllowed && ($orderField = Input::get('order')) && ($sort = Input::get('sort'))) {
             // anti sql injection: check if field exists
             /** @var Database $db */
             $db = $this->getFramework()->getAdapter(Database::class);
@@ -349,50 +283,32 @@ class ListManager implements ListManagerInterface
             if ($db->getInstance()->fieldExists($orderField, $filter->dataContainer)
                 && \in_array($sort, ListConfig::SORTING_DIRECTIONS)) {
                 $currentSorting = [
-                    'order' => $request->getGet('order'),
-                    'sort' => $request->getGet('sort'),
+                    'order' => Input::get('order'),
+                    'sort' => Input::get('sort'),
                 ];
-            } else {
-                $currentSorting = [];
             }
         } // initial
-        else {
-            switch ($listConfig->sortingMode) {
-                case ListConfig::SORTING_MODE_TEXT:
-                    $currentSorting = [
-                        'order' => $listConfig->sortingText,
-                    ];
-
-                    break;
-
-                case ListConfig::SORTING_MODE_RANDOM:
-                    $currentSorting = [
-                        'order' => ListConfig::SORTING_MODE_RANDOM,
-                    ];
-
-                    break;
-
-                case ListConfig::SORTING_MODE_MANUAL:
-                    $currentSorting = [
-                        'order' => ListConfig::SORTING_MODE_MANUAL,
-                    ];
-
-                    break;
-
-                default:
-                    $currentSorting = [
-                        'order' => $filter->dataContainer.'.'.$listConfig->sortingField,
-                        'sort' => $listConfig->sortingDirection,
-                    ];
-
-                    break;
-            }
+        else
+        {
+            $currentSorting = match ($listConfig->sortingMode)
+            {
+                ListConfig::SORTING_MODE_TEXT => ['order' => $listConfig->sortingText],
+                ListConfig::SORTING_MODE_RANDOM => ['order' => ListConfig::SORTING_MODE_RANDOM],
+                ListConfig::SORTING_MODE_MANUAL => ['order' => ListConfig::SORTING_MODE_MANUAL],
+                default => [
+                    'order' => $filter->dataContainer . '.' . $listConfig->sortingField,
+                    'sort' => $listConfig->sortingDirection,
+                ],
+            };
         }
 
         return $currentSorting;
     }
 
-    public function applyListConfigSortingToQueryBuilder(FilterQueryBuilder $queryBuilder)
+    /**
+     * @throws Exception
+     */
+    public function applyListConfigSortingToQueryBuilder(FilterQueryBuilder $queryBuilder): void
     {
         $listConfig = $this->getListConfig();
         $filter = (object) $this->getFilterConfig();
@@ -400,7 +316,7 @@ class ListManager implements ListManagerInterface
         $currentSorting = $this->getCurrentSorting();
 
         if (ListConfig::SORTING_MODE_RANDOM == $currentSorting['order']) {
-            $randomSeed = $this->getRequest()->getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
+            $randomSeed = Input::get(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
             $queryBuilder->orderBy('RAND("'.(int) $randomSeed.'")');
         } elseif (ListConfig::SORTING_MODE_MANUAL == $currentSorting['order']) {
             $sortingItems = StringUtil::deserialize($listConfig->sortingItems, true);
@@ -426,7 +342,7 @@ class ListManager implements ListManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getTwig(): Environment
+    public function getTwig(): TwigEnvironment
     {
         return $this->twig;
     }
@@ -434,17 +350,9 @@ class ListManager implements ListManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getFramework(): ContaoFrameworkInterface
+    public function getFramework(): ContaoFramework
     {
         return $this->framework;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormUtil(): FormUtil
-    {
-        return $this->formUtil;
     }
 
     public function getFilterConfig(): FilterConfig
@@ -452,20 +360,20 @@ class ListManager implements ListManagerInterface
         $filterId = $this->getListConfig()->filter;
 
         if (!$filterId || null === ($filterConfig = System::getContainer()->get('huh.filter.manager')->findById($filterId))) {
-            throw new \Exception(sprintf('The module %s has no valid filter. Please set one.', $this->moduleData['id']));
+            throw new Exception(sprintf('The module %s has no valid filter. Please set one.', $this->moduleData['id']));
         }
 
         return $filterConfig;
     }
 
-    public function getRequest(): Request
+    public function getRequestStack(): RequestStack
     {
-        return $this->request;
+        return $this->requestStack;
     }
 
-    public function setRequest(Request $request)
+    public function setRequestStack(RequestStack $requestStack)
     {
-        $this->request = $request;
+        $this->requestStack = $requestStack;
     }
 
     public function getFilterManager(): FilterManager

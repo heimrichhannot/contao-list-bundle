@@ -91,7 +91,7 @@ interface ListInterface
      */
     public function getWrapperId(): ?string;
 
-    public function setWrapperId(string $wrapperId);
+    public function setWrapperId(string $wrapperId): void;
 
     /**
      * @return string
@@ -105,7 +105,7 @@ interface ListInterface
      */
     public function isShowInitialResults(): ?bool;
 
-    public function setShowInitialResults(bool $showInitialResults);
+    public function setShowInitialResults(bool $showInitialResults): void;
 
     /**
      * @return bool

@@ -53,7 +53,8 @@
     "symfony/phpunit-bridge": "^3.2"
   },
   "conflict": {
-    "heimrichhannot/contao-reader-bundle": "<=1.0.0-beta54"
+    "heimrichhannot/contao-reader-bundle": "<=1.0.0-beta54",
+    "heimrichhannot/contao-blocks": "<2.0.0-beta"
   },
   "autoload": {
     "psr-4": {

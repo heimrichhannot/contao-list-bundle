@@ -109,7 +109,7 @@ class ListConfig extends Backend
                 $overridableFields[] = $field;
             }
 
-            System::getContainer()->get('huh.utils.dca')->flattenPaletteForSubEntities('tl_list_config', $overridableFields);
+            Polyfill::flattenPaletteForSubEntities('tl_list_config', $overridableFields);
         }
     }
 

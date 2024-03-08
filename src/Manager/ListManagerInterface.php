@@ -8,15 +8,14 @@
 
 namespace HeimrichHannot\ListBundle\Manager;
 
-use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Manager\FilterManager;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
-use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
-use HeimrichHannot\UtilsBundle\Form\FormUtil;
-use Twig\Environment;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Twig\Environment as TwigEnvironment;
 
 interface ListManagerInterface
 {
@@ -94,41 +93,32 @@ interface ListManagerInterface
 
     /**
      * Get the current item class.
-     *
-     * @param string $name Item name
-     *
-     * @return string|null
      */
-    public function getItemClassByName(string $name);
+    public function getItemClassByName(string $name): ?string;
 
     /**
      * Get current twig environment.
      */
-    public function getTwig(): Environment;
+    public function getTwig(): TwigEnvironment;
 
     /**
      * Get the contao framework.
      */
-    public function getFramework(): ContaoFrameworkInterface;
-
-    /**
-     * Get current form utils.
-     */
-    public function getFormUtil(): FormUtil;
+    public function getFramework(): ContaoFramework;
 
     /**
      * Get the request service.
      *
      * @return mixed
      */
-    public function getRequest();
+    public function getRequestStack(): RequestStack;
 
     /**
      * Sets a request service.
      */
-    public function setRequest(Request $request);
+    public function setRequestStack(RequestStack $requestStack);
 
     public function getFilterManager(): FilterManager;
 
-    public function setFilterManager(FilterManager $filterRegistry);
+    public function setFilterManager(FilterManager $filterManager);
 }

@@ -9,13 +9,16 @@
 namespace HeimrichHannot\ListBundle\Lists;
 
 use Contao\Config;
+use Contao\Controller;
+use Contao\CoreBundle\Framework\Adapter;
 use Contao\Database;
 use Contao\Date;
 use Contao\FrontendTemplate;
-use Contao\Model;
+use Contao\Input;
 use Contao\StringUtil;
 use Contao\System;
-use HeimrichHannot\Blocks\BlockModuleModel;
+use Doctrine\DBAL\Exception;
+use HeimrichHannot\Blocks\Model\BlockModuleModel;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
 use HeimrichHannot\ListBundle\Backend\ListConfig;
@@ -34,11 +37,16 @@ use HeimrichHannot\ListBundle\ListExtension\ListExtensionCollection;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Pagination\RandomPagination;
+use HeimrichHannot\ListBundle\Util\DCUtil;
+use HeimrichHannot\ListBundle\Util\Polyfill;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 use HeimrichHannot\UtilsBundle\Util\Utils;
+use JsonSerializable;
+use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class DefaultList implements ListInterface, \JsonSerializable
+class DefaultList implements ListInterface, JsonSerializable
 {
     const JUMP_TO_OVERVIEW_LABEL_DEFAULT = 'huh.list.labels.overview.default';
 
@@ -204,7 +212,13 @@ class DefaultList implements ListInterface, \JsonSerializable
 
         $listConfiguration = new ListConfiguration($filter->dataContainer, $listConfig);
 
-        System::getContainer()->get('huh.utils.dca')->loadDc($filter->dataContainer);
+        if (empty($GLOBALS['TL_DCA'][$filter->dataContainer])) {
+            $framework = System::getContainer()->get('contao.framework');
+            /** @var Adapter<Controller> $controller */
+            $controller = $framework->getAdapter(Controller::class);
+            $controller->loadDataContainer($filter->dataContainer);
+        }
+
         $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
 
         $this->setWrapperId('huh-list-'.$this->getModule()['id']);
@@ -367,16 +381,16 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function addRelatedFilters(string $table, $queryBuilder)
     {
         // tags
-        if (isset($GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERIUM_TAGS])) {
-            $itemIds = $GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERIUM_TAGS]['itemIds'];
+        if (isset($GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERION_TAGS])) {
+            $itemIds = $GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERION_TAGS]['itemIds'];
 
             // if no items with the given tags are found, no related news should be displayed
             $queryBuilder->andWhere($queryBuilder->expr()->in($table.'.id', empty($itemIds) ? [0] : $itemIds));
         }
 
         // categories
-        if (isset($GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERIUM_CATEGORIES])) {
-            $itemIds = $GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERIUM_CATEGORIES]['itemIds'];
+        if (isset($GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERION_CATEGORIES])) {
+            $itemIds = $GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERION_CATEGORIES]['itemIds'];
 
             // if no items with the given tags are found, no related news should be displayed
             $queryBuilder->andWhere($queryBuilder->expr()->in($table.'.id', empty($itemIds) ? [0] : $itemIds));
@@ -396,13 +410,16 @@ class DefaultList implements ListInterface, \JsonSerializable
 
     public function isDcMultilingualActive(ListConfigModel $listConfig, array $dca, string $table)
     {
-        return $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.dca')->isDcMultilingual($table);
+        return $listConfig->addDcMultilingualSupport && DCUtil::isTableUsingDcMultilingual($table);
     }
 
     public function isDcMultilingualUtilsActive(ListConfigModel $listConfig, array $dca, string $table)
     {
-        return $listConfig->addDcMultilingualSupport && System::getContainer()->get('huh.utils.dca')->isDcMultilingual($table) &&
-            System::getContainer()->get('huh.utils.container')->isBundleActive('HeimrichHannot\DcMultilingualUtilsBundle\ContaoDcMultilingualUtilsBundle');
+        $kernelBundles = System::getContainer()->getParameter('kernel.bundles');
+        $bundleName = 'HeimrichHannot\DcMultilingualUtilsBundle\ContaoDcMultilingualUtilsBundle';
+
+        return $listConfig->addDcMultilingualSupport && DCUtil::isTableUsingDcMultilingual($table) &&
+            in_array($bundleName, array_merge(array_values($kernelBundles), array_keys($kernelBundles)));
     }
 
     /**
@@ -451,14 +468,14 @@ class DefaultList implements ListInterface, \JsonSerializable
                     throw new \Exception(sprintf('Item class %s must implement %s', $itemClass, ItemInterface::class));
                 }
 
-                if (!isset($interfaces[\JsonSerializable::class])) {
-                    throw new \Exception(sprintf('Item class %s must implement %s', $itemClass, \JsonSerializable::class));
+                if (!isset($interfaces[JsonSerializable::class])) {
+                    throw new \Exception(sprintf('Item class %s must implement %s', $itemClass, JsonSerializable::class));
                 }
 
                 /** @var ItemInterface $result */
                 $result = new $itemClass($this->_manager, $item);
             } else {
-                throw new \Exception(sprintf('Item class for %s not found', $listConfig->item ?: 'default', \JsonSerializable::class));
+                throw new \Exception(sprintf('Item class for %s not found', $listConfig->item ?: 'default'));
             }
 
             $parsedResult = $result->parse($cssClass, $count);
@@ -511,7 +528,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $currentSorting = $this->_manager->getCurrentSorting();
 
         if (ListConfig::SORTING_MODE_RANDOM == $currentSorting['order']) {
-            $randomSeed = $this->_manager->getRequest()->getGet(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
+            $randomSeed = Input::get(RandomPagination::PARAM_RANDOM) ?: rand(1, 500);
             $queryBuilder->orderBy('RAND("'.(int) $randomSeed.'")');
             [$offset, $limit] = $this->splitResults($offset, $totalCount, $limit, $randomSeed);
         } elseif (ListConfig::SORTING_MODE_MANUAL == $currentSorting['order']) {
@@ -548,7 +565,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
             // Get the current page
             $id = 'page_s'.$this->getModule()['id'];
-            $page = (int) $this->_manager->getRequest()->getGet($id) ?: 1;
+            $page = (int) Input::get($id) ?: 1;
             $this->setPage($page);
 
             $pageModel = System::getContainer()->get(Utils::class)->request()->getCurrentPageModel();
@@ -579,10 +596,27 @@ class DefaultList implements ListInterface, \JsonSerializable
             }
 
             // Add the pagination menu
-            if ($listConfig->addAjaxPagination) {
-                $pagination = new RandomPagination($randomSeed, $offsettedTotal, $listConfig->perPage, Config::get('maxPaginationLinks'), $id, new FrontendTemplate($listConfig->ajaxPaginationTemplate ?: 'pagination_list_ajax'));
-            } else {
-                $pagination = new RandomPagination($randomSeed, $offsettedTotal, $listConfig->perPage, Config::get('maxPaginationLinks'), $id);
+            if ($listConfig->addAjaxPagination)
+            {
+                $pagination =
+                    new RandomPagination(
+                        $randomSeed,
+                        $offsettedTotal,
+                        $listConfig->perPage,
+                        Config::get('maxPaginationLinks'),
+                        $id,
+                        new FrontendTemplate($listConfig->ajaxPaginationTemplate ?: 'pagination_list_ajax')
+                    );
+            } else
+            {
+                $pagination =
+                    new RandomPagination(
+                        $randomSeed,
+                        $offsettedTotal,
+                        $listConfig->perPage,
+                        Config::get('maxPaginationLinks'),
+                        $id
+                    );
             }
 
             $this->setPagination($pagination->generate("\n  "));
@@ -605,24 +639,36 @@ class DefaultList implements ListInterface, \JsonSerializable
         $currentSorting = $this->_manager->getCurrentSorting();
         $listConfig = $this->_manager->getListConfig();
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
-        $urlUtil = System::getContainer()->get('huh.utils.url');
+        $urlUtil = System::getContainer()->get(Utils::class)->url();
         $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
-        $tableFields = \Contao\StringUtil::deserialize($listConfig->tableFields, true);
+        $tableFields = StringUtil::deserialize($listConfig->tableFields, true);
 
         foreach ($tableFields as $i => $name) {
             $isCurrentOrderField = ($name == $currentSorting['order']);
 
             $field = [
                 'label' => $dca['fields'][$name]['label'][0] ?: $name,
-                'class' => System::getContainer()->get('huh.utils.string')->camelCaseToDashed($name),
+                'class' => System::getContainer()->get(Utils::class)->string()->camelCaseToDashed($name),
             ];
 
-            if ($isCurrentOrderField) {
-                $field['sortingClass'] = (ListConfig::SORTING_DIRECTION_ASC == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_ASC : ListConfig::SORTING_DIRECTION_DESC);
+            if ($isCurrentOrderField)
+            {
+                $field['sortingClass'] = (ListConfig::SORTING_DIRECTION_ASC == $currentSorting['sort']
+                    ? ListConfig::SORTING_DIRECTION_ASC
+                    : ListConfig::SORTING_DIRECTION_DESC);
 
-                $field['link'] = $urlUtil->addQueryString('order='.$name.'&sort='.(ListConfig::SORTING_DIRECTION_ASC == $currentSorting['sort'] ? ListConfig::SORTING_DIRECTION_DESC : ListConfig::SORTING_DIRECTION_ASC));
-            } else {
-                $field['link'] = $urlUtil->addQueryString('order='.$name.'&sort='.ListConfig::SORTING_DIRECTION_ASC);
+                $field['link'] =
+                    $urlUtil->addQueryStringParameterToUrl(
+                        'order=' . $name . '&sort='
+                        . (ListConfig::SORTING_DIRECTION_ASC == $currentSorting['sort']
+                            ? ListConfig::SORTING_DIRECTION_DESC
+                            : ListConfig::SORTING_DIRECTION_ASC)
+                    );
+            } else
+            {
+                $field['link'] = $urlUtil->addQueryStringParameterToUrl(
+                    'order=' . $name . '&sort=' . ListConfig::SORTING_DIRECTION_ASC
+                );
             }
 
             $headerFields[] = $field;
@@ -634,7 +680,7 @@ class DefaultList implements ListInterface, \JsonSerializable
     public function addDataAttributes()
     {
         $dataAttributes = [];
-        $stringUtil = System::getContainer()->get('huh.utils.string');
+        $stringUtil = System::getContainer()->get(Utils::class)->string();
         $listConfig = $this->_manager->getListConfig();
 
         foreach ($GLOBALS['TL_DCA']['tl_list_config']['fields'] as $field => $data) {
@@ -692,7 +738,8 @@ class DefaultList implements ListInterface, \JsonSerializable
             }
         }
 
-        $pageJumpTo = System::getContainer()->get('huh.utils.url')->getJumpToPageObject($jumpToOverview);
+        # fixme
+        $pageJumpTo = System::getContainer()->get(Utils::class)->url()->getJumpToPageObject($jumpToOverview);
 
         if (null !== $pageJumpTo) {
             $this->setJumpToOverview($pageJumpTo->getAbsoluteUrl());
@@ -704,18 +751,23 @@ class DefaultList implements ListInterface, \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function handleShare()
+    public function handleShare(): void
     {
         $listConfig = $this->_manager->getListConfig();
         $filter = (object) $this->_manager->getFilterConfig();
-        $request = $this->_manager->getRequest();
-        $action = $request->getGet('act');
+        $request = $this->_manager->getRequestStack()->getCurrentRequest();
+        $action = Input::get('act');
 
         if (HeimrichHannotContaoListBundle::ACTION_SHARE == $action && $listConfig->addShare) {
-            $url = $request->getGet('url');
-            $id = $request->getGet($listConfig->useAlias ? $listConfig->aliasField : 'id');
+            $url = Input::get('url');
+            $id = Input::get($listConfig->useAlias ? $listConfig->aliasField : 'id');
 
-            if (null !== ($entity = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($this->_manager->getFramework(), $filter->dataContainer, $id))) {
+            # fixme
+            $entity = System::getContainer()->get(Utils::class)->model()
+                ->findModelInstanceByPk($this->_manager->getFramework(), $filter->dataContainer, $id);
+
+            if (null !== $entity)
+            {
                 $now = time();
 
                 if ($this->shareTokenExpiredOrEmpty($entity, $now)) {
@@ -728,7 +780,8 @@ class DefaultList implements ListInterface, \JsonSerializable
                 if ($listConfig->shareAutoItem) {
                     $shareUrl = $url.'/'.$entity->shareToken;
                 } else {
-                    $shareUrl = System::getContainer()->get('huh.utils.url')->addQueryString('share='.$entity->shareToken, $url);
+                    $shareUrl = System::getContainer()->get(Utils::class)->url()
+                        ->addQueryStringParameterToUrl('share='.$entity->shareToken, $url);
                 }
 
                 exit($shareUrl);
@@ -746,6 +799,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $interval = 604800; // default: 7 days
 
         if (isset($expirationInterval['unit']) && isset($expirationInterval['value']) && $expirationInterval['value'] > 0) {
+            # fixme
             $interval = System::getContainer()->get('huh.utils.date')->getTimePeriodInSeconds($expirationInterval);
         }
 
@@ -802,10 +856,11 @@ class DefaultList implements ListInterface, \JsonSerializable
 
     /**
      * {@inheritdoc}
+     * @throws ReflectionException
      */
     public function jsonSerialize()
     {
-        return System::getContainer()->get('huh.utils.class')->jsonSerialize($this);
+        return Polyfill::jsonSerialize($this);
     }
 
     /**
@@ -816,7 +871,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_wrapperId;
     }
 
-    public function setWrapperId(string $wrapperId)
+    public function setWrapperId(string $wrapperId): void
     {
         $this->_wrapperId = $wrapperId;
     }
@@ -842,7 +897,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         return $this->_showInitialResults;
     }
 
-    public function setShowInitialResults(bool $showInitialResults)
+    public function setShowInitialResults(bool $showInitialResults): void
     {
         $this->_showInitialResults = $showInitialResults;
     }
@@ -1205,13 +1260,22 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->_paginationData = $paginationData;
     }
 
-    protected function computeSearchablePages(Model $listConfig, array $arrRoot, array $arrPages, int $intRoot = 0, bool $blnIsSitemap = false)
-    {
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
+    protected function computeSearchablePages(
+        ListConfigModel $listConfig,
+        array           $arrRoot,
+        array           $arrPages,
+        int             $intRoot = 0,
+        bool            $blnIsSitemap = false
+    ): array {
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
         $table = $filter->dataContainer;
-        $dcMultilingualActive = System::getContainer()->get('huh.utils.dca')->isDcMultilingual($table);
 
-        if (null === ($rootPage = System::getContainer()->get(ModelUtil::class)->findModelInstanceByPk('tl_page', $intRoot))) {
+        $rootPage = System::getContainer()->get(Utils::class)->model()->findModelInstanceByPk('tl_page', $intRoot);
+        if (null === $rootPage) {
             return $arrPages;
         }
 
@@ -1238,7 +1302,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $GLOBALS['TL_LANGUAGE'] = $tmpLang;
 
         if (null !== ($itemClass = $this->getItemClassByName($listConfig->item ?: 'default'))) {
-            $reflection = new \ReflectionClass($itemClass);
+            $reflection = new ReflectionClass($itemClass);
 
             if (!$reflection->implementsInterface(ItemInterface::class)) {
                 return $arrPages;
@@ -1262,7 +1326,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
                 $url = $result->getDetailsUrl($blnIsSitemap);
 
-                if (null !== $url && !empty($url)) {
+                if (!empty($url)) {
                     $urls[] = $url;
                 }
             }
@@ -1278,7 +1342,8 @@ class DefaultList implements ListInterface, \JsonSerializable
                     $GLOBALS['TL_LANGUAGE'] = $data['language'];
 
                     // switch the alias
-                    if ($dcMultilingualActive) {
+                    if (DCUtil::isTableUsingDcMultilingual($table))
+                    {
                         $query = "SELECT $table.$listConfig->aliasField FROM $table WHERE $table.langPid=? AND $table.language=?";
 
                         if ($this->isDcMultilingualUtilsActive($listConfig, [], $table)) {
@@ -1304,7 +1369,7 @@ class DefaultList implements ListInterface, \JsonSerializable
 
                     $url = $result->getDetailsUrl($blnIsSitemap);
 
-                    if (null !== $url && !empty($url)) {
+                    if (!empty($url)) {
                         $urls[] = $url;
                     }
                 }

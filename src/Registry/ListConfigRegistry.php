@@ -9,37 +9,51 @@
 namespace HeimrichHannot\ListBundle\Registry;
 
 use Contao\Controller;
-use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\CoreBundle\Framework\Adapter;
+use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\Model;
+use Contao\Model\Collection;
 use Contao\System;
 use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
+use HeimrichHannot\ListBundle\Util\DCUtil;
+use HeimrichHannot\ListBundle\Util\Polyfill;
+use HeimrichHannot\UtilsBundle\Util\Utils;
 
 class ListConfigRegistry
 {
-    /**
-     * @var ContaoFrameworkInterface
-     */
-    protected $framework;
+    protected ContaoFramework $framework;
+    protected Utils $utils;
 
     /**
      * Constructor.
      */
-    public function __construct(ContaoFrameworkInterface $framework)
-    {
+    public function __construct(
+        ContaoFramework $framework,
+        Utils $utils
+    ) {
         $this->framework = $framework;
+        $this->utils = $utils;
     }
 
     /**
      * Adapter function for the model's findBy method.
      *
-     * @return \Contao\Model\Collection|ListConfigModel|null
+     * @return Collection<ListConfigModel>|null
      */
-    public function findAll(array $options = [])
+    public function findAll(array $options = []): ?Collection
     {
-        return System::getContainer()->get('huh.utils.model')->findAllModelInstances(
-            'tl_list_config',
-            $options
-        );
+        $table = 'tl_list_config';
+
+        $modelClass = $this->framework->getAdapter(Model::class)->getClassFromTable($table);
+        if (!$modelClass) {
+            return null;
+        }
+
+        /* @var Adapter<ListConfigModel> $adapter */
+        $adapter = $this->framework->getAdapter($modelClass);
+
+        return $adapter->findAll($options);
     }
 
     /**
@@ -48,11 +62,11 @@ class ListConfigRegistry
      * @param mixed $column
      * @param mixed $value
      *
-     * @return \Contao\Model\Collection|ListConfigModel|null
+     * @return Collection|ListConfigModel|null
      */
     public function findBy($column, $value, array $options = [])
     {
-        return System::getContainer()->get('huh.utils.model')->findModelInstancesBy(
+        return $this->utils->model()->findModelInstancesBy(
             'tl_list_config',
             $column,
             $value,
@@ -66,11 +80,11 @@ class ListConfigRegistry
      * @param mixed $column
      * @param mixed $value
      *
-     * @return \Contao\Model\Collection|ListConfigModel|null
+     * @return Collection|ListConfigModel|null
      */
     public function findOneBy($column, $value, array $options = [])
     {
-        return System::getContainer()->get('huh.utils.model')->findModelInstancesBy(
+        return $this->utils->model()->findModelInstancesBy(
             'tl_list_config',
             $column,
             $value,
@@ -81,18 +95,11 @@ class ListConfigRegistry
     /**
      * Adapter function for the model's findByPk method.
      *
-     * @param mixed $column
-     * @param mixed $value
-     *
      * @return ListConfigModel|null
      */
-    public function findByPk($pk, array $options = [])
+    public function findByPk(mixed $pk, array $options = [])
     {
-        return System::getContainer()->get('huh.utils.model')->findModelInstanceByPk(
-            'tl_list_config',
-            $pk,
-            $options
-        );
+        return ListConfigModel::findByPk($pk, $options);
     }
 
     /**
@@ -115,24 +122,18 @@ class ListConfigRegistry
 
     public function getOverridableProperty($property, int $listConfigPk)
     {
-        if (null === ($listConfig = $this->findByPk($listConfigPk))) {
+        $listConfig = $this->findByPk($listConfigPk);
+        if (null === $listConfig) {
             return null;
         }
 
-        $parentListConfigs = System::getContainer()->get('huh.utils.model')->findParentsRecursively(
-            'pid',
-            'tl_list_config',
-            $listConfig
-        );
+        $parentListConfigs = $this->utils->model()->findParentsRecursively($listConfig);
 
         if (empty($parentListConfigs)) {
             return null;
         }
 
-        return System::getContainer()->get('huh.utils.dca')->getOverridableProperty(
-            $property,
-            $parentListConfigs
-        );
+        return DCUtil::getOverridableProperty($property, $parentListConfigs);
     }
 
     /**
@@ -154,13 +155,14 @@ class ListConfigRegistry
 
         $computedListConfig = new ListConfigModel();
 
-        $parentListConfigs = System::getContainer()->get('huh.utils.model')->findParentsRecursively(
+        $parentListConfigs = $this->utils->model()->findParentsRecursively(
             'pid',
             'tl_list_config',
             $listConfig
         );
 
-        $rootListConfig = System::getContainer()->get('huh.utils.model')->findRootParentRecursively(
+        $rootListConfig = Polyfill::findRootParentRecursively(
+            $this->utils->model(),
             'pid',
             'tl_list_config',
             $listConfig
@@ -172,7 +174,7 @@ class ListConfigRegistry
             if ($data['eval']['notOverridable'] ?? false) {
                 $computedListConfig->{$field} = $rootListConfig->{$field};
             } else {
-                $computedListConfig->{$field} = System::getContainer()->get('huh.utils.dca')->getOverridableProperty(
+                $computedListConfig->{$field} = DCUtil::getOverridableProperty(
                     $field,
                     array_merge($parentListConfigs, [$listConfig])
                 );

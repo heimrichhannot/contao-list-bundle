@@ -35,28 +35,27 @@ class ModelInstanceChoicePolyfill extends AbstractChoice
             return $choices;
         }
 
-        while ($instances->next()) {
+        while ($instances->next())
+        {
             $labelPattern = $context['labelPattern'] ?? null;
 
             if (!$labelPattern) {
                 $labelPattern = 'ID %id%';
 
-                switch ($context['dataContainer']) {
-                    case 'tl_member':
-                        $labelPattern = '%firstname% %lastname% (ID %id%)';
-
-                        break;
-
-                    default:
-                        foreach (static::TITLE_FIELDS as $titleField) {
-                            if (isset($GLOBALS['TL_DCA'][$context['dataContainer']]['fields'][$titleField])) {
-                                $labelPattern = '%'.$titleField.'% (ID %id%)';
-
-                                break;
-                            }
+                if ($context['dataContainer'] == 'tl_member')
+                {
+                    $labelPattern = '%firstname% %lastname% (ID %id%)';
+                }
+                else
+                {
+                    foreach (static::TITLE_FIELDS as $titleField)
+                    {
+                        if (isset($GLOBALS['TL_DCA'][$context['dataContainer']]['fields'][$titleField]))
+                        {
+                            $labelPattern = '%' . $titleField . '% (ID %id%)';
+                            break;
                         }
-
-                        break;
+                    }
                 }
             }
 
@@ -64,7 +63,7 @@ class ModelInstanceChoicePolyfill extends AbstractChoice
 
             if (!$skipFormatting) {
                 $dca = &$GLOBALS['TL_DCA']['tl_submission'];
-                # note: originally new \HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils(...);
+                # note on below: originally new \HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils(...);
                 $dc = new DC_Table($context['dataContainer']);
                 $dc->id = $instances->id;
                 $dc->activeRecord = $instances->current();
@@ -72,12 +71,11 @@ class ModelInstanceChoicePolyfill extends AbstractChoice
                 $label = preg_replace_callback(
                     '@%([^%]+)%@i',
                     function ($matches) use ($instances, $dca, $context, $dc) {
-                        return System::getContainer()->get(Utils::class)->form()
-                            ->prepareSpecialValueForOutput(
-                                $matches[1],
-                                $instances->{$matches[1]},
-                                $dc
-                            );
+                        return $this->utils->formatter()->formatDcaFieldValue(
+                            $matches[1],
+                            $instances->{$matches[1]},
+                            $dc
+                        );
                     },
                     $labelPattern
                 );
@@ -91,10 +89,9 @@ class ModelInstanceChoicePolyfill extends AbstractChoice
                 );
             }
 
-            $callbackLabel = Polyfill::getConfigByArrayOrCallbackOrFunction($context, 'label', [$label, $instances->row(), $context]);
-            if (null !== $callbackLabel) {
-                $label = $callbackLabel;
-            }
+            $label = $context['label']
+                ?? $this->utils->dca()->executeCallback($context['label_callback'], [$label, $instances->row(), $context])
+                ?? $label;
 
             $choices[$instances->id] = $label;
         }

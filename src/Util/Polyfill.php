@@ -14,7 +14,6 @@ use Contao\Model;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Validator;
-use Error;
 use Exception;
 use HeimrichHannot\UtilsBundle\Util\ModelUtil;
 use HeimrichHannot\UtilsBundle\Util\Utils;
@@ -316,7 +315,7 @@ class Polyfill
         $imageFile = $file;
 
         try {
-            $src = System::getContainer()->get('contao.image.image_factory')->create($projDir.'/'.$file->path, $size)->getUrl($projDir);
+            $src = System::getContainer()->get('contao.image.factory')->create($projDir.'/'.$file->path, $size)->getUrl($projDir);
             $picture = System::getContainer()->get('contao.image.picture_factory')->create($projDir.'/'.$file->path, $size);
 
             $picture = [
@@ -572,60 +571,6 @@ class Polyfill
         }
 
         return self::findRootParentRecursively($modelUtil, $parentProperty, $table, $parentInstance);
-    }
-
-    /**
-     * Retrieves an array from a dca config (in most cases eval) in the following priorities:.
-     *
-     * 1. The value associated to $array[$property]
-     * 2. The value retrieved by $array[$property . '_callback'] which is a callback array like ['Class', 'method'] or ['service.id', 'method']
-     * 3. The value retrieved by $array[$property . '_callback'] which is a function closure array like ['Class', 'method']
-     *
-     * @return mixed|null The value retrieved in the way mentioned above or null
-     *
-     * @internal {@see https://github.com/heimrichhannot/contao-utils-bundle/blob/ee122d2e267a60aa3200ce0f40d92c22028988e8/src/Dca/DcaUtil.php#L375}
-     */
-    public static function getConfigByArrayOrCallbackOrFunction(array $array, $property, array $arguments = [])
-    {
-        if (isset($array[$property])) {
-            return $array[$property];
-        }
-
-        if (!isset($array[$property.'_callback'])) {
-            return null;
-        }
-
-        if (is_array($array[$property.'_callback'])) {
-            $callback = $array[$property.'_callback'];
-
-            if (!isset($callback[0]) || !isset($callback[1])) {
-                return null;
-            }
-
-            try {
-                $instance = Controller::importStatic($callback[0]);
-            } catch (Exception $e) {
-                return null;
-            }
-
-            if (!method_exists($instance, $callback[1])) {
-                return null;
-            }
-
-            try {
-                return call_user_func_array([$instance, $callback[1]], $arguments);
-            } catch (Error $e) {
-                return null;
-            }
-        } elseif (is_callable($array[$property.'_callback'])) {
-            try {
-                return call_user_func_array($array[$property.'_callback'], $arguments);
-            } catch (Error $e) {
-                return null;
-            }
-        }
-
-        return null;
     }
 
     /**

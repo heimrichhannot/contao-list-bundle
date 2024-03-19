@@ -24,7 +24,7 @@ class InterfaceNotImplementedException extends \Exception
     public function __construct(string $interface, string $class, string $message = '', int $code = 0, Throwable $previous = null)
     {
         if (empty($message)) {
-            sprintf('List class %s must implement %s', $class, $interface);
+            $message = sprintf('List class %s must implement %s', $class, $interface);
         }
         parent::__construct($message, $code, $previous);
         $this->interface = $interface;

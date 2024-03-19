@@ -10,8 +10,10 @@ namespace HeimrichHannot\ListBundle\Pagination;
 
 use Contao\Controller;
 use Contao\Pagination;
+use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
+use HeimrichHannot\UtilsBundle\Util\Utils;
 
 class RandomPagination extends Pagination
 {
@@ -43,23 +45,23 @@ class RandomPagination extends Pagination
         return parent::generate($strSeparator);
     }
 
-    protected function linkToPage($page)
+    protected function linkToPage($intPage)
     {
-        $urlUtil = System::getContainer()->get('huh.utils.url');
+        $urlUtil = System::getContainer()->get(Utils::class)->url();
 
-        $url = ampersand($this->strUrl);
+        $url = StringUtil::ampersand($this->strUrl);
 
-        if ($page <= 1 && !$this->blnForceParam) {
+        if ($intPage <= 1 && !$this->blnForceParam) {
             if ($this->randomSeed) {
-                $url = $urlUtil->addQueryString(static::PARAM_RANDOM.'='.$this->randomSeed, $url);
+                $url = $urlUtil->addQueryStringParameterToUrl(static::PARAM_RANDOM.'='.$this->randomSeed, $url);
             }
 
             return $url;
         }
-        $url = $urlUtil->addQueryString($this->strParameter.'='.$page, $url);
+        $url = $urlUtil->addQueryStringParameterToUrl($this->strParameter.'='.$intPage, $url);
 
         if ($this->randomSeed) {
-            $url = $urlUtil->addQueryString(static::PARAM_RANDOM.'='.$this->randomSeed, $url);
+            $url = $urlUtil->addQueryStringParameterToUrl(static::PARAM_RANDOM.'='.$this->randomSeed, $url);
         }
 
         return $url;

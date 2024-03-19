@@ -8,7 +8,7 @@
 
 namespace HeimrichHannot\ListBundle\ConfigElementType;
 
-use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use HeimrichHannot\ListBundle\Item\ItemInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 
@@ -19,7 +19,7 @@ use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
  */
 interface ConfigElementType
 {
-    public function __construct(ContaoFrameworkInterface $framework);
+    public function __construct(ContaoFramework $framework);
 
     public function addToItemData(ItemInterface $item, ListConfigElementModel $listConfigElement);
 }

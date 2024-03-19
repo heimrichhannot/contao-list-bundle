@@ -8,12 +8,14 @@
 
 namespace HeimrichHannot\ListBundle\ContentElement;
 
+use Contao\BackendTemplate;
 use Contao\ContentElement;
 use Contao\ContentModel;
 use Contao\Controller;
 use Contao\Model;
 use Contao\StringUtil;
 use Contao\System;
+use Doctrine\DBAL\Exception;
 use HeimrichHannot\FilterBundle\Config\FilterConfig;
 use HeimrichHannot\FilterBundle\Model\FilterPreselectModel;
 use HeimrichHannot\FilterBundle\QueryBuilder\FilterQueryBuilder;
@@ -25,7 +27,11 @@ use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
-use HeimrichHannot\UtilsBundle\Database\DatabaseUtil;
+use HeimrichHannot\ListBundle\Util\DatabaseUtilPolyfill;
+use HeimrichHannot\UtilsBundle\Util\Utils;
+use JsonSerializable;
+use ReflectionClass;
+use ReflectionException;
 
 class ContentListPreselect extends ContentElement
 {
@@ -78,16 +84,17 @@ class ContentListPreselect extends ContentElement
      *
      * @codeCoverageIgnore
      */
-    public function __construct(ContentModel $objElement, string $strColumn = 'main')
-    {
+    public function __construct(
+        ContentModel $objElement,
+        string $strColumn = 'main'
+    ) {
         parent::__construct($objElement, $strColumn);
 
-        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
+        if (System::getContainer()->get(Utils::class)->container()->isBackend()) {
             return $this->generate();
         }
 
         $this->listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
-        $this->request = System::getContainer()->get('huh.request');
 
         // retrieve list config
         $this->listConfig = System::getContainer()->get('huh.list.list-config-registry')->getComputedListConfig((int) $objElement->listConfig);
@@ -105,10 +112,10 @@ class ContentListPreselect extends ContentElement
     /**
      * @codeCoverageIgnore
      */
-    public function generate()
+    public function generate(): string
     {
-        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
-            $objTemplate = new \BackendTemplate('be_wildcard');
+        if (System::getContainer()->get(Utils::class)->container()->isBackend()) {
+            $objTemplate = new BackendTemplate('be_wildcard');
             $objTemplate->wildcard = implode("\n", $this->getWildcard());
             $objTemplate->title = $this->getListTitle();
 
@@ -124,7 +131,12 @@ class ContentListPreselect extends ContentElement
         return parent::generate();
     }
 
-    public function doGenerate()
+    /**
+     * @throws ReflectionException
+     * @throws InterfaceNotImplementedException
+     * @throws Exception
+     */
+    public function doGenerate(): bool
     {
         if (!$this->manager) {
             return false;
@@ -138,14 +150,14 @@ class ContentListPreselect extends ContentElement
         $framework->getAdapter(Controller::class)->loadLanguageFile($this->filter->dataContainer);
 
         if ($listClass = $this->manager->getListByName($this->listConfig->list ?: 'default')) {
-            $reflection = new \ReflectionClass($listClass);
+            $reflection = new ReflectionClass($listClass);
 
             if (!$reflection->implementsInterface(ListInterface::class)) {
                 throw new InterfaceNotImplementedException(ListInterface::class, $listClass);
             }
 
-            if (!$reflection->implementsInterface(\JsonSerializable::class)) {
-                throw new InterfaceNotImplementedException(\JsonSerializable::class, $listClass);
+            if (!$reflection->implementsInterface(JsonSerializable::class)) {
+                throw new InterfaceNotImplementedException(JsonSerializable::class, $listClass);
             }
 
             $this->manager->setList(new $listClass($this->manager));
@@ -157,8 +169,8 @@ class ContentListPreselect extends ContentElement
         $dispatcher = System::getContainer()->get('event_dispatcher');
         $dispatcher->addListener(ListModifyQueryBuilderForCountEvent::NAME, [$this, 'listModifyQueryBuilderForCount']);
 
-        if (true === (bool) $this->manager->getListConfig()->doNotRenderEmpty
-            && empty($this->manager->getList()->getItems())) {
+        if ($this->manager->getListConfig()->doNotRenderEmpty && empty($this->manager->getList()->getItems()))
+        {
             /** @var FilterQueryBuilder $queryBuilder */
             $queryBuilder = $this->manager->getFilterManager()->getQueryBuilder($this->filter->id);
 
@@ -167,7 +179,7 @@ class ContentListPreselect extends ContentElement
             }
             $fields = $this->filter->dataContainer.'.* ';
 
-            if ($totalCount = $queryBuilder->select($fields)->execute()->rowCount() < 1) {
+            if ($totalCount = $queryBuilder->select($fields)->executeQuery()->rowCount() < 1) {
                 return false;
             }
         }
@@ -178,18 +190,14 @@ class ContentListPreselect extends ContentElement
     /**
      * Modify the list query builder.
      */
-    public function listModifyQueryBuilderForCount(ListModifyQueryBuilderForCountEvent $event)
+    public function listModifyQueryBuilderForCount(ListModifyQueryBuilderForCountEvent $event): void
     {
         $framework = System::getContainer()->get('contao.framework');
         $filter = (object) $event->getList()->getManager()->getFilterConfig()->getFilter();
 
-        $pk = 'id';
+        /** @var class-string<Model> $model */
         $model = $framework->getAdapter(Model::class)->getClassFromTable($filter->dataContainer);
-
-        /** @var Model $model */
-        if (class_exists($model)) {
-            $pk = $model::getPk();
-        }
+        $pk = class_exists($model) ? $model::getPk() : 'id';
 
         $queryBuilder = $event->getQueryBuilder();
 
@@ -201,10 +209,11 @@ class ContentListPreselect extends ContentElement
         $values = array_filter(StringUtil::deserialize($this->objModel->listPreselect, true));
 
         if (!empty($values)) {
-            $queryBuilder->andWhere(System::getContainer()->get('huh.utils.database')->composeWhereForQueryBuilder(
+            $dbUtil = System::getContainer()->get(DatabaseUtilPolyfill::class);
+            $queryBuilder->andWhere($dbUtil->composeWhereForQueryBuilder(
                 $queryBuilder,
                 $this->filter->dataContainer.'.'.$pk,
-                DatabaseUtil::OPERATOR_IN,
+                DatabaseUtilPolyfill::OPERATOR_IN,
                 $GLOBALS['TL_DCA'][$filter->dataContainer],
                 $values
             ));
@@ -259,14 +268,17 @@ class ContentListPreselect extends ContentElement
             return $wildcard;
         }
 
-        if (null === ($filterConfig = $manager->getFilterConfig()) || null === ($elements = $filterConfig->getElements())) {
+        $filterConfig = $manager->getFilterConfig();
+        $elements = $filterConfig?->getElements();
+        if ($filterConfig === null || null === $elements) {
             return $wildcard;
         }
 
         /** @var FilterPreselectModel $preselections */
         $preselections = System::getContainer()->get('contao.framework')->createInstance(FilterPreselectModel::class);
+        $preselections = $preselections->findPublishedByPidAndTableAndField($this->id, 'tl_content', 'filterPreselect');
 
-        if (null === ($preselections = $preselections->findPublishedByPidAndTableAndField($this->id, 'tl_content', 'filterPreselect'))) {
+        if ($preselections === null) {
             return $wildcard;
         }
 
@@ -283,7 +295,10 @@ class ContentListPreselect extends ContentElement
      */
     protected function getListTitle(): string
     {
-        if (null === ($listConfig = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk('tl_list_config', $this->getModel()->listConfig))) {
+        $listConfig = System::getContainer()->get(Utils::class)->model()
+            ->findModelInstanceByPk('tl_list_config', $this->getModel()->listConfig);
+
+        if (null === $listConfig) {
             return '';
         }
 
@@ -295,7 +310,7 @@ class ContentListPreselect extends ContentElement
      *
      * @codeCoverageIgnore
      */
-    protected function compile()
+    protected function compile(): void
     {
         $this->Template->noSearch = (bool) $this->manager->getListConfig()->noSearch;
 
@@ -307,20 +322,21 @@ class ContentListPreselect extends ContentElement
     /**
      * Invoke preselection.
      */
-    protected function preselect()
+    protected function preselect(): void
     {
         $filterConfig = System::getContainer()->get('huh.filter.manager')->findById($this->filterConfig->getId());
 
-        if (!$filterConfig || !$elements = $filterConfig->getElements()) {
+        if (!$filterConfig?->getElements()) {
             return;
         }
 
         /** @var FilterPreselectModel $preselectModel */
         $preselectModel = System::getContainer()->get('contao.framework')->createInstance(FilterPreselectModel::class);
 
-        if (null === ($preselections = $preselectModel->findPublishedByPidAndTableAndField($this->id, 'tl_content', 'filterPreselect'))) {
+        $preselections = $preselectModel->findPublishedByPidAndTableAndField($this->id, 'tl_content', 'filterPreselect');
+        if (null === $preselections)
+        {
             $filterConfig->resetData(); // reset previous filters
-
             return;
         }
 

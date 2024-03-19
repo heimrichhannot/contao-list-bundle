@@ -11,6 +11,7 @@ namespace HeimrichHannot\ListBundle;
 use HeimrichHannot\ListBundle\DependencyInjection\Compiler\ListCompilerPass;
 use HeimrichHannot\ListBundle\DependencyInjection\ListExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class HeimrichHannotContaoListBundle extends Bundle
@@ -20,12 +21,12 @@ class HeimrichHannotContaoListBundle extends Bundle
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new ListExtension();
     }
 
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new ListCompilerPass());
     }

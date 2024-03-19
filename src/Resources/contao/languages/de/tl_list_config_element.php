@@ -137,8 +137,8 @@ $lang['reference'][\HeimrichHannot\ListBundle\ConfigElementType\TagsConfigElemen
 $lang['reference'][\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE] = 'einfach';
 $lang['reference'][\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED] = 'geschlechtsspezifisch';
 $lang['reference'][\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM] = 'zufällig';
-$lang['reference'][\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERIUM_TAGS] = 'Schlagworte';
-$lang['reference'][\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERIUM_CATEGORIES] = 'Kategorien';
+$lang['reference'][\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERION_TAGS] = 'Schlagworte';
+$lang['reference'][\HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer::RELATED_CRITERION_CATEGORIES] = 'Kategorien';
 
 /*
  * Buttons

@@ -10,7 +10,7 @@ namespace HeimrichHannot\ListBundle\Test\DataContainer;
 
 use Contao\TestCase\ContaoTestCase;
 use HeimrichHannot\ListBundle\DataContainer\ListConfigContainer;
-use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
+use HeimrichHannot\FilterBundle\Util\TwigSupportPolyfill\TwigTemplateLocator;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class ListConfigTest extends ContaoTestCase

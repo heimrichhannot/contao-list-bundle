@@ -8,31 +8,25 @@
 
 namespace HeimrichHannot\ListBundle\EventListener;
 
-use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\System;
+use Exception;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
+use ReflectionClass;
 
 class SearchListener
 {
-    /**
-     * @var ContaoFrameworkInterface
-     */
-    private $framework;
+    private ContaoFramework $framework;
+    private ListConfigRegistry $listConfigRegistry;
+    private ListManagerInterface $manager;
 
-    /**
-     * @var ListConfigRegistry
-     */
-    private $listConfigRegistry;
-
-    /**
-     * @var ListManagerInterface
-     */
-    private $manager;
-
-    public function __construct(ContaoFrameworkInterface $framework, ListConfigRegistry $listConfigRegistry, ListManagerInterface $manager)
-    {
+    public function __construct(
+        ContaoFramework $framework,
+        ListConfigRegistry $listConfigRegistry,
+        ListManagerInterface $manager
+    ) {
         $this->framework = $framework;
         $this->listConfigRegistry = $listConfigRegistry;
         $this->manager = $manager;
@@ -57,10 +51,10 @@ class SearchListener
             }
 
             if (null !== ($listClass = $this->manager->getListByName($listConfig->list ?: 'default'))) {
-                $reflection = new \ReflectionClass($listClass);
+                $reflection = new ReflectionClass($listClass);
 
                 if (!$reflection->implementsInterface(ListInterface::class)) {
-                    throw new \Exception(sprintf('Item class %s must implement %s', $listClass, ListInterface::class));
+                    throw new Exception(sprintf('Item class %s must implement %s', $listClass, ListInterface::class));
                 }
 
                 $this->manager->setListConfig($listConfig);

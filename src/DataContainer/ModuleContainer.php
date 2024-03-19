@@ -9,7 +9,7 @@
 namespace HeimrichHannot\ListBundle\DataContainer;
 
 use Contao\Controller;
-use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\DataContainer;
 use Contao\Image;
 use Contao\ModuleModel;
@@ -18,12 +18,9 @@ use HeimrichHannot\ListBundle\Controller\FrontendModule\ListFrontendModuleContro
 
 class ModuleContainer
 {
-    /**
-     * @var ContaoFrameworkInterface
-     */
-    private $framework;
+    private ContaoFramework $framework;
 
-    public function __construct(ContaoFrameworkInterface $framework)
+    public function __construct(ContaoFramework $framework)
     {
         $this->framework = $framework;
     }
@@ -35,7 +32,7 @@ class ModuleContainer
      *
      * @return array
      */
-    public function getAllListModules()
+    public function getAllListModules(): array
     {
         $listModules = [];
         /** @var ModuleModel $adapter */
@@ -57,7 +54,7 @@ class ModuleContainer
      *
      * @return string
      */
-    public function editListConfigurationWizard(DataContainer $dc)
+    public function editListConfigurationWizard(DataContainer $dc): string
     {
         $this->framework->getAdapter(Controller::class)->loadLanguageFile('tl_list_config');
         /** @var Image $image */

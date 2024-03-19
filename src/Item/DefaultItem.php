@@ -9,9 +9,11 @@
 namespace HeimrichHannot\ListBundle\Item;
 
 use Contao\Config;
-use Contao\Controller;
 use Contao\DataContainer;
+use Contao\DC_Table;
 use Contao\Environment;
+use Contao\Input;
+use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementData;
@@ -25,9 +27,12 @@ use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
-use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
+use HeimrichHannot\ListBundle\Util\DC_Table_Utils;
+use HeimrichHannot\ListBundle\Util\Polyfill;
+use HeimrichHannot\UtilsBundle\Util\Utils;
+use JsonSerializable;
 
-class DefaultItem implements ItemInterface, \JsonSerializable
+class DefaultItem implements ItemInterface, JsonSerializable
 {
     /**
      * Current Item Manager.
@@ -35,96 +40,78 @@ class DefaultItem implements ItemInterface, \JsonSerializable
      * @var ListManagerInterface
      */
     protected $_manager;
-
     /**
      * Current item data.
      *
      * @var array
      */
     protected $_raw = [];
-
     /**
      * Current formatted data.
      *
      * @var array
      */
     protected $_formatted = [];
-
     /**
      * @var string
      */
     protected $_cssClass;
-
     /**
      * @var int
      */
     protected $_count;
-
     /**
      * @var string
      */
     protected $_dataContainer;
-
     /**
      * @var string
      */
     protected $_idOrAlias;
-
     /**
      * @var bool
      */
     protected $_addDetails;
-
     /**
      * @var string
      */
     protected $_detailsUrl;
-
     /**
      * @var bool
      */
     protected $_addShare;
-
     /**
      * @var string
      */
     protected $_shareUrl;
-
     /**
      * @var bool
      */
     protected $_active;
-
     /**
      * @var bool
      */
     protected $_useModal;
-
     /**
      * @var bool
      */
     protected $_openListItemsInModal;
-
     /**
      * @var int
      */
     protected $_jumpToDetails;
-
     /**
      * @var string
      */
     protected $_jumpToDetailsMultilingual;
-
     /**
      * @var string
      */
     protected $_modalUrl;
-
     /**
      * @var array
      */
     protected $_tableFields;
-
     /**
      * @var DataContainer
      */
@@ -197,11 +184,11 @@ class DefaultItem implements ItemInterface, \JsonSerializable
             $this->dc = DC_Table_Utils::createFromModelData($this->getRaw(), $this->getDataContainer());
         }
 
-        if (isset($dca['fields'][$name]['load_callback']) && \is_array($dca['fields'][$name]['load_callback'])) {
+        if (isset($dca['fields'][$name]['load_callback']) && is_array($dca['fields'][$name]['load_callback'])) {
             foreach ($dca['fields'][$name]['load_callback'] as $callback) {
                 $this->dc->field = $name;
 
-                if (\is_array($callback)) {
+                if (is_array($callback)) {
                     $instance = System::importStatic($callback[0]);
                     $value = $instance->{$callback[1]}($value, $this->dc);
                 } elseif (\is_callable($callback)) {
@@ -251,34 +238,62 @@ class DefaultItem implements ItemInterface, \JsonSerializable
      */
     public function setFormattedValue(string $name, $value, bool $formatted = false): void
     {
+        $utils = System::getContainer()->get(Utils::class);
+
         // do not format values in back end for performance reasons (sitemap…)
-        if (System::getContainer()->get('huh.utils.container')->isBackend()) {
+        if ($utils->container()->isBackend()) {
             return;
         }
 
-        if (!$formatted) {
-            $dca = &$GLOBALS['TL_DCA'][$this->getDataContainer()];
+        if ($formatted)
+        {
+            $this->_formatted[$name] = $value;
+            return;
+        }
 
-            if (!$this->dc) {
-                $this->dc = DC_Table_Utils::createFromModelData($this->getRaw(), $this->getDataContainer());
+        $dca = &$GLOBALS['TL_DCA'][$this->getDataContainer()];
+
+        if (!$this->dc)
+        {
+            /**
+             * @see https://github.com/heimrichhannot/contao-utils-bundle/blob/ee122d2e267a60aa3200ce0f40d92c22028988e8/src/Driver/DC_Table_Utils.php#L166
+             */
+            $modelData = $this->getRaw();
+            $table = $this->getDataContainer();
+
+            $dc = new DC_Table($table);
+            $dc->strTable = $table;
+            $dc->activeRecord = null;
+
+            if (!empty($modelData['id']))
+            {
+                $dc->activeRecord = $utils->model()->findModelInstanceByPk($table, $modelData['id']);
+                $dc->intId = $modelData['id'];
             }
 
-            $fields = $this->getManager()->getListConfig()->limitFormattedFields ? StringUtil::deserialize($this->getManager()->getListConfig()->formattedFields, true) : (isset($dca['fields']) && \is_array($dca['fields']) ? array_keys($dca['fields']) : []);
+            $this->dc = $dc;
+        }
 
-            if (\in_array($name, $fields)) {
-                $this->dc->field = $name;
+        $fields = $this->getManager()->getListConfig()->limitFormattedFields
+            ? StringUtil::deserialize($this->getManager()->getListConfig()->formattedFields, true)
+            : (isset($dca['fields']) && \is_array($dca['fields']) ? array_keys($dca['fields']) : []);
 
-                $value = $this->_manager->getFormUtil()->prepareSpecialValueForOutput($name, $value, $this->dc);
+        if (in_array($name, $fields))
+        {
+            $this->dc->field = $name;
 
-                $value = Controller::replaceInsertTags($value);
+            $value = $utils->formatter()->formatDcaFieldValue($this->dc, $name, $value);
 
-                // anti-xss: escape everything besides some tags
-                $value = $this->_manager->getFormUtil()->escapeAllHtmlEntities($this->getDataContainer(), $name, $value);
+            $insertTagParser = System::getContainer()->get('contao.insert_tag.parser');
+            $value = $insertTagParser->parse($value);
 
-                // overwrite existing property with formatted value
-                if (property_exists($this, $name)) {
-                    $this->{$name} = $value;
-                }
+            $utils = System::getContainer()->get(Utils::class);
+            // anti-xss: escape everything besides some tags
+            $value = $utils->forms()->escapeAllHtmlEntities($this->getDataContainer(), $name, $value);
+
+            // overwrite existing property with formatted value
+            if (property_exists($this, $name)) {
+                $this->{$name} = $value;
             }
         }
 
@@ -359,6 +374,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
     /**
      * {@inheritdoc}
+     * @throws \ReflectionException
      */
     public function parse(string $cssClass = '', int $count = 0): string
     {
@@ -433,7 +449,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         $idOrAlias = $this->generateIdOrAlias($this, $listConfig);
 
         $this->setIdOrAlias($idOrAlias);
-        $this->setActive($idOrAlias && $this->_manager->getRequest()->getGet('items') == $idOrAlias);
+        $this->setActive($idOrAlias && Input::get('items') == $idOrAlias);
 
         // details
         $this->addDetailsUrl($idOrAlias, $this, $listConfig);
@@ -465,10 +481,11 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
     /**
      * {@inheritdoc}
+     * @throws \ReflectionException
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        return System::getContainer()->get('huh.utils.class')->jsonSerialize($this, $this->getFormatted());
+        return Polyfill::jsonSerialize($this, $this->getFormatted());
     }
 
     public function generateIdOrAlias(ItemInterface $item, ListConfigModel $listConfig): string
@@ -486,41 +503,48 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     {
         $this->setAddDetails($listConfig->addDetails);
 
-        if ($listConfig->addDetails) {
-            $this->setUseModal($listConfig->useModal);
-            $this->setJumpToDetails($listConfig->jumpToDetails);
-            $this->setOpenListItemsInModal($listConfig->openListItemsInModal);
+        if (!$listConfig->addDetails) {
+            return;
+        }
 
-            if ($listConfig->jumpToDetailsMultilingual) {
-                $this->setJumpToDetailsMultilingual($listConfig->jumpToDetailsMultilingual);
-            }
+        $this->setUseModal($listConfig->useModal);
+        $this->setJumpToDetails($listConfig->jumpToDetails);
+        $this->setOpenListItemsInModal($listConfig->openListItemsInModal);
 
-            $jumpToDetails = $listConfig->jumpToDetails;
-            $jumpToDetailsMultilingual = StringUtil::deserialize($listConfig->jumpToDetailsMultilingual, true);
+        if ($listConfig->jumpToDetailsMultilingual) {
+            $this->setJumpToDetailsMultilingual($listConfig->jumpToDetailsMultilingual);
+        }
 
-            if (!empty($jumpToDetailsMultilingual)) {
-                foreach ($jumpToDetailsMultilingual as $item) {
-                    if (isset($item['language']) && $GLOBALS['TL_LANGUAGE'] === $item['language']) {
-                        $jumpToDetails = $item['jumpTo'];
+        $jumpToDetails = $listConfig->jumpToDetails;
+        $jumpToDetailsMultilingual = StringUtil::deserialize($listConfig->jumpToDetailsMultilingual, true);
 
-                        break;
-                    }
+        if (!empty($jumpToDetailsMultilingual)) {
+            foreach ($jumpToDetailsMultilingual as $item) {
+                if (isset($item['language']) && $GLOBALS['TL_LANGUAGE'] === $item['language']) {
+                    $jumpToDetails = $item['jumpTo'];
+                    break;
                 }
             }
+        }
 
-            $pageJumpTo = System::getContainer()->get('huh.utils.url')->getJumpToPageObject($jumpToDetails);
+        /** @var System $system */
+        $system = $this->_manager->getFramework()->getAdapter(System::class);
+        $pageAdapter = $this->_manager->getFramework()->getAdapter(PageModel::class);
+        $utils = $system->getContainer()->get(Utils::class);
+        $pageJumpTo = $pageAdapter::findByPk($jumpToDetails) ?? $GLOBALS['objPage'];
 
-            if (null !== $pageJumpTo) {
-                if ($listConfig->useModal && isset(System::getContainer()->getParameter('kernel.bundles')['modal'])) {
-                    if (null !== ($modal = \HeimrichHannot\Modal\ModalModel::findPublishedByTargetPage($pageJumpTo))) {
-                        /** @var Controller $controller */
-                        $controller = $this->_manager->getFramework()->getAdapter(Controller::class);
-
-                        $this->setModalUrl($controller->replaceInsertTags(sprintf('{{modal_url::%s::%s::%s}}', $modal->id, $jumpToDetails, $idOrAlias), true));
-                    }
-                } else {
-                    $this->setDetailsUrl(true === $absolute ? $pageJumpTo->getAbsoluteUrl('/'.$idOrAlias) : $pageJumpTo->getFrontendUrl('/'.$idOrAlias));
+        if (null !== $pageJumpTo) {
+            if ($listConfig->useModal
+                && isset(System::getContainer()->getParameter('kernel.bundles')['modal'])
+                && class_exists(\HeimrichHannot\Modal\ModalModel::class))
+            {
+                $modal = \HeimrichHannot\Modal\ModalModel::findPublishedByTargetPage($pageJumpTo);
+                if (null !== $modal) {
+                    $insertTagParser = $system->getContainer()->get('contao.insert_tag.parser');
+                    $this->setModalUrl($insertTagParser->replace(sprintf('{{modal_url::%s::%s::%s}}', $modal->id, $jumpToDetails, $idOrAlias)));
                 }
+            } else {
+                $this->setDetailsUrl(true === $absolute ? $pageJumpTo->getAbsoluteUrl('/'.$idOrAlias) : $pageJumpTo->getFrontendUrl('/'.$idOrAlias));
             }
         }
     }
@@ -529,29 +553,37 @@ class DefaultItem implements ItemInterface, \JsonSerializable
     {
         $this->setAddShare($listConfig->addShare);
 
-        if ($listConfig->addShare) {
-            $urlUtil = System::getContainer()->get('huh.utils.url');
-
-            $pageJumpTo = $urlUtil->getJumpToPageObject($listConfig->jumpToShare);
-
-            if (null !== $pageJumpTo) {
-                $shareUrl = Environment::get('url').'/'.$pageJumpTo->getFrontendUrl();
-
-                $url = $urlUtil->addQueryString('act='.HeimrichHannotContaoListBundle::ACTION_SHARE, $urlUtil->getCurrentUrl([
-                    'skipParams' => true,
-                ]));
-
-                $url = $urlUtil->addQueryString('url='.urlencode($shareUrl), $url);
-
-                if ($listConfig->useAlias && $item['raw'][$listConfig->aliasField]) {
-                    $url = $urlUtil->addQueryString($listConfig->aliasField.'='.$item['raw'][$listConfig->aliasField], $url);
-                } else {
-                    $url = $urlUtil->addQueryString('id='.$item['raw']['id'], $url);
-                }
-
-                $this->setShareUrl($url);
-            }
+        if (!$listConfig->addShare) {
+            return;
         }
+
+        /** @var System $system */
+        $system = $this->_manager->getFramework()->getAdapter(System::class);
+        $pageAdapter = $this->_manager->getFramework()->getAdapter(PageModel::class);
+        $utils = $system->getContainer()->get(Utils::class);
+
+        $pageJumpTo = $pageAdapter::findByPk($listConfig->jumpToShare) ?? $GLOBALS['objPage'];
+
+        if (null === $pageJumpTo) {
+            return;
+        }
+
+        $shareUrl = Environment::get('url').'/'.$pageJumpTo->getFrontendUrl();
+
+        $url = $utils->url()->addQueryStringParameterToUrl(
+            'act='.HeimrichHannotContaoListBundle::ACTION_SHARE,
+            Environment::get('url') . parse_url(Environment::get('url'), PHP_URL_PATH)
+        );
+
+        $url = $utils->url()->addQueryStringParameterToUrl('url='.urlencode($shareUrl), $url);
+
+        if ($listConfig->useAlias && $item['raw'][$listConfig->aliasField]) {
+            $url = $utils->url()->addQueryStringParameterToUrl($listConfig->aliasField.'='.$item['raw'][$listConfig->aliasField], $url);
+        } else {
+            $url = $utils->url()->addQueryStringParameterToUrl('id='.$item['raw']['id'], $url);
+        }
+
+        $this->setShareUrl($url);
     }
 
     /**

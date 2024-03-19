@@ -10,10 +10,14 @@ namespace HeimrichHannot\ListBundle\Backend;
 
 use Contao\Backend;
 use Contao\BackendUser;
+use Contao\Controller;
+use Contao\CoreBundle\Security\ContaoCorePermissions;
 use Contao\DataContainer;
 use Contao\Image;
 use Contao\StringUtil;
 use Contao\System;
+use HeimrichHannot\ListBundle\Util\Polyfill;
+use HeimrichHannot\UtilsBundle\Util\Utils;
 
 class ListConfig extends Backend
 {
@@ -42,7 +46,7 @@ class ListConfig extends Backend
      *
      * @return string
      */
-    public function editFilter(DataContainer $dc)
+    public function editFilter(DataContainer $dc): string
     {
         $editFilterTitle =  $GLOBALS['TL_LANG']['tl_list_config']['editFilter'][0] ?? '';
         $editFilterDesc  = $GLOBALS['TL_LANG']['tl_list_config']['editFilter'][1] ?? '';
@@ -50,14 +54,14 @@ class ListConfig extends Backend
                 sprintf($editFilterDesc, $dc->value))) . '\',\'url\':this.href});return false">' . Image::getHtml('alias.svg', $editFilterTitle) . '</a>';
     }
 
-    public function editList(DataContainer $dc)
+    public function editList(DataContainer $dc): string
     {
         $editListTitle =  $GLOBALS['TL_LANG']['tl_filter_config']['edit'][0] ?? '';
         $editListDesc  = $GLOBALS['TL_LANG']['tl_list_config']['edit'][1] ?? '';
         return ($dc->value < 1) ? '' : ' <a href="contao/main.php?do=list_configs&amp;act=edit&amp;id=' . $dc->value . '&amp;rt=' . REQUEST_TOKEN . '" title="' . sprintf(StringUtil::specialchars($editListDesc), $dc->value) . '">' . Image::getHtml('alias.svg', $editListTitle) . '</a>';
     }
 
-    public static function addOverridableFields()
+    public static function addOverridableFields(): void
     {
         $dca = &$GLOBALS['TL_DCA']['tl_list_config'];
 
@@ -74,7 +78,10 @@ class ListConfig extends Backend
             $overridableFields[] = $field;
         }
 
-        System::getContainer()->get('huh.utils.dca')->addOverridableFields(
+        /** @var Utils $utils */
+        $utils = static::getContainer()->get(Utils::class);
+
+        Polyfill::addOverridableFields(
             $overridableFields,
             'tl_list_config',
             'tl_list_config',
@@ -86,24 +93,23 @@ class ListConfig extends Backend
         );
     }
 
-    public static function flattenPaletteForSubEntities(DataContainer $dc)
+    public static function flattenPaletteForSubEntities(DataContainer $dc): void
     {
-        if (null !== ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->findByPk($dc->id))) {
-            if ($listConfig->pid) {
-                $dca = &$GLOBALS['TL_DCA']['tl_list_config'];
+        $listConfig = System::getContainer()->get('huh.list.list-config-registry')->findByPk($dc->id);
+        if ($listConfig?->pid) {
+            $dca = &$GLOBALS['TL_DCA']['tl_list_config'];
 
-                $overridableFields = [];
+            $overridableFields = [];
 
-                foreach ($dca['fields'] as $field => $data) {
-                    if (isset($data['eval']['notOverridable']) || isset($data['eval']['isOverrideSelector'])) {
-                        continue;
-                    }
-
-                    $overridableFields[] = $field;
+            foreach ($dca['fields'] as $field => $data) {
+                if (isset($data['eval']['notOverridable']) || isset($data['eval']['isOverrideSelector'])) {
+                    continue;
                 }
 
-                System::getContainer()->get('huh.utils.dca')->flattenPaletteForSubEntities('tl_list_config', $overridableFields);
+                $overridableFields[] = $field;
             }
+
+            Polyfill::flattenPaletteForSubEntities('tl_list_config', $overridableFields);
         }
     }
 
@@ -115,7 +121,7 @@ class ListConfig extends Backend
      *
      * @return string
      */
-    public function generateLabel($row, $label, $dca, $attributes)
+    public function generateLabel($row, $label, $dca, $attributes): string
     {
         if ($row['pid']) {
             if (null !== ($listConfig = System::getContainer()->get('huh.list.list-config-registry')->findByPk($row['pid']))) {
@@ -138,12 +144,16 @@ class ListConfig extends Backend
      *
      * @return string
      */
-    public function editHeader($row, $href, $label, $title, $icon, $attributes)
+    public function editHeader($row, $href, $label, $title, $icon, $attributes): string
     {
-        return BackendUser::getInstance()->canEditFieldsOf('tl_list_config') ? '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label) . '</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
+        $security = static::getContainer()->get('security.helper');
+        if ($security->isGranted('tl_list_config', ContaoCorePermissions::USER_CAN_EDIT_FIELDS_OF_TABLE)) {
+            return '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label) . '</a> ';
+        }
+        return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
     }
 
-    public function edit($row, $href, $label, $title, $icon, $attributes)
+    public function edit($row, $href, $label, $title, $icon, $attributes): string
     {
         if ($row['pid']) {
             return '';

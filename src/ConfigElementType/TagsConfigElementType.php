@@ -8,57 +8,34 @@
 
 namespace HeimrichHannot\ListBundle\ConfigElementType;
 
+use Contao\Controller;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\Database;
+use Contao\Input;
+use Contao\Model;
 use Contao\System;
-use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
-use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
-use HeimrichHannot\UtilsBundle\Dca\DcaUtil;
-use HeimrichHannot\UtilsBundle\Model\ModelUtil;
-use HeimrichHannot\UtilsBundle\String\StringUtil;
-use HeimrichHannot\UtilsBundle\Url\UrlUtil;
-use Twig\Environment;
+use HeimrichHannot\FilterBundle\Util\TwigSupportPolyfill\TwigTemplateLocator;
+use HeimrichHannot\UtilsBundle\Util\Utils;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Twig\Environment as TwigEnvironment;
 
 class TagsConfigElementType implements ListConfigElementTypeInterface
 {
-    /**
-     * @var TwigTemplateLocator
-     */
-    protected $templateLocator;
-    /**
-     * @var Environment
-     */
-    private $twig;
-    /**
-     * @var StringUtil
-     */
-    private $stringUtil;
-    /**
-     * @var DcaUtil
-     */
-    private $dcaUtil;
-    /**
-     * @var UrlUtil
-     */
-    private $urlUtil;
-    /**
-     * @var Request
-     */
-    private $request;
-    /**
-     * @var ModelUtil
-     */
-    private $modelUtil;
+    protected TwigEnvironment $twig;
+    protected TwigTemplateLocator $templateLocator;
+    protected Utils $utils;
+    protected RequestStack $requestStack;
 
-    public function __construct(Environment $twig, StringUtil $stringUtil, DcaUtil $dcaUtil, UrlUtil $urlUtil, Request $request, ModelUtil $modelUtil, TwigTemplateLocator $templateLocator)
-    {
+    public function __construct(
+        TwigEnvironment $twig,
+        TwigTemplateLocator $templateLocator,
+        Utils $utils,
+        RequestStack $requestStack
+    ) {
         $this->twig = $twig;
-        $this->stringUtil = $stringUtil;
-        $this->dcaUtil = $dcaUtil;
-        $this->urlUtil = $urlUtil;
-        $this->request = $request;
-        $this->modelUtil = $modelUtil;
         $this->templateLocator = $templateLocator;
+        $this->utils = $utils;
+        $this->requestStack = $requestStack;
     }
 
     public function renderTags($configElement, $item): ?string
@@ -69,11 +46,13 @@ class TagsConfigElementType implements ListConfigElementTypeInterface
             return '';
         }
 
-        $this->dcaUtil->loadDc($table);
+        if (empty($GLOBALS['TL_DCA'][$table])) {
+            Controller::loadDataContainer($table);
+        }
 
         $source = $GLOBALS['TL_DCA'][$table]['fields'][$configElement->tagsField]['eval']['tagsManager'];
 
-        $nonTlTable = $this->stringUtil->removeLeadingString('tl_', $item->getDataContainer());
+        $nonTlTable = str_starts_with($table, 'tl_') ? substr($table, 3) : $table;
         $cfgTable = 'tl_cfg_tag_'.$nonTlTable;
 
         $tags = [];
@@ -88,27 +67,45 @@ class TagsConfigElementType implements ListConfigElementTypeInterface
             $tags = $tagRecords->fetchAllAssoc();
         }
 
-        if ($configElement->tagsAddLink) {
-            $jumpTo = $this->urlUtil->getJumpToPageUrl($configElement->tagsJumpTo, false);
+        if ($configElement->tagsAddLink)
+        {
+            $tagId = Input::get('huh_cfg_tag');
 
-            if (($tagId = $this->request->getGet('huh_cfg_tag')) && $jumpTo) {
-                if (null !== ($filterConfigElement = $this->modelUtil->findModelInstanceByPk('tl_filter_config_element', $configElement->tagsFilterConfigElement))) {
-                    $sessionKey = System::getContainer()->get('huh.filter.manager')->findById($configElement->tagsFilter)->getSessionKey();
+            $jumpTo = $configElement->tagsJumpTo;
+            if ($jumpTo && $jumpTo != $GLOBALS['objPage']?->id || $jumpTo = null)
+            {
+                $jumpToPage = $this->utils->model()->findModelInstanceByPk('tl_page', $jumpTo);
+                $jumpTo = $jumpToPage instanceof Model ? $jumpToPage->getFrontendUrl() : null;
+            }
 
-                    $sessionData = System::getContainer()->get('huh.filter.session')->getData($sessionKey);
+            /**
+             * Defer fetching the filter config element from the database until we know we need it.
+             *
+             * This closure can only be called once since it overwrites the pointer that was previously pointed to it.
+             * This shenanigan is probably not a good practice, but in this very instance, it's convenient and fun, and
+             * it's contained in a narrow scope. This is fine.
+             *
+             * @return Model|null
+             */
+            $filterConfigElement = function () use ($configElement, &$filterConfigElement) {
+                return $filterConfigElement = $this->utils->model()
+                    ->findModelInstanceByPk('tl_filter_config_element', $configElement->tagsFilterConfigElement);
+            };
 
-                    $sessionData = \is_array($sessionData) ? $sessionData : [];
+            if ($tagId && $jumpTo && $filterConfigElement() !== null)
+            {
+                /** @var Model|null $filterConfigElement */
+                $sessionKey = System::getContainer()->get('huh.filter.manager')->findById($configElement->tagsFilter)->getSessionKey();
+                $sessionData = System::getContainer()->get('huh.filter.session')->getData($sessionKey);
+                $sessionData[$filterConfigElement->field] = $tagId;
 
-                    $sessionData[$filterConfigElement->field] = $tagId;
+                System::getContainer()->get('huh.filter.session')->setData($sessionKey, $sessionData);
 
-                    System::getContainer()->get('huh.filter.session')->setData($sessionKey, $sessionData);
-
-                    throw new RedirectResponseException('/'.ltrim($jumpTo, '/'), 301);
-                }
+                throw new RedirectResponseException('/'.ltrim($jumpTo, '/'), 301);
             }
 
             foreach ($tags as &$tag) {
-                $tag['url'] = $this->urlUtil->addQueryString('huh_cfg_tag='.$tag['id']);
+                $tag['url'] = $this->utils->url()->addQueryStringParameterToUrl('huh_cfg_tag='.$tag['id']);
             }
         }
 

@@ -28,7 +28,7 @@ use Contao\Model;
  * @property bool   $hasHeader
  * @property bool   $sortingHeader
  * @property int    $tableFields
- * @property int    $sortingMode
+ * @property string $sortingMode
  * @property string $sortingField
  * @property string $sortingDirection
  * @property string $sortingText

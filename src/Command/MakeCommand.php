@@ -9,7 +9,7 @@
 namespace HeimrichHannot\ListBundle\Command;
 
 use Ausi\SlugGenerator\SlugGenerator;
-use Contao\CoreBundle\Command\AbstractLockedCommand;
+use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Model;
 use Contao\ModuleModel;
@@ -17,44 +17,30 @@ use HeimrichHannot\FilterBundle\Model\FilterConfigElementModel;
 use HeimrichHannot\FilterBundle\Model\FilterConfigModel;
 use HeimrichHannot\ListBundle\Controller\FrontendModule\ListFrontendModuleController;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
-use HeimrichHannot\UtilsBundle\Dca\DcaUtil;
-use HeimrichHannot\UtilsBundle\Model\ModelUtil;
+use HeimrichHannot\ListBundle\Util\Polyfill;
+use HeimrichHannot\UtilsBundle\Util\Utils;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class MakeCommand extends AbstractLockedCommand
+class MakeCommand extends Command
 {
     /**
      * @var SymfonyStyle
      */
     private $io;
-    /**
-     * @var ContaoFramework
-     */
-    private $framework;
-    /**
-     * @var DcaUtil
-     */
-    private $dcaUtil;
-    /**
-     * @var ModelUtil
-     */
-    private $modelUtil;
-    /**
-     * @var string
-     */
-    private $name;
+    private ContaoFramework $framework;
+    private Utils $util;
+    private ?string $name;
 
     public function __construct(
         ContaoFramework $contaoFramework,
-        DcaUtil $dcaUtil,
-        ModelUtil $modelUtil,
+        Utils $util,
         $name = null
     ) {
         $this->framework = $contaoFramework;
-        $this->dcaUtil = $dcaUtil;
-        $this->modelUtil = $modelUtil;
+        $this->util = $util;
         $this->name = $name;
 
         parent::__construct($name);
@@ -63,7 +49,7 @@ class MakeCommand extends AbstractLockedCommand
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('huh-list:make')->setDescription('Creates list modules based on heimrichhannot/contao-list-bundle.');
     }
@@ -71,19 +57,17 @@ class MakeCommand extends AbstractLockedCommand
     /**
      * {@inheritdoc}
      */
-    protected function executeLocked(InputInterface $input, OutputInterface $output)
+    protected function executeLocked(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
 
         $this->framework->initialize();
 
-        $themes = $this->modelUtil->findAllModelInstances('tl_theme', [
-            'order' => 'tl_theme.name ASC',
-        ]);
+        $modelClass = Model::getClassFromTable('tl_theme');
+        $themes = $this->framework->getAdapter($modelClass)?->findAll(['order' => 'tl_theme.name ASC']);
 
         if (null === $themes) {
             $this->io->error('You need at least 1 record in tl_theme before creating modules.');
-
             return 0;
         }
 
@@ -95,11 +79,12 @@ class MakeCommand extends AbstractLockedCommand
 
         $table = $this->io->ask('Which database entities would you like to display? Please type in the table name', 'tl_news');
 
-        $this->dcaUtil->loadDc($table);
+        if (empty($GLOBALS['TL_DCA'][$table])) {
+            Controller::loadDataContainer($table);
+        }
 
-        if (!isset($GLOBALS['TL_DCA'][$table]) || !\is_array($GLOBALS['TL_DCA'][$table])) {
-            $this->io->error('No DCA for "'.$table.'" could be found.');
-
+        if (empty($GLOBALS['TL_DCA'][$table])) {
+            $this->io->error('No DCA found for "'.$table.'"');
             return 0;
         }
 
@@ -117,18 +102,16 @@ class MakeCommand extends AbstractLockedCommand
         return 0;
     }
 
-    protected function createFilterConfig(string $table)
+    protected function createFilterConfig(string $table): array
     {
         $slugGenerator = new SlugGenerator();
 
         $filterTitle = $this->io->ask('Please type in the title of the filter configuration');
 
         $filterConfig = new FilterConfigModel();
-
-        $filterConfig = $this->dcaUtil->setDefaultsFromDca('tl_filter_config', $filterConfig);
+        $filterConfig = Polyfill::setDefaultsFromDca('tl_filter_config', $filterConfig);
 
         $filterConfig->dateAdded = $filterConfig->tstamp = time();
-
         $filterConfig->mergeRow([
             'title' => $filterTitle,
             'name' => $slugGenerator->generate($filterTitle),
@@ -145,7 +128,7 @@ class MakeCommand extends AbstractLockedCommand
         return [$filterConfig, $filterTitle];
     }
 
-    protected function createPublishedFilterConfigElement(string $table, Model $filterConfig)
+    protected function createPublishedFilterConfigElement(string $table, Model $filterConfig): void
     {
         $dca = $GLOBALS['TL_DCA'][$table];
 
@@ -153,7 +136,8 @@ class MakeCommand extends AbstractLockedCommand
         $invertPublished = false;
         $addStartStop = false;
 
-        if ($this->io->confirm('Would you like to hide unpublished entities?')) {
+        if ($this->io->confirm('Would you like to hide unpublished entities?'))
+        {
             if (isset($dca['fields']['published'])) {
                 $publishedField = 'published';
             } elseif (isset($dca['fields']['disable'])) {
@@ -183,13 +167,12 @@ class MakeCommand extends AbstractLockedCommand
             }
         }
 
-        if ($publishedField) {
+        if ($publishedField)
+        {
             $filterConfigElement = new FilterConfigElementModel();
-
-            $filterConfigElement = $this->dcaUtil->setDefaultsFromDca('tl_filter_config_element', $filterConfigElement);
+            $filterConfigElement = Polyfill::setDefaultsFromDca('tl_filter_config_element', $filterConfigElement);
 
             $filterConfigElement->dateAdded = $filterConfigElement->tstamp = time();
-
             $filterConfigElement->mergeRow([
                 'title' => 'Veröffentlicht',
                 'pid' => $filterConfig->id,
@@ -215,11 +198,11 @@ class MakeCommand extends AbstractLockedCommand
         }
     }
 
-    protected function createArchiveFilterConfigElement(string $table, Model $filterConfig, array $dca)
+    protected function createArchiveFilterConfigElement(string $table, Model $filterConfig, array $dca): void
     {
         $parentTable = $dca['config']['ptable'] ?? null;
 
-        if (!$this->io->confirm('Does the entity have one or more parent entities?', $parentTable ? true : false)) {
+        if (!$this->io->confirm('Does the entity have one or more parent entities?', (bool) $parentTable)) {
             return;
         }
 
@@ -230,9 +213,9 @@ class MakeCommand extends AbstractLockedCommand
         $parentTable = $this->io->ask('Please specify the parent table you\'d like to filter', $parentTable);
         $pidField = $this->io->ask('Please specify the parent id field in '.$table, isset($dca['fields']['pid']) ? 'pid' : null);
 
-        $archives = $this->modelUtil->findAllModelInstances($parentTable);
+        $modelClass = Model::getClassFromTable($parentTable);
+        $archives = $this->framework->getAdapter($modelClass)?->findAll();
         $archiveOptions = [];
-
         while ($archives->next()) {
             $archiveOptions[$archives->id] = $archives->name ?: ($archives->title ?: $archives->id);
         }
@@ -245,7 +228,7 @@ class MakeCommand extends AbstractLockedCommand
 
         $filterConfigElement = new FilterConfigElementModel();
 
-        $filterConfigElement = $this->dcaUtil->setDefaultsFromDca('tl_filter_config_element', $filterConfigElement);
+        $filterConfigElement = Polyfill::setDefaultsFromDca('tl_filter_config_element', $filterConfigElement);
 
         $filterConfigElement->dateAdded = $filterConfigElement->tstamp = time();
 
@@ -274,25 +257,12 @@ class MakeCommand extends AbstractLockedCommand
         $listTitle = $this->io->ask('Please type in the title of the list configuration', $filterTitle);
         $parentListConfig = $this->io->ask('Do you want to create a child list config inheriting from a parent? If so, please type in the parent ID here', 0);
 
-        switch ($table) {
-            case 'tl_news':
-                $sortingField = 'date';
-
-                break;
-
-            case 'tl_calendar_events':
-                $sortingField = 'startDate';
-
-                break;
-
-            case 'tl_member':
-                $sortingField = 'lastname';
-
-                break;
-
-            default:
-                $sortingField = null;
-        }
+        $sortingField = match ($table) {
+            'tl_news' => 'date',
+            'tl_calendar_events' => 'startDate',
+            'tl_member' => 'lastname',
+            default => null,
+        };
 
         $sortingField = $this->io->ask('Please specify the sorting field', $sortingField);
         $sortingDirection = $this->io->ask('Please specify the sorting direction (asc or desc)', 'asc');
@@ -304,11 +274,9 @@ class MakeCommand extends AbstractLockedCommand
         }
 
         $listConfig = new ListConfigModel();
-
-        $listConfig = $this->dcaUtil->setDefaultsFromDca('tl_list_config', $listConfig);
+        $listConfig = Polyfill::setDefaultsFromDca('tl_list_config', $listConfig);
 
         $listConfig->dateAdded = $listConfig->tstamp = time();
-
         $listConfig->mergeRow([
             'title' => $listTitle,
             'filter' => $filterConfig->id,
@@ -341,7 +309,7 @@ class MakeCommand extends AbstractLockedCommand
         return $listConfig;
     }
 
-    protected function createModule(string $filterTitle, array $themeOptions, Model $listConfig)
+    protected function createModule(string $filterTitle, array $themeOptions, Model $listConfig): void
     {
         $moduleName = $this->io->ask('Please type in the title of the list module', $filterTitle);
         $modulePid = $this->io->choice('Please type in the ID of the theme which you\'d like to place the module under', $themeOptions);
@@ -352,7 +320,7 @@ class MakeCommand extends AbstractLockedCommand
 
         $module = new ModuleModel();
 
-        $module = $this->dcaUtil->setDefaultsFromDca('tl_module', $module);
+        $module = Polyfill::setDefaultsFromDca('tl_module', $module);
 
         $module->tstamp = time();
 

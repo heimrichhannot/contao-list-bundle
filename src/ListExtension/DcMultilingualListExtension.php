@@ -13,6 +13,7 @@ use Contao\Database;
 use Contao\Date;
 use Contao\DcaExtractor;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Exception;
 use HeimrichHannot\DcMultilingualUtilsBundle\ContaoDcMultilingualUtilsBundle;
 use HeimrichHannot\ListBundle\ListConfiguration\ListConfiguration;
 use HeimrichHannot\UtilsBundle\Util\Utils;
@@ -24,13 +25,17 @@ use Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle;
  */
 class DcMultilingualListExtension implements ListExtensionInterface
 {
-    /**
-     * @var Utils
-     */
-    private $utils;
+    private Utils $utils;
 
     public function __construct(Utils $utils)
     {
+        if (!($_ENV['UPGRADE_LIST_ALLOW_DC_MULTILINGUAL'] ?? false)) {
+            throw new Exception(
+                'Experimental: DcMultilingualListExtension MAY NOT yet be ready for production use with Contao 5.'
+                . ' Please test thoroughly before using in production and share your experience with ListBundle\'s developers.'
+                . ' Set \'UPGRADE_LIST_ALLOW_DC_MULTILINGUAL\' in your environment variables to true to enable it.');
+        }
+
         $this->utils = $utils;
     }
 

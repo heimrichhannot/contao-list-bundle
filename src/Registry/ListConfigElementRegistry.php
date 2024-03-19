@@ -8,18 +8,17 @@
 
 namespace HeimrichHannot\ListBundle\Registry;
 
-use Contao\CoreBundle\Framework\ContaoFrameworkInterface;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\System;
 use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
+use HeimrichHannot\UtilsBundle\Util\Utils;
 
 class ListConfigElementRegistry
 {
-    /**
-     * @var ContaoFrameworkInterface
-     */
-    protected $framework;
+    protected ContaoFramework $framework;
+    protected Utils $utils;
 
     /**
      * @var ConfigElementTypeInterface[]|ListConfigElementTypeInterface[]|array
@@ -29,9 +28,12 @@ class ListConfigElementRegistry
     /**
      * Constructor.
      */
-    public function __construct(ContaoFrameworkInterface $framework)
-    {
+    public function __construct(
+        ContaoFramework $framework,
+        Utils $utils
+    ) {
         $this->framework = $framework;
+        $this->utils = $utils;
     }
 
     /**
@@ -51,7 +53,7 @@ class ListConfigElementRegistry
      */
     public function getListConfigElementType(string $type)
     {
-        return isset($this->configElementTypes[$type]) ? $this->configElementTypes[$type] : null;
+        return $this->configElementTypes[$type] ?? null;
     }
 
     /**
@@ -72,8 +74,7 @@ class ListConfigElementRegistry
      */
     public function findBy($column, $value, array $options = [])
     {
-        return System::getContainer()->get('huh.utils.model')->findModelInstancesBy(
-            'tl_list_config_element', $column, $value, $options);
+        return $this->utils->model()->findModelInstancesBy('tl_list_config_element', $column, $value, $options);
     }
 
     /**
@@ -91,8 +92,7 @@ class ListConfigElementRegistry
             $options
         );
 
-        return System::getContainer()->get('huh.utils.model')->findModelInstancesBy(
-            'tl_list_config_element', $column, $value, $options);
+        return $this->utils->model()->findModelInstancesBy('tl_list_config_element', $column, $value, $options);
     }
 
     /**
@@ -105,8 +105,7 @@ class ListConfigElementRegistry
      */
     public function findByPk($pk, array $options = [])
     {
-        return System::getContainer()->get('huh.utils.model')->findModelInstanceByPk(
-            'tl_list_config_element', $pk, $options);
+        return $this->utils->model()->findModelInstanceByPk('tl_list_config_element', $pk, $options);
     }
 
     /**

@@ -8,6 +8,8 @@
 
 namespace HeimrichHannot\ListBundle\Exception;
 
-class InvalidListManagerException extends \InvalidArgumentException
+use InvalidArgumentException;
+
+class InvalidListManagerException extends InvalidArgumentException
 {
 }

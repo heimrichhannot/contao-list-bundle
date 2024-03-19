@@ -297,9 +297,11 @@ class ListBundle {
                         if (request.readyState === 4 && request.status === 200) {
                             const response = request.responseText,
                                 parser = new DOMParser(),
-                                loadedDoc = parser.parseFromString(response, 'text/html');
+                                loadedDoc = parser.parseFromString(response, 'text/html'),
+                                wrapperId = list.querySelector('.wrapper').getAttribute('id'),
+                                wrapper = loadedDoc.querySelector(`.huh-list #${wrapperId}`)
 
-                            let itemsWrapper = loadedDoc.querySelector('.huh-list #' + list.querySelector('.wrapper').getAttribute('id') + ' .items');
+                            let itemsWrapper = wrapper.querySelector('.items');
 
                             if (true === ajaxLoad.enableScreenReaderMessage) {
                                 let span = document.createElement('span');
@@ -319,9 +321,8 @@ class ListBundle {
 
                             ajaxPagination.innerHTML = '';
 
-                            if (loadedDoc.querySelector('.huh-list .ajax-pagination a.next')) {
-                                let nextButton = loadedDoc.querySelector('.huh-list #' + list.querySelector('.wrapper').getAttribute('id') + ' .ajax-pagination a.next');
-
+                            const nextButton = wrapper.querySelector('.ajax-pagination a.next');
+                            if (nextButton) {
                                 nextButton.addEventListener('click', e => {
                                     e.preventDefault();
                                     e.stopPropagation();
@@ -369,7 +370,7 @@ class ListBundle {
                                     pagination: ajaxPagination,
                                     items: items
                                 }
-                            }))
+                            }));
 
                             if (!ajaxLoad.disableLiveRegion) {
                                 items.setAttribute('aria-busy', 'false');

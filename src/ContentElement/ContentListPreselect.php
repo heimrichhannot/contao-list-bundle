@@ -179,7 +179,7 @@ class ContentListPreselect extends ContentElement
             }
             $fields = $this->filter->dataContainer.'.* ';
 
-            if ($totalCount = $queryBuilder->select($fields)->execute()->rowCount() < 1) {
+            if ($totalCount = $queryBuilder->select($fields)->executeQuery()->rowCount() < 1) {
                 return false;
             }
         }

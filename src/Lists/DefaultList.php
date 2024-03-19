@@ -310,7 +310,7 @@ class DefaultList implements ListInterface, JsonSerializable
         $this->setShowInitialResults($listConfig->showInitialResults);
 
         if ($isSubmitted || $listConfig->showInitialResults) {
-            $totalCount = $queryBuilder->addSelect($filter->dataContainer.'.id')->execute()->rowCount();
+            $totalCount = $queryBuilder->addSelect($filter->dataContainer.'.id')->executeQuery()->rowCount();
             $queryBuilder->select($event->getFields());
         }
 
@@ -332,7 +332,7 @@ class DefaultList implements ListInterface, JsonSerializable
         );
 
         if ($isSubmitted || $listConfig->showInitialResults) {
-            $items = $queryBuilder->execute()->fetchAll();
+            $items = $queryBuilder->executeQuery()->fetchAllAssociative();
 
             // add fields without sql key in DCA (could have a value by load_callback)
             foreach ($items as &$item) {
@@ -1288,7 +1288,7 @@ class DefaultList implements ListInterface, JsonSerializable
 
         $fields = $table.'.* ';
 
-        if (($totalCount = $queryBuilder->select($fields)->execute()->rowCount()) < 1) {
+        if (($totalCount = $queryBuilder->select($fields)->executeQuery()->rowCount()) < 1) {
             return $arrPages;
         }
 
@@ -1297,7 +1297,7 @@ class DefaultList implements ListInterface, JsonSerializable
             ListModifyQueryBuilderEvent::NAME
         );
 
-        $items = $queryBuilder->execute()->fetchAll();
+        $items = $queryBuilder->executeQuery()->fetchAllAssociative();
 
         $GLOBALS['TL_LANGUAGE'] = $tmpLang;
 

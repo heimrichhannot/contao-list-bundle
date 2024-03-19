@@ -86,7 +86,7 @@ class RelatedConfigElementType implements ListConfigElementTypeInterface
             return;
         }
 
-        if (!in_array(ListConfigElementContainer::RELATED_CRITERIUM_TAGS, $criteria)) {
+        if (!in_array(ListConfigElementContainer::RELATED_CRITERION_TAGS, $criteria)) {
             return;
         }
 
@@ -123,7 +123,7 @@ class RelatedConfigElementType implements ListConfigElementTypeInterface
         // exclude the item itself
         $itemIds = array_diff($itemIds, [$item->getRawValue('id')]);
 
-        $GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERIUM_TAGS] = [
+        $GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERION_TAGS] = [
             'itemIds' => $itemIds,
         ];
     }
@@ -142,7 +142,7 @@ class RelatedConfigElementType implements ListConfigElementTypeInterface
             return;
         }
 
-        if (!in_array(ListConfigElementContainer::RELATED_CRITERIUM_CATEGORIES, $criteria)) {
+        if (!in_array(ListConfigElementContainer::RELATED_CRITERION_CATEGORIES, $criteria)) {
             return;
         }
 
@@ -167,7 +167,7 @@ class RelatedConfigElementType implements ListConfigElementTypeInterface
         // exclude the item itself
         $itemIds = array_diff($itemIds, [$item->getRawValue('id')]);
 
-        $GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERIUM_CATEGORIES] = [
+        $GLOBALS['HUH_LIST_RELATED'][ListConfigElementContainer::RELATED_CRITERION_CATEGORIES] = [
             'itemIds' => $itemIds,
         ];
     }

@@ -207,7 +207,7 @@ class ContentContainer
             $queryBuilder->setParameter('preselect_parent_id', $contentModel->pid);
         }
 
-        $items = $queryBuilder->select($fields)->execute()->fetchAll();
+        $items = $queryBuilder->select($fields)->executeQuery()->fetchAllAssociative();
 
         $total = count($items);
 

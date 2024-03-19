@@ -27,8 +27,8 @@ use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
+use HeimrichHannot\ListBundle\Util\DC_Table_Utils;
 use HeimrichHannot\ListBundle\Util\Polyfill;
-use HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils;
 use HeimrichHannot\UtilsBundle\Util\Utils;
 use JsonSerializable;
 
@@ -184,11 +184,11 @@ class DefaultItem implements ItemInterface, JsonSerializable
             $this->dc = DC_Table_Utils::createFromModelData($this->getRaw(), $this->getDataContainer());
         }
 
-        if (isset($dca['fields'][$name]['load_callback']) && \is_array($dca['fields'][$name]['load_callback'])) {
+        if (isset($dca['fields'][$name]['load_callback']) && is_array($dca['fields'][$name]['load_callback'])) {
             foreach ($dca['fields'][$name]['load_callback'] as $callback) {
                 $this->dc->field = $name;
 
-                if (\is_array($callback)) {
+                if (is_array($callback)) {
                     $instance = System::importStatic($callback[0]);
                     $value = $instance->{$callback[1]}($value, $this->dc);
                 } elseif (\is_callable($callback)) {

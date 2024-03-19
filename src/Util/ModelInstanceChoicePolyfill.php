@@ -63,8 +63,7 @@ class ModelInstanceChoicePolyfill extends AbstractChoice
 
             if (!$skipFormatting) {
                 $dca = &$GLOBALS['TL_DCA']['tl_submission'];
-                # note on below: originally new \HeimrichHannot\UtilsBundle\Driver\DC_Table_Utils(...);
-                $dc = new DC_Table($context['dataContainer']);
+                $dc = new DC_Table_Utils($context['dataContainer']);
                 $dc->id = $instances->id;
                 $dc->activeRecord = $instances->current();
 
@@ -72,9 +71,9 @@ class ModelInstanceChoicePolyfill extends AbstractChoice
                     '@%([^%]+)%@i',
                     function ($matches) use ($instances, $dca, $context, $dc) {
                         return $this->utils->formatter()->formatDcaFieldValue(
+                            $dc,
                             $matches[1],
-                            $instances->{$matches[1]},
-                            $dc
+                            $instances->{$matches[1]}
                         );
                     },
                     $labelPattern

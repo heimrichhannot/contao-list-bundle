@@ -8,6 +8,7 @@ services:
     resource: '../../{Asset,Controller,DataContainer,EventSubscriber,ListExtension,Util}/*'
     autoconfigure: true
     autowire: true
+    exclude: '../../Util/DC_Table_Utils.php'
 
   huh.list.choice.parent-list-config:
     class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice

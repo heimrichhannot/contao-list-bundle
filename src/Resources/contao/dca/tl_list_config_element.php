@@ -13,7 +13,6 @@ use Contao\System;
 use HeimrichHannot\ListBundle\Backend\ListConfigElement;
 use HeimrichHannot\ListBundle\Choice\ListChoices;
 use HeimrichHannot\ListBundle\DataContainer\ListConfigElementContainer;
-use HeimrichHannot\ListBundle\Util\ListConfigElementHelper;
 use HeimrichHannot\UtilsBundle\Util\DcaUtil\GetDcaFieldsOptions;
 use HeimrichHannot\UtilsBundle\Util\Utils;
 
@@ -266,7 +265,11 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'exclude' => true,
             'inputType' => 'select',
             'options_callback' => function () {
-                return System::getContainer()->get(HeimrichHannot\UtilsBundle\Choice\TwigTemplateChoice::class)->getCachedChoices(['submission_form_']);
+                $finderFactory = System::getContainer()->get('contao.twig.finder_factory');
+                $finder = $finderFactory->create()
+                    ->identifier('submission_form_')  # should be used as group prefix
+                    ->extension('html.twig');
+                return $finder->asTemplateOptions();
             },
             'eval' => ['tl_class' => 'w50', 'includeBlankOption' => true, 'mandatory' => true, 'chosen' => true],
             'sql' => "varchar(64) NOT NULL default ''",
@@ -418,8 +421,11 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'inputType' => 'select',
             'default' => 'config_element_tags_default.html',
             'options_callback' => function (DataContainer $dc) {
-                # todo
-                return System::getContainer()->get(HeimrichHannot\UtilsBundle\Choice\TwigTemplateChoice::class)->getCachedChoices(['config_element_tags_']);
+                $finderFactory = System::getContainer()->get('contao.twig.finder_factory');
+                $finder = $finderFactory->create()
+                    ->identifier('config_element_tags_')  # should be used as group prefix
+                    ->extension('html.twig');
+                return $finder->asTemplateOptions();
             },
             'eval' => ['tl_class' => 'w50', 'includeBlankOption' => true, 'mandatory' => true],
             'sql' => "varchar(64) NOT NULL default ''",

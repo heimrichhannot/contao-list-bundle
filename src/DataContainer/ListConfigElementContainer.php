@@ -12,13 +12,13 @@ use Contao\Config;
 use Contao\Date;
 use Contao\DC_Table;
 use Contao\StringUtil;
+use Contao\System;
 use HeimrichHannot\ConfigElementTypeBundle\ConfigElementType\ConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\ConfigElementType\RelatedConfigElementType;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
 use HeimrichHannot\UtilsBundle\Util\Utils;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ListConfigElementContainer
 {
@@ -36,10 +36,6 @@ class ListConfigElementContainer
      * @var ListConfigElementRegistry
      */
     private $configElementRegistry;
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
     protected Utils $utils;
 
     /**
@@ -47,12 +43,10 @@ class ListConfigElementContainer
      */
     public function __construct(
         ListConfigElementRegistry $configElementRegistry,
-        Utils $utils,
-        ContainerInterface $container
+        Utils $utils
     ) {
         $this->configElementRegistry = $configElementRegistry;
         $this->utils = $utils;
-        $this->container = $container;
     }
 
     /**
@@ -65,7 +59,7 @@ class ListConfigElementContainer
         $types = array_keys($this->configElementRegistry->getConfigElementTypes());
 
         // TODO: remove in next major version
-        $listConfig = $this->container->getParameter('huh.list');
+        $listConfig = System::getContainer()->getParameter('huh.list');
         $configElementTypes = $listConfig['list']['config_element_types'];
 
         foreach ($configElementTypes as $configElementType) {

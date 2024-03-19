@@ -6,6 +6,13 @@
  * @license LGPL-3.0-or-later
  */
 
+use Contao\BackendUser;
+use Contao\Config;
+use Contao\DataContainer;
+use Contao\System;
+use HeimrichHannot\ListBundle\Backend\ListConfigElement;
+use HeimrichHannot\ListBundle\Util\ListConfigElementHelper;
+
 $GLOBALS['TL_DCA']['tl_list_config_element'] = [
     'config' => [
         'dataContainer' => 'Table',
@@ -82,10 +89,10 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
         'default' => '{title_type_legend},title,type;',
     ],
     'subpalettes' => [
-        'placeholderImageMode_'.\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE => 'placeholderImage',
-        'placeholderImageMode_'.\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'genderField,placeholderImage,placeholderImageFemale',
-        'placeholderImageMode_'.\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM => 'placeholderImages',
-        'placeholderImageMode_'.\HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODE_FIELD => 'fieldDependentPlaceholderConfig',
+        'placeholderImageMode_' . ListConfigElement::PLACEHOLDER_IMAGE_MODE_SIMPLE => 'placeholderImage',
+        'placeholderImageMode_' . ListConfigElement::PLACEHOLDER_IMAGE_MODE_GENDERED => 'genderField,placeholderImage,placeholderImageFemale',
+        'placeholderImageMode_' . ListConfigElement::PLACEHOLDER_IMAGE_MODE_RANDOM => 'placeholderImages',
+        'placeholderImageMode_' . ListConfigElement::PLACEHOLDER_IMAGE_MODE_FIELD => 'fieldDependentPlaceholderConfig',
         'tagsAddLink' => 'tagsFilter,tagsFilterConfigElement,tagsJumpTo',
         'openImageInLightbox' => 'lightboxId',
         'overrideTemplateContainerVariable' => 'templateContainerVariable',
@@ -142,7 +149,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['imageSelectorField'],
             'inputType' => 'select',
             'options_callback' => function (DataContainer $dc) {
-                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getCheckboxFields($dc);
+                return ListConfigElementHelper::getCheckboxFields($dc);
             },
             'exclude' => true,
             'eval' => ['includeBlankOption' => true, 'tl_class' => 'clr w50 autoheight', 'chosen' => true],
@@ -152,7 +159,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['imageField'],
             'inputType' => 'select',
             'options_callback' => function (DataContainer $dc) {
-                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+                return ListConfigElementHelper::getFields($dc);
             },
             'exclude' => true,
             'eval' => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
@@ -165,7 +172,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'reference' => &$GLOBALS['TL_LANG']['MSC'],
             'eval' => ['rgxp' => 'natural', 'includeBlankOption' => true, 'nospace' => true, 'helpwizard' => true, 'tl_class' => 'w50'],
             'options_callback' => static function () {
-                return \Contao\System::getContainer()->get('contao.image.image_sizes')->getOptionsForUser(Contao\BackendUser::getInstance());
+                return System::getContainer()->get('contao.image.sizes')->getOptionsForUser(BackendUser::getInstance());
             },
             'sql' => "varchar(255) NOT NULL default ''",
         ],
@@ -173,7 +180,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['placeholderImageMode'],
             'exclude' => true,
             'inputType' => 'select',
-            'options' => \HeimrichHannot\ListBundle\Backend\ListConfigElement::PLACEHOLDER_IMAGE_MODES,
+            'options' => ListConfigElement::PLACEHOLDER_IMAGE_MODES,
             'reference' => &$GLOBALS['TL_LANG']['tl_list_config_element']['reference'],
             'eval' => ['tl_class' => 'w50', 'includeBlankOption' => true, 'submitOnChange' => true],
             'sql' => "varchar(64) NOT NULL default ''",
@@ -196,7 +203,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['genderField'],
             'inputType' => 'select',
             'options_callback' => function (DataContainer $dc) {
-                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+                return ListConfigElementHelper::getFields($dc);
             },
             'exclude' => true,
             'eval' => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
@@ -250,7 +257,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['emailField'],
             'inputType' => 'select',
             'options_callback' => function (DataContainer $dc) {
-                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+                return ListConfigElementHelper::getFields($dc);
             },
             'exclude' => true,
             'eval' => ['includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
@@ -261,7 +268,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'exclude' => true,
             'inputType' => 'select',
             'options_callback' => function () {
-                return \Contao\System::getContainer()->get(HeimrichHannot\UtilsBundle\Choice\TwigTemplateChoice::class)->getCachedChoices(['submission_form_']);
+                return System::getContainer()->get(HeimrichHannot\UtilsBundle\Choice\TwigTemplateChoice::class)->getCachedChoices(['submission_form_']);
             },
             'eval' => ['tl_class' => 'w50', 'includeBlankOption' => true, 'mandatory' => true, 'chosen' => true],
             'sql' => "varchar(64) NOT NULL default ''",
@@ -288,7 +295,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
                             'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['submissionDefaultValues']['entityField'],
                             'inputType' => 'select',
                             'options_callback' => function (DataContainer $dc) {
-                                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+                                return ListConfigElementHelper::getFields($dc);
                             },
                             'eval' => ['style' => 'width: 400px', 'mandatory' => true, 'includeBlankOption' => true],
                         ],
@@ -309,14 +316,21 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
                             'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['fieldDependentPlaceholderConfig']['field'],
                             'inputType' => 'select',
                             'options_callback' => function (DataContainer $dc) {
-                                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+                                return ListConfigElementHelper::getFields($dc);
                             },
                             'eval' => ['style' => 'width: 200px', 'mandatory' => true, 'includeBlankOption' => true],
                         ],
                         'operator' => [
                             'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['fieldDependentPlaceholderConfig']['operator'],
                             'inputType' => 'select',
-                            'options' => \HeimrichHannot\UtilsBundle\Comparison\CompareUtil::PHP_OPERATORS,
+                            'options' => [
+                                'equal', 'unequal',
+                                'like', 'unlike',
+                                'inarray', 'notinarray',
+                                'lower', 'lowerequal',
+                                'greater', 'greaterequal',
+                                'isnull', 'isnotnull'
+                            ],
                             'reference' => &$GLOBALS['TL_LANG']['MSC']['phpOperators'],
                             'eval' => ['style' => 'width: 200px', 'mandatory' => true, 'includeBlankOption' => true],
                         ],
@@ -349,7 +363,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options_callback' => function (Contao\DataContainer $dc) {
+            'options_callback' => function (DataContainer $dc) {
                 return System::getContainer()->get(HeimrichHannot\UtilsBundle\Choice\ModelInstanceChoice::class)->getCachedChoices([
                     'dataContainer' => 'tl_module',
                     'labelPattern' => '%name% (ID %id%)',
@@ -406,8 +420,8 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'exclude' => true,
             'inputType' => 'select',
             'default' => 'config_element_tags_default.html',
-            'options_callback' => function (Contao\DataContainer $dc) {
-                return \Contao\System::getContainer()->get(HeimrichHannot\UtilsBundle\Choice\TwigTemplateChoice::class)->getCachedChoices(['config_element_tags_']);
+            'options_callback' => function (DataContainer $dc) {
+                return System::getContainer()->get(HeimrichHannot\UtilsBundle\Choice\TwigTemplateChoice::class)->getCachedChoices(['config_element_tags_']);
             },
             'eval' => ['tl_class' => 'w50', 'includeBlankOption' => true, 'mandatory' => true],
             'sql' => "varchar(64) NOT NULL default ''",
@@ -424,7 +438,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options_callback' => function (Contao\DataContainer $dc) {
+            'options_callback' => function (DataContainer $dc) {
                 return System::getContainer()->get(HeimrichHannot\UtilsBundle\Choice\ModelInstanceChoice::class)->getCachedChoices([
                     'dataContainer' => 'tl_filter_config',
                     'labelPattern' => '%title% (ID %id%)',
@@ -438,7 +452,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options_callback' => function (Contao\DataContainer $dc) {
+            'options_callback' => function (DataContainer $dc) {
                 if (!$dc->activeRecord || !$dc->activeRecord->tagsFilter) {
                     return [];
                 }
@@ -496,7 +510,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'inputType' => 'select',
             'exclude' => true,
             'options_callback' => function (DataContainer $dc) {
-                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+                return ListConfigElementHelper::getFields($dc);
             },
             'eval' => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],
             'sql' => "varchar(64) NOT NULL default ''",
@@ -508,7 +522,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'reference' => &$GLOBALS['TL_LANG']['MSC'],
             'eval' => ['rgxp' => 'natural', 'includeBlankOption' => true, 'nospace' => true, 'helpwizard' => true, 'tl_class' => 'w50'],
             'options_callback' => static function () {
-                return \Contao\System::getContainer()->get('contao.image.image_sizes')->getOptionsForUser(Contao\BackendUser::getInstance());
+                return System::getContainer()->get('contao.image.image_sizes')->getOptionsForUser(Contao\BackendUser::getInstance());
             },
             'sql' => "varchar(255) NOT NULL default ''",
         ],
@@ -516,7 +530,7 @@ $GLOBALS['TL_DCA']['tl_list_config_element'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config_element']['posterImageField'],
             'inputType' => 'select',
             'options_callback' => function (DataContainer $dc) {
-                return \HeimrichHannot\ListBundle\Util\ListConfigElementHelper::getFields($dc);
+                return ListConfigElementHelper::getFields($dc);
             },
             'exclude' => true,
             'eval' => ['includeBlankOption' => true, 'mandatory' => true, 'chosen' => true, 'tl_class' => 'w50 autoheight'],

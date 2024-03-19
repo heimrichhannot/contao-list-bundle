@@ -6,7 +6,8 @@
  * @license LGPL-3.0-or-later
  */
 
-use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
+use Contao\System;
+use HeimrichHannot\FilterBundle\Util\TwigSupportPolyfill\TwigTemplateLocator;
 
 $GLOBALS['TL_DCA']['tl_list_config'] = [
     'config' => [
@@ -180,7 +181,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'inputType' => 'select',
             'sorting' => true,
             'options_callback' => function (DataContainer $dc) {
-                return \Contao\System::getContainer()->get('huh.list.choice.parent-list-config')->getCachedChoices(
+                return System::getContainer()->get('huh.list.choice.parent-list-config')->getCachedChoices(
                     [
                         'id' => $dc->id,
                     ]
@@ -286,7 +287,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'exclude' => true,
             'inputType' => 'select',
             'options_callback' => function (DataContainer $dc) {
-                return \Contao\System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.count.text');
+                return System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.count.text');
             },
             'eval' => ['maxlength' => 64, 'includeBlankOption' => true],
             'sql' => "varchar(64) NOT NULL default ''",
@@ -304,7 +305,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'search' => true,
             'inputType' => 'select',
             'options_callback' => function (DataContainer $dc) {
-                return \Contao\System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.empty.text');
+                return System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.empty.text');
             },
             'eval' => ['maxlength' => 64, 'tl_class' => 'w50', 'includeBlankOption' => true],
             'sql' => "varchar(64) NOT NULL default ''",
@@ -464,7 +465,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
                         'language' => [
                             'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['language'],
                             'inputType' => 'select',
-                            'options' => \Contao\System::getLanguages(),
+                            'options' => System::getContainer()->get('contao.intl.locales')->getLanguages(),
                             'eval' => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true, 'groupStyle' => 'width: 400px;'],
                         ],
                         'jumpTo' => [
@@ -690,7 +691,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
                         'language' => [
                             'label' => &$GLOBALS['TL_LANG']['tl_list_config']['jumpToDetailsMultilingual']['language'],
                             'inputType' => 'select',
-                            'options' => \Contao\System::getLanguages(),
+                            'options' => System::getContainer()->get('contao.intl.locales')->getLanguages(),
                             'eval' => ['tl_class' => 'w50', 'mandatory' => true, 'includeBlankOption' => true, 'chosen' => true, 'groupStyle' => 'width: 400px;'],
                         ],
                         'jumpTo' => [
@@ -717,7 +718,7 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'exclude' => true,
             'inputType' => 'select',
             'options_callback' => function (DataContainer $dc) {
-                return \Contao\System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.labels.overview');
+                return System::getContainer()->get('huh.utils.choice.message')->getCachedChoices('huh.list.labels.overview');
             },
             'eval' => ['chosen' => true, 'mandatory' => true, 'maxlength' => 128, 'includeBlankOption' => true, 'tl_class' => 'w50'],
             'sql' => "varchar(128) NOT NULL default ''",
@@ -736,7 +737,7 @@ $dca = &$GLOBALS['TL_DCA']['tl_list_config'];
 
 $dca['fields']['numberOfItems']['eval']['tl_class'] = 'w50 clr';
 
-if (System::getContainer()->get('huh.utils.container')->isBundleActive('modal')) {
+if (in_array('modal', array_keys(System::getContainer()->getParameter('kernel.bundles')))) {
     $dca['fields']['useModal'] = [
         'label' => &$GLOBALS['TL_LANG']['tl_list_config']['useModal'],
         'exclude' => true,
@@ -759,7 +760,9 @@ if (System::getContainer()->get('huh.utils.container')->isBundleActive('modal'))
     $dca['subpalettes']['addDetails'] = 'useModalExplanation,useModal,'.$dca['subpalettes']['addDetails'];
 }
 
-if (System::getContainer()->get('huh.utils.container')->isBundleActive('Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle')) {
+if (in_array('Terminal42\DcMultilingualBundle\Terminal42DcMultilingualBundle',
+             System::getContainer()->getParameter('kernel.bundles')))
+{
     $dca['fields'] = array_merge(is_array($dca['fields']) ? $dca['fields'] : [], [
         'addDcMultilingualSupport' => [
             'label' => &$GLOBALS['TL_LANG']['tl_list_config']['addDcMultilingualSupport'],

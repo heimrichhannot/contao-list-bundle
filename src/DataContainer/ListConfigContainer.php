@@ -21,7 +21,6 @@ use Contao\Model;
 use Contao\StringUtil;
 use Contao\Versions;
 use HeimrichHannot\FilterBundle\Util\TwigSupportPolyfill\TwigTemplateLocator;
-use HeimrichHannot\ListBundle\Util\Polyfill;
 use HeimrichHannot\UtilsBundle\Util\Utils;
 
 class ListConfigContainer

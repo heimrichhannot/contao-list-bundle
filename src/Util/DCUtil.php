@@ -8,6 +8,9 @@ use Contao\Model;
 use Contao\System;
 use HeimrichHannot\UtilsBundle\Util\Utils;
 
+/**
+ * @internal
+ */
 class DCUtil
 {
     /**

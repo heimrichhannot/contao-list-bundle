@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## prepare [2.0] - 2024-03-xx
+- Removed: services `huh.list.choice.manager`, `huh.list.choice.list`, `huh.list.choice.item`
+
 ## [1.53.1] - 2023-09-15
 - Fixed: add select to query instead of overwriting
 

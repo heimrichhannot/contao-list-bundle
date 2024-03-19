@@ -9,6 +9,7 @@
 namespace HeimrichHannot\ListBundle\DataContainer;
 
 use Contao\Config;
+use Contao\DataContainer;
 use Contao\Date;
 use Contao\DC_Table;
 use Contao\StringUtil;
@@ -18,6 +19,7 @@ use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementTypeInterface;
 use HeimrichHannot\ListBundle\ConfigElementType\RelatedConfigElementType;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry;
+use HeimrichHannot\UtilsBundle\Util\DcaUtil\GetDcaFieldsOptions;
 use HeimrichHannot\UtilsBundle\Util\Utils;
 
 class ListConfigElementContainer
@@ -145,5 +147,36 @@ class ListConfigElementContainer
         return '<div class="tl_content_left">' . ($rows['title'] ?: $rows['id']) . ' <span style="color:#b3b3b3; padding-left:3px">['
             . $reference[$rows['type']] . '] ('
             . Date::parse(Config::get('datimFormat'), trim($rows['dateAdded'])) . ')</span></div>';
+    }
+
+    public static function getFieldsOptions(DataContainer $dc)
+    {
+        if (!$dc->id) {
+            return [];
+        }
+
+        $filter = System::getContainer()->get('huh.list.list-config-element-registry')->getFilterByPk($dc->id);
+        if (null === $filter) {
+            return [];
+        }
+
+        return System::getContainer()->get(Utils::class)->dca()->getDcaFields($filter['dataContainer']);
+    }
+
+    public static function getCheckboxFieldsOptions(DataContainer $dc)
+    {
+        if (!$dc->id) {
+            return [];
+        }
+
+        $filter = System::getContainer()->get('huh.list.list-config-element-registry')->getFilterByPk($dc->id);
+        if (null === $filter) {
+            return [];
+        }
+
+        return System::getContainer()->get(Utils::class)->dca()->getDcaFields(
+            $filter['dataContainer'],
+            GetDcaFieldsOptions::create()->setAllowedInputTypes(['checkbox'])
+        );
     }
 }

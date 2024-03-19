@@ -19,8 +19,11 @@ use Contao\Image;
 use Contao\Input;
 use Contao\Model;
 use Contao\StringUtil;
+use Contao\System;
 use Contao\Versions;
 use HeimrichHannot\FilterBundle\Util\TwigSupportPolyfill\TwigTemplateLocator;
+use HeimrichHannot\ListBundle\Choice\ListChoices;
+use HeimrichHannot\ListBundle\Util\Polyfill;
 use HeimrichHannot\UtilsBundle\Util\Utils;
 
 class ListConfigContainer
@@ -199,5 +202,50 @@ class ListConfigContainer
         asort($choices);
 
         return $choices;
+    }
+
+    public static function getModelInstances(DataContainer $dc)
+    {
+        $listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
+        $listConfig = $listConfigRegistry->findByPk($dc->id);
+
+        if (null === $listConfig) {
+            return [];
+        }
+
+        $modelUtil = System::getContainer()->get(Utils::class)->model();
+        $listConfig = Polyfill::findRootParentRecursively($modelUtil, 'pid', 'tl_list_config', $listConfig);
+
+        if (null === $listConfig) {
+            return [];
+        }
+
+        $filter = $listConfigRegistry->getFilterByPk($listConfig->id);
+
+        if (null === $filter) {
+            return [];
+        }
+
+        $dc->table = $filter['dataContainer'] ?? $dc->table;
+
+        return ListChoices::getModelInstanceOptions($dc, $filter['dataContainer'] ?? $dc->table);
+    }
+
+    public static function getFields(DataContainer $dc)
+    {
+        $listConfigRegistry = System::getContainer()->get('huh.list.list-config-registry');
+
+        if (null === ($listConfig = $listConfigRegistry->findByPk($dc->id))) {
+            return [];
+        }
+
+        $modelUtil = System::getContainer()->get(Utils::class)->model();
+        $listConfig = Polyfill::findRootParentRecursively($modelUtil, 'pid', 'tl_list_config', $listConfig);
+
+        if (null === $listConfig || null === ($filter = $listConfigRegistry->getFilterByPk($listConfig->id))) {
+            return [];
+        }
+
+        return System::getContainer()->get(Utils::class)->dca()->getDcaFields($filter['dataContainer']);
     }
 }

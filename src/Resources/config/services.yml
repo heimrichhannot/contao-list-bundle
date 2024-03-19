@@ -32,21 +32,6 @@ services:
     autowire: true
   huh.list.list-config-element-registry: '@HeimrichHannot\ListBundle\Registry\ListConfigElementRegistry'
 
-  huh.list.choice.manager:
-    class: HeimrichHannot\ListBundle\Choice\ManagerChoice
-    arguments:
-    - "@contao.framework"
-
-  huh.list.choice.list:
-    class: HeimrichHannot\ListBundle\Choice\ListChoice
-    arguments:
-    - "@contao.framework"
-
-  huh.list.choice.item:
-    class: HeimrichHannot\ListBundle\Choice\ItemChoice
-    arguments:
-    - "@contao.framework"
-
   huh.list.util.manager:
     class: HeimrichHannot\ListBundle\Util\ListManagerUtil
     public: true

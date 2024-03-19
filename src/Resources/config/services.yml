@@ -10,12 +10,6 @@ services:
     autowire: true
     exclude: '../../Util/DC_Table_Utils.php'
 
-  huh.list.choice.parent-list-config:
-    class: HeimrichHannot\ListBundle\Choice\ParentListConfigChoice
-    public: true
-    arguments:
-    - "@contao.framework"
-
   HeimrichHannot\ListBundle\Manager\ListManager:
     public: true
     autowire: true

@@ -189,9 +189,13 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->_dispatcher = System::getContainer()->get('event_dispatcher');
     }
 
-    public function parse(string $listTemplate = null, string $itemTemplate = null, array $data = []): ?string
+    public function parse(string $listTemplate = null, string $itemTemplate = null, array $data = [], ListConfiguration $listConfiguration = null): ?string
     {
-        $listConfig = $this->_manager->getListConfig();
+        if ($listConfiguration) {
+            $listConfig = $listConfiguration->getListConfigModel();
+        } else {
+            $listConfig = $this->_manager->getListConfig();
+        }
 
         if (System::getContainer()->getParameter('kernel.debug')) {
             $stopwatch = System::getContainer()->get('debug.stopwatch');
@@ -202,10 +206,12 @@ class DefaultList implements ListInterface, \JsonSerializable
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
         $this->_filterConfig = $this->_manager->getFilterConfig();
 
-        $listConfiguration = new ListConfiguration($filter->dataContainer, $listConfig);
+        if (!$listConfiguration) {
+            $listConfiguration = new ListConfiguration($filter->dataContainer, $listConfig);
+        }
 
-        System::getContainer()->get('huh.utils.dca')->loadDc($filter->dataContainer);
-        $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
+        System::getContainer()->get('huh.utils.dca')->loadDc($listConfiguration->getDataContainer());
+        $dca = &$GLOBALS['TL_DCA'][$listConfiguration->getDataContainer()];
 
         $this->setWrapperId('huh-list-'.$this->getModule()['id']);
         $this->setItemsId($this->getWrapperId().'-items');
@@ -235,16 +241,16 @@ class DefaultList implements ListInterface, \JsonSerializable
         /** @var Database $db */
         $db = $this->_manager->getFramework()->createInstance(Database::class);
 
-        $dbFields = $db->getFieldNames($filter->dataContainer);
+        $dbFields = $db->getFieldNames($listConfiguration->getDataContainer());
 
         // support for terminal42/contao-DC_Multilingual
-        if ($this->isDcMultilingualActive($listConfig, $dca, $filter->dataContainer)) {
+        if ($this->isDcMultilingualActive($listConfig, $dca, $listConfiguration->getDataContainer())) {
             $extension = System::getContainer()->get(ListExtensionCollection::class)->getExtension(DcMultilingualListExtension::getAlias());
             $extension->prepareQueryBuilder($queryBuilder, $listConfiguration);
             $fields = implode(', ', $queryBuilder->getQueryPart('select'));
         }
         // support for heimrichhannot/contao-multilingual-fields-bundle
-        elseif ($this->isMultilingualFieldsActive($listConfig, $filter->dataContainer)) {
+        elseif ($this->isMultilingualFieldsActive($listConfig, $listConfiguration->getDataContainer())) {
             $fallbackLanguage = System::getContainer()->getParameter('huh_multilingual_fields')['fallback_language'];
 
             if ($GLOBALS['TL_LANGUAGE'] !== $fallbackLanguage) {
@@ -260,27 +266,27 @@ class DefaultList implements ListInterface, \JsonSerializable
                         $selectorField = $data['eval']['translationConfig'][$GLOBALS['TL_LANGUAGE']]['selector'];
                         $translationField = $data['eval']['translationConfig'][$GLOBALS['TL_LANGUAGE']]['field'];
 
-                        $fieldNames[] = "IF($filter->dataContainer.$selectorField=1, $filter->dataContainer.$translationField, $filter->dataContainer.$field) AS '$field'";
+                        $fieldNames[] = "IF(".$listConfiguration->getDataContainer().".$selectorField=1, ".$listConfiguration->getDataContainer().".$translationField, ".$listConfiguration->getDataContainer().".$field) AS '$field'";
                     } else {
-                        $fieldNames[] = $filter->dataContainer.'.'.$field;
+                        $fieldNames[] = $listConfiguration->getDataContainer().'.'.$field;
                     }
                 }
 
                 $fields = implode(', ', $fieldNames);
             } else {
-                $fields = implode(', ', array_map(function ($field) use ($filter) {
-                    return $filter->dataContainer.'.'.$field;
+                $fields = implode(', ', array_map(function ($field) use ($listConfiguration) {
+                    return $listConfiguration->getDataContainer().'.'.$field;
                 }, $dbFields));
             }
         } else {
-            $fields = implode(', ', array_map(function ($field) use ($filter) {
-                return $filter->dataContainer.'.'.$field;
+            $fields = implode(', ', array_map(function ($field) use ($listConfiguration) {
+                return $listConfiguration->getDataContainer().'.'.$field;
             }, $dbFields));
         }
 
         // filter related items
         if (isset($GLOBALS['HUH_LIST_RELATED'])) {
-            $this->addRelatedFilters($filter->dataContainer, $queryBuilder);
+            $this->addRelatedFilters($listConfiguration->getDataContainer(), $queryBuilder);
         }
 
         $this->setIsSubmitted($isSubmitted);
@@ -296,7 +302,7 @@ class DefaultList implements ListInterface, \JsonSerializable
         $this->setShowInitialResults($listConfig->showInitialResults);
 
         if ($isSubmitted || $listConfig->showInitialResults) {
-            $totalCount = $queryBuilder->addSelect($filter->dataContainer.'.id')->execute()->rowCount();
+            $totalCount = $queryBuilder->addSelect($listConfiguration->getDataContainer().'.id')->execute()->rowCount();
             $queryBuilder->select($event->getFields());
         }
 
@@ -704,10 +710,16 @@ class DefaultList implements ListInterface, \JsonSerializable
     /**
      * {@inheritdoc}
      */
-    public function handleShare()
+    public function handleShare(ListConfiguration $listConfiguration = null): void
     {
-        $listConfig = $this->_manager->getListConfig();
-        $filter = (object) $this->_manager->getFilterConfig();
+        if ($listConfiguration) {
+            $listConfig = $listConfiguration->getListConfigModel();
+            $dataContainer = $listConfiguration->getDataContainer();
+        } else {
+            $listConfig = $this->_manager->getListConfig();
+            $dataContainer = $this->_manager->getFilterConfig()->getFilter()['dataContainer'];
+        }
+
         $request = $this->_manager->getRequest();
         $action = $request->getGet('act');
 
@@ -715,7 +727,8 @@ class DefaultList implements ListInterface, \JsonSerializable
             $url = $request->getGet('url');
             $id = $request->getGet($listConfig->useAlias ? $listConfig->aliasField : 'id');
 
-            if (null !== ($entity = System::getContainer()->get('huh.utils.model')->findModelInstanceByPk($this->_manager->getFramework(), $filter->dataContainer, $id))) {
+            if (null !== ($entity = System::getContainer()->get(Utils::class)->model()
+                    ->findModelInstanceByPk($dataContainer, $id))) {
                 $now = time();
 
                 if ($this->shareTokenExpiredOrEmpty($entity, $now)) {
@@ -728,7 +741,8 @@ class DefaultList implements ListInterface, \JsonSerializable
                 if ($listConfig->shareAutoItem) {
                     $shareUrl = $url.'/'.$entity->shareToken;
                 } else {
-                    $shareUrl = System::getContainer()->get('huh.utils.url')->addQueryString('share='.$entity->shareToken, $url);
+                    $shareUrl = System::getContainer()->get(Utils::class)->url()
+                        ->addQueryStringParameterToUrl('share='.$entity->shareToken, $url);
                 }
 
                 exit($shareUrl);

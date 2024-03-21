@@ -1,17 +1,11 @@
 <?php
 
-/*
- * Copyright (c) 2022 Heimrich & Hannot GmbH
- *
- * @license LGPL-3.0-or-later
- */
-
-namespace HeimrichHannot\ListBundle\ListConfiguration;
+namespace HeimrichHannot\ListBundle\Listing\Configuration;
 
 use HeimrichHannot\ListBundle\Filter\FilterConfiguration;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
 
-class ListConfiguration
+class ListingConfiguration
 {
     private string $dataContainer;
     private ListConfigModel $listConfigModel;
@@ -31,6 +25,12 @@ class ListConfiguration
     public function getListConfigModel(): ListConfigModel
     {
         return $this->listConfigModel;
+    }
+
+    public function setFilterConfiguration(FilterConfiguration $filterConfiguration): ListingConfiguration
+    {
+        $this->filterConfiguration = $filterConfiguration;
+        return $this;
     }
 
     public function getFilterConfiguration(): FilterConfiguration

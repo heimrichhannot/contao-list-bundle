@@ -18,6 +18,7 @@ use HeimrichHannot\ListBundle\Asset\FrontendAsset;
 use HeimrichHannot\ListBundle\Event\ListCompileEvent;
 use HeimrichHannot\ListBundle\Exception\InterfaceNotImplementedException;
 use HeimrichHannot\ListBundle\Exception\InvalidListConfigException;
+use HeimrichHannot\ListBundle\ListConfiguration\ListConfiguration;
 use HeimrichHannot\ListBundle\Lists\ListInterface;
 use HeimrichHannot\ListBundle\Manager\ListManager;
 use HeimrichHannot\ListBundle\Registry\ListConfigRegistry;
@@ -48,30 +49,39 @@ class ListFrontendModuleController extends AbstractFrontendModuleController
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
+        $listConfiguration = $this->getListConfiguration($model, $request);
+
         // Hide list and show reader on detail pages if configured
         if ('1' === $model->list_renderReaderOnAutoItem && $model->list_readerModule && (Config::get('useAutoItem') && isset($_GET['auto_item']))) {
             return new Response(Controller::getFrontendModule($model->list_readerModule, $template->inColumn));
         }
 
         // retrieve list config
-        $listConfig = $this->listConfigRegistry->getComputedListConfig((int) $model->listConfig);
+        if (!$listConfiguration) {
+            $listConfigModel = $this->listConfigRegistry->getComputedListConfig((int) $model->listConfig);
+        } else {
+            $listConfigModel = $listConfiguration->getListConfigModel();
+        }
 
         /** @var ListManager $listManager */
-        $listManager = $this->listManagerUtil->getListManagerByName($listConfig->manager ?: 'default');
+        $listManager = $this->listManagerUtil->getListManagerByName($listConfigModel->manager ?: 'default');
 
         if (!$listManager) {
             return $template->getResponse();
         }
 
-        $listManager->setListConfig($listConfig);
+        $listManager->setListConfig($listConfigModel);
         $listManager->setModuleData($model->row());
-        $filterConfig = $listManager->getFilterConfig();
+
+        $dataContainer = $listConfiguration
+            ? $listConfiguration->getDataContainer()
+            : $listManager->getFilterConfig()->getFilter()['dataContainer'];
 
         Controller::loadDataContainer('tl_list_config');
-        Controller::loadDataContainer($filterConfig->getFilter()['dataContainer']);
-        Controller::loadLanguageFile($filterConfig->getFilter()['dataContainer']);
+        Controller::loadDataContainer($dataContainer);
+        Controller::loadLanguageFile($dataContainer);
 
-        if (null !== ($listClass = $listManager->getListByName($listConfig->list ?: 'default'))) {
+        if (null !== ($listClass = $listManager->getListByName($listConfigModel->list ?: 'default'))) {
             $reflection = new \ReflectionClass($listClass);
 
             if (!$reflection->implementsInterface(ListInterface::class)) {
@@ -84,6 +94,7 @@ class ListFrontendModuleController extends AbstractFrontendModuleController
 
             $list = new $listClass($listManager);
             $listManager->setList($list);
+
         } else {
             if ($this->container->has('parameter_bag')
                 && $this->container->get('parameter_bag')->has('kernel.environment')
@@ -97,28 +108,33 @@ class ListFrontendModuleController extends AbstractFrontendModuleController
 
         $this->frontendAsset->addFrontendAssets();
 
-        $list->handleShare();
+        $list->handleShare($listConfiguration);
 
         // add class to every list template
-        $template->class = trim($template->class.' huh-list '.$list->getDataContainer());
-        $template->noSearch = (bool) $listConfig->noSearch;
+        $template->class = trim($template->class.' huh-list '.$listConfiguration->getDataContainer());
+        $template->noSearch = (bool) $listConfigModel->noSearch;
 
-        $template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) use ($list) {
-            return $list->parse($listTemplate, $itemTemplate, $data);
+        $template->list = function (string $listTemplate = null, string $itemTemplate = null, array $data = []) use ($list, $listConfiguration) {
+            return $list->parse($listTemplate, $itemTemplate, $data, $listConfiguration);
         };
 
         $this->eventDispatcher->dispatch(
-            new ListCompileEvent($template, $this, $listConfig),
+            new ListCompileEvent($template, $this, $listConfigModel),
             ListCompileEvent::NAME
         );
 
         $response = $template->getResponse();
 
-        if ((bool) $listConfig->doNotRenderEmpty
+        if ((bool) $listConfigModel->doNotRenderEmpty
             && empty($list->getItems())) {
             return new Response();
         }
 
         return $response;
+    }
+
+    protected function getListConfiguration(ModuleModel $model, Request $request): ?ListConfiguration
+    {
+        return null;
     }
 }

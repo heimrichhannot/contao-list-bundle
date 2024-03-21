@@ -215,7 +215,7 @@ class ImageConfigElementType implements ListConfigElementTypeInterface
             return false;
         }
 
-        $uuid = StringUtil::deserialize($item->getRawValue($listConfigElement->imageField), true)[0];
+        $uuid = (StringUtil::deserialize($item->getRawValue($listConfigElement->imageField), true)[0] ?? null);
 
         if (null === ($file = System::getContainer()->get('huh.utils.file')->getFileFromUuid($uuid))) {
             return false;

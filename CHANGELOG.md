@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.53.2] - 2024-03-21
+- Fixed: warnings
+
 ## [1.53.1] - 2023-09-15
 - Fixed: add select to query instead of overwriting
 

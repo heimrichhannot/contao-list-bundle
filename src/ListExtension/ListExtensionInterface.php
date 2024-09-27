@@ -27,7 +27,11 @@ interface ListExtensionInterface
      */
     public static function getFields(): array;
 
-    public function prepareQueryBuilder(QueryBuilder $queryBuilder, ListConfiguration $listConfiguration): void;
+    public function adjustListConfiguration(ListConfiguration $configuration): void;
+
+    public function prepareQueryBuilderBeforeCount(QueryBuilder $queryBuilder, ListConfiguration $listConfiguration): void;
+
+    public function prepareQueryBuilderBeforeItemRetrival(QueryBuilder $queryBuilder, ListConfiguration $listConfiguration, int $totalCount): void;
 
     public function prepareListTemplate(array &$templateData, ListConfiguration $listConfiguration): void;
 

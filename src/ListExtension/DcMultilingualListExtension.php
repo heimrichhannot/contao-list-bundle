@@ -44,7 +44,7 @@ class DcMultilingualListExtension implements ListExtensionInterface
         return [];
     }
 
-    public function prepareQueryBuilder(QueryBuilder $queryBuilder, ListConfiguration $listConfiguration): void
+    public function prepareQueryBuilderBeforeCount(QueryBuilder $queryBuilder, ListConfiguration $listConfiguration): void
     {
         if (!isset($GLOBALS['TL_DCA'][$listConfiguration->getDataContainer()])) {
             Controller::loadDataContainer($listConfiguration->getDataContainer());
@@ -153,6 +153,11 @@ class DcMultilingualListExtension implements ListExtensionInterface
 
     public function prepareListItemTemplate(array &$templateData, ListConfiguration $listConfiguration): void
     {
+    }
+
+    public function prepareQueryBuilderBeforeItemRetrival(QueryBuilder $queryBuilder, ListConfiguration $listConfiguration, int $totalCount): void
+    {
+        // TODO: Implement prepareQueryBuilderBeforeItemRetrival() method.
     }
 
     private function isDcMultilingualActive(ListConfiguration $listConfiguration)

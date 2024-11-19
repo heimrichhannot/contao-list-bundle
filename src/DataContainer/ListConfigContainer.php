@@ -17,6 +17,7 @@ use Contao\RequestToken;
 use Contao\StringUtil;
 use Contao\Versions;
 use HeimrichHannot\RequestBundle\Component\HttpFoundation\Request;
+use HeimrichHannot\TwigSupportBundle\Exception\TemplateNotFoundException;
 use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
 use HeimrichHannot\UtilsBundle\Model\ModelUtil;
 use HeimrichHannot\UtilsBundle\Url\UrlUtil;
@@ -153,7 +154,12 @@ class ListConfigContainer
             $templates = array_column($this->bundleConfig['templates'][$templatesKey], 'template');
 
             foreach ($choices as $key => $choice) {
-                $templatePath = $this->templateLocator->getTemplatePath($key);
+                try {
+                    $templatePath = $this->templateLocator->getTemplatePath($key);
+                } catch (TemplateNotFoundException $e) {
+                    unset($choices[$key]);
+                    continue;
+                }
 
                 // remove duplicates
                 if (false !== array_search($templatePath, $templates)) {

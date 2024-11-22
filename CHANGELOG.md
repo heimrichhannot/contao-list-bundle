@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.53.5] - 2024-11-22
+- Changed: throw a exception if dca is empty for selected datacontainer in DefaultList
+
 ## [1.53.4] - 2024-11-19
 - Fixed: do not throw exception in backend if a template is not found
 

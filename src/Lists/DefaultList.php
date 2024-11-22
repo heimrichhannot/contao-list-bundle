@@ -207,6 +207,15 @@ class DefaultList implements ListInterface, \JsonSerializable
         System::getContainer()->get('huh.utils.dca')->loadDc($filter->dataContainer);
         $dca = &$GLOBALS['TL_DCA'][$filter->dataContainer];
 
+        if (empty($dca)) {
+            throw new \Exception(
+                'Data container array (DCA) for ' .
+                $filter->dataContainer .
+                ' is empty. Maybe the data container does not exist or the DCA file is missing. '.
+                '[List configuration ID: ' . $listConfiguration->getListConfigModel()->id . ']'
+            );
+        }
+
         $this->setWrapperId('huh-list-' . $this->getModule()['id']);
         $this->setItemsId($this->getWrapperId() . '-items');
 

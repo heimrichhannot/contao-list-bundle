@@ -6,11 +6,12 @@
  * @license LGPL-3.0-or-later
  */
 
+use Contao\DC_Table;
 use HeimrichHannot\TwigSupportBundle\Filesystem\TwigTemplateLocator;
 
 $GLOBALS['TL_DCA']['tl_list_config'] = [
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ptable' => 'tl_list_config',
         'ctable' => ['tl_list_config_element'],
         'enableVersioning' => true,
@@ -120,7 +121,16 @@ $GLOBALS['TL_DCA']['tl_list_config'] = [
             'addOverview',
             'customJumpToOverviewLabel',
         ],
-        'default' => '{general_legend},title;'.'{filter_legend},filter;'.'{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,limitFormattedFields,isTableList;'.'{sorting_legend},sortingMode;'.'{jumpto_legend},useAlias,addDetails,addShare,addOverview;'.'{action_legend},addHashToAction,removeAutoItemFromAction;'.'{misc_legend},addAjaxPagination,addMasonry,addDcMultilingualSupport,addMultilingualFieldsSupport,hideForListPreselect,listContextVariables;'.'{search_legend},noSearch,doNotIndexItems;'.'{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
+        'default' => '{general_legend},title,filter;'
+            . '{config_legend},manager,list,item,numberOfItems,perPage,skipFirst,doNotRenderEmpty,showItemCount,showNoItemsText,showInitialResults,isTableList;'
+            . '{fields_legend},limitFormattedFields;'
+            . '{sorting_legend},sortingMode;'
+            . '{jumpto_legend},useAlias,addDetails,addShare,addOverview;'
+            . '{action_legend},addHashToAction,removeAutoItemFromAction;'
+            . '{extensions_legend},addDcMultilingualSupport,addMultilingualFieldsSupport;'
+            . '{misc_legend},addAjaxPagination,addMasonry,hideForListPreselect,listContextVariables;'
+            . '{search_legend},noSearch,doNotIndexItems;'
+            . '{template_legend},listTemplate,itemTemplate,itemChoiceTemplate;',
     ],
     'subpalettes' => [
         'showItemCount' => 'itemCountText',

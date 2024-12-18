@@ -162,9 +162,9 @@ $lang['generateSorting'] = 'Alphabetisch sortieren';
  * Legends
  */
 $lang['general_legend'] = 'Allgemeine Einstellungen';
-$lang['entity_legend'] = 'Entität';
 $lang['config_legend'] = 'Konfiguration';
-$lang['filter_legend'] = 'Filter';
+$lang['fields_legend'] = 'Felder';
+$lang['extensions_legend'] = 'Erweiterungen';
 $lang['overrideFilter_legend'] = 'Filter';
 $lang['sorting_legend'] = 'Sortierung';
 $lang['jumpto_legend'] = 'Weiterleitung';

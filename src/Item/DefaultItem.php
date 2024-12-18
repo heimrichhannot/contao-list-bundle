@@ -22,6 +22,7 @@ use HeimrichHannot\ListBundle\ConfigElementType\ListConfigElementData;
 use HeimrichHannot\ListBundle\Event\ListBeforeApplyConfigElementsEvent;
 use HeimrichHannot\ListBundle\Event\ListBeforeRenderItemEvent;
 use HeimrichHannot\ListBundle\HeimrichHannotContaoListBundle;
+use HeimrichHannot\ListBundle\ListConfiguration\ListConfiguration;
 use HeimrichHannot\ListBundle\Manager\ListManagerInterface;
 use HeimrichHannot\ListBundle\Model\ListConfigElementModel;
 use HeimrichHannot\ListBundle\Model\ListConfigModel;
@@ -369,6 +370,8 @@ class DefaultItem implements ItemInterface, \JsonSerializable
         $listConfig = $this->_manager->getListConfig();
         $filter = (object) $this->_manager->getFilterConfig()->getFilter();
 
+        $listConfiguration = new ListConfiguration($filter->dataContainer, $listConfig);
+
         if (System::getContainer()->getParameter('kernel.debug')) {
             $stopwatch = System::getContainer()->get('debug.stopwatch');
             $stopwatch->start('huh.list.item.parse (ID '.$listConfig->id.')');
@@ -445,7 +448,7 @@ class DefaultItem implements ItemInterface, \JsonSerializable
 
         /** @var ListBeforeRenderItemEvent $event */
         $event = $this->_dispatcher->dispatch(
-            new ListBeforeRenderItemEvent($listConfig->itemTemplate, $this->jsonSerialize(), $this),
+            new ListBeforeRenderItemEvent($listConfig->itemTemplate, $this->jsonSerialize(), $this, $listConfiguration),
             ListBeforeRenderItemEvent::NAME
         );
         $templateName = $this->_manager->getItemTemplateByName($event->getTemplateName() ?: 'default');

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.54.0] - 2024-12-18
+- Changed: added ListConfiguration instance to ListBeforeRenderItemEvent
+- Changed: adjusted tl_list_config palette
+
 ## [1.53.5] - 2024-11-22
 - Changed: throw a exception if dca is empty for selected datacontainer in DefaultList
 
